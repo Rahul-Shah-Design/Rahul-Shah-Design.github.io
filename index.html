@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahul Shah — Vibe Coded Projects</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181b24;
+    --surface2: #1e2230;
+    --border: #2a2f40;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --accent: #4a90e2;
+    --gold: #f0b429;
+    --font-display: 'DM Serif Display', serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    padding: 64px 40px 48px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 400;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  header h1 em {
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  .tagline {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 480px;
+  }
+
+  .tagline a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .tagline a:hover { text-decoration: underline; }
+
+  /* DIVIDER */
+  .divider {
+    max-width: 900px;
+    margin: 0 auto 48px;
+    padding: 0 40px;
+  }
+
+  .divider hr {
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  /* GRID */
+  .projects {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 20px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--card-accent, var(--accent));
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .card:hover {
+    border-color: #3a4060;
+    background: var(--surface2);
+    transform: translateY(-2px);
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .card-icon {
+    font-size: 26px;
+    line-height: 1;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: -0.3px;
+    flex: 1;
+  }
+
+  .card-tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 9px;
+  }
+
+  .card-desc {
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.55;
+    flex: 1;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-top: 4px;
+  }
+
+  .card-footer svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.15s;
+  }
+
+  .card:hover .card-footer svg {
+    transform: translateX(3px);
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 32px 40px;
+    color: var(--muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  footer span { color: var(--gold); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    header { padding: 40px 24px 36px; }
+    .divider { padding: 0 24px; }
+    .projects { padding: 0 24px 60px; grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Vibe Coded with Claude</p>
+  <h1>Rahul Shah<br><em>Design &amp; Projects</em></h1>
+  <p class="tagline">A collection of small tools and experiments built by vibe coding with <a href="https://claude.ai/code" target="_blank">Claude Code</a>. Each project lives in its own folder in this repo.</p>
+</header>
+
+<div class="divider"><hr></div>
+
+<main class="projects">
+
+  <a class="card" href="ClaudeProjects/BudgetTracker/budget-tracker.html" style="--card-accent: #4a90e2;">
+    <div class="card-icon">💰</div>
+    <div class="card-meta">
+      <span class="card-title">Budget Tracker</span>
+      <span class="card-tag">Finance</span>
+    </div>
+    <p class="card-desc">A single-file budgeting SPA. Track monthly expenses and income across Needs, Wants &amp; Savings buckets, with a paycheck calculator and YTD dashboard chart.</p>
+    <div class="card-footer">
+      Open app
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M3 8h10M9 4l4 4-4 4"/>
+      </svg>
+    </div>
+  </a>
+
+  <a class="card" href="ClaudeProjects/User State Map/state-map.html" style="--card-accent: #f0b429;">
+    <div class="card-icon">🗺️</div>
+    <div class="card-meta">
+      <span class="card-title">User State Map</span>
+      <span class="card-tag">Visualization</span>
+    </div>
+    <p class="card-desc">An interactive US map visualizing college destination flows by state. Filter by metrics like destination count, enrollment share, and regional patterns.</p>
+    <div class="card-footer">
+      Open app
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M3 8h10M9 4l4 4-4 4"/>
+      </svg>
+    </div>
+  </a>
+
+</main>
+
+<footer>
+  Built with <span>♥</span> and Claude &nbsp;·&nbsp; <a href="https://github.com/Rahul-Shah-Design/Rahul-Shah-Design.github.io" style="color: inherit; text-decoration: none;">GitHub</a>
+</footer>
+
+</body>
+</html>
