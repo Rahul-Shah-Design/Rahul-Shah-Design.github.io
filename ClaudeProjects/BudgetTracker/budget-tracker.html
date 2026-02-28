@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budget Tracker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117; --surface: #181b24; --surface2: #1e2230; --border: #2a2f40;
+    --text: #e8eaf0; --muted: #6b7280; --needs: #4a90e2; --wants: #e05c5c;
+    --savings: #f0b429; --accent: #4a90e2; --green: #5cb85c;
+    --font-display: 'DM Serif Display', serif; --font-body: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
+  .app { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 224px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; padding: 28px 0 24px;
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto;
+  }
+  .sidebar-logo { font-family: var(--font-display); font-size: 22px; color: var(--text); padding: 0 24px 28px; letter-spacing: -0.5px; }
+  .sidebar-logo span { color: var(--savings); }
+  .sidebar-section { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 0 24px 8px; margin-top: 4px; }
+  .sidebar-nav { list-style: none; margin-bottom: 8px; }
+  .sidebar-nav li {
+    cursor: pointer; padding: 9px 24px; color: var(--muted); font-size: 13.5px;
+    display: flex; align-items: center; gap: 10px; transition: all 0.15s; border-left: 3px solid transparent;
+  }
+  .sidebar-nav li:hover { color: var(--text); background: var(--surface2); }
+  .sidebar-nav li.active { color: var(--text); border-left-color: var(--accent); background: rgba(74,144,226,0.08); font-weight: 500; }
+  .sidebar-nav li .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+  .sidebar-nav li.active .dot { background: var(--accent); }
+  .sidebar-nav li.has-data .dot { background: var(--savings); }
+  .main { margin-left: 224px; flex: 1; padding: 36px 40px; }
+  .view { display: none; }
+  .view.active { display: block; }
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 { font-family: var(--font-display); font-size: 30px; letter-spacing: -0.5px; font-weight: 400; }
+  .page-header p { color: var(--muted); margin-top: 4px; font-size: 13px; }
+
+  /* STAT CARDS */
+  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; }
+  .stat-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .stat-label .badge { width: 8px; height: 8px; border-radius: 50%; }
+  .stat-value { font-size: 26px; font-family: var(--font-display); font-weight: 400; }
+  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .stat-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 14px; overflow: hidden; }
+  .stat-bar-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+  .over { color: var(--wants); } .under { color: var(--green); }
+
+  /* CHART */
+  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin-bottom: 28px; }
+  .chart-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .chart-card-header h2 { font-family: var(--font-display); font-size: 20px; font-weight: 400; }
+  .chart-year { display: flex; align-items: center; gap: 8px; }
+  .chart-year button { background: none; border: 1px solid var(--border); color: var(--muted); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-family: var(--font-body); font-size: 13px; transition: all 0.15s; }
+  .chart-year button:hover { border-color: var(--accent); color: var(--text); }
+  .chart-year span { font-size: 13px; color: var(--muted); }
+  .chart-wrapper { position: relative; height: 300px; }
+
+  /* CALCULATOR */
+  .calc-layout { display: grid; grid-template-columns: 1fr 350px; gap: 24px; align-items: start; }
+  .calc-section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+  .calc-section-header { padding: 13px 20px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.015); display: flex; justify-content: space-between; align-items: center; }
+  .calc-section-title { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .calc-section-body { padding: 4px 0; }
+  .calc-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; border-bottom: 1px solid rgba(42,47,64,0.4); gap: 12px; }
+  .calc-row:last-child { border-bottom: none; }
+  .calc-row-label { font-size: 13px; color: var(--text); flex: 1; min-width: 0; }
+  .calc-row-label small { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .calc-row-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .ci { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 7px; padding: 6px 10px; font-family: var(--font-body); font-size: 13px; transition: border-color 0.15s; }
+  .ci:focus { outline: none; border-color: var(--accent); }
+  .ci-w100 { width: 110px; text-align: right; }
+  .ci-w70 { width: 70px; text-align: right; }
+  .ci-select { width: 200px; cursor: pointer; }
+  .ci-select-sm { width: 130px; cursor: pointer; }
+  .ci-prefix { font-size: 12px; color: var(--muted); }
+  .cv { font-size: 13px; min-width: 90px; text-align: right; }
+  .cv-dim { color: var(--muted); }
+  .cv-neg { color: var(--wants); }
+  .calc-total-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: rgba(74,144,226,0.05); border-top: 1px solid var(--border); }
+  .calc-total-label { font-size: 13px; font-weight: 600; }
+  .calc-total-val { font-family: var(--font-display); font-size: 22px; color: var(--accent); }
+  .warn-badge { font-size: 11px; background: rgba(240,180,41,0.15); color: var(--savings); border: 1px solid rgba(240,180,41,0.3); padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .good-badge { font-size: 11px; background: rgba(92,184,92,0.12); color: var(--green); border: 1px solid rgba(92,184,92,0.25); padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+
+  /* RESULT PANEL */
+  .result-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; position: sticky; top: 24px; }
+  .result-panel-hdr { padding: 16px 20px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.015); }
+  .result-panel-hdr h3 { font-family: var(--font-display); font-size: 18px; font-weight: 400; }
+  .result-panel-body { padding: 8px 0; }
+  .rline { display: flex; justify-content: space-between; align-items: center; padding: 9px 20px; border-bottom: 1px solid rgba(42,47,64,0.35); }
+  .rline:last-child { border-bottom: none; }
+  .rline-label { font-size: 12px; color: var(--muted); }
+  .rline-val { font-size: 13px; font-weight: 500; }
+  .rline-val.neg { color: var(--wants); }
+  .rline-val.pos { color: var(--green); }
+  .result-takehome { padding: 18px 20px; background: rgba(74,144,226,0.06); border-top: 1px solid var(--border); text-align: center; }
+  .result-takehome-lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .result-takehome-amt { font-family: var(--font-display); font-size: 36px; color: var(--accent); }
+  .result-takehome-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .split-section { padding: 16px 20px; border-top: 1px solid var(--border); }
+  .split-title { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+  .split-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .split-lbl { font-size: 12px; width: 46px; }
+  .split-pct { width: 48px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 5px 7px; font-family: var(--font-body); font-size: 12px; text-align: center; }
+  .split-pct:focus { outline: none; border-color: var(--accent); }
+  .split-bar-wrap { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .split-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  .split-amt { font-size: 12px; font-weight: 500; min-width: 62px; text-align: right; }
+  .split-warn { font-size: 11px; color: var(--wants); margin-top: 6px; display: none; }
+  .apply-btn { width: 100%; margin-top: 14px; padding: 9px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; font-family: var(--font-body); font-size: 13px; font-weight: 500; transition: all 0.2s; }
+  .apply-btn:hover { opacity: 0.85; }
+  .apply-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 7px; }
+
+  /* MONTH */
+  .month-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+  .month-nav-btn { background: var(--surface); border: 1px solid var(--border); color: var(--muted); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.15s; }
+  .month-nav-btn:hover { border-color: var(--accent); color: var(--text); }
+  .month-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+  .month-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .month-stat-lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .month-stat-val { font-size: 22px; font-family: var(--font-display); }
+  .month-stat-diff { font-size: 12px; margin-top: 3px; }
+  .tables-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .tx-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .tx-card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .tx-card-title { font-family: var(--font-display); font-size: 17px; font-weight: 400; }
+  .tx-card-title .orange { color: #f97316; }
+  .add-btn { background: rgba(74,144,226,0.15); border: 1px solid rgba(74,144,226,0.3); color: var(--accent); padding: 5px 12px; border-radius: 7px; cursor: pointer; font-family: var(--font-body); font-size: 12px; font-weight: 500; transition: all 0.15s; }
+  .add-btn:hover { background: rgba(74,144,226,0.25); }
+  .tx-table { width: 100%; border-collapse: collapse; }
+  .tx-table th { text-align: left; padding: 10px 20px 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .tx-table td { padding: 10px 20px; border-bottom: 1px solid rgba(42,47,64,0.5); vertical-align: middle; }
+  .tx-table tr:last-child td { border-bottom: none; }
+  .tx-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .cat-badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+  .cat-badge.needs { background: rgba(74,144,226,0.15); color: var(--needs); }
+  .cat-badge.wants { background: rgba(224,92,92,0.15); color: var(--wants); }
+  .cat-badge.savings { background: rgba(240,180,41,0.15); color: var(--savings); }
+  .amount-needs { color: var(--needs); } .amount-wants { color: var(--wants); } .amount-savings { color: var(--savings); }
+  .del-btn { background: none; border: none; color: var(--muted); cursor: pointer; padding: 2px 6px; border-radius: 4px; font-size: 14px; transition: all 0.15s; }
+  .del-btn:hover { color: var(--wants); background: rgba(224,92,92,0.1); }
+  .empty-row td { text-align: center; color: var(--muted); padding: 24px !important; font-style: italic; font-size: 13px; }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: flex; align-items: center; justify-content: center; z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px 30px; width: 380px; transform: translateY(10px); transition: transform 0.2s; }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal h3 { font-family: var(--font-display); font-size: 20px; font-weight: 400; margin-bottom: 20px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.07em; }
+  .field input, .field select { width: 100%; padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-family: var(--font-body); font-size: 14px; transition: border-color 0.15s; }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--accent); }
+  .field select option { background: var(--surface2); }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+  .cancel-btn { background: none; border: 1px solid var(--border); color: var(--muted); padding: 8px 18px; border-radius: 8px; cursor: pointer; font-family: var(--font-body); font-size: 13px; }
+  .save-btn { background: var(--accent); color: white; border: none; padding: 9px 20px; border-radius: 8px; cursor: pointer; font-family: var(--font-body); font-size: 13px; font-weight: 500; }
+  .save-btn:hover { opacity: 0.85; }
+  .modal-hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">budget<span>.</span></div>
+    <div class="sidebar-section">Overview</div>
+    <ul class="sidebar-nav">
+      <li class="active" onclick="switchView('dashboard',this)"><div class="dot"></div>Dashboard</li>
+      <li onclick="switchView('calculator',this)"><div class="dot"></div>Budget Calculator</li>
+      <li onclick="switchView('settings',this)"><div class="dot"></div>Settings</li>
+    </ul>
+    <div class="sidebar-section">Months</div>
+    <ul class="sidebar-nav" id="month-nav"></ul>
+  </nav>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="view active" id="view-dashboard">
+      <div class="page-header"><h1>Overview</h1><p>Your spending and savings at a glance</p></div>
+      <div class="stat-row" id="stat-row"></div>
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <h2>Needs, Wants &amp; Savings</h2>
+          <div class="chart-year">
+            <button onclick="changeYear(-1)">‹</button>
+            <span id="chart-year-label"></span>
+            <button onclick="changeYear(1)">›</button>
+          </div>
+        </div>
+        <div class="chart-wrapper"><canvas id="mainChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- BUDGET CALCULATOR -->
+    <div class="view" id="view-calculator">
+      <div class="page-header"><h1>Budget Calculator</h1><p>Salary → paycheck → budget. Every field flows through in real time.</p></div>
+      <div class="calc-layout">
+        <div>
+
+          <!-- GROSS -->
+          <div class="calc-section">
+            <div class="calc-section-header"><span class="calc-section-title">Gross Income</span></div>
+            <div class="calc-section-body">
+              <div class="calc-row">
+                <div class="calc-row-label">Annual Salary</div>
+                <div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="c-salary" value="77536" oninput="recalc()"></div>
+              </div>
+              <div class="calc-row">
+                <div class="calc-row-label">Pay Frequency<small>How often you receive a paycheck</small></div>
+                <div class="calc-row-right">
+                  <select class="ci ci-select-sm" id="c-payfreq" onchange="recalc()">
+                    <option value="24">Semi-Monthly (24×)</option>
+                    <option value="26">Bi-Weekly (26×)</option>
+                    <option value="12">Monthly (12×)</option>
+                    <option value="52">Weekly (52×)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PRE-TAX -->
+          <div class="calc-section">
+            <div class="calc-section-header">
+              <span class="calc-section-title">Pre-Tax Deductions</span>
+              <span id="badge-401k" class="good-badge">—</span>
+            </div>
+            <div class="calc-section-body">
+              <div class="calc-row">
+                <div class="calc-row-label">Traditional 401(k)<small>Percentage of gross salary</small></div>
+                <div class="calc-row-right">
+                  <input class="ci ci-w70" type="number" id="c-401k-pct" value="11" min="0" max="100" step="0.5" oninput="recalc()">
+                  <span class="ci-prefix">%</span>
+                  <span class="cv cv-neg" id="cv-401k">—</span>
+                </div>
+              </div>
+              <div class="calc-row">
+                <div class="calc-row-label">HSA<small>Per paycheck (pre-tax)</small></div>
+                <div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="c-hsa" value="110" oninput="recalc()"></div>
+              </div>
+              <div class="calc-row">
+                <div class="calc-row-label">Health Insurance<small>Per paycheck</small></div>
+                <div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="c-health" value="26.07" oninput="recalc()"></div>
+              </div>
+              <div class="calc-row">
+                <div class="calc-row-label">Dental<small>Per paycheck</small></div>
+                <div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="c-dental" value="5.52" oninput="recalc()"></div>
+              </div>
+              <div class="calc-row">
+                <div class="calc-row-label">Vision<small>Per paycheck</small></div>
+                <div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="c-vision" value="0.59" oninput="recalc()"></div>
+              </div>
+              <div class="calc-row">
+                <div class="calc-row-label">GTL / Other pre-tax<small>Per paycheck</small></div>
+                <div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="c-gtl" value="3.06" oninput="recalc()"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAXES -->
+          <div class="calc-section">
+            <div class="calc-section-header"><span class="calc-section-title">Taxes</span></div>
+            <div class="calc-section-body">
+              <div class="calc-row">
+                <div class="calc-row-label">
+                  Federal Income Tax
+                  <small>Auto-calculated from 2024 brackets — or override with your paystub</small>
+                </div>
+                <div class="calc-row-right" style="flex-direction:column;align-items:flex-end;gap:5px;">
+                  <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);cursor:pointer;">
+                    <input type="checkbox" id="c-fed-override" onchange="recalc()"> Use paystub amount
+                  </label>
+                  <span class="cv cv-neg" id="cv-fed-auto">—</span>
+                  <input class="ci ci-w100" type="number" id="c-fed-manual" value="715" style="display:none;" oninput="recalc()">
+                </div>
+              </div>
+              <div class="calc-row">
+                <div class="calc-row-label">Social Security<small>6.2% of gross — auto</small></div>
+                <div class="cv cv-neg" id="cv-ss">—</div>
+              </div>
+              <div class="calc-row">
+                <div class="calc-row-label">Medicare<small>1.45% of gross — auto</small></div>
+                <div class="cv cv-neg" id="cv-med">—</div>
+              </div>
+              <div class="calc-row">
+                <div class="calc-row-label">State Tax<small>Per paycheck — copy from paystub</small></div>
+                <div class="calc-row-right">
+                  <span class="ci-prefix">$</span>
+                  <input class="ci ci-w100" type="number" id="c-state-dollar" value="0" step="0.01" oninput="recalc()">
+                  <span class="cv cv-neg" id="cv-state">—</span>
+                </div>
+              </div>
+              <div class="calc-row">
+                <div class="calc-row-label">Local / City Tax<small>Per paycheck — copy from paystub</small></div>
+                <div class="calc-row-right">
+                  <span class="ci-prefix">$</span>
+                  <input class="ci ci-w100" type="number" id="c-local-dollar" value="0" step="0.01" oninput="recalc()">
+                  <span class="cv cv-neg" id="cv-local">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- POST-TAX -->
+          <div class="calc-section">
+            <div class="calc-section-header"><span class="calc-section-title">Post-Tax Deductions</span></div>
+            <div class="calc-section-body">
+              <div class="calc-row">
+                <div class="calc-row-label">Roth IRA<small>Per paycheck</small></div>
+                <div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="c-roth" value="0" oninput="recalc()"></div>
+              </div>
+              <div class="calc-row">
+                <div class="calc-row-label">Other post-tax<small>Per paycheck</small></div>
+                <div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="c-other" value="0" oninput="recalc()"></div>
+              </div>
+            </div>
+            <div class="calc-total-row">
+              <span class="calc-total-label">Take-Home Per Paycheck</span>
+              <span class="calc-total-val" id="cv-takehome">$0.00</span>
+            </div>
+          </div>
+
+        </div><!-- end left col -->
+
+        <!-- RIGHT: RESULT PANEL -->
+        <div>
+          <div class="result-panel">
+            <div class="result-panel-hdr"><h3>Paycheck Breakdown</h3></div>
+            <div class="result-panel-body">
+              <div class="rline"><span class="rline-label">Gross per paycheck</span><span class="rline-val pos" id="r-gross">—</span></div>
+              <div class="rline"><span class="rline-label">Pre-tax deductions</span><span class="rline-val neg" id="r-pretax">—</span></div>
+              <div class="rline"><span class="rline-label">Taxable / paycheck</span><span class="rline-val" id="r-taxable">—</span></div>
+              <div class="rline"><span class="rline-label">Federal tax</span><span class="rline-val neg" id="r-fed">—</span></div>
+              <div class="rline"><span class="rline-label">State tax</span><span class="rline-val neg" id="r-state">—</span></div>
+              <div class="rline"><span class="rline-label">FICA (SS + Medicare)</span><span class="rline-val neg" id="r-fica">—</span></div>
+              <div class="rline"><span class="rline-label">Local tax</span><span class="rline-val neg" id="r-local">—</span></div>
+              <div class="rline"><span class="rline-label">Post-tax deductions</span><span class="rline-val neg" id="r-posttax">—</span></div>
+              <div class="rline"><span class="rline-label">Effective tax rate</span><span class="rline-val" id="r-effrate">—</span></div>
+            </div>
+            <div class="result-takehome">
+              <div class="result-takehome-lbl">Take-Home Per Paycheck</div>
+              <div class="result-takehome-amt" id="r-takehome">$0</div>
+              <div class="result-takehome-sub" id="r-monthly">— / month</div>
+            </div>
+
+            <div class="split-section">
+              <div class="split-title">Monthly Budget Split</div>
+              <div class="split-row">
+                <span class="split-lbl" style="color:var(--needs)">Needs</span>
+                <input class="split-pct" type="number" id="sp-needs" value="50" min="0" max="100" oninput="recalcSplit()">
+                <span style="font-size:11px;color:var(--muted)">%</span>
+                <div class="split-bar-wrap"><div class="split-bar-fill" id="bar-needs" style="background:var(--needs);width:50%"></div></div>
+                <span class="split-amt" style="color:var(--needs)" id="sa-needs">—</span>
+              </div>
+              <div class="split-row">
+                <span class="split-lbl" style="color:var(--wants)">Wants</span>
+                <input class="split-pct" type="number" id="sp-wants" value="15" min="0" max="100" oninput="recalcSplit()">
+                <span style="font-size:11px;color:var(--muted)">%</span>
+                <div class="split-bar-wrap"><div class="split-bar-fill" id="bar-wants" style="background:var(--wants);width:15%"></div></div>
+                <span class="split-amt" style="color:var(--wants)" id="sa-wants">—</span>
+              </div>
+              <div class="split-row">
+                <span class="split-lbl" style="color:var(--savings)">Save</span>
+                <input class="split-pct" type="number" id="sp-save" value="35" min="0" max="100" oninput="recalcSplit()">
+                <span style="font-size:11px;color:var(--muted)">%</span>
+                <div class="split-bar-wrap"><div class="split-bar-fill" id="bar-save" style="background:var(--savings);width:35%"></div></div>
+                <span class="split-amt" style="color:var(--savings)" id="sa-save">—</span>
+              </div>
+              <div class="split-warn" id="split-warn">⚠ Percentages should total 100%</div>
+              <button class="apply-btn" id="apply-btn" onclick="applyToTracker()">Apply to Budget Tracker →</button>
+              <div class="apply-note">Updates dashed budget lines and monthly targets</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SETTINGS VIEW -->
+    <div class="view" id="view-settings">
+      <div class="page-header"><h1>Settings</h1><p>Budget targets, paycheck defaults, and savings baseline</p></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:700px;">
+        <div class="calc-section" style="margin-bottom:0;">
+          <div class="calc-section-header"><span class="calc-section-title">Budget Targets</span></div>
+          <div class="calc-section-body">
+            <div class="calc-row"><div class="calc-row-label">Needs Budget ($/mo)</div><div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="set-needs"></div></div>
+            <div class="calc-row"><div class="calc-row-label">Wants Budget ($/mo)</div><div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="set-wants"></div></div>
+            <div class="calc-row"><div class="calc-row-label">Savings Target ($/mo)</div><div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="set-savings-target"></div></div>
+            <div class="calc-row"><div class="calc-row-label">Starting Savings Balance<small>Your current total savings today</small></div><div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="set-starting-savings"></div></div>
+          </div>
+          <div class="calc-total-row">
+            <button class="apply-btn" onclick="saveSettings()" style="width:auto;margin-top:0;padding:8px 20px;">Save Settings</button>
+          </div>
+        </div>
+        <div class="calc-section" style="margin-bottom:0;">
+          <div class="calc-section-header"><span class="calc-section-title">Paycheck Defaults</span></div>
+          <div class="calc-section-body">
+            <div class="calc-row"><div class="calc-row-label">Paycheck Amount<small>Take-home per paycheck</small></div><div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="set-paycheck"></div></div>
+            <div class="calc-row">
+              <div class="calc-row-label">Paychecks per Month</div>
+              <div class="calc-row-right">
+                <select class="ci ci-select-sm" id="set-paycheck-count">
+                  <option value="1">1 — Monthly</option>
+                  <option value="2" selected>2 — Semi-monthly</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="calc-total-row" style="color:var(--muted);font-size:12px;">Changes apply to new months only</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MONTH VIEW -->
+    <div class="view" id="view-month">
+      <div class="month-header">
+        <button class="month-nav-btn" onclick="navigateMonth(-1)">‹</button>
+        <h1 style="font-family:var(--font-display);font-size:26px;font-weight:400;" id="month-title">January</h1>
+        <button class="month-nav-btn" onclick="navigateMonth(1)">›</button>
+      </div>
+      <div class="month-summary" id="month-summary"></div>
+      <div class="tables-grid">
+        <div class="tx-card">
+          <div class="tx-card-header">
+            <span class="tx-card-title"><span class="orange">Expense</span> Transactions</span>
+            <button class="add-btn" onclick="openModal('expense')">+ Add</button>
+          </div>
+          <table class="tx-table">
+            <thead><tr><th>Date</th><th>Amount</th><th>Description</th><th>Category</th><th></th></tr></thead>
+            <tbody id="expense-tbody"></tbody>
+          </table>
+        </div>
+        <div class="tx-card">
+          <div class="tx-card-header">
+            <span class="tx-card-title"><span class="orange">Income</span> Transactions</span>
+            <button class="add-btn" onclick="openModal('income')">+ Add</button>
+          </div>
+          <table class="tx-table">
+            <thead><tr><th>Date</th><th>Amount</th><th>Description</th><th></th></tr></thead>
+            <tbody id="income-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <h3 id="modal-title">Add Expense</h3>
+    <div class="field"><label>Date <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label><input type="date" id="modal-date"></div>
+    <div class="field">
+      <label>Amount ($)</label>
+      <input type="number" id="modal-amount" placeholder="0.00" step="0.01">
+      <div class="modal-hint" id="modal-hint">Use negative amounts for reimbursements — they subtract from the category total</div>
+    </div>
+    <div class="field"><label>Description</label><input type="text" id="modal-desc" placeholder="Bilt, Rent, Groceries…"></div>
+    <div class="field" id="modal-cat-field">
+      <label>Category</label>
+      <select id="modal-cat">
+        <option value="Needs">Needs</option>
+        <option value="Wants">Wants</option>
+        <option value="Savings">Savings</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+      <button class="save-btn" onclick="saveTransaction()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// State/local taxes are now entered as flat dollar amounts per paycheck from paystub
+
+// 2024 federal brackets (single filer)
+const FED_BRACKETS = [
+  {rate:0.10,limit:11600},{rate:0.12,limit:47150},{rate:0.22,limit:100525},
+  {rate:0.24,limit:191950},{rate:0.32,limit:243725},{rate:0.35,limit:609350},
+  {rate:0.37,limit:Infinity}
+];
+const STD_DEDUCTION = 14600;
+const IRS_401K_LIMIT_2024 = 23000;
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// ─── APP STATE ──────────────────────────────────────────────────────────────
+let S = {
+  currentYear: new Date().getFullYear(),
+  currentMonth: new Date().getMonth(),
+  modalType: 'expense',
+  settings: { needsBudget:2015, wantsBudget:605, savingsBudget:1411, paycheckAmount:1818, paycheckCount:2, startingSavings:13000 },
+  months: {},
+  calc: {
+    salary:77536, payfreq:24,
+    k401pct:11, hsa:110, health:26.07, dental:5.52, vision:0.59, gtl:3.06,
+    fedOverride:false, fedManual:715,
+    stateDollar:0, localDollar:0,
+    roth:0, otherPost:0,
+    spNeeds:50, spWants:15, spSave:35,
+    _monthlyNet:0
+  }
+};
+
+function mkey(y,m){ return `${y}-${m}`; }
+function getMonth(y,m){
+  const k=mkey(y,m);
+  if(!S.months[k]){
+    const pcs=[];
+    for(let i=0;i<S.settings.paycheckCount;i++) pcs.push({id:Date.now()+i,date:'',amount:S.settings.paycheckAmount,desc:'Paycheck'});
+    S.months[k]={expenses:[],incomes:pcs};
+  }
+  return S.months[k];
+}
+
+function persist(){ try{ localStorage.setItem('bgt3',JSON.stringify(S)); }catch(e){} }
+function hydrate(){
+  try{
+    const r=localStorage.getItem('bgt3');
+    if(r){ const d=JSON.parse(r); S={...S,...d}; }
+  }catch(e){}
+}
+
+// ─── FEDERAL TAX CALC ───────────────────────────────────────────────────────
+function calcFed(taxableAnnual){
+  const inc=Math.max(0,taxableAnnual-STD_DEDUCTION);
+  let tax=0,prev=0;
+  for(const b of FED_BRACKETS){
+    if(inc<=prev)break;
+    tax+=(Math.min(inc,b.limit)-prev)*b.rate;
+    prev=b.limit;
+  }
+  return tax;
+}
+
+// ─── PAYCHECK CALCULATOR ────────────────────────────────────────────────────
+function recalc(){
+  const c=S.calc;
+  c.salary     = +document.getElementById('c-salary').value||0;
+  c.payfreq    = +document.getElementById('c-payfreq').value||24;
+  c.k401pct    = +document.getElementById('c-401k-pct').value||0;
+  c.hsa        = +document.getElementById('c-hsa').value||0;
+  c.health     = +document.getElementById('c-health').value||0;
+  c.dental     = +document.getElementById('c-dental').value||0;
+  c.vision     = +document.getElementById('c-vision').value||0;
+  c.gtl        = +document.getElementById('c-gtl').value||0;
+  c.fedOverride= document.getElementById('c-fed-override').checked;
+  c.fedManual  = +document.getElementById('c-fed-manual').value||0;
+  c.stateDollar= +document.getElementById('c-state-dollar').value||0;
+  c.localDollar= +document.getElementById('c-local-dollar').value||0;
+  c.roth       = +document.getElementById('c-roth').value||0;
+  c.otherPost  = +document.getElementById('c-other').value||0;
+
+  const freq=c.payfreq;
+  const grossPay=c.salary/freq;
+
+  // Pre-tax per paycheck
+  const k401Annual=c.salary*(c.k401pct/100);
+  const k401Pay=k401Annual/freq;
+  const preTaxPay=k401Pay+c.hsa+c.health+c.dental+c.vision+c.gtl;
+  const taxablePay=grossPay-preTaxPay;
+  const taxableAnnual=taxablePay*freq;
+
+  // 401k badge
+  const remaining=IRS_401K_LIMIT_2024-k401Annual;
+  const badge=document.getElementById('badge-401k');
+  if(k401Annual>=IRS_401K_LIMIT_2024){
+    badge.className='warn-badge'; badge.textContent=`At IRS limit ($${IRS_401K_LIMIT_2024.toLocaleString()})`;
+  } else if(remaining<3000){
+    badge.className='warn-badge'; badge.textContent=`$${remaining.toFixed(0)} left of limit`;
+  } else {
+    badge.className='good-badge'; badge.textContent=`$${remaining.toFixed(0)} of $${IRS_401K_LIMIT_2024.toLocaleString()} remaining`;
+  }
+  document.getElementById('cv-401k').textContent=`-$${k401Pay.toFixed(2)}`;
+
+  // Federal
+  const fedAnnual=c.fedOverride ? c.fedManual*freq : calcFed(taxableAnnual);
+  const fedPay=fedAnnual/freq;
+  const fedEl=document.getElementById('cv-fed-auto');
+  const fedManEl=document.getElementById('c-fed-manual');
+  fedEl.style.display=c.fedOverride?'none':'inline';
+  fedManEl.style.display=c.fedOverride?'inline-block':'none';
+  if(!c.fedOverride) fedEl.textContent=`-$${fedPay.toFixed(2)}`;
+
+  // FICA
+  const ssPay=grossPay*0.062;
+  const medPay=grossPay*0.0145;
+  document.getElementById('cv-ss').textContent=`-$${ssPay.toFixed(2)}`;
+  document.getElementById('cv-med').textContent=`-$${medPay.toFixed(2)}`;
+
+  // State & local — flat dollar per paycheck from paystub
+  const statePay = c.stateDollar;
+  const localPay = c.localDollar;
+  document.getElementById('cv-state').textContent = statePay > 0 ? `-$${statePay.toFixed(2)}` : '—';
+  document.getElementById('cv-local').textContent = localPay > 0 ? `-$${localPay.toFixed(2)}` : '—';
+
+  // Post-tax
+  const postPay=c.roth+c.otherPost;
+
+  // Take-home
+  const takeHome=grossPay-preTaxPay-fedPay-ssPay-medPay-statePay-localPay-postPay;
+  const monthlyNet=takeHome*freq/12;
+  c._monthlyNet=monthlyNet;
+
+  const effRate=grossPay>0?((fedPay+ssPay+medPay+statePay+localPay)/grossPay*100):0;
+
+  // Result panel
+  const $ = (v,d=2)=>`$${v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})}`;
+  document.getElementById('r-gross').textContent=$(grossPay);
+  document.getElementById('r-pretax').textContent=`-${$(preTaxPay)}`;
+  document.getElementById('r-taxable').textContent=$(taxablePay);
+  document.getElementById('r-fed').textContent=`-${$(fedPay)}`;
+  document.getElementById('r-state').textContent = statePay > 0 ? `-${$(statePay)}` : '—';
+  document.getElementById('r-fica').textContent=`-${$((ssPay+medPay))}`;
+  document.getElementById('r-local').textContent = localPay > 0 ? `-${$(localPay)}` : '—';
+  document.getElementById('r-posttax').textContent=postPay>0?`-${$(postPay)}`:'—';
+  document.getElementById('r-effrate').textContent=`${effRate.toFixed(1)}%`;
+  document.getElementById('r-takehome').textContent=$(takeHome);
+  document.getElementById('r-monthly').textContent=`${$(monthlyNet,0)} / month`;
+  document.getElementById('cv-takehome').textContent=$(takeHome);
+
+  recalcSplit();
+  persist();
+}
+
+function recalcSplit(){
+  const c=S.calc;
+  c.spNeeds=+document.getElementById('sp-needs').value||0;
+  c.spWants=+document.getElementById('sp-wants').value||0;
+  c.spSave =+document.getElementById('sp-save').value||0;
+  const total=c.spNeeds+c.spWants+c.spSave;
+  document.getElementById('split-warn').style.display=Math.abs(total-100)>0.5?'block':'none';
+  const m=c._monthlyNet||S.settings.paycheckAmount*S.settings.paycheckCount;
+  document.getElementById('sa-needs').textContent=`$${(m*c.spNeeds/100).toFixed(0)}`;
+  document.getElementById('sa-wants').textContent=`$${(m*c.spWants/100).toFixed(0)}`;
+  document.getElementById('sa-save').textContent =`$${(m*c.spSave/100).toFixed(0)}`;
+  document.getElementById('bar-needs').style.width=Math.min(c.spNeeds,100)+'%';
+  document.getElementById('bar-wants').style.width=Math.min(c.spWants,100)+'%';
+  document.getElementById('bar-save').style.width =Math.min(c.spSave,100)+'%';
+}
+
+function applyToTracker(){
+  const c=S.calc;
+  const m=c._monthlyNet||S.settings.paycheckAmount*S.settings.paycheckCount;
+  S.settings.needsBudget  =parseFloat((m*c.spNeeds/100).toFixed(2));
+  S.settings.wantsBudget  =parseFloat((m*c.spWants/100).toFixed(2));
+  S.settings.savingsBudget=parseFloat((m*c.spSave/100).toFixed(2));
+  // derive paycheck amount from calc
+  const freq=c.payfreq;
+  const grossPay=c.salary/freq;
+  const k401Pay=(c.salary*(c.k401pct/100))/freq;
+  const preTax=k401Pay+c.hsa+c.health+c.dental+c.vision+c.gtl;
+  const taxable=grossPay-preTax;
+  const fedAnnual=c.fedOverride?c.fedManual*freq:calcFed(taxable*freq);
+  const fedPay=fedAnnual/freq;
+  const ss=grossPay*0.062, med=grossPay*0.0145;
+  const st=c.stateDollar;
+  const loc=c.localDollar;
+  const post=c.roth+c.otherPost;
+  const takeHome=grossPay-preTax-fedPay-ss-med-st-loc-post;
+  S.settings.paycheckAmount=parseFloat(takeHome.toFixed(2));
+  S.settings.paycheckCount=freq===24?2:freq===26?2:freq===12?1:4;
+  persist();
+  const btn=document.getElementById('apply-btn');
+  btn.textContent='✓ Applied!'; btn.style.background='var(--green)';
+  setTimeout(()=>{ btn.textContent='Apply to Budget Tracker →'; btn.style.background='var(--accent)'; },2500);
+}
+
+function loadCalcUI(){
+  const c=S.calc;
+  document.getElementById('c-salary').value=c.salary;
+  document.getElementById('c-payfreq').value=c.payfreq;
+  document.getElementById('c-401k-pct').value=c.k401pct;
+  document.getElementById('c-hsa').value=c.hsa;
+  document.getElementById('c-health').value=c.health;
+  document.getElementById('c-dental').value=c.dental;
+  document.getElementById('c-vision').value=c.vision;
+  document.getElementById('c-gtl').value=c.gtl;
+  document.getElementById('c-fed-override').checked=c.fedOverride;
+  document.getElementById('c-fed-manual').value=c.fedManual;
+  document.getElementById('c-state-dollar').value=c.stateDollar;
+  document.getElementById('c-local-dollar').value=c.localDollar;
+  document.getElementById('c-roth').value=c.roth;
+  document.getElementById('c-other').value=c.otherPost;
+  document.getElementById('sp-needs').value=c.spNeeds;
+  document.getElementById('sp-wants').value=c.spWants;
+  document.getElementById('sp-save').value=c.spSave;
+}
+
+
+// ─── NAVIGATION ─────────────────────────────────────────────────────────────
+function switchView(id, el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(`view-${id}`).classList.add('active');
+  document.querySelectorAll('.sidebar-nav li').forEach(li=>li.classList.remove('active'));
+  if(el) el.classList.add('active');
+  if(id==='dashboard') renderDashboard();
+  if(id==='calculator'){ loadCalcUI(); recalc(); }
+  if(id==='month') renderMonth();
+  if(id==='settings') loadSettingsUI();
+}
+
+function loadSettingsUI(){
+  const s=S.settings;
+  document.getElementById('set-needs').value=s.needsBudget;
+  document.getElementById('set-wants').value=s.wantsBudget;
+  document.getElementById('set-savings-target').value=s.savingsBudget;
+  document.getElementById('set-starting-savings').value=s.startingSavings||0;
+  document.getElementById('set-paycheck').value=s.paycheckAmount;
+  document.getElementById('set-paycheck-count').value=s.paycheckCount;
+}
+
+function saveSettings(){
+  S.settings.needsBudget    = +document.getElementById('set-needs').value||2015;
+  S.settings.wantsBudget    = +document.getElementById('set-wants').value||605;
+  S.settings.savingsBudget  = +document.getElementById('set-savings-target').value||1411;
+  S.settings.startingSavings= +document.getElementById('set-starting-savings').value||0;
+  S.settings.paycheckAmount = +document.getElementById('set-paycheck').value||1818;
+  S.settings.paycheckCount  = +document.getElementById('set-paycheck-count').value||2;
+  persist();
+  const btn = event.target;
+  btn.textContent='✓ Saved!'; btn.style.background='var(--green)';
+  setTimeout(()=>{ btn.textContent='Save Settings'; btn.style.background='var(--accent)'; },2000);
+}
+
+function openMonth(m,y){
+  S.currentMonth=m; S.currentYear=y;
+  switchView('month',null);
+  document.querySelectorAll('.sidebar-nav li').forEach(li=>li.classList.remove('active'));
+  const t=document.querySelector(`[data-month="${m}"]`);
+  if(t)t.classList.add('active');
+}
+
+function navigateMonth(dir){
+  S.currentMonth+=dir;
+  if(S.currentMonth<0){S.currentMonth=11;S.currentYear--;}
+  if(S.currentMonth>11){S.currentMonth=0;S.currentYear++;}
+  renderMonth();
+  document.querySelectorAll('.sidebar-nav li[data-month]').forEach(li=>li.classList.remove('active'));
+  const t=document.querySelector(`[data-month="${S.currentMonth}"]`);
+  if(t)t.classList.add('active');
+}
+
+function changeYear(dir){
+  S.currentYear+=dir;
+  document.getElementById('chart-year-label').textContent=S.currentYear;
+  renderDashboard();
+}
+
+function buildMonthNav(){
+  const nav=document.getElementById('month-nav'); nav.innerHTML='';
+  MONTHS.forEach((name,i)=>{
+    const li=document.createElement('li'); li.dataset.month=i;
+    const d=S.months[mkey(S.currentYear,i)];
+    if(d&&d.expenses.length>0)li.classList.add('has-data');
+    li.innerHTML=`<div class="dot"></div>${name}`;
+    li.onclick=()=>openMonth(i,S.currentYear);
+    nav.appendChild(li);
+  });
+}
+
+// ─── DASHBOARD ───────────────────────────────────────────────────────────────
+function calcMonthTotals(y,m){
+  const d=getMonth(y,m); let n=0,w=0,s=0;
+  for(const tx of d.expenses){ const a=+tx.amount||0; if(tx.cat==='Needs')n+=a; else if(tx.cat==='Wants')w+=a; else if(tx.cat==='Savings')s+=a; }
+  return{needs:n,wants:w,savings:s};
+}
+
+function renderStats(){
+  const cm=new Date().getMonth(); let tn=0,tw=0,ts=0;
+  for(let m=0;m<=cm;m++){const c=calcMonthTotals(S.currentYear,m);tn+=c.needs;tw+=c.wants;ts+=c.savings;}
+  const mi=cm+1, nb=S.settings.needsBudget*mi, wb=S.settings.wantsBudget*mi, sb=S.settings.savingsBudget*mi;
+  const pct=(v,b)=>Math.min(100,Math.round(v/b*100))||0;
+  const diff=(v,b)=>{const d=v-b; return d>0?`<span class="over">+$${d.toFixed(0)} over</span>`:`<span class="under">$${Math.abs(d).toFixed(0)} under</span>`;};
+  const f=v=>v.toLocaleString('en-US',{maximumFractionDigits:0});
+  document.getElementById('stat-row').innerHTML=`
+    <div class="stat-card"><div class="stat-label"><div class="badge" style="background:var(--needs)"></div>YTD Needs</div><div class="stat-value" style="color:var(--needs)">$${f(tn)}</div><div class="stat-sub">${diff(tn,nb)} vs budget</div><div class="stat-bar"><div class="stat-bar-fill" style="width:${pct(tn,nb)}%;background:var(--needs)"></div></div></div>
+    <div class="stat-card"><div class="stat-label"><div class="badge" style="background:var(--wants)"></div>YTD Wants</div><div class="stat-value" style="color:var(--wants)">$${f(tw)}</div><div class="stat-sub">${diff(tw,wb)} vs budget</div><div class="stat-bar"><div class="stat-bar-fill" style="width:${pct(tw,wb)}%;background:var(--wants)"></div></div></div>
+    <div class="stat-card"><div class="stat-label"><div class="badge" style="background:var(--savings)"></div>YTD Savings</div><div class="stat-value" style="color:var(--savings)">$${f(ts)}</div><div class="stat-sub">${diff(ts,sb)} vs target</div><div class="stat-bar"><div class="stat-bar-fill" style="width:${pct(ts,sb)}%;background:var(--savings)"></div></div></div>`;
+}
+
+let chart=null;
+function renderChart(){
+  const nd=[],wd=[],cs=[]; let run=S.settings.startingSavings||0;
+  for(let m=0;m<12;m++){const c=calcMonthTotals(S.currentYear,m);nd.push(c.needs);wd.push(c.wants);run+=c.savings;cs.push(run);}
+  const nb=Array(12).fill(S.settings.needsBudget), wb=Array(12).fill(S.settings.wantsBudget);
+  const ctx=document.getElementById('mainChart').getContext('2d');
+  if(chart)chart.destroy();
+
+  // Determine left axis max so right = 10x left
+  const leftMax = Math.max(...nd, ...wb, S.settings.needsBudget) * 1.2;
+  const leftStep = Math.ceil(leftMax / 4 / 500) * 500 || 500;
+  const leftTicks = [0, leftStep, leftStep*2, leftStep*3, leftStep*4];
+  const rightTicks = leftTicks.map(v => v * 10);
+
+  chart=new Chart(ctx,{
+    data:{labels:MONTH_SHORT,datasets:[
+      {type:'bar',label:'Needs',data:nd,backgroundColor:'rgba(74,144,226,0.75)',borderRadius:4,yAxisID:'y',order:2},
+      {type:'bar',label:'Wants',data:wd,backgroundColor:'rgba(224,92,92,0.75)',borderRadius:4,yAxisID:'y',order:2},
+      {type:'line',label:'Budgeted Needs',data:nb,borderColor:'rgba(74,144,226,0.7)',borderWidth:2,borderDash:[8,5],pointRadius:0,fill:false,yAxisID:'y',order:1},
+      {type:'line',label:'Budgeted Wants',data:wb,borderColor:'rgba(224,92,92,0.7)',borderWidth:2,borderDash:[8,5],pointRadius:0,fill:false,yAxisID:'y',order:1},
+      {type:'line',label:'Cumul. Savings',data:cs,borderColor:'rgba(240,180,41,0.85)',borderWidth:2,borderDash:[8,5],pointRadius:3,pointBackgroundColor:'rgba(240,180,41,0.85)',fill:{target:'origin',above:'rgba(240,180,41,0.08)'},yAxisID:'y2',order:1}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{position:'top',labels:{color:'#9ca3af',font:{family:'DM Sans',size:12},boxWidth:12,padding:20,usePointStyle:true}},
+        tooltip:{backgroundColor:'#1e2230',titleColor:'#e8eaf0',bodyColor:'#9ca3af',borderColor:'#2a2f40',borderWidth:1,
+          callbacks:{label:c=>` ${c.dataset.label}: $${c.parsed.y.toLocaleString('en-US',{maximumFractionDigits:0})}`}}
+      },
+      scales:{
+        x:{ticks:{color:'#6b7280',font:{family:'DM Sans',size:12}},grid:{color:'rgba(42,47,64,0.5)'}},
+        y:{
+          position:'left',
+          min:0,
+          max:leftTicks[leftTicks.length-1],
+          ticks:{
+            color:'#6b7280',
+            font:{family:'DM Sans',size:12},
+            callback:(v)=> leftTicks.includes(v) ? '$'+v.toLocaleString() : null,
+            stepSize: leftStep
+          },
+          grid:{color:'rgba(42,47,64,0.5)'}
+        },
+        y2:{
+          position:'right',
+          min:0,
+          max:rightTicks[rightTicks.length-1],
+          ticks:{
+            color:'rgba(240,180,41,0.6)',
+            font:{family:'DM Sans',size:12},
+            callback:(v,i,ticks)=> rightTicks.includes(Math.round(v)) ? '$'+Math.round(v).toLocaleString() : null,
+            stepSize: leftStep * 10
+          },
+          grid:{drawOnChartArea:false}
+        }
+      }
+    }
+  });
+}
+
+function renderDashboard(){ renderStats(); renderChart(); }
+
+// ─── MONTH VIEW ──────────────────────────────────────────────────────────────
+function renderMonth(){
+  const{currentYear:y,currentMonth:m}=S;
+  document.getElementById('month-title').textContent=`${MONTHS[m]} ${y}`;
+  const c=calcMonthTotals(y,m), s=S.settings;
+  const db=(v,b)=>{const d=v-b; if(d>0)return`<div class="month-stat-diff over">+$${d.toFixed(0)} over</div>`; if(d<0)return`<div class="month-stat-diff under">$${Math.abs(d).toFixed(0)} under</div>`; return`<div class="month-stat-diff" style="color:var(--muted)">On budget</div>`;};
+  const f=v=>v.toLocaleString('en-US',{maximumFractionDigits:0});
+  document.getElementById('month-summary').innerHTML=`
+    <div class="month-stat"><div class="month-stat-lbl">Needs</div><div class="month-stat-val" style="color:var(--needs)">$${f(c.needs)}</div>${db(c.needs,s.needsBudget)}</div>
+    <div class="month-stat"><div class="month-stat-lbl">Wants</div><div class="month-stat-val" style="color:var(--wants)">$${f(c.wants)}</div>${db(c.wants,s.wantsBudget)}</div>
+    <div class="month-stat"><div class="month-stat-lbl">Savings</div><div class="month-stat-val" style="color:var(--savings)">$${f(c.savings)}</div>${db(c.savings,s.savingsBudget)}</div>`;
+  renderExpenses(); renderIncomes();
+}
+
+function renderExpenses(){
+  const{currentYear:y,currentMonth:m}=S;
+  const data=getMonth(y,m), tbody=document.getElementById('expense-tbody');
+  if(!data.expenses.length){tbody.innerHTML=`<tr class="empty-row"><td colspan="5">No expenses yet</td></tr>`;return;}
+  tbody.innerHTML=data.expenses.map(tx=>{
+    const amt=+tx.amount,cl=(tx.cat||'Needs').toLowerCase();
+    return`<tr><td style="color:var(--muted);font-size:12px;">${tx.date||'—'}</td><td class="amount-${cl}">${amt<0?'-':''}$${Math.abs(amt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td>${tx.desc||'—'}</td><td><span class="cat-badge ${cl}">${tx.cat}</span></td><td><button class="del-btn" onclick="deleteTx('expense',${tx.id})">×</button></td></tr>`;
+  }).join('');
+}
+
+function renderIncomes(){
+  const{currentYear:y,currentMonth:m}=S;
+  const data=getMonth(y,m), tbody=document.getElementById('income-tbody');
+  if(!data.incomes.length){tbody.innerHTML=`<tr class="empty-row"><td colspan="4">No income yet</td></tr>`;return;}
+  tbody.innerHTML=data.incomes.map(tx=>`<tr><td style="color:var(--muted);font-size:12px;">${tx.date||'—'}</td><td style="color:var(--green)">$${(+tx.amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td>${tx.desc||'—'}</td><td><button class="del-btn" onclick="deleteTx('income',${tx.id})">×</button></td></tr>`).join('');
+}
+
+function deleteTx(type,id){
+  const{currentYear:y,currentMonth:m}=S, d=getMonth(y,m);
+  if(type==='expense')d.expenses=d.expenses.filter(t=>t.id!==id);
+  else d.incomes=d.incomes.filter(t=>t.id!==id);
+  persist(); renderMonth(); buildMonthNav();
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────────────
+function openModal(type){
+  S.modalType=type;
+  document.getElementById('modal-title').textContent=type==='expense'?'Add Expense':'Add Income';
+  document.getElementById('modal-cat-field').style.display=type==='expense'?'block':'none';
+  document.getElementById('modal-hint').style.display=type==='expense'?'block':'none';
+  ['modal-amount','modal-desc','modal-date'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('modal-amount').focus(),50);
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOutside(e){ if(e.target===document.getElementById('modal-overlay'))closeModal(); }
+function saveTransaction(){
+  const amount=+document.getElementById('modal-amount').value;
+  if(isNaN(amount)||document.getElementById('modal-amount').value===''){alert('Enter a valid amount.');return;}
+  const desc=document.getElementById('modal-desc').value.trim()||'—';
+  const date=document.getElementById('modal-date').value;
+  const cat=document.getElementById('modal-cat').value;
+  const{currentYear:y,currentMonth:m}=S, d=getMonth(y,m);
+  const tx={id:Date.now(),date,amount,desc};
+  if(S.modalType==='expense'){tx.cat=cat;d.expenses.push(tx);}
+  else d.incomes.push(tx);
+  persist(); closeModal(); renderMonth(); buildMonthNav();
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('modal-overlay').classList.contains('open'))saveTransaction();
+  if(e.key==='Escape')closeModal();
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+hydrate();
+document.getElementById('chart-year-label').textContent=S.currentYear;
+buildMonthNav();
+renderDashboard();
+</script>
+</body>
+</html>

@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>US College Destination Map</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f8f9fa;
+    color: #333;
+  }
+
+  header {
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  header h1 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    white-space: nowrap;
+  }
+
+  #subtitle {
+    font-size: 0.78rem;
+    color: #888;
+    margin-top: 2px;
+  }
+
+  #controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .metric-btn {
+    padding: 7px 16px;
+    border: 1.5px solid #d0d0d0;
+    border-radius: 20px;
+    background: #fff;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: #555;
+  }
+
+  .metric-btn:hover { border-color: #888; color: #222; }
+
+  .metric-btn.active {
+    background: #1a1a2e;
+    border-color: #1a1a2e;
+    color: #fff;
+    font-weight: 500;
+  }
+
+  #map-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 16px 8px 0;
+  }
+
+  #map {
+    width: 100%;
+    max-width: 960px;
+    height: auto;
+  }
+
+  .state-path {
+    stroke: #fff;
+    stroke-width: 0.5;
+    cursor: pointer;
+    transition: opacity 0.1s;
+  }
+
+  .state-path:hover { opacity: 0.8; stroke-width: 1.5; stroke: #333; }
+
+  .state-border {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 0.5;
+    pointer-events: none;
+  }
+
+  .dc-marker { cursor: pointer; }
+  .dc-marker-line {
+    stroke: #555;
+    stroke-width: 0.8;
+    pointer-events: none;
+  }
+  .dc-marker-circle {
+    stroke: #fff;
+    stroke-width: 1;
+  }
+  .dc-marker-label {
+    font-size: 9px;
+    font-weight: 700;
+    fill: #222;
+    pointer-events: none;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  #extras-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 0 24px 20px;
+  }
+  #extras { max-width: 960px; width: 100%; }
+  #extras-title {
+    font-size: 0.72rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  #extras-svg { display: block; overflow: visible; }
+
+  #tooltip {
+    position: fixed;
+    background: rgba(20, 20, 35, 0.93);
+    color: #f0f0f0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 0.8rem;
+    pointer-events: none;
+    display: none;
+    max-width: 220px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 100;
+    line-height: 1.5;
+  }
+
+  #tooltip h3 {
+    font-size: 0.92rem;
+    margin-bottom: 4px;
+    color: #fff;
+  }
+
+  #tooltip .metric-val {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #a8d8ea;
+    margin-bottom: 8px;
+  }
+
+  #tooltip .tt-label {
+    font-size: 0.7rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+
+  #tooltip .tt-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+
+  #tooltip .tt-row:last-child { border-bottom: none; }
+
+  #tooltip .tt-count {
+    color: #ccc;
+    font-size: 0.75rem;
+  }
+
+  #tooltip .tt-n {
+    font-size: 0.7rem;
+    color: #999;
+    margin-top: 8px;
+  }
+
+  #legend-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 8px 24px 20px;
+  }
+
+  #legend {
+    max-width: 320px;
+    width: 100%;
+  }
+
+  #legend-title {
+    font-size: 0.72rem;
+    color: #888;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  #legend svg { display: block; overflow: visible; }
+
+  #no-data-note {
+    font-size: 0.7rem;
+    color: #aaa;
+    margin-top: 4px;
+  }
+
+  #footer {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #bbb;
+    padding: 12px;
+  }
+
+  #metric-desc-row {
+    width: 100%;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 8px;
+    padding-top: 6px;
+  }
+
+  #metric-desc {
+    font-size: 0.75rem;
+    color: #777;
+    font-style: italic;
+    line-height: 1.4;
+    max-width: 640px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>US College Destination Map</h1>
+    <div id="subtitle">27,294 students &nbsp;|&nbsp; Hover for details &nbsp;·&nbsp; Click to highlight connections</div>
+  </div>
+  <div id="controls">
+    <button class="metric-btn active" data-metric="avg_states">Avg States Selected</button>
+    <button class="metric-btn" data-metric="want_to_leave_pct">Want to Leave</button>
+    <button class="metric-btn" data-metric="destination_pop">Destination Popularity</button>
+  </div>
+  <div id="metric-desc-row">
+    <div id="metric-desc">Average number of states each student added to their college search list, grouped by home state. Higher values indicate broader geographic exploration.</div>
+  </div>
+</header>
+
+<div id="map-wrap">
+  <svg id="map" viewBox="0 0 960 600"></svg>
+</div>
+
+<div id="legend-wrap">
+  <div id="legend">
+    <div id="legend-title">Legend</div>
+    <svg id="legend-svg" width="320" height="36"></svg>
+    <div id="no-data-note">&#9632; Light gray = no data</div>
+  </div>
+</div>
+
+<div id="extras-wrap">
+  <div id="extras">
+    <div id="extras-title">Territories</div>
+    <svg id="extras-svg"></svg>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<div id="footer">
+  Source: student interest data (n = 27,294 after filtering)
+</div>
+
+<!-- ── Libraries ──────────────────────────────────────────────────────── -->
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+
+<script>
+// ── Embedded data ─────────────────────────────────────────────────────
+const DATA = {"total_users":27294,"per_state":{"NV":{"n":629,"avg_states":5.03,"want_to_leave_pct":21.9,"top5_destinations":[{"state":"NV","count":491},{"state":"CA","count":380},{"state":"AZ","count":197},{"state":"UT","count":164},{"state":"NY","count":158}]},"DE":{"n":46,"avg_states":5.07,"want_to_leave_pct":21.7,"top5_destinations":[{"state":"DE","count":36},{"state":"PA","count":28},{"state":"MD","count":23},{"state":"FL","count":18},{"state":"NY","count":16}]},"WY":{"n":616,"avg_states":5.09,"want_to_leave_pct":21.6,"top5_destinations":[{"state":"WY","count":483},{"state":"CO","count":238},{"state":"MT","count":235},{"state":"UT","count":197},{"state":"ID","count":137}]},"WV":{"n":272,"avg_states":4.23,"want_to_leave_pct":15.8,"top5_destinations":[{"state":"WV","count":229},{"state":"VA","count":81},{"state":"OH","count":78},{"state":"PA","count":73},{"state":"KY","count":69}]},"MN":{"n":285,"avg_states":4.84,"want_to_leave_pct":9.5,"top5_destinations":[{"state":"MN","count":258},{"state":"WI","count":105},{"state":"ND","count":95},{"state":"SD","count":87},{"state":"IA","count":74}]},"NY":{"n":560,"avg_states":4.44,"want_to_leave_pct":11.8,"top5_destinations":[{"state":"NY","count":494},{"state":"PA","count":199},{"state":"NJ","count":175},{"state":"MA","count":162},{"state":"CT","count":147}]},"AR":{"n":1274,"avg_states":4.64,"want_to_leave_pct":13.6,"top5_destinations":[{"state":"AR","count":1101},{"state":"TX","count":545},{"state":"FL","count":360},{"state":"MO","count":299},{"state":"LA","count":281}]},"IA":{"n":371,"avg_states":4.64,"want_to_leave_pct":11.1,"top5_destinations":[{"state":"IA","count":330},{"state":"NE","count":102},{"state":"IL","count":95},{"state":"MO","count":91},{"state":"MN","count":89}]},"KY":{"n":454,"avg_states":4.45,"want_to_leave_pct":11.2,"top5_destinations":[{"state":"KY","count":403},{"state":"TN","count":197},{"state":"OH","count":132},{"state":"IN","count":120},{"state":"FL","count":113}]},"LA":{"n":688,"avg_states":4.41,"want_to_leave_pct":10.2,"top5_destinations":[{"state":"LA","count":618},{"state":"TX","count":350},{"state":"FL","count":233},{"state":"MS","count":209},{"state":"AL","count":177}]},"MD":{"n":266,"avg_states":5.63,"want_to_leave_pct":12.4,"top5_destinations":[{"state":"MD","count":233},{"state":"NY","count":122},{"state":"VA","count":117},{"state":"PA","count":108},{"state":"CA","count":97}]},"NC":{"n":1056,"avg_states":4.23,"want_to_leave_pct":7.7,"top5_destinations":[{"state":"NC","count":975},{"state":"SC","count":377},{"state":"VA","count":300},{"state":"FL","count":283},{"state":"GA","count":262}]},"AK":{"n":32,"avg_states":5.34,"want_to_leave_pct":31.2,"top5_destinations":[{"state":"AK","count":22},{"state":"CA","count":15},{"state":"OR","count":13},{"state":"WA","count":11},{"state":"CO","count":9}]},"NJ":{"n":396,"avg_states":4.56,"want_to_leave_pct":18.9,"top5_destinations":[{"state":"NJ","count":321},{"state":"NY","count":259},{"state":"PA","count":195},{"state":"MA","count":117},{"state":"FL","count":91}]},"OR":{"n":158,"avg_states":5.12,"want_to_leave_pct":14.6,"top5_destinations":[{"state":"OR","count":135},{"state":"CA","count":106},{"state":"WA","count":83},{"state":"AZ","count":39},{"state":"NY","count":39}]},"MO":{"n":746,"avg_states":4.59,"want_to_leave_pct":10.5,"top5_destinations":[{"state":"MO","count":668},{"state":"KS","count":256},{"state":"TX","count":161},{"state":"IL","count":152},{"state":"FL","count":151}]},"SC":{"n":549,"avg_states":4.46,"want_to_leave_pct":12.9,"top5_destinations":[{"state":"SC","count":478},{"state":"NC","count":311},{"state":"GA","count":248},{"state":"FL","count":210},{"state":"TN","count":116}]},"NE":{"n":269,"avg_states":4.77,"want_to_leave_pct":13.4,"top5_destinations":[{"state":"NE","count":233},{"state":"KS","count":92},{"state":"CO","count":83},{"state":"SD","count":71},{"state":"IA","count":62}]},"WA":{"n":251,"avg_states":4.33,"want_to_leave_pct":16.3,"top5_destinations":[{"state":"WA","count":210},{"state":"CA","count":116},{"state":"OR","count":80},{"state":"NY","count":55},{"state":"ID","count":54}]},"OK":{"n":720,"avg_states":4.39,"want_to_leave_pct":11.8,"top5_destinations":[{"state":"OK","count":635},{"state":"TX","count":356},{"state":"AR","count":174},{"state":"KS","count":162},{"state":"FL","count":146}]},"VI":{"n":1,"avg_states":1.0,"want_to_leave_pct":100.0,"top5_destinations":[{"state":"PA","count":1}]},"ND":{"n":81,"avg_states":4.47,"want_to_leave_pct":19.8,"top5_destinations":[{"state":"ND","count":65},{"state":"MN","count":43},{"state":"SD","count":33},{"state":"MT","count":19},{"state":"AZ","count":15}]},"VT":{"n":18,"avg_states":6.56,"want_to_leave_pct":22.2,"top5_destinations":[{"state":"VT","count":14},{"state":"MA","count":13},{"state":"NY","count":10},{"state":"ME","count":10},{"state":"NH","count":9}]},"SD":{"n":168,"avg_states":5.05,"want_to_leave_pct":20.2,"top5_destinations":[{"state":"SD","count":134},{"state":"MN","count":67},{"state":"ND","count":50},{"state":"NE","count":45},{"state":"IA","count":42}]},"MI":{"n":314,"avg_states":4.4,"want_to_leave_pct":3.8,"top5_destinations":[{"state":"MI","count":302},{"state":"FL","count":85},{"state":"CA","count":69},{"state":"OH","count":68},{"state":"NY","count":68}]},"DC":{"n":22,"avg_states":6.59,"want_to_leave_pct":59.1,"top5_destinations":[{"state":"CA","count":10},{"state":"VA","count":9},{"state":"DC","count":9},{"state":"NY","count":8},{"state":"MA","count":8}]},"GU":{"n":0,"avg_states":null,"want_to_leave_pct":null,"top5_destinations":[]},"MP":{"n":0,"avg_states":null,"want_to_leave_pct":null,"top5_destinations":[]},"AZ":{"n":816,"avg_states":4.68,"want_to_leave_pct":8.7,"top5_destinations":[{"state":"AZ","count":745},{"state":"CA","count":480},{"state":"NY","count":226},{"state":"CO","count":198},{"state":"TX","count":196}]},"AS":{"n":0,"avg_states":null,"want_to_leave_pct":null,"top5_destinations":[]},"PR":{"n":1,"avg_states":10.0,"want_to_leave_pct":100.0,"top5_destinations":[{"state":"FL","count":1},{"state":"DC","count":1},{"state":"IL","count":1},{"state":"LA","count":1},{"state":"MA","count":1}]},"ME":{"n":62,"avg_states":5.05,"want_to_leave_pct":19.4,"top5_destinations":[{"state":"ME","count":50},{"state":"MA","count":29},{"state":"NH","count":25},{"state":"NY","count":16},{"state":"FL","count":13}]},"CO":{"n":176,"avg_states":5.18,"want_to_leave_pct":12.5,"top5_destinations":[{"state":"CO","count":154},{"state":"CA","count":66},{"state":"TX","count":53},{"state":"FL","count":47},{"state":"NY","count":45}]},"CA":{"n":1439,"avg_states":4.03,"want_to_leave_pct":4.0,"top5_destinations":[{"state":"CA","count":1381},{"state":"NY","count":438},{"state":"OR","count":318},{"state":"AZ","count":294},{"state":"HI","count":292}]},"KS":{"n":299,"avg_states":4.55,"want_to_leave_pct":11.4,"top5_destinations":[{"state":"KS","count":265},{"state":"MO","count":92},{"state":"OK","count":84},{"state":"TX","count":81},{"state":"CO","count":80}]},"TN":{"n":1162,"avg_states":4.56,"want_to_leave_pct":9.0,"top5_destinations":[{"state":"TN","count":1058},{"state":"GA","count":358},{"state":"FL","count":346},{"state":"AL","count":324},{"state":"KY","count":320}]},"GA":{"n":898,"avg_states":4.43,"want_to_leave_pct":6.0,"top5_destinations":[{"state":"GA","count":844},{"state":"FL","count":450},{"state":"AL","count":271},{"state":"NC","count":218},{"state":"NY","count":209}]},"NM":{"n":133,"avg_states":4.12,"want_to_leave_pct":30.8,"top5_destinations":[{"state":"NM","count":92},{"state":"CO","count":59},{"state":"TX","count":59},{"state":"AZ","count":53},{"state":"CA","count":50}]},"CT":{"n":85,"avg_states":5.05,"want_to_leave_pct":21.2,"top5_destinations":[{"state":"CT","count":67},{"state":"MA","count":48},{"state":"NY","count":48},{"state":"CA","count":24},{"state":"RI","count":23}]},"IL":{"n":1073,"avg_states":5.04,"want_to_leave_pct":15.4,"top5_destinations":[{"state":"IL","count":908},{"state":"FL","count":299},{"state":"IN","count":296},{"state":"IA","count":263},{"state":"MI","count":261}]},"MS":{"n":1040,"avg_states":4.48,"want_to_leave_pct":12.2,"top5_destinations":[{"state":"MS","count":913},{"state":"AL","count":468},{"state":"TX","count":374},{"state":"LA","count":367},{"state":"FL","count":348}]},"PA":{"n":791,"avg_states":4.3,"want_to_leave_pct":11.6,"top5_destinations":[{"state":"PA","count":699},{"state":"NY","count":369},{"state":"NJ","count":182},{"state":"FL","count":172},{"state":"MD","count":169}]},"MA":{"n":158,"avg_states":5.45,"want_to_leave_pct":7.6,"top5_destinations":[{"state":"MA","count":146},{"state":"CT","count":66},{"state":"NY","count":60},{"state":"NH","count":59},{"state":"RI","count":52}]},"ID":{"n":127,"avg_states":4.8,"want_to_leave_pct":18.9,"top5_destinations":[{"state":"ID","count":103},{"state":"WA","count":49},{"state":"CA","count":41},{"state":"OR","count":41},{"state":"MT","count":38}]},"IN":{"n":561,"avg_states":4.21,"want_to_leave_pct":8.9,"top5_destinations":[{"state":"IN","count":511},{"state":"IL","count":173},{"state":"OH","count":157},{"state":"MI","count":150},{"state":"FL","count":129}]},"AL":{"n":1060,"avg_states":4.61,"want_to_leave_pct":9.7,"top5_destinations":[{"state":"AL","count":957},{"state":"GA","count":529},{"state":"FL","count":497},{"state":"TN","count":377},{"state":"MS","count":301}]},"FL":{"n":2011,"avg_states":4.23,"want_to_leave_pct":6.3,"top5_destinations":[{"state":"FL","count":1884},{"state":"GA","count":730},{"state":"AL","count":583},{"state":"NY","count":501},{"state":"CA","count":427}]},"RI":{"n":25,"avg_states":4.64,"want_to_leave_pct":20.0,"top5_destinations":[{"state":"RI","count":20},{"state":"MA","count":17},{"state":"NY","count":13},{"state":"CT","count":9},{"state":"FL","count":6}]},"VA":{"n":500,"avg_states":4.62,"want_to_leave_pct":9.6,"top5_destinations":[{"state":"VA","count":452},{"state":"NC","count":215},{"state":"NY","count":134},{"state":"SC","count":125},{"state":"FL","count":122}]},"MT":{"n":137,"avg_states":4.56,"want_to_leave_pct":16.8,"top5_destinations":[{"state":"MT","count":114},{"state":"WA","count":37},{"state":"CA","count":33},{"state":"CO","count":32},{"state":"ND","count":31}]},"UT":{"n":215,"avg_states":4.25,"want_to_leave_pct":9.3,"top5_destinations":[{"state":"UT","count":195},{"state":"CA","count":68},{"state":"ID","count":50},{"state":"AZ","count":43},{"state":"FL","count":42}]},"TX":{"n":2832,"avg_states":3.83,"want_to_leave_pct":6.6,"top5_destinations":[{"state":"TX","count":2646},{"state":"CA","count":743},{"state":"FL","count":657},{"state":"NY","count":595},{"state":"OK","count":451}]},"HI":{"n":91,"avg_states":4.45,"want_to_leave_pct":22.0,"top5_destinations":[{"state":"HI","count":71},{"state":"CA","count":60},{"state":"WA","count":30},{"state":"TX","count":22},{"state":"NY","count":22}]},"OH":{"n":1000,"avg_states":4.39,"want_to_leave_pct":11.3,"top5_destinations":[{"state":"OH","count":887},{"state":"FL","count":257},{"state":"PA","count":242},{"state":"MI","count":226},{"state":"KY","count":215}]},"WI":{"n":350,"avg_states":4.71,"want_to_leave_pct":8.6,"top5_destinations":[{"state":"WI","count":320},{"state":"IL","count":130},{"state":"MN","count":112},{"state":"MI","count":109},{"state":"FL","count":76}]},"NH":{"n":10,"avg_states":7.6,"want_to_leave_pct":20.0,"top5_destinations":[{"state":"NH","count":8},{"state":"MA","count":7},{"state":"NY","count":6},{"state":"ME","count":5},{"state":"PA","count":5}]}},"destination_pop":{"NV":4.15,"DE":2.41,"WY":4.09,"WV":3.58,"MN":4.28,"NY":23.18,"AR":8.33,"IA":4.8,"KY":7.77,"LA":11.13,"MD":6.55,"NC":15.3,"AK":2.39,"NJ":7.03,"OR":6.96,"MO":7.29,"SC":10.23,"NE":3.69,"WA":8.64,"OK":7.86,"VI":0.55,"ND":1.96,"VT":1.77,"SD":2.31,"MI":10.15,"DC":3.13,"GU":0.29,"MP":0.0,"AZ":10.58,"AS":0.31,"PR":1.72,"ME":3.29,"CO":11.31,"CA":26.86,"KS":5.69,"TN":17.03,"GA":19.38,"NM":2.24,"CT":5.48,"IL":9.68,"MS":9.51,"PA":11.39,"MA":11.85,"ID":2.84,"IN":6.84,"AL":15.77,"FL":30.7,"RI":2.77,"VA":8.94,"MT":3.53,"UT":5.0,"TX":29.06,"HI":8.48,"OH":9.52,"WI":4.53,"NH":1.99},"top5_sources":{"NV":[{"state":"NV","count":491},{"state":"CA","count":179},{"state":"AZ","count":68},{"state":"TX","count":52},{"state":"WY","count":32}],"DE":[{"state":"PA","count":118},{"state":"MD","count":51},{"state":"NJ","count":50},{"state":"NY","count":45},{"state":"DE","count":36}],"WY":[{"state":"WY","count":483},{"state":"TX","count":63},{"state":"NE","count":44},{"state":"MT","count":30},{"state":"AR","count":29}],"WV":[{"state":"WV","count":229},{"state":"OH","count":151},{"state":"PA","count":93},{"state":"VA","count":87},{"state":"NC","count":61}],"MN":[{"state":"MN","count":258},{"state":"WI","count":112},{"state":"IA","count":89},{"state":"IL","count":74},{"state":"SD","count":67}],"NY":[{"state":"TX","count":595},{"state":"FL","count":501},{"state":"NY","count":494},{"state":"CA","count":438},{"state":"PA","count":369}],"AR":[{"state":"AR","count":1101},{"state":"TX","count":227},{"state":"OK","count":174},{"state":"MO","count":128},{"state":"MS","count":108}],"IA":[{"state":"IA","count":330},{"state":"IL","count":263},{"state":"MO","count":118},{"state":"MN","count":74},{"state":"NE","count":62}],"KY":[{"state":"KY","count":403},{"state":"TN","count":320},{"state":"OH","count":215},{"state":"IL","count":144},{"state":"IN","count":124}],"LA":[{"state":"LA","count":618},{"state":"TX","count":448},{"state":"MS","count":367},{"state":"AR","count":281},{"state":"FL","count":249}],"MD":[{"state":"MD","count":233},{"state":"PA","count":169},{"state":"TX","count":120},{"state":"VA","count":119},{"state":"FL","count":86}],"NC":[{"state":"NC","count":975},{"state":"FL","count":323},{"state":"SC","count":311},{"state":"TN","count":245},{"state":"GA","count":218}],"AK":[{"state":"TX","count":73},{"state":"WY","count":47},{"state":"CA","count":46},{"state":"AR","count":34},{"state":"FL","count":32}],"NJ":[{"state":"NJ","count":321},{"state":"PA","count":182},{"state":"NY","count":175},{"state":"FL","count":137},{"state":"TX","count":112}],"OR":[{"state":"CA","count":318},{"state":"TX","count":173},{"state":"NV","count":141},{"state":"OR","count":135},{"state":"AZ","count":135}],"MO":[{"state":"MO","count":668},{"state":"AR","count":299},{"state":"IL","count":204},{"state":"OK","count":102},{"state":"KS","count":92}],"SC":[{"state":"SC","count":478},{"state":"NC","count":377},{"state":"GA","count":209},{"state":"FL","count":207},{"state":"TN","count":184}],"NE":[{"state":"NE","count":233},{"state":"IA","count":102},{"state":"MO","count":79},{"state":"WY","count":67},{"state":"KS","count":63}],"WA":[{"state":"WA","count":210},{"state":"CA","count":207},{"state":"TX","count":196},{"state":"AZ","count":129},{"state":"FL","count":124}],"OK":[{"state":"OK","count":635},{"state":"TX","count":451},{"state":"AR","count":243},{"state":"MO","count":105},{"state":"KS","count":84}],"VI":[{"state":"FL","count":13},{"state":"TX","count":10},{"state":"NC","count":9},{"state":"MO","count":9},{"state":"CA","count":7}],"ND":[{"state":"MN","count":95},{"state":"ND","count":65},{"state":"WY","count":55},{"state":"SD","count":50},{"state":"MT","count":31}],"VT":[{"state":"NY","count":42},{"state":"TX","count":41},{"state":"PA","count":34},{"state":"MA","count":28},{"state":"CA","count":22}],"SD":[{"state":"SD","count":134},{"state":"WY","count":90},{"state":"MN","count":87},{"state":"NE","count":71},{"state":"IA","count":41}],"MI":[{"state":"MI","count":302},{"state":"IL","count":261},{"state":"OH","count":226},{"state":"TX","count":185},{"state":"FL","count":165}],"DC":[{"state":"FL","count":69},{"state":"TX","count":63},{"state":"MD","count":62},{"state":"VA","count":60},{"state":"NC","count":52}],"GU":[{"state":"CA","count":8},{"state":"TX","count":7},{"state":"NC","count":6},{"state":"FL","count":6},{"state":"NV","count":4}],"MP":[],"AZ":[{"state":"AZ","count":745},{"state":"CA","count":294},{"state":"TX","count":234},{"state":"NV","count":197},{"state":"WY","count":137}],"AS":[{"state":"TX","count":9},{"state":"FL","count":8},{"state":"NC","count":5},{"state":"AR","count":5},{"state":"CA","count":5}],"PR":[{"state":"TX","count":53},{"state":"FL","count":38},{"state":"CA","count":33},{"state":"NV","count":27},{"state":"NC","count":25}],"ME":[{"state":"TX","count":56},{"state":"ME","count":50},{"state":"OH","count":42},{"state":"MA","count":42},{"state":"FL","count":40}],"CO":[{"state":"TX","count":396},{"state":"WY","count":238},{"state":"AZ","count":198},{"state":"CA","count":187},{"state":"FL","count":159}],"CA":[{"state":"CA","count":1381},{"state":"TX","count":743},{"state":"AZ","count":480},{"state":"FL","count":427},{"state":"NV","count":380}],"KS":[{"state":"KS","count":265},{"state":"MO","count":256},{"state":"OK","count":162},{"state":"TX","count":129},{"state":"AR","count":117}],"TN":[{"state":"TN","count":1058},{"state":"AL","count":377},{"state":"MS","count":316},{"state":"FL","count":303},{"state":"AR","count":249}],"GA":[{"state":"GA","count":844},{"state":"FL","count":730},{"state":"AL","count":529},{"state":"TN","count":358},{"state":"MS","count":301}],"NM":[{"state":"TX","count":141},{"state":"NM","count":92},{"state":"AZ","count":77},{"state":"CA","count":45},{"state":"NV","count":30}],"CT":[{"state":"NY","count":147},{"state":"FL","count":108},{"state":"TX","count":104},{"state":"CA","count":85},{"state":"NJ","count":73}],"IL":[{"state":"IL","count":908},{"state":"IN","count":173},{"state":"MO","count":152},{"state":"WI","count":130},{"state":"TX","count":107}],"MS":[{"state":"MS","count":913},{"state":"AL","count":301},{"state":"AR","count":223},{"state":"FL","count":221},{"state":"LA","count":209}],"PA":[{"state":"PA","count":699},{"state":"OH","count":242},{"state":"NY","count":199},{"state":"NJ","count":195},{"state":"TX","count":159}],"MA":[{"state":"TX","count":303},{"state":"FL","count":253},{"state":"CA","count":187},{"state":"NY","count":162},{"state":"MA","count":146}],"ID":[{"state":"WY","count":137},{"state":"ID","count":103},{"state":"NV","count":65},{"state":"WA","count":54},{"state":"CA","count":50}],"IN":[{"state":"IN","count":511},{"state":"IL","count":296},{"state":"OH","count":177},{"state":"KY","count":120},{"state":"FL","count":60}],"AL":[{"state":"AL","count":957},{"state":"FL","count":583},{"state":"MS","count":468},{"state":"TN","count":324},{"state":"GA","count":271}],"FL":[{"state":"FL","count":1884},{"state":"TX","count":657},{"state":"AL","count":497},{"state":"GA","count":450},{"state":"AR","count":360}],"RI":[{"state":"NY","count":58},{"state":"FL","count":57},{"state":"MA","count":52},{"state":"TX","count":48},{"state":"NJ","count":47}],"VA":[{"state":"VA","count":452},{"state":"NC","count":300},{"state":"FL","count":141},{"state":"TN","count":131},{"state":"TX","count":128}],"MT":[{"state":"WY","count":235},{"state":"MT","count":114},{"state":"CA","count":46},{"state":"TX","count":46},{"state":"WA","count":43}],"UT":[{"state":"WY","count":197},{"state":"UT","count":195},{"state":"NV","count":164},{"state":"CA","count":117},{"state":"AZ","count":94}],"TX":[{"state":"TX","count":2646},{"state":"AR","count":545},{"state":"FL","count":423},{"state":"MS","count":374},{"state":"OK","count":356}],"HI":[{"state":"CA","count":292},{"state":"TX","count":196},{"state":"AZ","count":147},{"state":"FL","count":142},{"state":"NV","count":113}],"OH":[{"state":"OH","count":887},{"state":"IN","count":157},{"state":"PA","count":147},{"state":"KY","count":132},{"state":"IL","count":125}],"WI":[{"state":"WI","count":320},{"state":"IL","count":216},{"state":"MN","count":105},{"state":"IA","count":55},{"state":"TX","count":45}],"NH":[{"state":"MA","count":59},{"state":"TX","count":34},{"state":"NY","count":33},{"state":"FL","count":29},{"state":"NJ","count":26}]}};
+
+// ── FIPS → state abbreviation ─────────────────────────────────────────
+const FIPS = {
+  "01":"AL","02":"AK","04":"AZ","05":"AR","06":"CA","08":"CO","09":"CT",
+  "10":"DE","11":"DC","12":"FL","13":"GA","15":"HI","16":"ID","17":"IL",
+  "18":"IN","19":"IA","20":"KS","21":"KY","22":"LA","23":"ME","24":"MD",
+  "25":"MA","26":"MI","27":"MN","28":"MS","29":"MO","30":"MT","31":"NE",
+  "32":"NV","33":"NH","34":"NJ","35":"NM","36":"NY","37":"NC","38":"ND",
+  "39":"OH","40":"OK","41":"OR","42":"PA","44":"RI","45":"SC","46":"SD",
+  "47":"TN","48":"TX","49":"UT","50":"VT","51":"VA","53":"WA","54":"WV",
+  "55":"WI","56":"WY","72":"PR","78":"VI"
+};
+
+// ── State full names ──────────────────────────────────────────────────
+const NAMES = {
+  AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",
+  CO:"Colorado",CT:"Connecticut",DE:"Delaware",DC:"District of Columbia",
+  FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",
+  IN:"Indiana",IA:"Iowa",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",
+  ME:"Maine",MD:"Maryland",MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",
+  MS:"Mississippi",MO:"Missouri",MT:"Montana",NE:"Nebraska",NV:"Nevada",
+  NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",NY:"New York",
+  NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",
+  OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",
+  SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",
+  VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",
+  WY:"Wyoming",PR:"Puerto Rico",VI:"Virgin Islands",GU:"Guam",
+  AS:"American Samoa",MP:"N. Mariana Islands"
+};
+
+// ── Metric configuration ──────────────────────────────────────────────
+const METRICS = {
+  avg_states: {
+    label: "Avg States Selected",
+    description: "Average number of states each student added to their college search list, grouped by home state. Higher values indicate broader geographic exploration.",
+    getValue: code => DATA.per_state[code]?.avg_states ?? null,
+    format: v => v.toFixed(2) + " states",
+    colorScheme: d3.schemeBlues[9],
+    legendSuffix: " states"
+  },
+  want_to_leave_pct: {
+    label: "Want to Leave (%)",
+    description: "Percentage of students who did not include their own home state in their college list — a signal of how many want to leave for school. Higher % = more students looking elsewhere.",
+    getValue: code => DATA.per_state[code]?.want_to_leave_pct ?? null,
+    format: v => v.toFixed(1) + "%",
+    colorScheme: d3.schemeOrRd[9],
+    legendSuffix: "%"
+  },
+  destination_pop: {
+    label: "Destination Popularity (%)",
+    description: "Share of all 27,294 students who included this state in their college list, regardless of where they're from. Darker = more students nationally want to go here.",
+    getValue: code => DATA.destination_pop[code] ?? null,
+    format: v => v.toFixed(2) + "%",
+    colorScheme: d3.schemeGreens[9],
+    legendSuffix: "%"
+  }
+};
+
+// ── State ─────────────────────────────────────────────────────────────
+let currentMetric = "avg_states";
+let selectedState = null;
+
+// ── Selection helpers ─────────────────────────────────────────────────
+function getRelatedCodes(code) {
+  const isDestPop = currentMetric === "destination_pop";
+  const list = isDestPop
+    ? (DATA.top5_sources[code] ?? [])
+    : (DATA.per_state[code]?.top5_destinations ?? []);
+  return list.map(d => d.state);
+}
+
+function applySelection(code) {
+  selectedState = code;
+  const related = getRelatedCodes(code);
+  const highlightSet = new Set([code, ...related]);
+
+  mapG.selectAll("path.state-path")
+    .style("opacity", d => {
+      const fips = String(d.id).padStart(2, "0");
+      const c = FIPS[fips];
+      return (c && !highlightSet.has(c)) ? 0.15 : 1;
+    })
+    .style("stroke", d => {
+      const fips = String(d.id).padStart(2, "0");
+      const c = FIPS[fips];
+      if (c === code) return "#ff5722";
+      if (related.includes(c)) return "#ff9800";
+      return "#fff";
+    })
+    .style("stroke-width", d => {
+      const fips = String(d.id).padStart(2, "0");
+      const c = FIPS[fips];
+      if (c === code) return 2.5;
+      if (related.includes(c)) return 2;
+      return 0.5;
+    });
+
+  // DC marker
+  mapG.selectAll(".dc-marker-circle")
+    .style("opacity", highlightSet.has("DC") ? 1 : 0.15)
+    .style("stroke", code === "DC" ? "#ff5722" : (related.includes("DC") ? "#ff9800" : "#fff"))
+    .style("stroke-width", (code === "DC" || related.includes("DC")) ? 2.5 : 1);
+}
+
+function clearSelection() {
+  selectedState = null;
+  mapG.selectAll("path.state-path")
+    .style("opacity", null)
+    .style("stroke", null)
+    .style("stroke-width", null);
+  mapG.selectAll(".dc-marker-circle")
+    .style("opacity", null)
+    .style("stroke", null)
+    .style("stroke-width", null);
+}
+
+// ── Tooltip ───────────────────────────────────────────────────────────
+const tooltip = document.getElementById("tooltip");
+
+function showTooltip(event, code) {
+  const name  = NAMES[code] || code;
+  const cfg   = METRICS[currentMetric];
+  const val   = cfg.getValue(code);
+  const pst   = DATA.per_state[code];
+  const n     = pst?.n ?? 0;
+
+  // For Destination Popularity, show which home states are sending students here.
+  // For other metrics, show where students from this state want to go.
+  const isDestPop = currentMetric === "destination_pop";
+  const top5      = isDestPop
+    ? (DATA.top5_sources[code] ?? [])
+    : (pst?.top5_destinations ?? []);
+  const listLabel = isDestPop ? "Top states sending students here" : "Top destinations (from here)";
+  const nLabel    = isDestPop
+    ? `${val !== null ? val.toFixed(2) + "% of all students" : "—"} picked this state`
+    : `Based on ${n.toLocaleString()} students`;
+
+  let html = `<h3>${name}</h3>`;
+  html += `<div class="tt-label">${cfg.label}</div>`;
+  html += `<div class="metric-val">${val !== null ? cfg.format(val) : "No data"}</div>`;
+
+  if (top5.length > 0) {
+    html += `<div class="tt-label">${listLabel}</div>`;
+    for (const d of top5) {
+      html += `<div class="tt-row"><span>${NAMES[d.state] || d.state}</span><span class="tt-count">${d.count}</span></div>`;
+    }
+  }
+
+  html += `<div class="tt-n">${nLabel}</div>`;
+
+  tooltip.innerHTML = html;
+  tooltip.style.display = "block";
+  moveTooltip(event);
+}
+
+function moveTooltip(event) {
+  const w = tooltip.offsetWidth;
+  const h = tooltip.offsetHeight;
+  let x = event.clientX + 14;
+  let y = event.clientY - 14;
+  if (x + w > window.innerWidth - 8)  x = event.clientX - w - 14;
+  if (y + h > window.innerHeight - 8) y = event.clientY - h + 14;
+  tooltip.style.left = x + "px";
+  tooltip.style.top  = y + "px";
+}
+
+function hideTooltip() { tooltip.style.display = "none"; }
+
+// ── Build color scale for a metric ───────────────────────────────────
+function makeScale(metricKey) {
+  const cfg    = METRICS[metricKey];
+  const values = Object.values(FIPS)
+    .map(code => cfg.getValue(code))
+    .filter(v => v !== null);
+  return d3.scaleQuantile()
+    .domain(values)
+    .range(cfg.colorScheme.slice(1));   // skip lightest swatch
+}
+
+// ── Legend ────────────────────────────────────────────────────────────
+function drawLegend(metricKey, colorScale) {
+  const cfg    = METRICS[metricKey];
+  const scheme = cfg.colorScheme.slice(1);
+  const n      = scheme.length;
+  const W      = 320, H = 36;
+  const barH   = 14;
+  const barW   = Math.floor(W / n);
+
+  const svg = d3.select("#legend-svg")
+    .attr("width", W).attr("height", H);
+  svg.selectAll("*").remove();
+
+  // Color rects
+  svg.selectAll("rect")
+    .data(scheme)
+    .join("rect")
+    .attr("x", (d, i) => i * barW)
+    .attr("y", 0)
+    .attr("width", barW)
+    .attr("height", barH)
+    .attr("fill", d => d);
+
+  // Tick labels: min, mid, max of quantile thresholds
+  const qs = colorScale.quantiles();
+  const tickVals = [
+    colorScale.domain()[0],
+    qs[Math.floor(qs.length / 2)],
+    colorScale.domain()[colorScale.domain().length - 1]
+  ];
+  const tickX = [0, Math.floor(W / 2), W];
+
+  svg.selectAll("text")
+    .data(tickVals)
+    .join("text")
+    .attr("x", (d, i) => tickX[i])
+    .attr("y", barH + 12)
+    .attr("text-anchor", (d, i) => ["start", "middle", "end"][i])
+    .attr("font-size", "10px")
+    .attr("fill", "#666")
+    .text(d => {
+      if (metricKey === "avg_states") return d.toFixed(1);
+      return d.toFixed(1) + "%";
+    });
+}
+
+// ── Territory bubbles ─────────────────────────────────────────────────
+const TERRITORIES = ["PR", "VI", "GU", "AS", "MP"];
+const TERR_NAMES  = {
+  PR: "Puerto Rico", VI: "Virgin Islands",
+  GU: "Guam", AS: "Am. Samoa", MP: "N. Mariana Is."
+};
+
+function drawExtras() {
+  const scale = makeScale(currentMetric);
+  const cfg   = METRICS[currentMetric];
+  const R = 24, spacing = 84;
+  const W = TERRITORIES.length * spacing + 20;
+  const H = R * 2 + 32;
+
+  const extSvg = d3.select("#extras-svg").attr("width", W).attr("height", H);
+  extSvg.selectAll("*").remove();
+
+  TERRITORIES.forEach((code, i) => {
+    const cx   = 10 + R + i * spacing;
+    const cy   = R + 4;
+    const val  = cfg.getValue(code);
+    const fill = val !== null ? scale(val) : "#ddd";
+
+    const g = extSvg.append("g")
+      .style("cursor", "pointer")
+      .on("mouseover", event => showTooltip(event, code))
+      .on("mousemove", moveTooltip)
+      .on("mouseout",  hideTooltip);
+
+    g.append("circle")
+      .attr("cx", cx).attr("cy", cy).attr("r", R)
+      .attr("fill", fill).attr("stroke", "#ccc").attr("stroke-width", 0.8);
+
+    g.append("text")
+      .attr("x", cx).attr("y", cy)
+      .attr("text-anchor", "middle").attr("dominant-baseline", "middle")
+      .attr("font-size", "10px").attr("font-weight", "600")
+      .attr("fill", "#222").attr("pointer-events", "none")
+      .text(code);
+
+    g.append("text")
+      .attr("x", cx).attr("y", cy + R + 13)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "9px").attr("fill", "#888")
+      .attr("pointer-events", "none")
+      .text(TERR_NAMES[code]);
+  });
+}
+
+// ── Map ───────────────────────────────────────────────────────────────
+const svg       = d3.select("#map");
+const projection = d3.geoAlbersUsa().scale(1280).translate([480, 300]);
+const path       = d3.geoPath().projection(projection);
+
+const mapG = svg.append("g");
+
+// Load TopoJSON then render
+d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json").then(us => {
+  const features = topojson.feature(us, us.objects.states).features;
+  const meshBorders = topojson.mesh(us, us.objects.states, (a, b) => a !== b);
+
+  // Click on map background clears selection
+  svg.on("click", function() { clearSelection(); });
+
+  // State fills
+  mapG.selectAll("path.state-path")
+    .data(features)
+    .join("path")
+    .attr("class", "state-path")
+    .attr("d", path)
+    .on("mouseover", function(event, d) {
+      const fips = String(d.id).padStart(2, "0");
+      const code = FIPS[fips];
+      if (code) showTooltip(event, code);
+    })
+    .on("mousemove", function(event) { moveTooltip(event); })
+    .on("mouseout",  function()      { hideTooltip(); })
+    .on("click", function(event, d) {
+      event.stopPropagation();
+      const fips = String(d.id).padStart(2, "0");
+      const code = FIPS[fips];
+      if (!code) return;
+      if (selectedState === code) {
+        clearSelection();
+      } else {
+        applySelection(code);
+      }
+    });
+
+  // State border mesh
+  mapG.append("path")
+    .datum(meshBorders)
+    .attr("class", "state-border")
+    .attr("d", path);
+
+  // DC overlay — bigger dot + leader line + label so it's easy to hover
+  const dcFeature = features.find(d => String(d.id).padStart(2, "0") === "11");
+  if (dcFeature) {
+    const [cx, cy] = path.centroid(dcFeature);
+    const lx = cx + 28, ly = cy - 20;
+
+    const dcG = mapG.append("g").attr("class", "dc-marker")
+      .on("mouseover", event => showTooltip(event, "DC"))
+      .on("mousemove", moveTooltip)
+      .on("mouseout",  hideTooltip)
+      .on("click", function(event) {
+        event.stopPropagation();
+        if (selectedState === "DC") {
+          clearSelection();
+        } else {
+          applySelection("DC");
+        }
+      });
+
+    dcG.append("line").attr("class", "dc-marker-line")
+      .attr("x1", cx).attr("y1", cy).attr("x2", lx).attr("y2", ly);
+
+    dcG.append("circle").attr("class", "dc-marker-circle")
+      .attr("cx", cx).attr("cy", cy).attr("r", 7);
+
+    dcG.append("text").attr("class", "dc-marker-label")
+      .attr("x", lx).attr("y", ly - 1).text("DC");
+  }
+
+  // Initial render
+  updateColors();
+});
+
+// ── Update colors when metric changes ────────────────────────────────
+function updateColors() {
+  const scale = makeScale(currentMetric);
+  const cfg   = METRICS[currentMetric];
+
+  mapG.selectAll("path.state-path")
+    .transition().duration(300)
+    .attr("fill", d => {
+      const fips = String(d.id).padStart(2, "0");
+      const code = FIPS[fips];
+      if (!code) return "#ddd";
+      const val = cfg.getValue(code);
+      return val !== null ? scale(val) : "#ddd";
+    });
+
+  drawLegend(currentMetric, scale);
+
+  // Update DC overlay dot color
+  const dcVal = cfg.getValue("DC");
+  mapG.selectAll(".dc-marker-circle")
+    .transition().duration(300)
+    .attr("fill", dcVal !== null ? scale(dcVal) : "#ddd");
+
+  // Update territory bubbles
+  drawExtras();
+}
+
+// ── Button handlers ───────────────────────────────────────────────────
+document.querySelectorAll(".metric-btn").forEach(btn => {
+  btn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    document.querySelectorAll(".metric-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentMetric = btn.dataset.metric;
+    document.getElementById("metric-desc").textContent = METRICS[currentMetric].description;
+    clearSelection();
+    updateColors();
+  });
+});
+</script>
+</body>
+</html>
