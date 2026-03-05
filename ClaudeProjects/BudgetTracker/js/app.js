@@ -7,7 +7,6 @@ function switchView(id, el){
   if(id==='dashboard') renderDashboard();
   if(id==='calculator'){ loadCalcUI(); recalc(); }
   if(id==='month') renderMonth();
-  if(id==='settings') loadSettingsUI();
 }
 
 function changeYear(dir){
@@ -25,6 +24,7 @@ document.addEventListener('keydown',e=>{
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 hydrate();
 document.getElementById('chart-year-label').textContent=S.currentYear;
+document.getElementById('starting-savings').value=S.settings.startingSavings||0;
 buildMonthNav();
 renderDashboard();
 loadSyncUI();

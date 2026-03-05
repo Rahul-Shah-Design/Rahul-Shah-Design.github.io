@@ -78,4 +78,15 @@ function renderChart(){
   });
 }
 
-function renderDashboard(){ renderStats(); renderChart(); }
+function saveStartingSavings(val){
+  S.settings.startingSavings=+val||0;
+  persist();
+  renderChart();
+}
+
+function renderDashboard(){
+  const el=document.getElementById('starting-savings');
+  if(el) el.value=S.settings.startingSavings||0;
+  renderStats();
+  renderChart();
+}

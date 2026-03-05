@@ -18,7 +18,6 @@
     <ul class="sidebar-nav">
       <li class="active" onclick="switchView('dashboard',this)"><div class="dot"></div>Dashboard</li>
       <li onclick="switchView('calculator',this)"><div class="dot"></div>Budget Calculator</li>
-      <li onclick="switchView('settings',this)"><div class="dot"></div>Settings</li>
     </ul>
     <div class="sidebar-section">Months</div>
     <ul class="sidebar-nav" id="month-nav"></ul>
@@ -33,10 +32,17 @@
       <div class="chart-card">
         <div class="chart-card-header">
           <h2>Needs, Wants &amp; Savings</h2>
-          <div class="chart-year">
-            <button onclick="changeYear(-1)">‹</button>
-            <span id="chart-year-label"></span>
-            <button onclick="changeYear(1)">›</button>
+          <div style="display:flex;align-items:center;gap:20px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:12px;color:var(--muted);">2026 Starting Balance</span>
+              <span class="ci-prefix">$</span>
+              <input class="ci ci-w100" type="number" id="starting-savings" style="text-align:right;" oninput="saveStartingSavings(this.value)">
+            </div>
+            <div class="chart-year">
+              <button onclick="changeYear(-1)">‹</button>
+              <span id="chart-year-label"></span>
+              <button onclick="changeYear(1)">›</button>
+            </div>
           </div>
         </div>
         <div class="chart-wrapper"><canvas id="mainChart"></canvas></div>
@@ -225,41 +231,6 @@
       </div>
     </div>
 
-    <!-- SETTINGS VIEW -->
-    <div class="view" id="view-settings">
-      <div class="page-header"><h1>Settings</h1><p>Budget targets, paycheck defaults, and savings baseline</p></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:700px;">
-        <div class="calc-section" style="margin-bottom:0;">
-          <div class="calc-section-header"><span class="calc-section-title">Budget Targets</span></div>
-          <div class="calc-section-body">
-            <div class="calc-row"><div class="calc-row-label">Needs Budget ($/mo)</div><div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="set-needs"></div></div>
-            <div class="calc-row"><div class="calc-row-label">Wants Budget ($/mo)</div><div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="set-wants"></div></div>
-            <div class="calc-row"><div class="calc-row-label">Savings Target ($/mo)</div><div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="set-savings-target"></div></div>
-            <div class="calc-row"><div class="calc-row-label">Starting Savings Balance<small>Your current total savings today</small></div><div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="set-starting-savings"></div></div>
-          </div>
-          <div class="calc-total-row">
-            <button class="apply-btn" onclick="saveSettings()" style="width:auto;margin-top:0;padding:8px 20px;">Save Settings</button>
-          </div>
-        </div>
-        <div class="calc-section" style="margin-bottom:0;">
-          <div class="calc-section-header"><span class="calc-section-title">Paycheck Defaults</span></div>
-          <div class="calc-section-body">
-            <div class="calc-row"><div class="calc-row-label">Paycheck Amount<small>Take-home per paycheck</small></div><div class="calc-row-right"><span class="ci-prefix">$</span><input class="ci ci-w100" type="number" id="set-paycheck"></div></div>
-            <div class="calc-row">
-              <div class="calc-row-label">Paychecks per Month</div>
-              <div class="calc-row-right">
-                <select class="ci ci-select-sm" id="set-paycheck-count">
-                  <option value="1">1 — Monthly</option>
-                  <option value="2" selected>2 — Semi-monthly</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="calc-total-row" style="color:var(--muted);font-size:12px;">Changes apply to new months only</div>
-        </div>
-      </div>
-    </div>
-
     <!-- CLOUD SYNC -->
     <div class="calc-section" style="max-width:700px;margin-top:24px;">
       <div class="calc-section-header"><span class="calc-section-title">Cloud Sync (GitHub Gist)</span></div>
@@ -347,7 +318,6 @@
 <script src="js/calc.js"></script>
 <script src="js/dashboard.js"></script>
 <script src="js/month.js"></script>
-<script src="js/settings.js"></script>
 <script src="js/modal.js"></script>
 <script src="js/app.js"></script>
 </body>

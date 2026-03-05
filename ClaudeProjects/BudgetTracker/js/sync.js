@@ -46,7 +46,6 @@ async function pullFromGist(){
     S=JSON.parse(raw);
     persist();
     loadCalcUI(); recalc();
-    loadSettingsUI();
     buildMonthNav(); renderDashboard(); renderMonth();
     const now=new Date().toLocaleString();
     saveSyncConfig({ token, gistId, lastPush: now });
