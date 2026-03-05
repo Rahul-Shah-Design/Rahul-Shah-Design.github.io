@@ -18,6 +18,20 @@ function changeYear(dir){
   renderDashboard();
 }
 
+// ─── SAVINGS MODAL ───────────────────────────────────────────────────────────
+function openSavingsModal(){
+  document.getElementById('savings-modal-label').textContent=`Balance at start of ${S.currentYear}`;
+  document.getElementById('starting-savings').value=S.settings.startingSavings||0;
+  document.getElementById('savings-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('starting-savings').select(),50);
+}
+function closeSavingsModal(){ document.getElementById('savings-modal').classList.remove('open'); }
+function closeSavingsModalOutside(e){ if(e.target===document.getElementById('savings-modal')) closeSavingsModal(); }
+function saveSavingsModal(){
+  saveStartingSavings(document.getElementById('starting-savings').value);
+  closeSavingsModal();
+}
+
 // ─── SYNC MODAL ──────────────────────────────────────────────────────────────
 function openSyncModal(){
   const cfg=loadSyncConfig();
@@ -54,13 +68,12 @@ function disconnectSync(){
 // ─── KEYBOARD SHORTCUTS ──────────────────────────────────────────────────────
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&document.getElementById('modal-overlay').classList.contains('open')) saveTransaction();
-  if(e.key==='Escape'){ closeModal(); closeSyncModal(); }
+  if(e.key==='Escape'){ closeModal(); closeSyncModal(); closeSavingsModal(); }
 });
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 hydrate();
 document.getElementById('chart-year-label').textContent=S.currentYear;
-document.getElementById('starting-savings').value=S.settings.startingSavings||0;
 buildMonthNav();
 renderDashboard();
 initSyncBadge();

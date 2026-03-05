@@ -49,7 +49,7 @@ function renderChart(){
     options:{
       responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{
-        legend:{position:'top',labels:{color:'#9ca3af',font:{family:'DM Sans',size:12},boxWidth:12,padding:20,usePointStyle:true}},
+        legend:{display:false},
         tooltip:{backgroundColor:'#1e2230',titleColor:'#e8eaf0',bodyColor:'#9ca3af',borderColor:'#2a2f40',borderWidth:1,
           callbacks:{label:c=>` ${c.dataset.label}: $${c.parsed.y.toLocaleString('en-US',{maximumFractionDigits:0})}`}}
       },
@@ -82,6 +82,25 @@ function renderChart(){
       }
     }
   });
+
+  const legendEl=document.getElementById('chart-legend');
+  if(legendEl){
+    legendEl.innerHTML=[
+      ['Needs',       'rgba(74,144,226,0.75)', 'box'],
+      ['Wants',       'rgba(224,92,92,0.75)',  'box'],
+      ['Budgeted Needs', 'rgba(74,144,226,0.7)',  'dash'],
+      ['Budgeted Wants', 'rgba(224,92,92,0.7)',   'dash'],
+      ['Cumul. Savings', 'rgba(240,180,41,0.85)', 'dash'],
+    ].map(([text,color,type],i,arr)=>{
+      const icon=type==='box'
+        ?`<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${color};flex-shrink:0;"></span>`
+        :`<span style="display:inline-block;width:20px;height:0;border-top:2px dashed ${color};flex-shrink:0;"></span>`;
+      const gear=i===arr.length-1
+        ?`<button onclick="openSavingsModal()" title="Set starting balance" style="background:none;border:none;color:#9ca3af;cursor:pointer;padding:0 0 0 4px;display:inline-flex;align-items:center;line-height:1;transition:color 0.15s;" onmouseover="this.style.color='#e8eaf0'" onmouseout="this.style.color='#9ca3af'"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="overflow:visible;"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.34.07-.69.07-1.08s-.03-.74-.07-1.08l2.32-1.81c.21-.17.27-.46.14-.7l-2.2-3.81c-.13-.24-.42-.32-.66-.24l-2.74 1.1c-.57-.44-1.18-.8-1.86-1.08L14.21 1.8A.554.554 0 0 0 13.67 1h-4.4a.554.554 0 0 0-.54.46L8.27 4.49c-.68.28-1.29.64-1.86 1.08L3.67 4.47c-.24-.08-.53 0-.66.24L.81 8.52c-.14.24-.08.53.14.7l2.32 1.81C3.23 11.37 3.2 11.72 3.2 12s.03.63.07.97l-2.32 1.81c-.22.17-.28.46-.14.7l2.2 3.81c.13.24.42.32.66.24l2.74-1.1c.57.44 1.18.8 1.86 1.08l.42 2.69c.07.27.29.46.54.46h4.4c.25 0 .47-.19.54-.46l.42-2.69c.68-.28 1.29-.64 1.86-1.08l2.74 1.1c.24.08.53 0 .66-.24l2.2-3.81c.13-.24.07-.53-.14-.7l-2.32-1.81z"/></svg></button>`
+        :'';
+      return`<span style="display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex-shrink:0;color:#9ca3af;font-size:12px;font-family:'DM Sans',sans-serif;">${icon}${text}${gear}</span>`;
+    }).join('');
+  }
 }
 
 function saveStartingSavings(val){
@@ -91,8 +110,6 @@ function saveStartingSavings(val){
 }
 
 function renderDashboard(){
-  const el=document.getElementById('starting-savings');
-  if(el) el.value=S.settings.startingSavings||0;
   renderStats();
   renderChart();
 }
