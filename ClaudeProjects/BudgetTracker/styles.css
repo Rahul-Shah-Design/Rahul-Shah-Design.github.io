@@ -155,3 +155,48 @@
   .save-btn { background: var(--accent); color: white; border: none; padding: 9px 20px; border-radius: 8px; cursor: pointer; font-family: var(--font-body); font-size: 13px; font-weight: 500; }
   .save-btn:hover { opacity: 0.85; }
   .modal-hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+  /* SCROLL WRAPPERS */
+  .chart-scroll { overflow-x: auto; }
+  .tx-scroll { overflow-x: auto; }
+
+  /* TAB BAR (hidden on desktop) */
+  .tab-bar {
+    display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+    background: var(--surface); border-top: 1px solid var(--border); height: 60px;
+  }
+  .tab-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; background: none; border: none; color: var(--muted); font-family: var(--font-body);
+    font-size: 10px; font-weight: 500; cursor: pointer; transition: color 0.15s; padding: 8px 0;
+  }
+  .tab-item.active { color: var(--accent); }
+
+  /* SYNC BADGE */
+  .sync-badge {
+    position: fixed; top: 16px; right: 20px; z-index: 400;
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 20px;
+    padding: 5px 12px 5px 9px; color: var(--muted);
+    font-family: var(--font-body); font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: color 0.2s, border-color 0.2s; white-space: nowrap;
+  }
+  .sync-badge:hover { border-color: var(--accent); color: var(--text); }
+  .sync-badge svg { flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 1s linear infinite; }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .tab-bar { display: flex; }
+    .main { margin-left: 0; padding: 20px 16px 76px; }
+    .stat-row { grid-template-columns: 1fr; }
+    .calc-layout { grid-template-columns: 1fr; }
+    .tables-grid { grid-template-columns: 1fr; }
+    .month-summary { grid-template-columns: 1fr; }
+    .modal { width: calc(100% - 32px); }
+    .chart-wrapper { height: 240px; min-width: 500px; }
+    .result-panel { position: static; }
+    .sync-badge { top: auto; bottom: 72px; right: 12px; }
+  }

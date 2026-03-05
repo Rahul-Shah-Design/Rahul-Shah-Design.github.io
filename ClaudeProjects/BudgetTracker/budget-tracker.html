@@ -32,7 +32,7 @@
       <div class="chart-card">
         <div class="chart-card-header">
           <h2>Needs, Wants &amp; Savings</h2>
-          <div style="display:flex;align-items:center;gap:20px;">
+          <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
             <div style="display:flex;align-items:center;gap:8px;">
               <span style="font-size:12px;color:var(--muted);">2026 Starting Balance</span>
               <span class="ci-prefix">$</span>
@@ -45,7 +45,7 @@
             </div>
           </div>
         </div>
-        <div class="chart-wrapper"><canvas id="mainChart"></canvas></div>
+        <div class="chart-scroll"><div class="chart-wrapper"><canvas id="mainChart"></canvas></div></div>
       </div>
     </div>
 
@@ -231,27 +231,6 @@
       </div>
     </div>
 
-    <!-- CLOUD SYNC -->
-    <div class="calc-section" style="max-width:700px;margin-top:24px;">
-      <div class="calc-section-header"><span class="calc-section-title">Cloud Sync (GitHub Gist)</span></div>
-      <div class="calc-section-body">
-        <div class="calc-row">
-          <div class="calc-row-label">GitHub Token<small>Personal Access Token with "gist" scope — <a href="https://github.com/settings/tokens/new?scopes=gist" target="_blank" style="color:var(--accent)">create one here</a></small></div>
-          <div class="calc-row-right"><input class="ci" type="password" id="sync-token" placeholder="ghp_…" style="width:200px;"
-            oninput="const c=loadSyncConfig();c.token=this.value.trim();saveSyncConfig(c);"></div>
-        </div>
-        <div class="calc-row">
-          <div class="calc-row-label">Gist ID<small>Auto-filled after first Push, or paste an existing ID</small></div>
-          <div class="calc-row-right"><input class="ci" type="text" id="sync-gist-id" placeholder="auto" style="width:200px;font-family:monospace;font-size:11px;"></div>
-        </div>
-      </div>
-      <div class="calc-total-row" style="gap:10px;">
-        <span id="sync-status" style="font-size:12px;color:var(--muted);flex:1;"></span>
-        <button class="apply-btn" onclick="pullFromGist()" style="width:auto;margin-top:0;padding:8px 18px;background:var(--surface2);border:1px solid var(--border);color:var(--text);">Pull</button>
-        <button class="apply-btn" onclick="pushToGist()" style="width:auto;margin-top:0;padding:8px 18px;">Push</button>
-      </div>
-    </div>
-
     <!-- MONTH VIEW -->
     <div class="view" id="view-month">
       <div class="month-header">
@@ -266,20 +245,24 @@
             <span class="tx-card-title"><span class="orange">Expense</span> Transactions</span>
             <button class="add-btn" onclick="openModal('expense')">+ Add</button>
           </div>
-          <table class="tx-table">
-            <thead><tr><th>Date</th><th>Amount</th><th>Description</th><th>Category</th><th></th></tr></thead>
-            <tbody id="expense-tbody"></tbody>
-          </table>
+          <div class="tx-scroll">
+            <table class="tx-table">
+              <thead><tr><th>Date</th><th>Amount</th><th>Description</th><th>Category</th><th></th></tr></thead>
+              <tbody id="expense-tbody"></tbody>
+            </table>
+          </div>
         </div>
         <div class="tx-card">
           <div class="tx-card-header">
             <span class="tx-card-title"><span class="orange">Income</span> Transactions</span>
             <button class="add-btn" onclick="openModal('income')">+ Add</button>
           </div>
-          <table class="tx-table">
-            <thead><tr><th>Date</th><th>Amount</th><th>Description</th><th></th></tr></thead>
-            <tbody id="income-tbody"></tbody>
-          </table>
+          <div class="tx-scroll">
+            <table class="tx-table">
+              <thead><tr><th>Date</th><th>Amount</th><th>Description</th><th></th></tr></thead>
+              <tbody id="income-tbody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -287,7 +270,26 @@
   </main>
 </div>
 
-<!-- MODAL -->
+<!-- BOTTOM TAB BAR (mobile only) -->
+<nav class="tab-bar">
+  <button class="tab-item active" data-view="dashboard" onclick="switchView('dashboard',null)">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </button>
+  <button class="tab-item" data-view="calculator" onclick="switchView('calculator',null)">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="12" y1="10" x2="14" y2="10"/><line x1="16" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="8" y2="18"/><line x1="12" y1="18" x2="12" y2="18"/><line x1="16" y1="18" x2="16" y2="18"/></svg>
+    Calculator
+  </button>
+  <button class="tab-item" data-view="month" onclick="openMonth(new Date().getMonth(),new Date().getFullYear())">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Months
+  </button>
+</nav>
+
+<!-- SYNC STATUS BADGE -->
+<button class="sync-badge" id="sync-badge" onclick="openSyncModal()"></button>
+
+<!-- TRANSACTION MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal">
     <h3 id="modal-title">Add Expense</h3>
@@ -309,6 +311,29 @@
     <div class="modal-footer">
       <button class="cancel-btn" onclick="closeModal()">Cancel</button>
       <button class="save-btn" onclick="saveTransaction()">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- SYNC CONFIG MODAL -->
+<div class="modal-overlay" id="sync-modal" onclick="closeSyncModalOutside(event)">
+  <div class="modal">
+    <h3>Sync Settings</h3>
+    <div class="field">
+      <label>GitHub Token<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);margin-left:6px;">Personal Access Token with "gist" scope</span></label>
+      <input type="password" id="sync-modal-token" placeholder="ghp_…">
+    </div>
+    <div class="field">
+      <label>Gist ID</label>
+      <input type="text" id="sync-modal-gist-id" placeholder="Leave blank to create a new Gist on first sync" style="font-family:monospace;font-size:12px;">
+      <div class="modal-hint">Auto-filled on first sync — or paste an existing Gist ID</div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between;">
+      <button class="cancel-btn" onclick="disconnectSync()" style="color:var(--muted);">Disconnect</button>
+      <div style="display:flex;gap:10px;">
+        <button class="cancel-btn" onclick="closeSyncModal()">Cancel</button>
+        <button class="save-btn" onclick="saveSyncModal()">Save &amp; Sync</button>
+      </div>
     </div>
   </div>
 </div>

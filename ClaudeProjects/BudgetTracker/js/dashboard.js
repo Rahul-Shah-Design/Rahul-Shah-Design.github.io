@@ -10,7 +10,7 @@ function renderStats(){
   const c=calcMonthTotals(cy,cm);
   const d=getMonth(cy,cm);
   const income=d.incomes.reduce((sum,tx)=>sum+(+tx.amount||0),0);
-  const netSavings=income-c.needs-c.wants-c.savings;
+  const netSavings=income-c.needs-c.wants;
   const nb=S.settings.needsBudget, wb=S.settings.wantsBudget, sb=S.settings.savingsBudget;
   const pct=(v,b)=>Math.min(100,Math.round(Math.abs(v)/Math.max(b,1)*100));
   const diff=(v,b)=>{const d=v-b; return d>0?`<span class="over">+$${d.toFixed(0)} over</span>`:`<span class="under">$${Math.abs(d).toFixed(0)} under</span>`;};

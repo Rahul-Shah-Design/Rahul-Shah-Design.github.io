@@ -41,7 +41,10 @@ function getMonth(y,m){
   return S.months[k];
 }
 
-function persist(){ try{ localStorage.setItem('bgt3',JSON.stringify(S)); }catch(e){} }
+function persist(){
+  try{ localStorage.setItem('bgt3',JSON.stringify(S)); }catch(e){}
+  if(typeof schedulePush==='function') schedulePush();
+}
 function hydrate(){
   try{
     const r=localStorage.getItem('bgt3');

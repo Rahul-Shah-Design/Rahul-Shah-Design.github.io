@@ -5,7 +5,7 @@ function renderMonth(){
   const c=calcMonthTotals(y,m), s=S.settings;
   const d=getMonth(y,m);
   const income=d.incomes.reduce((sum,tx)=>sum+(+tx.amount||0),0);
-  const netSavings=income-c.needs-c.wants-c.savings;
+  const netSavings=income-c.needs-c.wants;
   const db=(v,b)=>{const diff=v-b; if(diff>0)return`<div class="month-stat-diff over">+$${diff.toFixed(0)} over</div>`; if(diff<0)return`<div class="month-stat-diff under">$${Math.abs(diff).toFixed(0)} under</div>`; return`<div class="month-stat-diff" style="color:var(--muted)">On budget</div>`;};
   const dbs=(v,b)=>{const diff=v-b; if(diff>0)return`<div class="month-stat-diff under">+$${diff.toFixed(0)} over</div>`; if(diff<0)return`<div class="month-stat-diff over">$${Math.abs(diff).toFixed(0)} under</div>`; return`<div class="month-stat-diff" style="color:var(--muted)">On budget</div>`;};
   const f=v=>v.toLocaleString('en-US',{maximumFractionDigits:0});
