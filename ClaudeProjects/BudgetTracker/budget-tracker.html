@@ -424,7 +424,8 @@
       <div class="calc-section-body">
         <div class="calc-row">
           <div class="calc-row-label">GitHub Token<small>Personal Access Token with "gist" scope — <a href="https://github.com/settings/tokens/new?scopes=gist" target="_blank" style="color:var(--accent)">create one here</a></small></div>
-          <div class="calc-row-right"><input class="ci" type="password" id="sync-token" placeholder="ghp_…" style="width:200px;"></div>
+          <div class="calc-row-right"><input class="ci" type="password" id="sync-token" placeholder="ghp_…" style="width:200px;"
+            oninput="const c=loadSyncConfig();c.token=this.value.trim();saveSyncConfig(c);"></div>
         </div>
         <div class="calc-row">
           <div class="calc-row-label">Gist ID<small>Auto-filled after first Push, or paste an existing ID</small></div>
@@ -566,14 +567,15 @@ function loadSyncUI(){
 async function pushToGist(){
   const cfg=loadSyncConfig();
   const token=document.getElementById('sync-token').value.trim();
+  const gistId=document.getElementById('sync-gist-id').value.trim();
   if(!token){ setSyncStatus('Enter a GitHub token first.', true); return; }
+  if(!gistId){ setSyncStatus('Enter a Gist ID first — push would create a duplicate.', true); return; }
   setSyncStatus('Pushing…');
   const body={ description:'Budget Tracker Data', public:false,
     files:{ 'budget-tracker-data.json':{ content: JSON.stringify(S, null, 2) } } };
   try{
-    let url='https://api.github.com/gists';
-    let method='POST';
-    if(cfg.gistId){ url+='/'+cfg.gistId; method='PATCH'; }
+    const url='https://api.github.com/gists/'+gistId;
+    const method='PATCH';
     const res=await fetch(url,{ method, headers:{ Authorization:'token '+token, 'Content-Type':'application/json' }, body: JSON.stringify(body) });
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data=await res.json();
@@ -597,7 +599,8 @@ async function pullFromGist(){
     S=JSON.parse(raw);
     persist();
     loadCalcUI(); recalc();
-    buildMonthNav(); renderDashboard();
+    loadSettingsUI();
+    buildMonthNav(); renderDashboard(); renderMonth();
     const now=new Date().toLocaleString();
     saveSyncConfig({ token, gistId, lastPush: now });
     setSyncStatus('✓ Pulled at '+now);
