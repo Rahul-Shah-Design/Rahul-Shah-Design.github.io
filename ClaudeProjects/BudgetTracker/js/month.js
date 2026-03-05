@@ -3,12 +3,17 @@ function renderMonth(){
   const{currentYear:y,currentMonth:m}=S;
   document.getElementById('month-title').textContent=`${MONTHS[m]} ${y}`;
   const c=calcMonthTotals(y,m), s=S.settings;
-  const db=(v,b)=>{const d=v-b; if(d>0)return`<div class="month-stat-diff over">+$${d.toFixed(0)} over</div>`; if(d<0)return`<div class="month-stat-diff under">$${Math.abs(d).toFixed(0)} under</div>`; return`<div class="month-stat-diff" style="color:var(--muted)">On budget</div>`;};
+  const d=getMonth(y,m);
+  const income=d.incomes.reduce((sum,tx)=>sum+(+tx.amount||0),0);
+  const netSavings=income-c.needs-c.wants-c.savings;
+  const db=(v,b)=>{const diff=v-b; if(diff>0)return`<div class="month-stat-diff over">+$${diff.toFixed(0)} over</div>`; if(diff<0)return`<div class="month-stat-diff under">$${Math.abs(diff).toFixed(0)} under</div>`; return`<div class="month-stat-diff" style="color:var(--muted)">On budget</div>`;};
+  const dbs=(v,b)=>{const diff=v-b; if(diff>0)return`<div class="month-stat-diff under">+$${diff.toFixed(0)} over</div>`; if(diff<0)return`<div class="month-stat-diff over">$${Math.abs(diff).toFixed(0)} under</div>`; return`<div class="month-stat-diff" style="color:var(--muted)">On budget</div>`;};
   const f=v=>v.toLocaleString('en-US',{maximumFractionDigits:0});
+  const fs=v=>`${v<0?'-':''}$${f(Math.abs(v))}`;
   document.getElementById('month-summary').innerHTML=`
     <div class="month-stat"><div class="month-stat-lbl">Needs</div><div class="month-stat-val" style="color:var(--needs)">$${f(c.needs)}</div>${db(c.needs,s.needsBudget)}</div>
     <div class="month-stat"><div class="month-stat-lbl">Wants</div><div class="month-stat-val" style="color:var(--wants)">$${f(c.wants)}</div>${db(c.wants,s.wantsBudget)}</div>
-    <div class="month-stat"><div class="month-stat-lbl">Savings</div><div class="month-stat-val" style="color:var(--savings)">$${f(c.savings)}</div>${db(c.savings,s.savingsBudget)}</div>`;
+    <div class="month-stat"><div class="month-stat-lbl">Savings</div><div class="month-stat-val" style="color:var(--savings)">${fs(netSavings)}</div>${dbs(netSavings,s.savingsBudget)}</div>`;
   renderExpenses(); renderIncomes();
 }
 

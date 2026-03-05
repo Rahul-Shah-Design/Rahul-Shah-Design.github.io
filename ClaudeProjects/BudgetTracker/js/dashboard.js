@@ -6,16 +6,22 @@ function calcMonthTotals(y,m){
 }
 
 function renderStats(){
-  const cm=new Date().getMonth(); let tn=0,tw=0,ts=0;
-  for(let m=0;m<=cm;m++){const c=calcMonthTotals(S.currentYear,m);tn+=c.needs;tw+=c.wants;ts+=c.savings;}
-  const mi=cm+1, nb=S.settings.needsBudget*mi, wb=S.settings.wantsBudget*mi, sb=S.settings.savingsBudget*mi;
-  const pct=(v,b)=>Math.min(100,Math.round(v/b*100))||0;
+  const now=new Date(), cy=now.getFullYear(), cm=now.getMonth();
+  const c=calcMonthTotals(cy,cm);
+  const d=getMonth(cy,cm);
+  const income=d.incomes.reduce((sum,tx)=>sum+(+tx.amount||0),0);
+  const netSavings=income-c.needs-c.wants-c.savings;
+  const nb=S.settings.needsBudget, wb=S.settings.wantsBudget, sb=S.settings.savingsBudget;
+  const pct=(v,b)=>Math.min(100,Math.round(Math.abs(v)/Math.max(b,1)*100));
   const diff=(v,b)=>{const d=v-b; return d>0?`<span class="over">+$${d.toFixed(0)} over</span>`:`<span class="under">$${Math.abs(d).toFixed(0)} under</span>`;};
+  const diffs=(v,b)=>{const d=v-b; return d>0?`<span class="under">+$${d.toFixed(0)} over</span>`:`<span class="over">$${Math.abs(d).toFixed(0)} under</span>`;};
   const f=v=>v.toLocaleString('en-US',{maximumFractionDigits:0});
+  const fs=v=>`${v<0?'-':''}$${f(Math.abs(v))}`;
+  const mo=MONTHS[cm];
   document.getElementById('stat-row').innerHTML=`
-    <div class="stat-card"><div class="stat-label"><div class="badge" style="background:var(--needs)"></div>YTD Needs</div><div class="stat-value" style="color:var(--needs)">$${f(tn)}</div><div class="stat-sub">${diff(tn,nb)} vs budget</div><div class="stat-bar"><div class="stat-bar-fill" style="width:${pct(tn,nb)}%;background:var(--needs)"></div></div></div>
-    <div class="stat-card"><div class="stat-label"><div class="badge" style="background:var(--wants)"></div>YTD Wants</div><div class="stat-value" style="color:var(--wants)">$${f(tw)}</div><div class="stat-sub">${diff(tw,wb)} vs budget</div><div class="stat-bar"><div class="stat-bar-fill" style="width:${pct(tw,wb)}%;background:var(--wants)"></div></div></div>
-    <div class="stat-card"><div class="stat-label"><div class="badge" style="background:var(--savings)"></div>YTD Savings</div><div class="stat-value" style="color:var(--savings)">$${f(ts)}</div><div class="stat-sub">${diff(ts,sb)} vs target</div><div class="stat-bar"><div class="stat-bar-fill" style="width:${pct(ts,sb)}%;background:var(--savings)"></div></div></div>`;
+    <div class="stat-card"><div class="stat-label"><div class="badge" style="background:var(--needs)"></div>${mo} Needs</div><div class="stat-value" style="color:var(--needs)">$${f(c.needs)}</div><div class="stat-sub">${diff(c.needs,nb)} vs budget</div><div class="stat-bar"><div class="stat-bar-fill" style="width:${pct(c.needs,nb)}%;background:var(--needs)"></div></div></div>
+    <div class="stat-card"><div class="stat-label"><div class="badge" style="background:var(--wants)"></div>${mo} Wants</div><div class="stat-value" style="color:var(--wants)">$${f(c.wants)}</div><div class="stat-sub">${diff(c.wants,wb)} vs budget</div><div class="stat-bar"><div class="stat-bar-fill" style="width:${pct(c.wants,wb)}%;background:var(--wants)"></div></div></div>
+    <div class="stat-card"><div class="stat-label"><div class="badge" style="background:var(--savings)"></div>${mo} Savings</div><div class="stat-value" style="color:var(--savings)">${fs(netSavings)}</div><div class="stat-sub">${diffs(netSavings,sb)} vs target</div><div class="stat-bar"><div class="stat-bar-fill" style="width:${pct(netSavings,sb)}%;background:var(--savings)"></div></div></div>`;
 }
 
 let chart=null;
