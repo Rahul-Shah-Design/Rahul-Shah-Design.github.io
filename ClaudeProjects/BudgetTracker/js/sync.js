@@ -32,7 +32,9 @@ function initSyncBadge(){
 
 // ─── AUTO-PUSH (debounced) ────────────────────────────────────────────────────
 let _pushTimer=null;
+let initialPullComplete=false;
 function schedulePush(){
+  if(!initialPullComplete) return;
   const cfg=loadSyncConfig();
   if(!cfg.token) return;
   clearTimeout(_pushTimer);
@@ -40,14 +42,17 @@ function schedulePush(){
 }
 
 // ─── PUSH ────────────────────────────────────────────────────────────────────
+let _pushing=false;
 async function pushToGist(){
-  const cfg=loadSyncConfig();
-  if(!cfg.token) return;
-  clearTimeout(_pushTimer);
-  updateSyncBadge('syncing','Syncing…');
-  const body={ description:'Budget Tracker Data', public:false,
-    files:{ 'budget-tracker-data.json':{ content: JSON.stringify(S, null, 2) } } };
+  if(_pushing){ schedulePush(); return; }
+  _pushing=true;
   try{
+    const cfg=loadSyncConfig();
+    if(!cfg.token) return;
+    clearTimeout(_pushTimer);
+    updateSyncBadge('syncing','Syncing…');
+    const body={ description:'Budget Tracker Data', public:false,
+      files:{ 'budget-tracker-data.json':{ content: JSON.stringify(S, null, 2) } } };
     const url = cfg.gistId ? 'https://api.github.com/gists/'+cfg.gistId : 'https://api.github.com/gists';
     const method = cfg.gistId ? 'PATCH' : 'POST';
     const res=await fetch(url,{ method, headers:{ Authorization:'token '+cfg.token, 'Content-Type':'application/json' }, body: JSON.stringify(body) });
@@ -59,6 +64,7 @@ async function pushToGist(){
     if(gistField) gistField.value=data.id;
     updateSyncBadge('synced','Synced '+now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
   } catch(e){ updateSyncBadge('error','Sync failed'); }
+  finally{ _pushing=false; }
 }
 
 // ─── PULL ────────────────────────────────────────────────────────────────────
@@ -66,19 +72,27 @@ async function pullFromGist(){
   const cfg=loadSyncConfig();
   if(!cfg.token||!cfg.gistId) return;
   updateSyncBadge('syncing','Syncing…');
+  const backup=JSON.stringify(S);
   try{
     const res=await fetch('https://api.github.com/gists/'+cfg.gistId,{ headers:{ Authorization:'token '+cfg.token } });
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data=await res.json();
     const raw=data.files['budget-tracker-data.json']?.content;
     if(!raw) throw new Error('File not found in Gist');
-    S=JSON.parse(raw);
-    // write directly to localStorage — do not call persist() to avoid a push loop
-    try{ localStorage.setItem('bgt3',JSON.stringify(S)); }catch(e){}
+    const newS=JSON.parse(raw);
+    // validate expected top-level keys before touching anything
+    if(!newS||typeof newS!=='object'||!newS.months||!newS.settings||!newS.calc)
+      throw new Error('bad-data');
+    // write to localStorage BEFORE mutating S — if setItem throws, S is unchanged
+    localStorage.setItem('bgt3',JSON.stringify(newS));
+    S=newS;
     loadCalcUI(); recalc();
     buildMonthNav(); renderDashboard(); renderMonth();
     const now=new Date();
     saveSyncConfig({ token:cfg.token, gistId:cfg.gistId, lastPush:now.toISOString() });
     updateSyncBadge('synced','Synced '+now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
-  } catch(e){ updateSyncBadge('error','Sync failed'); }
+  } catch(e){
+    try{ S=JSON.parse(backup); }catch(_){}
+    updateSyncBadge('error', e.message==='bad-data'?'Sync failed — bad data':'Sync failed');
+  }
 }

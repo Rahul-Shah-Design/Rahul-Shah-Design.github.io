@@ -29,5 +29,5 @@ function saveTransaction(){
   const tx={id:Date.now(),date,amount,desc};
   if(S.modalType==='expense'){tx.cat=cat;d.expenses.push(tx);}
   else d.incomes.push(tx);
-  persist(); closeModal(); renderMonth(); buildMonthNav();
+  persist(); schedulePush(); closeModal(); renderMonth(); buildMonthNav();
 }

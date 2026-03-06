@@ -99,6 +99,7 @@ function recalc(){
 
   recalcSplit();
   persist();
+  schedulePush();
 }
 
 function recalcSplit(){
@@ -140,6 +141,7 @@ function applyToTracker(){
   S.settings.paycheckAmount=parseFloat(takeHome.toFixed(2));
   S.settings.paycheckCount=freq===24?2:freq===26?2:freq===12?1:4;
   persist();
+  schedulePush();
   const btn=document.getElementById('apply-btn');
   btn.textContent='✓ Applied!'; btn.style.background='var(--green)';
   clearTimeout(_applyTimer);

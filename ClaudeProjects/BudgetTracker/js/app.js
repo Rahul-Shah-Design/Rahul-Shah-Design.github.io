@@ -55,7 +55,7 @@ function saveSyncModal(){
   const existing=loadSyncConfig();
   saveSyncConfig({ token, gistId: gistId||existing.gistId||'' });
   closeSyncModal();
-  pushToGist();
+  pullFromGist();
 }
 
 function disconnectSync(){
@@ -72,9 +72,15 @@ document.addEventListener('keydown',e=>{
 });
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-hydrate();
-document.getElementById('chart-year-label').textContent=S.currentYear;
-buildMonthNav();
-renderDashboard();
-initSyncBadge();
-pullFromGist();
+(async function init(){
+  hydrate();
+  document.getElementById('chart-year-label').textContent=S.currentYear;
+  buildMonthNav();
+  renderDashboard();
+  initSyncBadge();
+  const cfg=loadSyncConfig();
+  if(cfg.token&&cfg.gistId){
+    await pullFromGist();
+  }
+  initialPullComplete=true;
+})();

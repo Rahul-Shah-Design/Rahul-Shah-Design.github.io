@@ -106,6 +106,7 @@ function renderChart(){
 function saveStartingSavings(val){
   S.settings.startingSavings=+val||0;
   persist();
+  schedulePush();
   renderChart();
 }
 

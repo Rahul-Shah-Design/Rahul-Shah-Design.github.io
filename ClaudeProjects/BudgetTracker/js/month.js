@@ -43,7 +43,7 @@ function deleteTx(type,id){
   const{currentYear:y,currentMonth:m}=S, d=getMonth(y,m);
   if(type==='expense')d.expenses=d.expenses.filter(t=>t.id!==id);
   else d.incomes=d.incomes.filter(t=>t.id!==id);
-  persist(); renderMonth(); buildMonthNav();
+  persist(); schedulePush(); renderMonth(); buildMonthNav();
 }
 
 function openMonth(m,y){

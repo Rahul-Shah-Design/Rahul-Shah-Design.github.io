@@ -42,12 +42,21 @@ function getMonth(y,m){
 }
 
 function persist(){
-  try{ localStorage.setItem('bgt3',JSON.stringify(S)); }catch(e){}
-  if(typeof schedulePush==='function') schedulePush();
+  try{ localStorage.setItem('bgt3',JSON.stringify(S)); }catch(e){
+    if(typeof updateSyncBadge==='function') updateSyncBadge('error','Storage full');
+  }
 }
 function hydrate(){
   try{
     const r=localStorage.getItem('bgt3');
-    if(r){ const d=JSON.parse(r); S={...S,...d}; }
+    if(r){
+      const d=JSON.parse(r);
+      S.settings = {...S.settings, ...(d.settings||{})};
+      S.calc     = {...S.calc,     ...(d.calc||{})};
+      S.months   = d.months||{};
+      if('currentYear'  in d) S.currentYear  = d.currentYear;
+      if('currentMonth' in d) S.currentMonth = d.currentMonth;
+      if('modalType'    in d) S.modalType    = d.modalType;
+    }
   }catch(e){}
 }
