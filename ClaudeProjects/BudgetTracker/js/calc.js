@@ -13,12 +13,12 @@ function calcFed(taxableAnnual){
 // ─── PAYCHECK CALCULATOR ────────────────────────────────────────────────────
 function resetTaxes(){
   const c=S.calc;
-  c.fedOverride=false; c.fedManual=715;
-  c.stateDollar=123.79; c.localDollar=83.40;
+  c.fedOverride=false; c.fedManual=0;
+  c.stateDollar=0; c.localDollar=0;
   document.getElementById('c-fed-override').checked=false;
   document.getElementById('c-fed-manual').style.display='none';
-  document.getElementById('c-state-dollar').value=123.79;
-  document.getElementById('c-local-dollar').value=83.40;
+  document.getElementById('c-state-dollar').value=0;
+  document.getElementById('c-local-dollar').value=0;
   persist(); recalc();
 }
 function recalc(){
@@ -117,6 +117,7 @@ function recalcSplit(){
   document.getElementById('bar-save').style.width =Math.min(c.spSave,100)+'%';
 }
 
+let _applyTimer=null;
 function applyToTracker(){
   const c=S.calc;
   const m=c._monthlyNet||S.settings.paycheckAmount*S.settings.paycheckCount;
@@ -141,7 +142,8 @@ function applyToTracker(){
   persist();
   const btn=document.getElementById('apply-btn');
   btn.textContent='✓ Applied!'; btn.style.background='var(--green)';
-  setTimeout(()=>{ btn.textContent='Apply to Budget Tracker →'; btn.style.background='var(--accent)'; },2500);
+  clearTimeout(_applyTimer);
+  _applyTimer=setTimeout(()=>{ btn.textContent='Apply to Budget Tracker →'; btn.style.background='var(--accent)'; },2500);
 }
 
 function loadCalcUI(){

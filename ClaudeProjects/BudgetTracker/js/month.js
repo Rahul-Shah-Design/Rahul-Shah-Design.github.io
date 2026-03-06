@@ -1,3 +1,6 @@
+// ─── ESCAPE UTILITY ──────────────────────────────────────────────────────────
+function esc(s){ const d=document.createElement('div'); d.textContent=String(s); return d.innerHTML; }
+
 // ─── MONTH VIEW ──────────────────────────────────────────────────────────────
 function renderMonth(){
   const{currentYear:y,currentMonth:m}=S;
@@ -22,8 +25,10 @@ function renderExpenses(){
   const data=getMonth(y,m), tbody=document.getElementById('expense-tbody');
   if(!data.expenses.length){tbody.innerHTML=`<tr class="empty-row"><td colspan="5">No expenses yet</td></tr>`;return;}
   tbody.innerHTML=data.expenses.map(tx=>{
-    const amt=+tx.amount,cl=(tx.cat||'Needs').toLowerCase();
-    return`<tr><td style="color:var(--muted);font-size:12px;">${tx.date||'—'}</td><td class="amount-${cl}">${amt<0?'-':''}$${Math.abs(amt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td>${tx.desc||'—'}</td><td><span class="cat-badge ${cl}">${tx.cat}</span></td><td><button class="del-btn" onclick="deleteTx('expense',${tx.id})">×</button></td></tr>`;
+    const amt=+tx.amount;
+    const rawCat=tx.cat||'Needs';
+    const cl=['needs','wants','savings'].includes(rawCat.toLowerCase())?rawCat.toLowerCase():'needs';
+    return`<tr><td style="color:var(--muted);font-size:12px;">${esc(tx.date||'—')}</td><td class="amount-${cl}">${amt<0?'-':''}$${Math.abs(amt).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td>${esc(tx.desc||'—')}</td><td><span class="cat-badge ${cl}">${esc(rawCat)}</span></td><td><button class="del-btn" data-type="expense" data-id="${Number(tx.id)}">×</button></td></tr>`;
   }).join('');
 }
 
@@ -31,7 +36,7 @@ function renderIncomes(){
   const{currentYear:y,currentMonth:m}=S;
   const data=getMonth(y,m), tbody=document.getElementById('income-tbody');
   if(!data.incomes.length){tbody.innerHTML=`<tr class="empty-row"><td colspan="4">No income yet</td></tr>`;return;}
-  tbody.innerHTML=data.incomes.map(tx=>`<tr><td style="color:var(--muted);font-size:12px;">${tx.date||'—'}</td><td style="color:var(--green)">$${(+tx.amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td>${tx.desc||'—'}</td><td><button class="del-btn" onclick="deleteTx('income',${tx.id})">×</button></td></tr>`).join('');
+  tbody.innerHTML=data.incomes.map(tx=>`<tr><td style="color:var(--muted);font-size:12px;">${esc(tx.date||'—')}</td><td style="color:var(--green)">$${(+tx.amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td>${esc(tx.desc||'—')}</td><td><button class="del-btn" data-type="income" data-id="${Number(tx.id)}">×</button></td></tr>`).join('');
 }
 
 function deleteTx(type,id){
@@ -58,6 +63,16 @@ function navigateMonth(dir){
   const t=document.querySelector(`[data-month="${S.currentMonth}"]`);
   if(t)t.classList.add('active');
 }
+
+// ─── DELETE BUTTON EVENT DELEGATION ─────────────────────────────────────────
+document.getElementById('expense-tbody').addEventListener('click',function(e){
+  const btn=e.target.closest('.del-btn');
+  if(btn) deleteTx(btn.dataset.type, Number(btn.dataset.id));
+});
+document.getElementById('income-tbody').addEventListener('click',function(e){
+  const btn=e.target.closest('.del-btn');
+  if(btn) deleteTx(btn.dataset.type, Number(btn.dataset.id));
+});
 
 function buildMonthNav(){
   const nav=document.getElementById('month-nav'); nav.innerHTML='';

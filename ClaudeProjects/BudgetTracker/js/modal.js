@@ -21,6 +21,7 @@ function saveTransaction(){
   const raw=document.getElementById('modal-amount').value.trim();
   const amount=evalAmount(raw);
   if(!raw||isNaN(amount)){alert('Enter a valid amount or expression (e.g. 240+43-2).');return;}
+  if(!isFinite(amount)||Math.abs(amount)>1_000_000){alert('Amount must be a finite number under $1,000,000.');return;}
   const desc=document.getElementById('modal-desc').value.trim()||'—';
   const date=document.getElementById('modal-date').value;
   const cat=document.getElementById('modal-cat').value;
