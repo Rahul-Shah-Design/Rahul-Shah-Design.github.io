@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d0d0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GrindLog">
+<title>GrindLog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #15151a;
+    --surface2: #1c1c24;
+    --border: #2a2a36;
+    --accent: #c8f542;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --danger: #ff4d6d;
+    --radius: 14px;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    min-height: 100dvh;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: stretch;
+    padding: 16px 20px 0;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+
+  .logo {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    margin-right: auto;
+    padding-bottom: 14px;
+    display: flex;
+    align-items: center;
+  }
+  .logo span { color: var(--text); }
+
+  .nav-tab {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 0 14px 14px;
+    position: relative;
+    transition: color 0.2s;
+  }
+  .nav-tab.active { color: var(--text); }
+  .nav-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px 2px 0 0;
+  }
+
+  /* VIEWS */
+  .view { display: none; padding: 24px 20px 100px; animation: fadeUp 0.22s ease; }
+  .view.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  /* DATE HEADER */
+  .date-header { margin-bottom: 24px; }
+  .date-header .day-name {
+    font-family: var(--font-display);
+    font-size: 36px; font-weight: 800;
+    line-height: 1; letter-spacing: -1px;
+  }
+  .date-header .date-sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+  /* PULL-UP CARD */
+  .pullup-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px; margin-bottom: 16px;
+  }
+  .pullup-header {
+    display: flex; align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .pullup-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; }
+  .pullup-meta  { font-size: 11px; color: var(--muted); }
+
+  .sets-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+
+  .set-chip {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    width: 52px; height: 52px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    user-select: none;
+  }
+  .set-chip.done {
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    border-color: var(--accent);
+  }
+  .set-chip.locked { cursor: default; }
+  .set-chip .set-num {
+    font-family: var(--font-display);
+    font-size: 18px; font-weight: 800;
+    color: var(--text); line-height: 1;
+  }
+  .set-chip.done .set-num { color: var(--accent); }
+  .set-chip .set-label { font-size: 9px; color: var(--muted); letter-spacing: 0.05em; }
+
+  .total-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 12px; color: var(--muted);
+    display: inline-flex; gap: 4px; align-items: center;
+  }
+  .total-chip b { color: var(--text); }
+
+  /* CHECKLIST */
+  .checklist { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .check-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer; transition: all 0.15s; user-select: none;
+  }
+  .check-item.done {
+    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+    background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  }
+  .check-item.locked { cursor: default; pointer-events: none; }
+  .check-box {
+    width: 22px; height: 22px;
+    border-radius: 6px; border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.15s; font-size: 13px;
+  }
+  .check-item.done .check-box { background: var(--accent); border-color: var(--accent); color: #0d0d0f; }
+  .check-label { font-size: 14px; color: var(--text); flex: 1; }
+  .check-item.done .check-label { color: var(--muted); text-decoration: line-through; }
+  .check-emoji { font-size: 18px; }
+
+  /* BUTTONS */
+  .log-btn {
+    width: 100%; padding: 18px;
+    background: var(--accent); color: #0d0d0f;
+    border: none; border-radius: var(--radius);
+    font-family: var(--font-display); font-size: 17px; font-weight: 800;
+    letter-spacing: -0.3px; cursor: pointer;
+    transition: all 0.15s; margin-top: 8px;
+  }
+  .log-btn:hover  { background: #d4ff50; }
+  .log-btn:active { transform: scale(0.98); }
+
+  .logged-badge {
+    display: flex; align-items: center; gap: 10px;
+    background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    border-radius: var(--radius);
+    padding: 14px 18px; margin-top: 8px;
+    font-size: 13px; color: var(--accent);
+  }
+
+  /* REST BANNER */
+  .rest-note {
+    background: color-mix(in srgb, var(--muted) 8%, transparent);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px; font-size: 13px; color: var(--muted);
+    margin-bottom: 16px; text-align: center;
+  }
+  .rest-note b { color: var(--text); display: block; margin-bottom: 4px; font-family: var(--font-display); font-size: 15px; }
+
+  /* STAT GRID */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .stat-val { font-family: var(--font-display); font-size: 32px; font-weight: 800; color: var(--accent); line-height: 1; }
+  .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* STREAK DOTS */
+  .streak-bar { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
+  .streak-dot {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: var(--muted);
+  }
+  .streak-dot.full    { background: color-mix(in srgb, var(--accent) 22%, transparent); border-color: var(--accent); color: var(--accent); }
+  .streak-dot.partial { background: color-mix(in srgb, var(--accent) 8%, transparent);  border-color: color-mix(in srgb, var(--accent) 35%, transparent); color: color-mix(in srgb, var(--accent) 70%, transparent); }
+  .streak-dot.missed  { background: color-mix(in srgb, var(--danger) 8%, transparent);  border-color: color-mix(in srgb, var(--danger) 20%, transparent); color: var(--danger); }
+
+  .legend { display: flex; gap: 14px; margin-bottom: 24px; margin-top: 6px; flex-wrap: wrap; }
+  .legend span { font-size: 11px; color: var(--muted); }
+
+  /* HISTORY CARDS */
+  .history-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 10px; }
+  .history-date { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+  .history-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pill { font-size: 11px; padding: 3px 9px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); }
+  .pill.done { background: color-mix(in srgb, var(--accent) 15%, transparent); border-color: var(--accent); color: var(--accent); }
+
+  /* SETTINGS */
+  .settings-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+  .settings-card h3 { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+  .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-row label { font-size: 13px; color: var(--muted); }
+  .setting-row input[type=number] {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text);
+    font-family: var(--font-mono); font-size: 16px;
+    padding: 6px 12px; width: 72px; text-align: center;
+  }
+  .setting-row input[type=number]:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+
+  .action-btn { width: 100%; padding: 14px; border-radius: var(--radius); font-family: var(--font-mono); font-size: 13px; cursor: pointer; transition: all 0.15s; margin-top: 8px; }
+  .btn-accent { background: none; border: 1px solid var(--accent); color: var(--accent); }
+  .btn-accent:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  .btn-muted  { background: none; border: 1px solid var(--border); color: var(--muted); }
+  .btn-muted:hover  { background: var(--surface2); color: var(--text); border-color: var(--muted); }
+  .btn-danger { background: none; border: 1px solid var(--danger); color: var(--danger); }
+  .btn-danger:hover { background: color-mix(in srgb, var(--danger) 10%, transparent); }
+
+  .import-area {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text);
+    font-family: var(--font-mono); font-size: 12px;
+    padding: 10px 12px; resize: vertical; min-height: 80px;
+    margin-top: 8px;
+  }
+  .import-area:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 32px; left: 50%;
+    transform: translateX(-50%) translateY(16px);
+    background: var(--accent); color: #0d0d0f;
+    font-family: var(--font-display); font-weight: 700; font-size: 14px;
+    padding: 12px 22px; border-radius: 100px;
+    opacity: 0; transition: all 0.28s;
+    pointer-events: none; white-space: nowrap; z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Grind<span>Log</span></div>
+  <button class="nav-tab active" onclick="showView('today', this)">Today</button>
+  <button class="nav-tab"        onclick="showView('history', this)">History</button>
+  <button class="nav-tab"        onclick="showView('settings', this)">Config</button>
+</nav>
+
+<!-- ═══ TODAY ═══ -->
+<div class="view active" id="view-today">
+  <div class="date-header">
+    <div class="section-label">Daily Log</div>
+    <div class="day-name" id="day-name"></div>
+    <div class="date-sub"  id="date-sub"></div>
+  </div>
+
+  <div id="rest-day-banner" class="rest-note" style="display:none">
+    <b>Rest Day 🛌</b>
+    Fighter pull-ups take a break today. C25K + stretch still count!
+  </div>
+
+  <div id="pullup-section" class="pullup-card">
+    <div class="pullup-header">
+      <div class="pullup-title">Fighter Pull-Ups</div>
+      <div class="pullup-meta" id="pullup-meta"></div>
+    </div>
+    <div class="sets-row" id="sets-row"></div>
+    <div class="total-chip">Done: <b id="sets-done">0</b> / <b id="sets-max">0</b> reps</div>
+  </div>
+
+  <div class="checklist">
+    <div class="check-item" id="chk-c25k"    onclick="toggleCheck('c25k')">
+      <span class="check-emoji">🏃</span>
+      <span class="check-label">C25K session done</span>
+      <div class="check-box" id="box-c25k"></div>
+    </div>
+    <div class="check-item" id="chk-stretch" onclick="toggleCheck('stretch')">
+      <span class="check-emoji">🧘</span>
+      <span class="check-label">Morning stretch (10 min)</span>
+      <div class="check-box" id="box-stretch"></div>
+    </div>
+  </div>
+
+  <div id="log-area"></div>
+</div>
+
+<!-- ═══ HISTORY ═══ -->
+<div class="view" id="view-history">
+  <div class="section-label" style="margin-bottom:18px">Progress</div>
+  <div class="stat-grid"  id="stat-grid"></div>
+
+  <div class="section-label" style="margin-bottom:10px">Last 28 Days</div>
+  <div class="streak-bar" id="streak-bar"></div>
+  <div class="legend">
+    <span style="color:var(--accent)">■ Full day</span>
+    <span style="color:color-mix(in srgb, var(--accent) 55%, var(--muted))">■ Partial</span>
+    <span>■ Future</span>
+    <span style="color:var(--danger)">■ Missed</span>
+  </div>
+
+  <div class="section-label" style="margin-bottom:10px">Log Entries</div>
+  <div id="history-list"></div>
+</div>
+
+<!-- ═══ SETTINGS ═══ -->
+<div class="view" id="view-settings">
+  <div class="section-label" style="margin-bottom:18px">Configuration</div>
+
+  <div class="settings-card">
+    <h3>Fighter Pull-Up Program</h3>
+    <div class="setting-row">
+      <label>Program Day #</label>
+      <input type="number" id="cfg-day" min="1" max="9999">
+    </div>
+    <div class="setting-row">
+      <label>Current Max Reps</label>
+      <input type="number" id="cfg-max" min="1" max="99">
+    </div>
+    <div class="section-label" style="margin-top:14px;margin-bottom:6px">Sets preview</div>
+    <div class="sets-row" id="cfg-preview"></div>
+  </div>
+  <button class="action-btn btn-accent" onclick="saveSettings()">Save Changes</button>
+
+  <hr class="divider">
+
+  <div class="settings-card">
+    <h3>Export Data</h3>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6">
+      Download a full backup. Import it later on any device to restore or merge your data.
+    </div>
+    <button class="action-btn btn-muted" style="margin-top:0" onclick="exportJSON()">⬇ Download JSON backup</button>
+    <button class="action-btn btn-muted" onclick="exportCSV()">⬇ Download CSV (spreadsheet)</button>
+  </div>
+
+  <div class="settings-card">
+    <h3>Import Data</h3>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6">
+      Paste a previously exported JSON below. Existing entries are kept — imported data fills the gaps.
+    </div>
+    <textarea class="import-area" id="import-json" placeholder="Paste JSON backup here..."></textarea>
+    <button class="action-btn btn-accent" onclick="importJSON()">⬆ Import JSON</button>
+  </div>
+
+  <hr class="divider" style="margin-top:4px">
+  <button class="action-btn btn-danger" onclick="resetAll()">Reset All Data</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+const DB_KEY = 'grindlog_v1';
+
+function defaultState() {
+  return { programDay: 1, currentMax: 5, logs: {} };
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(DB_KEY);
+    if (!raw) return defaultState();
+    const s = JSON.parse(raw);
+    if (typeof s.programDay !== 'number' || s.programDay < 1) s.programDay = 1;
+    if (typeof s.currentMax  !== 'number' || s.currentMax  < 1) s.currentMax  = 5;
+    if (!s.logs || typeof s.logs !== 'object') s.logs = {};
+    return s;
+  } catch (e) {
+    console.warn('GrindLog: corrupt state, resetting.', e);
+    return defaultState();
+  }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(DB_KEY, JSON.stringify(state));
+  } catch (e) {
+    showToast('⚠ Save failed — storage full?');
+    console.error('GrindLog save error', e);
+  }
+}
+
+let state = loadState();
+
+// ═══════════════════════════════════════════════════════
+// FIGHTER PROGRAM LOGIC
+// ═══════════════════════════════════════════════════════
+// Structure: 5 active days + 1 rest day = 6-day cycle.
+// programDay 6, 12, 18, … are rest days.
+// Within each 5-day active block, sets descend from currentMax.
+// One set gains +1 rep per day, cycling bottom-up (set5 first).
+//
+// Day 1 of cycle: [max, max-1, max-2, max-3, max-4]
+// Day 2:          [max, max-1, max-2, max-3, max-3]  ← set5 +1
+// Day 3:          [max, max-1, max-2, max-2, max-3]  ← set4 +1
+// Day 4:          [max, max-1, max-1, max-2, max-3]  ← set3 +1
+// Day 5:          [max, max,   max-1, max-2, max-3]  ← set2 +1
+// Day 6: REST
+// Day 7 (next cycle, max already bumped to max+1):
+//                 [max+1, max, max-1, max-2, max-3]
+
+function isRestDay(programDay) {
+  return programDay % 6 === 0;
+}
+
+function getSetsForDay(programDay, currentMax) {
+  // cyclePos 1–5 for active days within a 6-day cycle
+  const cyclePos = ((programDay - 1) % 6) + 1;
+
+  // Base descending sets
+  const sets = [];
+  for (let i = 0; i < 5; i++) {
+    sets.push(Math.max(1, currentMax - i));
+  }
+
+  // Apply intra-cycle bottom-up increments
+  // cyclePos 1 → 0 increments; cyclePos 2 → set[4]++; cyclePos 3 → set[4]++, set[3]++; etc.
+  const numIncrements = cyclePos - 1;
+  for (let k = 0; k < numIncrements; k++) {
+    sets[4 - k] += 1;
+  }
+
+  return sets;
+}
+
+// Advance state after logging a day.
+// Max bumps when we hit a rest day (end of 5-day active block).
+function advanceProgramDay() {
+  state.programDay += 1;
+  // If we just landed on a rest day, bump max for the upcoming cycle.
+  if (isRestDay(state.programDay)) {
+    state.currentMax += 1;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// DATE UTILS
+// ═══════════════════════════════════════════════════════
+function todayKey() {
+  const d = new Date();
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, '0'),
+    String(d.getDate()).padStart(2, '0')
+  ].join('-');
+}
+
+function keyToDateObj(key) {
+  // Parse YYYY-MM-DD without timezone shift
+  const [y, m, d] = key.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function formatDateKey(key) {
+  return keyToDateObj(key).toLocaleDateString('en-US', {
+    weekday: 'short', month: 'short', day: 'numeric'
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// TEMP UI STATE (in-memory only, not persisted)
+// ═══════════════════════════════════════════════════════
+let tempSetsDone = [false, false, false, false, false];
+
+function resetTempState() {
+  tempSetsDone = [false, false, false, false, false];
+  ['c25k', 'stretch'].forEach(function(id) {
+    document.getElementById('chk-' + id).classList.remove('done');
+    document.getElementById('box-' + id).textContent = '';
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// TODAY VIEW
+// ═══════════════════════════════════════════════════════
+function renderToday() {
+  const key  = todayKey();
+  const now  = new Date();
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  document.getElementById('day-name').textContent = DAYS[now.getDay()];
+  document.getElementById('date-sub').textContent = now.toLocaleDateString('en-US', {
+    month: 'long', day: 'numeric', year: 'numeric'
+  });
+
+  const entry  = state.logs[key] || null;
+  const locked = !!entry;
+  const isRest = isRestDay(state.programDay);
+
+  // Rest / pull-up card visibility
+  document.getElementById('rest-day-banner').style.display = isRest ? 'block' : 'none';
+  document.getElementById('pullup-section').style.display  = isRest ? 'none'  : 'block';
+
+  if (!isRest) {
+    const sets = getSetsForDay(state.programDay, state.currentMax);
+    document.getElementById('pullup-meta').textContent = 'Day ' + state.programDay + ' · Max ' + state.currentMax;
+    renderSets(sets, locked, entry);
+  }
+
+  // Checkboxes
+  ['c25k', 'stretch'].forEach(function(id) {
+    var done    = locked ? !!(entry.checks && entry.checks[id]) : false;
+    var itemEl  = document.getElementById('chk-' + id);
+    var boxEl   = document.getElementById('box-' + id);
+    itemEl.classList.toggle('done',   done);
+    itemEl.classList.toggle('locked', locked);
+    boxEl.textContent = done ? '✓' : '';
+  });
+
+  // Log area
+  var logArea = document.getElementById('log-area');
+  if (locked) {
+    logArea.innerHTML = '<div class="logged-badge">✓ Logged at ' + (entry.time || 'today') + '</div>';
+  } else {
+    logArea.innerHTML = '<button class="log-btn" onclick="logDay()">Log Today</button>';
+  }
+}
+
+function renderSets(sets, locked, entry) {
+  var row      = document.getElementById('sets-row');
+  var totalRep = sets.reduce(function(a, b) { return a + b; }, 0);
+  row.innerHTML = '';
+
+  sets.forEach(function(reps, i) {
+    var isDone = locked
+      ? !!(entry && entry.setsDone && entry.setsDone[i])
+      : tempSetsDone[i];
+
+    var chip = document.createElement('div');
+    chip.className = 'set-chip' + (isDone ? ' done' : '') + (locked ? ' locked' : '');
+    chip.innerHTML = '<span class="set-num">' + reps + '</span><span class="set-label">set ' + (i + 1) + '</span>';
+
+    if (!locked) {
+      chip.addEventListener('click', (function(idx, chipEl) {
+        return function() {
+          tempSetsDone[idx] = !tempSetsDone[idx];
+          chipEl.classList.toggle('done', tempSetsDone[idx]);
+          updateDoneTotal(sets);
+        };
+      })(i, chip));
+    }
+    row.appendChild(chip);
+  });
+
+  document.getElementById('sets-max').textContent  = totalRep;
+
+  if (locked && entry && entry.setsDone) {
+    var donePts = entry.setsDone.reduce(function(sum, d, i) { return sum + (d ? sets[i] : 0); }, 0);
+    document.getElementById('sets-done').textContent = donePts;
+  } else {
+    updateDoneTotal(sets);
+  }
+}
+
+function updateDoneTotal(sets) {
+  var done = tempSetsDone.reduce(function(sum, d, i) { return sum + (d ? sets[i] : 0); }, 0);
+  document.getElementById('sets-done').textContent = done;
+}
+
+function toggleCheck(id) {
+  var itemEl = document.getElementById('chk-' + id);
+  if (itemEl.classList.contains('locked')) return;
+  var isDone = itemEl.classList.toggle('done');
+  document.getElementById('box-' + id).textContent = isDone ? '✓' : '';
+}
+
+function logDay() {
+  var key    = todayKey();
+  var isRest = isRestDay(state.programDay);
+  var sets   = isRest ? null : getSetsForDay(state.programDay, state.currentMax);
+  var now    = new Date();
+  var time   = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+  state.logs[key] = {
+    time:     time,
+    isRest:   isRest,
+    sets:     sets,
+    setsDone: isRest ? null : tempSetsDone.slice(),
+    checks: {
+      c25k:    document.getElementById('chk-c25k').classList.contains('done'),
+      stretch: document.getElementById('chk-stretch').classList.contains('done')
+    }
+  };
+
+  advanceProgramDay();
+  resetTempState();
+  saveState();
+  showToast(isRest ? 'Rest day logged 🛌' : 'Logged! 💪');
+  renderToday();
+}
+
+// ═══════════════════════════════════════════════════════
+// HISTORY VIEW
+// ═══════════════════════════════════════════════════════
+function renderHistory() {
+  var logs   = Object.entries(state.logs).sort(function(a, b) { return b[0].localeCompare(a[0]); });
+  var today  = todayKey();
+
+  // Stats
+  var totalDays   = logs.length;
+  var c25kDays    = logs.filter(function(e) { return e[1].checks && e[1].checks.c25k; }).length;
+  var stretchDays = logs.filter(function(e) { return e[1].checks && e[1].checks.stretch; }).length;
+
+  // Streak: count consecutive days going back from today
+  var streak = 0;
+  for (var i = 0; i < 365; i++) {
+    var d = new Date();
+    d.setDate(d.getDate() - i);
+    var k = [d.getFullYear(), String(d.getMonth()+1).padStart(2,'0'), String(d.getDate()).padStart(2,'0')].join('-');
+    if (state.logs[k]) {
+      streak++;
+    } else if (i === 0) {
+      // Today not logged yet — don't break, keep checking yesterday
+      continue;
+    } else {
+      break;
+    }
+  }
+
+  document.getElementById('stat-grid').innerHTML =
+    '<div class="stat-card"><div class="stat-val">' + streak + '</div><div class="stat-lbl">Day streak</div></div>' +
+    '<div class="stat-card"><div class="stat-val">' + totalDays + '</div><div class="stat-lbl">Total logged</div></div>' +
+    '<div class="stat-card"><div class="stat-val">' + c25kDays + '</div><div class="stat-lbl">C25K runs</div></div>' +
+    '<div class="stat-card"><div class="stat-val">' + stretchDays + '</div><div class="stat-lbl">Stretch days</div></div>';
+
+  // 28-day dot grid
+  var bar = document.getElementById('streak-bar');
+  bar.innerHTML = '';
+  for (var j = 27; j >= 0; j--) {
+    var dd = new Date();
+    dd.setDate(dd.getDate() - j);
+    var key   = [dd.getFullYear(), String(dd.getMonth()+1).padStart(2,'0'), String(dd.getDate()).padStart(2,'0')].join('-');
+    var entry = state.logs[key];
+    var dot   = document.createElement('div');
+    dot.className = 'streak-dot';
+    dot.title = key;
+
+    if (key > today) {
+      // future — unstyled
+    } else if (!entry) {
+      if (key < today) dot.classList.add('missed');
+    } else {
+      var pullsDone  = !entry.isRest && entry.setsDone && entry.setsDone.some(Boolean);
+      var maxScore   = entry.isRest ? 2 : 3;
+      var score      = [
+        entry.checks && entry.checks.c25k,
+        entry.checks && entry.checks.stretch,
+        pullsDone
+      ].filter(Boolean).length;
+
+      if (score >= maxScore) dot.classList.add('full');
+      else if (score > 0)    dot.classList.add('partial');
+      else                   dot.classList.add('missed');
+    }
+
+    dot.innerHTML = '<span>' + dd.getDate() + '</span>';
+    bar.appendChild(dot);
+  }
+
+  // Log entries list
+  var list = document.getElementById('history-list');
+  if (logs.length === 0) {
+    list.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:32px 0">No logs yet — go crush it!</div>';
+    return;
+  }
+
+  list.innerHTML = logs.slice(0, 60).map(function(pair) {
+    var key   = pair[0];
+    var entry = pair[1];
+    var pills = [];
+
+    if (!entry.isRest && entry.sets) {
+      var total = entry.sets.reduce(function(a, b) { return a + b; }, 0);
+      var done  = (entry.setsDone)
+        ? entry.setsDone.reduce(function(sum, d, i) { return sum + (d ? entry.sets[i] : 0); }, 0)
+        : 0;
+      pills.push('<span class="pill done">💪 ' + done + '/' + total + ' reps</span>');
+    }
+    if (entry.isRest)                pills.push('<span class="pill">😴 Rest</span>');
+    if (entry.checks && entry.checks.c25k)    pills.push('<span class="pill done">🏃 C25K</span>');
+    if (entry.checks && entry.checks.stretch) pills.push('<span class="pill done">🧘 Stretch</span>');
+    if (!pills.length)               pills.push('<span class="pill">— nothing checked</span>');
+
+    return '<div class="history-card">' +
+      '<div class="history-date">' + formatDateKey(key) + ' · ' + (entry.time || '') + '</div>' +
+      '<div class="history-pills">' + pills.join('') + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// SETTINGS VIEW
+// ═══════════════════════════════════════════════════════
+function renderSettings() {
+  document.getElementById('cfg-day').value = state.programDay;
+  document.getElementById('cfg-max').value = state.currentMax;
+  updatePreview();
+}
+
+function updatePreview() {
+  var day     = parseInt(document.getElementById('cfg-day').value, 10);
+  var max     = parseInt(document.getElementById('cfg-max').value, 10);
+  var preview = document.getElementById('cfg-preview');
+
+  if (!day || !max || day < 1 || max < 1) {
+    preview.innerHTML = '<span style="color:var(--muted);font-size:12px">Enter valid values</span>';
+    return;
+  }
+  if (isRestDay(day)) {
+    preview.innerHTML = '<span style="color:var(--muted);font-size:12px">Rest day — no sets</span>';
+    return;
+  }
+  var sets = getSetsForDay(day, max);
+  preview.innerHTML = sets.map(function(r, i) {
+    return '<div class="set-chip locked"><span class="set-num">' + r + '</span><span class="set-label">set ' + (i+1) + '</span></div>';
+  }).join('');
+}
+
+function saveSettings() {
+  var day = parseInt(document.getElementById('cfg-day').value, 10);
+  var max = parseInt(document.getElementById('cfg-max').value, 10);
+  if (!day || !max || day < 1 || max < 1) { showToast('⚠ Invalid values'); return; }
+  state.programDay = day;
+  state.currentMax = max;
+  saveState();
+  showToast('Saved ✓');
+  renderToday();
+}
+
+function resetAll() {
+  if (!confirm('Reset ALL data? This cannot be undone.')) return;
+  state = defaultState();
+  saveState();
+  resetTempState();
+  showToast('Reset complete');
+  renderToday();
+}
+
+// ═══════════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ═══════════════════════════════════════════════════════
+function exportJSON() {
+  var payload = { exportedAt: new Date().toISOString(), version: 1, state: state };
+  downloadFile('grindlog-backup.json', JSON.stringify(payload, null, 2), 'application/json');
+  showToast('JSON downloaded ✓');
+}
+
+function exportCSV() {
+  var rows = [['date','day_of_week','is_rest','pull_up_total','pull_up_done','c25k','stretch','time']];
+  var sorted = Object.entries(state.logs).sort(function(a, b) { return a[0].localeCompare(b[0]); });
+
+  sorted.forEach(function(pair) {
+    var key   = pair[0];
+    var entry = pair[1];
+    var dt    = keyToDateObj(key);
+    var dow   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dt.getDay()];
+    var pullTotal = (!entry.isRest && entry.sets) ? entry.sets.reduce(function(a,b){return a+b;},0) : '';
+    var pullDone  = (!entry.isRest && entry.sets && entry.setsDone)
+      ? entry.setsDone.reduce(function(sum, d, i) { return sum + (d ? entry.sets[i] : 0); }, 0) : '';
+
+    rows.push([
+      key, dow,
+      entry.isRest ? 'yes' : 'no',
+      pullTotal, pullDone,
+      (entry.checks && entry.checks.c25k)    ? 'yes' : 'no',
+      (entry.checks && entry.checks.stretch) ? 'yes' : 'no',
+      entry.time || ''
+    ]);
+  });
+
+  var csv = rows.map(function(r) {
+    return r.map(function(v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(',');
+  }).join('\n');
+  downloadFile('grindlog-export.csv', csv, 'text/csv');
+  showToast('CSV downloaded ✓');
+}
+
+function importJSON() {
+  var raw = document.getElementById('import-json').value.trim();
+  if (!raw) { showToast('⚠ Paste JSON first'); return; }
+
+  var parsed;
+  try { parsed = JSON.parse(raw); }
+  catch (e) { showToast('⚠ Invalid JSON'); return; }
+
+  // Accept either wrapped export or bare state
+  var imported = parsed.state || parsed;
+  if (!imported || typeof imported.logs !== 'object') {
+    showToast('⚠ Unrecognized format');
+    return;
+  }
+
+  // Merge: existing entries take priority
+  state.logs = Object.assign({}, imported.logs, state.logs);
+
+  // Adopt imported program position only if we're still at defaults
+  if (state.programDay === 1 && state.currentMax === 5) {
+    state.programDay = imported.programDay || 1;
+    state.currentMax = imported.currentMax || 5;
+  }
+
+  saveState();
+  document.getElementById('import-json').value = '';
+  showToast('Imported ' + Object.keys(imported.logs).length + ' entries ✓');
+  renderToday();
+}
+
+function downloadFile(filename, content, mimeType) {
+  var blob = new Blob([content], { type: mimeType });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href     = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+}
+
+// ═══════════════════════════════════════════════════════
+// NAV  — receives tabEl explicitly, no implicit `event`
+// ═══════════════════════════════════════════════════════
+function showView(id, tabEl) {
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById('view-' + id).classList.add('active');
+  tabEl.classList.add('active');
+  if (id === 'today')    renderToday();
+  if (id === 'history')  renderHistory();
+  if (id === 'settings') renderSettings();
+}
+
+// ═══════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════
+var toastTimer = null;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2400);
+}
+
+// ═══════════════════════════════════════════════════════
+// SETTINGS INPUTS — attached directly (DOM is ready here)
+// ═══════════════════════════════════════════════════════
+document.getElementById('cfg-day').addEventListener('input', updatePreview);
+document.getElementById('cfg-max').addEventListener('input', updatePreview);
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+renderToday();
+</script>
+
+<script>
+// PWA manifest (blob URL — install-to-homescreen hint)
+(function() {
+  try {
+    var m = {
+      name: 'GrindLog', short_name: 'GrindLog',
+      description: 'Daily fitness tracker — pull-ups, C25K, mobility',
+      start_url: './', display: 'standalone',
+      background_color: '#0d0d0f', theme_color: '#0d0d0f',
+      icons: [{ src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d0d0f'/><text y='72' x='10' font-size='68'>💪</text></svg>", sizes: 'any', type: 'image/svg+xml' }]
+    };
+    var b = new Blob([JSON.stringify(m)], { type: 'application/json' });
+    var l = document.createElement('link');
+    l.rel = 'manifest'; l.href = URL.createObjectURL(b);
+    document.head.appendChild(l);
+  } catch(e) {}
+
+  // Register real service worker for offline support
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('./sw.js').then(function(reg) {
+        console.log('GrindLog SW registered:', reg.scope);
+      }).catch(function(err) {
+        console.warn('GrindLog SW registration failed:', err);
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>
