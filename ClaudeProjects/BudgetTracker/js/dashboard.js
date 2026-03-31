@@ -10,7 +10,7 @@ function renderStats(){
   const c=calcMonthTotals(cy,cm);
   const d=getMonth(cy,cm);
   const income=d.incomes.reduce((sum,tx)=>sum+(+tx.amount||0),0);
-  const netSavings=income-c.needs-c.wants;
+  const netSavings=income-c.needs-c.wants-c.savings;
   const nb=S.settings.needsBudget, wb=S.settings.wantsBudget, sb=S.settings.savingsBudget;
   const pct=(v,b)=>Math.min(100,Math.round(Math.abs(v)/Math.max(b,1)*100));
   const diff=(v,b)=>{const d=v-b; return d>0?`<span class="over">+$${d.toFixed(0)} over</span>`:`<span class="under">$${Math.abs(d).toFixed(0)} under</span>`;};
@@ -27,7 +27,20 @@ function renderStats(){
 let chart=null;
 function renderChart(){
   const nd=[],wd=[],cs=[]; let run=S.settings.startingSavings||0;
-  for(let m=0;m<12;m++){const c=calcMonthTotals(S.currentYear,m);nd.push(c.needs);wd.push(c.wants);run+=c.savings;cs.push(run);}
+  for(let m=0;m<12;m++){
+    const _md=S.months[mkey(S.currentYear,m)];
+    const hasData=!!(_md&&_md.expenses&&_md.expenses.length>0);
+    const c=calcMonthTotals(S.currentYear,m);
+    nd.push(c.needs);wd.push(c.wants);
+    if(hasData){
+      const md=getMonth(S.currentYear,m);
+      const inc=md.incomes.reduce((sum,tx)=>sum+(+tx.amount||0),0);
+      run+=inc-c.needs-c.wants-c.savings;
+    } else {
+      run+=S.settings.savingsBudget;
+    }
+    cs.push(run);
+  }
   const nb=Array(12).fill(S.settings.needsBudget), wb=Array(12).fill(S.settings.wantsBudget);
   const ctx=document.getElementById('mainChart').getContext('2d');
   if(chart)chart.destroy();
