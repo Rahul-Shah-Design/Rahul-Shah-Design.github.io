@@ -46,6 +46,19 @@ This repo is a GitHub Pages portfolio of small tools and experiments vibe coded 
 | Budget Tracker | `ClaudeProjects/BudgetTracker/` | Single-file budgeting SPA with paycheck calculator and YTD dashboard |
 | User State Map | `ClaudeProjects/User State Map/` | Interactive US map of college destination flows by state |
 
+## Employer-Specific Portfolio Pages
+
+Some pages are tailored portfolios built for a specific job application, not general vibe-coded projects. These live at the **repo root** (not under `ClaudeProjects/`) so the URL is short and memorable, e.g. `rahul-shah-design.github.io/modern-classroom-project`.
+
+- **Folder name** = URL slug, kebab-case, named after the employer/role (e.g. `modern-classroom-project/`).
+- **`index.html`** inside that folder is the page — GitHub Pages serves folder/`index.html` at `/folder-name`.
+- These are NOT added as cards to the main portfolio `index.html` — they're for direct-link sharing with a specific employer, not general browsing.
+- Single-file HTML convention still applies (inline CSS/JS, no build step).
+
+| Page | Folder | Built for |
+|---|---|---|
+| Modern Classrooms Project pitch | `modern-classroom-project/` | Application to Modern Classrooms Project |
+
 ## GitHub Pages
 
 This site is served via GitHub Pages from the `main` branch root. The portfolio is live at:
