@@ -329,10 +329,8 @@
 
   /* ---------- FLOATING HEAD / SPEECH ---------- */
   .talker{
-    position:absolute; left:-14px; bottom:-30px;
     display:flex; align-items:flex-end; gap:12px;
-    max-width:78%;
-    z-index:6;
+    max-width:78%; margin:0 auto 24px;
   }
   .avatar{
     width:56px; height:56px; border-radius:50%;
@@ -425,7 +423,7 @@
     .ds-grid{ grid-template-columns:1fr; }
     /* stack the avatar under the bubble so the text gets the full card width */
     .talker{
-      position:static; margin-top:20px; max-width:100%; width:100%;
+      max-width:100%; width:100%; margin:0 0 20px;
       flex-direction:column-reverse; align-items:flex-start; gap:10px;
     }
     .talker .bubble{ width:100%; font-size:14.5px; padding:15px 17px; }
@@ -519,17 +517,16 @@
             <div class="k" id="cap-k-chiron">Slide 1 of 5</div>
             <div class="scribble-strip" id="strip-chiron"></div>
           </div>
+          <div class="talker">
+            <div class="avatar">RS</div>
+            <div class="bubble" id="bubble-chiron">Every student hits a wall at a different concept. I wanted a tutor that notices the wall and stops to work through it — Socratically, not by handing over the answer.</div>
+          </div>
           <div class="device">
             <span class="placeholder-label" id="ph-chiron">[ placeholder UI — Chiron ]</span>
           </div>
           <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
             <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
           </button>
-
-          <div class="talker">
-            <div class="avatar">RS</div>
-            <div class="bubble" id="bubble-chiron">Every student hits a wall at a different concept. I wanted a tutor that notices the wall and stops to work through it — Socratically, not by handing over the answer.</div>
-          </div>
         </div>
       </div>
     </div>
@@ -563,17 +560,16 @@
             <div class="k" id="cap-k-students">Slide 1 of 6</div>
             <div class="scribble-strip" id="strip-students"></div>
           </div>
+          <div class="talker">
+            <div class="avatar">RS</div>
+            <div class="bubble" id="bubble-students">I redesigned our onboarding for better completion rates and better data quality. I worked with developers to solve critical problems with our flow.</div>
+          </div>
           <div class="device filled">
             <img id="img-students" src="" alt="">
           </div>
           <button class="nav-arrow right" data-dir="1" data-target="students" aria-label="Next slide">
             <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
           </button>
-
-          <div class="talker">
-            <div class="avatar">RS</div>
-            <div class="bubble" id="bubble-students">I redesigned our onboarding for better completion rates and better data quality. I worked with developers to solve critical problems with our flow.</div>
-          </div>
         </div>
       </div>
     </div>
@@ -607,17 +603,16 @@
             <div class="k" id="cap-k-educators">Slide 1 of 4</div>
             <div class="scribble-strip" id="strip-educators"></div>
           </div>
+          <div class="talker">
+            <div class="avatar">RS</div>
+            <div class="bubble" id="bubble-educators">A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.</div>
+          </div>
           <div class="device filled tall">
             <img id="img-educators" src="" alt="">
           </div>
           <button class="nav-arrow right" data-dir="1" data-target="educators" aria-label="Next slide">
             <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
           </button>
-
-          <div class="talker">
-            <div class="avatar">RS</div>
-            <div class="bubble" id="bubble-educators">A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.</div>
-          </div>
         </div>
       </div>
     </div>
