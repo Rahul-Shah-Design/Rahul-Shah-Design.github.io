@@ -437,6 +437,9 @@
       border-radius:0; padding:0; min-height:0;
     }
     .device.filled{ box-shadow:0 2px 14px rgba(24,35,56,0.10); }
+    /* without the card behind it, the track needs its own fill so the
+       grid lines don't read through the scribbles */
+    .scribble-extended{ background:var(--paper); }
     .nav-arrow.left{ left:-2px; }
     .nav-arrow.right{ right:-2px; }
     /* tighten the vertical rhythm now that the card isn't holding it apart */
