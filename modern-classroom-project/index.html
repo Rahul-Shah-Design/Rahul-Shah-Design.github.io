@@ -99,7 +99,7 @@
   .eyebrow::before{
     content:''; width:26px; height:1px; background:var(--red);
   }
-  .mcp-logo{ height:32px; width:auto; display:block; }
+  .mcp-logo{ height:44px; width:auto; display:block; }
   .hero h1{
     font-size:52px; line-height:1.08; font-weight:500;
     letter-spacing:-0.015em; max-width:820px;
@@ -172,6 +172,9 @@
   }
   .scribble-extended{
     width:100%; overflow:hidden;
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:3px 12px;
   }
   .scribble-extended-inner{
     width:calc(100% * 6 / var(--n));
@@ -604,6 +607,7 @@
       autoplay: false,
       animationData: JSON.parse(JSON.stringify(SCRIBBLE_EXT_DATA))
     });
+    anim.setSpeed(1.5);
     const per = SCRIBBLE_EXT_DATA.op / SCRIBBLE_EXT_COUNT;
     let shown = 0;
     anim.addEventListener('DOMLoaded', ()=>{
