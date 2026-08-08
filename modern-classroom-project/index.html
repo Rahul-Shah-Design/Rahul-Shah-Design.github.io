@@ -429,7 +429,22 @@
     }
     .talker .bubble{ width:100%; font-size:14.5px; padding:15px 17px; }
     .talker .avatar{ width:46px; height:46px; font-size:16px; }
-    .stage{ padding:20px; }
+    /* drop the card entirely on phones — content sits on the paper and
+       reclaims the ~96px the wrap + card padding was eating */
+    .wrap{ padding:0 16px; }
+    .stage{
+      background:none; border:none; box-shadow:none;
+      border-radius:0; padding:0; min-height:0;
+    }
+    .device.filled{ box-shadow:0 2px 14px rgba(24,35,56,0.10); }
+    .nav-arrow.left{ left:-2px; }
+    .nav-arrow.right{ right:-2px; }
+    /* tighten the vertical rhythm now that the card isn't holding it apart */
+    .slideshow{ margin-bottom:44px; }
+    section.case{ padding:46px 0 6px; }
+    .ds-section{ padding:46px 0; }
+    .resume-section{ padding:46px 0 70px; }
+    .hero{ padding:56px 0 48px; }
     .resume-doc{ padding:36px 24px; }
     .topnav{ display:none; }
   }
