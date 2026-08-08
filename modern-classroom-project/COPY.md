@@ -33,7 +33,7 @@ Rahul Shah — for Modern Classrooms Project
 > You need a designer who ships pixels and understands mastery learning.
 > Hi, I'm Rahul.
 
-*The word “and” is italic and red.*
+*The word “and” is italic and red. Your name is highlighted in yellow.*
 
 **Intro paragraph:**
 

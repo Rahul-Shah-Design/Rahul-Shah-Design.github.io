@@ -53,8 +53,9 @@
   .hl-mark{
     background-color:var(--hl-yellow);
     mix-blend-mode:multiply;
-    padding:0 3px;
-    border-radius:2px;
+    /* em-based so the swipe stays proportional at headline and body sizes */
+    padding:0 0.18em;
+    border-radius:0.06em;
   }
 
   .wrap{ max-width:var(--wrap); margin:0 auto; padding:0 28px; position:relative; }
@@ -477,7 +478,7 @@
       <div class="eyebrow">Prepared for
         <img class="mcp-logo" src="mcp-logo.png" alt="Modern Classrooms Project" width="1009" height="285">
       </div>
-      <h1>You need a designer who ships pixels <em>and</em> understands mastery learning.<br>Hi, I'm Rahul.</h1>
+      <h1>You need a designer who ships pixels <em>and</em> understands mastery learning.<br>Hi, I'm <span class="hl-mark">Rahul</span>.</h1>
       <p class="hero-sub">
         I design end-to-end for K-12 products — journey maps to shipped UI to the copy in an error message —
         with a masters grounded in <span class="hl-mark">mastery learning theory</span> and an accessibility practice that treats WCAG
