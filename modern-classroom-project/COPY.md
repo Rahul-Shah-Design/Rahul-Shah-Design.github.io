@@ -31,13 +31,13 @@ Rahul Shah — for Modern Classrooms Project
 **Headline:**
 
 > You need a designer who ships pixels and understands mastery learning.
-> Here's evidence of both.
+> Hi, I'm Rahul.
 
 *The word “and” is italic and red.*
 
 **Intro paragraph:**
 
-> I design end-to-end for K-12 products — journey maps to shipped UI to the copy in an error message — with a masters grounded in mastery learning theory and an accessibility practice that treats WCAG as an input, not an afterthought. Three projects below, picked specifically for this role.
+> I design end-to-end for K-12 products — journey maps to shipped UI to the copy in an error message — with a masters grounded in mastery learning theory and an accessibility practice that treats WCAG as an input, not an afterthought. Explore three projects below, picked specifically for this role.
 
 *“mastery learning theory” is highlighted in yellow.*
 
@@ -59,7 +59,7 @@ Rahul Shah — for Modern Classrooms Project
 
 **Intro paragraph:**
 
-> A Socratic-dialogue adaptive tutor, grounded in mastery learning theory — my M.S. thesis project. It's the closest thing I have to a prototype of the pedagogy MCP is built on. Rough, real, and still evolving.
+> A Socratic-dialogue adaptive tutor, grounded in mastery learning theory — my M.S. thesis project. It's the closest thing I have to a prototype of the pedagogy MCP is built on.
 
 ### Slide captions — 5 slides
 
@@ -83,7 +83,7 @@ Rahul Shah — for Modern Classrooms Project
 
 **Title:** Encourage — redesigning onboarding under a 100% content increase
 
-**Status note:** Shipped
+**Status note:** Shipping Back to School 2026
 
 **Intro paragraph:**
 
@@ -93,17 +93,17 @@ Rahul Shah — for Modern Classrooms Project
 
 *Spoken by the RS avatar under each screenshot.*
 
-**1.** I broke the survey into small, self-contained steps — pick-your-path tags with a running progress sidebar — so each step feels finishable.
+**1.** I redesigned our onboarding for better completion rates and better data quality. I worked with developers to solve critical problems with our flow.
 
-**2.** The old flow front-loaded every question into one long checklist. Teenagers bailed the moment it felt long.
+**2.** Here's the old design. Boxy, bland, and the one giant progress bar felt like a slog. I had been doodling new ideas for months in my spare time.
 
-**3.** Before any pixels: I mapped the old flow against the 2×-longer new one on paper, sticky-noting exactly where each step should break.
+**3.** We also saw frustration with students in the classroom getting stuck on account verification. We also had to double our survey length to align with other data streams.
 
-**4.** Big, tappable targets built for a phone in study hall, not a mouse — pick more than one, no wrong answer, just signal.
+**4.** I chunked the questions by topic, gave it a fresh new look, and added micro-interactions to keep up momentum. Hitting Next plays an animation for that section.
 
-**5.** Account verification got the same treatment — one clear next step, no dead ends.
+**5.** Developers quietly created an account at the beginning, moving verification to the end. We also let users change their email if they get stuck, in case their personal emails are blocked on school wifi.
 
-**6.** The first A/B test infrastructure built at Encoura: completion held at 83.69% even with 2× the questions — a 4.2-point dip, not a cliff.
+**6.** The first A/B test infrastructure built at Encoura: completion held at 83.69% even with 2× the questions, just a 4.2-point dip.
 
 ---
 
@@ -127,7 +127,7 @@ Rahul Shah — for Modern Classrooms Project
 
 **2.** Counselors don't hold one giant roster in their head — they think in class periods, graduation years, and caseloads. Groups mirror how they already organize their day.
 
-**3.** Not Connected, Invited, Pending, Ready. The dot was the easy part — the work was writing each tooltip so a counselor knows exactly what to do next, without asking anyone.
+**3.** I worked with developers to identify different stages of student onboarding. The statuses track these and give educators real time help on what a student needs to get unstuck.
 
 **4.** Filter, search, and read connection status inline. Students already in the group stay checked and dimmed, so what you're actually adding is never ambiguous.
 
