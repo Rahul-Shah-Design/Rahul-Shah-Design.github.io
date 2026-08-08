@@ -53,8 +53,9 @@
   .hl-mark{
     background-color:var(--hl-yellow);
     mix-blend-mode:multiply;
-    padding:0 3px;
-    border-radius:2px;
+    /* em-based so the swipe stays proportional at headline and body sizes */
+    padding:0 0.18em;
+    border-radius:0.06em;
   }
 
   .wrap{ max-width:var(--wrap); margin:0 auto; padding:0 28px; position:relative; }
@@ -477,11 +478,11 @@
       <div class="eyebrow">Prepared for
         <img class="mcp-logo" src="mcp-logo.png" alt="Modern Classrooms Project" width="1009" height="285">
       </div>
-      <h1>You need a designer who ships pixels <em>and</em> understands mastery learning.<br>Here's evidence of both.</h1>
+      <h1>You need a designer who ships pixels <em>and</em> understands mastery learning.<br>Hi, I'm <span class="hl-mark">Rahul</span>.</h1>
       <p class="hero-sub">
         I design end-to-end for K-12 products — journey maps to shipped UI to the copy in an error message —
         with a masters grounded in <span class="hl-mark">mastery learning theory</span> and an accessibility practice that treats WCAG
-        as an input, not an afterthought. Three projects below, picked specifically for this role.
+        as an input, not an afterthought. Explore three projects below, picked specifically for this role.
       </p>
       <div class="hero-tags">
         <span class="tag">K-12 UX, 5 years</span>
@@ -504,7 +505,7 @@
         </div>
         <p class="case-desc">
         A Socratic-dialogue adaptive tutor, grounded in mastery learning theory — my M.S. thesis project.
-        It's the closest thing I have to a prototype of the pedagogy MCP is built on. Rough, real, and still evolving.
+        It's the closest thing I have to a prototype of the pedagogy MCP is built on.
         </p>
         <div class="status-pill progress">In progress — thinking, not a finished product</div>
       </div>
@@ -550,7 +551,7 @@
         When the onboarding survey had to double in length, I used chunking and micro-interactions to keep it
         from feeling like a slog — then built the company's first in-app A/B testing infrastructure to validate it.
         </p>
-        <div class="status-pill shipped">Shipped</div>
+        <div class="status-pill shipped">Shipping Back to School 2026</div>
       </div>
 
       <div class="slideshow" id="ss-students">
@@ -571,7 +572,7 @@
 
           <div class="talker">
             <div class="avatar">RS</div>
-            <div class="bubble" id="bubble-students">I broke the survey into small, self-contained steps — pick-your-path tags with a running progress sidebar — so each step feels finishable.</div>
+            <div class="bubble" id="bubble-students">I redesigned our onboarding for better completion rates and better data quality. I worked with developers to solve critical problems with our flow.</div>
           </div>
         </div>
       </div>
@@ -690,12 +691,12 @@
         "The result: 83.69% completion, still"
       ],
       bubbles: [
-        "I broke the survey into small, self-contained steps — pick-your-path tags with a running progress sidebar — so each step feels finishable.",
-        "The old flow front-loaded every question into one long checklist. Teenagers bailed the moment it felt long.",
-        "Before any pixels: I mapped the old flow against the 2×-longer new one on paper, sticky-noting exactly where each step should break.",
-        "Big, tappable targets built for a phone in study hall, not a mouse — pick more than one, no wrong answer, just signal.",
-        "Account verification got the same treatment — one clear next step, no dead ends.",
-        "The first A/B test infrastructure built at Encoura: completion held at 83.69% even with 2× the questions — a 4.2-point dip, not a cliff."
+        "I redesigned our onboarding for better completion rates and better data quality. I worked with developers to solve critical problems with our flow.",
+        "Here's the old design. Boxy, bland, and the one giant progress bar felt like a slog. I had been doodling new ideas for months in my spare time.",
+        "We also saw frustration with students in the classroom getting stuck on account verification. We also had to double our survey length to align with other data streams.",
+        "I chunked the questions by topic, gave it a fresh new look, and added micro-interactions to keep up momentum. Hitting Next plays an animation for that section.",
+        "Developers quietly created an account at the beginning, moving verification to the end. We also let users change their email if they get stuck, in case their personal emails are blocked on school wifi.",
+        "The first A/B test infrastructure built at Encoura: completion held at 83.69% even with 2× the questions, just a 4.2-point dip."
       ],
       images: [
         "onboard-1.png",
@@ -717,7 +718,7 @@
       bubbles: [
         "A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.",
         "Counselors don't hold one giant roster in their head — they think in class periods, graduation years, and caseloads. Groups mirror how they already organize their day.",
-        "Not Connected, Invited, Pending, Ready. The dot was the easy part — the work was writing each tooltip so a counselor knows exactly what to do next, without asking anyone.",
+        "I worked with developers to identify different stages of student onboarding. The statuses track these and give educators real time help on what a student needs to get unstuck.",
         "Filter, search, and read connection status inline. Students already in the group stay checked and dimmed, so what you're actually adding is never ambiguous."
       ],
       images: [
