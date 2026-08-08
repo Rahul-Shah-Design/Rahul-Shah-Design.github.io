@@ -1,12 +1,7 @@
 # Page copy — Modern Classrooms Project
 
-Every piece of writing on the page, in the order it appears.
-Edit anything here, hand it back, and I'll put it into the page.
-
-**Heads up:** each slide has a short *caption* that is **not currently shown**.
-It stopped being displayed when the scribble progress bar took over that spot.
-They're listed below in case you want them back — tell me and I'll re-add them,
-or say the word and I'll delete them for good.
+Everything a visitor actually reads on the page, in the order they read it.
+Edit anything here and hand it back, and I'll put it into the page.
 
 ---
 
@@ -66,39 +61,19 @@ Rahul Shah — for Modern Classrooms Project
 
 > A Socratic-dialogue adaptive tutor, grounded in mastery learning theory — my M.S. thesis project. It's the closest thing I have to a prototype of the pedagogy MCP is built on. Rough, real, and still evolving.
 
-### Slides — 5 total
+### Slide captions — 5 slides
 
-*Bubble = what the RS avatar says under the screenshot. This is the copy people read.*
+*Spoken by the RS avatar under each screenshot.*
 
-**Slide 1**
+**1.** Every student hits a wall at a different concept. I wanted a tutor that notices the wall and stops to work through it — Socratically, not by handing over the answer.
 
-> Every student hits a wall at a different concept. I wanted a tutor that notices the wall and stops to work through it — Socratically, not by handing over the answer.
+**2.** I mapped the loop as question → student reasoning → targeted follow-up, not question → answer → next question.
 
-<sub>Hidden caption: The problem: one-size lectures don't teach mastery</sub>
+**3.** A student can't advance until they've actually demonstrated the reasoning, not just gotten lucky on an answer.
 
-**Slide 2**
+**4.** This part works today — rough UI, real logic underneath.
 
-> I mapped the loop as question → student reasoning → targeted follow-up, not question → answer → next question.
-
-<sub>Hidden caption: Sketching the dialogue loop</sub>
-
-**Slide 3**
-
-> A student can't advance until they've actually demonstrated the reasoning, not just gotten lucky on an answer.
-
-<sub>Hidden caption: Wireframing the check-for-understanding moment</sub>
-
-**Slide 4**
-
-> This part works today — rough UI, real logic underneath.
-
-<sub>Hidden caption: First working prototype</sub>
-
-**Slide 5**
-
-> Next: refining how the tutor decides when a student has truly mastered a concept vs. just pattern-matched it.
-
-<sub>Hidden caption: What's next</sub>
+**5.** Next: refining how the tutor decides when a student has truly mastered a concept vs. just pattern-matched it.
 
 ---
 
@@ -114,45 +89,21 @@ Rahul Shah — for Modern Classrooms Project
 
 > Encourage serves 150,000+ high school students on school-issued devices and unreliable wifi. When the onboarding survey had to double in length, I used chunking and micro-interactions to keep it from feeling like a slog — then built the company's first in-app A/B testing infrastructure to validate it.
 
-### Slides — 6 total
+### Slide captions — 6 slides
 
-*Bubble = what the RS avatar says under the screenshot. This is the copy people read.*
+*Spoken by the RS avatar under each screenshot.*
 
-**Slide 1**
+**1.** I broke the survey into small, self-contained steps — pick-your-path tags with a running progress sidebar — so each step feels finishable.
 
-> I broke the survey into small, self-contained steps — pick-your-path tags with a running progress sidebar — so each step feels finishable.
+**2.** The old flow front-loaded every question into one long checklist. Teenagers bailed the moment it felt long.
 
-<sub>Hidden caption: The fix: chunked, pick-your-path steps</sub>
+**3.** Before any pixels: I mapped the old flow against the 2×-longer new one on paper, sticky-noting exactly where each step should break.
 
-**Slide 2**
+**4.** Big, tappable targets built for a phone in study hall, not a mouse — pick more than one, no wrong answer, just signal.
 
-> The old flow front-loaded every question into one long checklist. Teenagers bailed the moment it felt long.
+**5.** Account verification got the same treatment — one clear next step, no dead ends.
 
-<sub>Hidden caption: The old flow: one long checklist</sub>
-
-**Slide 3**
-
-> Before any pixels: I mapped the old flow against the 2×-longer new one on paper, sticky-noting exactly where each step should break.
-
-<sub>Hidden caption: The whiteboard before the pixels</sub>
-
-**Slide 4**
-
-> Big, tappable targets built for a phone in study hall, not a mouse — pick more than one, no wrong answer, just signal.
-
-<sub>Hidden caption: Multi-select, built for thumbs</sub>
-
-**Slide 5**
-
-> Account verification got the same treatment — one clear next step, no dead ends.
-
-<sub>Hidden caption: Verification, same care</sub>
-
-**Slide 6**
-
-> The first A/B test infrastructure built at Encoura: completion held at 83.69% even with 2× the questions — a 4.2-point dip, not a cliff.
-
-<sub>Hidden caption: The result: 83.69% completion, still</sub>
+**6.** The first A/B test infrastructure built at Encoura: completion held at 83.69% even with 2× the questions — a 4.2-point dip, not a cliff.
 
 ---
 
@@ -168,33 +119,17 @@ Rahul Shah — for Modern Classrooms Project
 
 > The counselor-facing side of Encourage: rosters, student status tracking, and the tools guidance staff use daily to support hundreds of students at once. This is the closest analog to designing for teachers — someone managing many learners' progress at different paces, simultaneously.
 
-### Slides — 4 total
+### Slide captions — 4 slides
 
-*Bubble = what the RS avatar says under the screenshot. This is the copy people read.*
+*Spoken by the RS avatar under each screenshot.*
 
-**Slide 1**
+**1.** A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.
 
-> A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.
+**2.** Counselors don't hold one giant roster in their head — they think in class periods, graduation years, and caseloads. Groups mirror how they already organize their day.
 
-<sub>Hidden caption: The empty state does the teaching</sub>
+**3.** Not Connected, Invited, Pending, Ready. The dot was the easy part — the work was writing each tooltip so a counselor knows exactly what to do next, without asking anyone.
 
-**Slide 2**
-
-> Counselors don't hold one giant roster in their head — they think in class periods, graduation years, and caseloads. Groups mirror how they already organize their day.
-
-<sub>Hidden caption: Groups the way a counselor already thinks</sub>
-
-**Slide 3**
-
-> Not Connected, Invited, Pending, Ready. The dot was the easy part — the work was writing each tooltip so a counselor knows exactly what to do next, without asking anyone.
-
-<sub>Hidden caption: Four connection states, each with a next step</sub>
-
-**Slide 4**
-
-> Filter, search, and read connection status inline. Students already in the group stay checked and dimmed, so what you're actually adding is never ambiguous.
-
-<sub>Hidden caption: Adding students without losing your place</sub>
+**4.** Filter, search, and read connection status inline. Students already in the group stay checked and dimmed, so what you're actually adding is never ambiguous.
 
 ---
 
@@ -228,7 +163,7 @@ Rahul Shah — for Modern Classrooms Project
 
 ## Small print
 
-**Hint under the zoomed image:** Tap image to zoom · pinch to zoom further · Esc to close
+**Hint under a zoomed image:** Tap image to zoom · pinch to zoom further · Esc to close
 
 **Image descriptions** — read aloud by screen readers, never visible on screen:
 
