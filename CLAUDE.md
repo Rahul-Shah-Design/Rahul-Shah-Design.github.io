@@ -59,6 +59,39 @@ Some pages are tailored portfolios built for a specific job application, not gen
 |---|---|---|
 | Modern Classrooms Project pitch | `modern-classroom-project/` | Application to Modern Classrooms Project |
 
+## Previewing a Page as a Claude Artifact
+
+Design iteration happens in a Claude Artifact, which previews far faster than
+waiting on a Pages deploy. An Artifact renders under a CSP that blocks **every**
+external host, so it cannot use relative image paths or the Google Fonts `<link>`
+that the deployed page relies on.
+
+**Never hand-maintain a second copy for this.** That copy drifts, and the drift is
+invisible until it is published — a swapped asset breaks only in the Artifact, and
+missing `@font-face` rules silently fall back to Georgia, so design decisions get
+made against type the live page never uses. Both happened before this was automated.
+
+Generate it instead:
+
+```
+python3 tools/build-artifact.py                    # -> build/<page>.artifact.html
+python3 tools/build-artifact.py --page some-dir --out /tmp/x.html
+```
+
+The script treats `<page>/index.html` as the single source of truth and inlines
+every font, image, script and PDF as a `data:` URI, then **verifies** the result —
+it refuses to write a file that still holds an external URL, an un-inlined local
+asset (in markup *or* in a JS array), or leftover `<html>`/`<body>` scaffolding.
+
+Consequences for page code:
+
+- Write the page for **deployment**: relative paths, normal `<link>` to Google Fonts.
+- Any logic that inspects an asset URL must accept both forms, since the build
+  turns `"x.gif"` into `"data:image/gif;base64,…"`. Match on
+  `/(?:\.gif$|^data:image\/gif)/i`, not on the extension alone.
+- `build/` and `.artifact-cache/` are gitignored. Fonts are cached on first run so
+  later builds need no network; the build is byte-for-byte reproducible.
+
 ## GitHub Pages
 
 This site is served via GitHub Pages from the `main` branch root. The portfolio is live at:

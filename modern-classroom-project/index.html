@@ -357,28 +357,65 @@
     min-height:20px;
   }
 
-  /* ---------- DESIGN SYSTEM CALLOUT ---------- */
+  /* ---------- WHAT I'M KNOWN FOR — POLAROIDS ---------- */
   .ds-section{ padding:70px 0; }
-  .ds-head{ max-width:560px; margin-bottom:36px; }
+  .ds-head{ max-width:560px; margin-bottom:44px; }
   .ds-head .case-index{ margin-bottom:10px; display:block; }
   .ds-head h3{ font-size:26px; font-weight:500; }
-  .ds-grid{
-    display:grid; grid-template-columns:1fr 1fr; gap:20px;
+
+  .polaroid-row{
+    display:grid; grid-template-columns:repeat(3, 1fr);
+    gap:30px; justify-items:center;
+    /* room for the tilt + lifted hover state to not clip against neighbours */
+    padding:10px 0 18px;
   }
-  .ds-card{
-    background:var(--paper); border:1px solid var(--line);
-    border-radius:var(--radius); padding:26px;
+  .polaroid{
+    --tilt:0deg;
+    margin:0; width:100%; max-width:320px;
+    background:var(--paper);
+    padding:14px 14px 0;
+    border:1px solid var(--line);
+    border-radius:3px;
+    box-shadow:0 6px 18px var(--sticky-shadow);
+    transform:rotate(var(--tilt));
+    transition:transform .18s ease, box-shadow .18s ease;
   }
-  .ds-card .lbl{
-    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px;
-    letter-spacing:0.06em; text-transform:uppercase; margin-bottom:12px;
+  /* scattered, not stacked — uneven angles and drops read as tossed on a desk */
+  .polaroid:nth-child(1){ --tilt:-3deg;  margin-top:0;    }
+  .polaroid:nth-child(2){ --tilt:1.8deg; margin-top:18px; }
+  .polaroid:nth-child(3){ --tilt:-1.4deg; margin-top:6px; }
+  .polaroid:hover, .polaroid:focus-within{
+    transform:rotate(0deg) translateY(-5px);
+    box-shadow:0 14px 28px var(--sticky-shadow);
   }
-  .ds-card.before .lbl{ color:var(--ink-faint); }
-  .ds-card.after .lbl{ color:var(--mastery); }
-  .ds-card p{ font-size:15px; line-height:1.6; color:var(--ink-soft); }
-  .ds-note{
-    margin-top:20px; font-size:13.5px; color:var(--ink-faint); line-height:1.6;
-    max-width:640px;
+  .polaroid-photo{
+    aspect-ratio:1/1;
+    background-color:var(--sketch-tint);
+    background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><path d='M8,40 Q28,10 48,40 T88,40 T128,40 T168,40' stroke='%239FC1E8' stroke-width='2.5' fill='none' opacity='0.55' stroke-linecap='round'/><path d='M-12,95 Q8,60 28,95 T68,95 T108,95 T148,95' stroke='%239FC1E8' stroke-width='2.5' fill='none' opacity='0.4' stroke-linecap='round'/><path d='M15,145 Q35,120 55,145 T95,145 T135,145' stroke='%239FC1E8' stroke-width='2' fill='none' opacity='0.3' stroke-linecap='round'/></svg>");
+    background-size:170px 170px;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  .polaroid-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  /* the nav-bar clip is a wide strip, not a square — contain it instead of
+     cropping to ~1 icon, and match its own navy so the letterbox is invisible */
+  .polaroid-photo.contain{ background-color:#003359; background-image:none; }
+  .polaroid-photo.contain img{ object-fit:contain; }
+  .polaroid-photo .placeholder-label{
+    background:var(--paper); border:1px dashed var(--ink-faint);
+    padding:8px 12px; border-radius:8px;
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+    font-size:11px; letter-spacing:0.04em; color:var(--ink-faint);
+  }
+  .polaroid figcaption{
+    /* the wide bottom lip is what makes it read as a polaroid */
+    font-family:'Rock Salt', cursive; color:var(--pen);
+    font-size:13px; line-height:1.4; text-align:center;
+    padding:20px 4px 24px;
+  }
+  @media (prefers-reduced-motion:reduce){
+    .polaroid{ transition:none; }
+    .polaroid:hover, .polaroid:focus-within{ transform:rotate(var(--tilt)); }
   }
 
 
@@ -430,7 +467,11 @@
     .nav-arrow{ width:38px; height:38px; box-shadow:0 2px 10px rgba(24,35,56,0.18); }
     .nav-arrow.left{ left:6px; }
     .nav-arrow.right{ right:6px; }
-    .ds-grid{ grid-template-columns:1fr; }
+    /* one column, and drop the stagger — offsets only read as scatter in a row */
+    .polaroid-row{ grid-template-columns:1fr; gap:26px; }
+    .polaroid:nth-child(1),
+    .polaroid:nth-child(2),
+    .polaroid:nth-child(3){ margin-top:0; }
     /* stack the avatar under the bubble so the text gets the full card width */
     .talker{
       max-width:100%; width:100%; margin:0 0 20px;
@@ -633,20 +674,29 @@
     <div class="wrap">
       <div class="ds-head">
         <img class="doodle d-m4" src="doodle-mug.png" alt="">
-        <span class="case-index">04 — SYSTEMS WORK</span>
-        <h3>I own the Encourage design system — and made it stop needing to be owned</h3>
+        <span class="case-index">04 — WHAT I'M KNOWN FOR</span>
+        <h3>The three things teams pull me in for, whatever the project</h3>
       </div>
-      <div class="ds-grid">
-        <div class="ds-card before">
-          <div class="lbl">Before</div>
-          <p>Governance was a constant conversation. Every new component meant a thread, a meeting, a judgment call about consistency.</p>
-        </div>
-        <div class="ds-card after">
-          <div class="lbl">After</div>
-          <p>I re-architected it so the system holds its own shape. It's no longer a conversation — engineers and designers just compose from it.</p>
-        </div>
+      <div class="polaroid-row">
+        <figure class="polaroid">
+          <div class="polaroid-photo contain">
+            <img src="craft-micro.gif" alt="A bottom navigation bar with four tabs — Home, Profile, Explore, Feedback — cycling through hover and active states, each icon filling in or spinning as it's selected.">
+          </div>
+          <figcaption>Micro-interactions</figcaption>
+        </figure>
+        <figure class="polaroid">
+          <div class="polaroid-photo">
+            <img src="craft-analytics.webp" alt="A product analytics report: bar charts of saved colleges per visitor and mean saved colleges by grade level, above a table of summary statistics.">
+          </div>
+          <figcaption>User Analytics</figcaption>
+        </figure>
+        <figure class="polaroid">
+          <div class="polaroid-photo">
+            <img src="craft-design-system.webp" alt="Design system typography documentation: body text specimens annotated with font family, size, line height and letter spacing, with sticky notes tracking differences between products.">
+          </div>
+          <figcaption>Design Systems</figcaption>
+        </figure>
       </div>
-      <p class="ds-note">Side note: I used my learning design background to build and teach an internal course on motion/Lottie — several teammates now ship their own animations from it.</p>
     </div>
   </section>
 
@@ -794,7 +844,9 @@
         // edges; nudge it under the container's clip. scoped to the GIF because
         // the PNG screenshots have their own corner arcs that a bleed would drag
         // inside the radius and expose as black.
-        el.closest('.device').classList.toggle('bleed', /\.gif$/i.test(src));
+        // matches both the deployed path and the inlined data URI the artifact
+        // build produces, so the two copies never diverge in behaviour
+        el.closest('.device').classList.toggle('bleed', /(?:\.gif$|^data:image\/gif)/i.test(src));
       } else {
         document.getElementById('ph-' + key).textContent = `[ placeholder UI — slide ${idx+1} ]`;
       }

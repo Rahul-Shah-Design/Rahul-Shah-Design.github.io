@@ -1,0 +1,9 @@
+# Generated Artifact preview copies — rebuild with tools/build-artifact.py
+build/
+
+# Cached Google Fonts woff2 files, so rebuilds work without network
+.artifact-cache/
+
+# Python bytecode
+__pycache__/
+*.pyc
