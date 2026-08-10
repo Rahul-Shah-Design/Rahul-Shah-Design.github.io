@@ -1,14 +1,23 @@
 # CLAUDE.md — Rahul Shah Vibe Coded Portfolio
 
-This repo is a GitHub Pages portfolio of small tools and experiments vibe coded with Claude Code. The root `index.html` is the portfolio landing page that links out to individual projects.
+This repo is a GitHub Pages site with two halves: a **design portfolio** at the root, and a
+collection of small tools and experiments vibe coded with Claude Code under `ClaudeProjects/`.
+
+The root `index.html` is the design portfolio — case studies, craft polaroids, résumé. The
+vibe-coded projects have their own index at `ClaudeProjects/index.html`, which is deliberately
+**not linked from anywhere**; it is reachable only by typing the URL.
 
 ## Repo Structure
 
 ```
 /
-├── index.html                  ← Portfolio landing page (edit this to add new projects)
+├── index.html                  ← Design portfolio (the page people are sent to)
+├── assets/                     ← Images, résumé and Lottie bundle for the root page
 ├── CLAUDE.md                   ← This file
+├── tools/build-artifact.py     ← Builds a CSP-safe Artifact preview of any page
+├── modern-classroom-project/   ← Employer-tailored variant of the root page
 └── ClaudeProjects/
+    ├── index.html              ← Unlinked card grid of the vibe-coded projects
     ├── BudgetTracker/
     │   ├── budget-tracker.html
     │   └── CLAUDE.md
@@ -21,7 +30,10 @@ This repo is a GitHub Pages portfolio of small tools and experiments vibe coded 
 
 1. **Create a folder** inside `ClaudeProjects/` named after the project (PascalCase, no spaces preferred).
 2. **Build the project** inside that folder. Single-file HTML apps are the default — no build step, no npm, just a `.html` file that opens in the browser.
-3. **Add a card** to `index.html` inside the `<main class="projects">` section. Copy an existing card and update:
+3. **Add a card** to `ClaudeProjects/index.html` inside the `<main class="projects">` section — *not*
+   to the root `index.html`, which is the design portfolio. `href`s there are relative to
+   `ClaudeProjects/`, so a card points at `BudgetTracker/budget-tracker.html`, not
+   `ClaudeProjects/BudgetTracker/...`. Copy an existing card and update:
    - `href` — path to the project's HTML file
    - `--card-accent` — a hex color for the top border hover accent
    - `card-icon` — an emoji that fits the project
@@ -52,12 +64,19 @@ Some pages are tailored portfolios built for a specific job application, not gen
 
 - **Folder name** = URL slug, kebab-case, named after the employer/role (e.g. `modern-classroom-project/`).
 - **`index.html`** inside that folder is the page — GitHub Pages serves folder/`index.html` at `/folder-name`.
-- These are NOT added as cards to the main portfolio `index.html` — they're for direct-link sharing with a specific employer, not general browsing.
+- These are for direct-link sharing with a specific employer, not general browsing, so nothing links to them.
 - Single-file HTML convention still applies (inline CSS/JS, no build step).
 
 | Page | Folder | Built for |
 |---|---|---|
 | Modern Classrooms Project pitch | `modern-classroom-project/` | Application to Modern Classrooms Project |
+
+The root `index.html` and `modern-classroom-project/index.html` share a design: the root page is the
+general-audience version, the employer page is that same page with a "Prepared for" logo lockup and
+copy angled at one role. They are **separate files with separate asset copies** — the root page reads
+from `assets/`, the employer page from its own folder — so retargeting copy for one employer can never
+silently rewrite the page everyone else sees. The cost is that a swapped image (a new résumé, a new
+screenshot) has to be dropped in both places; check the other folder whenever you replace an asset.
 
 ## Previewing a Page as a Claude Artifact
 
@@ -76,6 +95,7 @@ Generate it instead:
 ```
 python3 tools/build-artifact.py                    # -> build/<page>.artifact.html
 python3 tools/build-artifact.py --page some-dir --out /tmp/x.html
+python3 tools/build-artifact.py --page . --out build/portfolio.artifact.html   # the root page
 ```
 
 The script treats `<page>/index.html` as the single source of truth and inlines
