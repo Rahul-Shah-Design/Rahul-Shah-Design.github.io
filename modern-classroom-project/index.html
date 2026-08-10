@@ -397,6 +397,10 @@
     overflow:hidden;
   }
   .polaroid-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  /* the nav-bar clip is a wide strip, not a square — contain it instead of
+     cropping to ~1 icon, and match its own navy so the letterbox is invisible */
+  .polaroid-photo.contain{ background-color:#003359; background-image:none; }
+  .polaroid-photo.contain img{ object-fit:contain; }
   .polaroid-photo .placeholder-label{
     background:var(--paper); border:1px dashed var(--ink-faint);
     padding:8px 12px; border-radius:8px;
@@ -675,8 +679,8 @@
       </div>
       <div class="polaroid-row">
         <figure class="polaroid">
-          <div class="polaroid-photo">
-            <img src="craft-micro.gif" alt="Four Encourage illustrations — a backpack, a school, a student, a piggy bank — each playing a looping micro-animation.">
+          <div class="polaroid-photo contain">
+            <img src="craft-micro.gif" alt="A bottom navigation bar with four tabs — Home, Profile, Explore, Feedback — cycling through hover and active states, each icon filling in or spinning as it's selected.">
           </div>
           <figcaption>Micro-interactions</figcaption>
         </figure>
