@@ -167,11 +167,11 @@
   }
   .hero h1 em{ font-style:italic; color:var(--red); font-weight:500; }
   .hero-sub{
-    margin-top:26px; max-width:620px; font-size:17px;
+    margin-top:32px; max-width:620px; font-size:17px;
     line-height:1.65; color:var(--ink-soft);
   }
   .hero-tags{
-    margin-top:38px; display:flex; gap:18px; flex-wrap:wrap;
+    margin-top:26px; display:flex; gap:18px; flex-wrap:wrap;
   }
   .tag{
     position:relative;
@@ -305,10 +305,20 @@
   .device.filled{
     max-width:860px; aspect-ratio:1401/770;
     background-color:var(--paper); background-image:none;
-    border:none; padding:0; overflow:hidden; border-radius:14px;
+    border:none; padding:0; border-radius:14px;
+    /* the onboarding GIF has ~11px black arcs baked into its corners where the
+       export flattened transparency out to black; the radius here is wider than
+       those arcs, so overflow:hidden clips them away. do not add an inward bleed
+       to "help" — it drags the educator PNGs' own corner arcs inside the radius
+       and reintroduces the black it was meant to remove. */
+    overflow:hidden;
   }
   .device.filled img{
     width:100%; height:100%; object-fit:cover; display:block;
+  }
+  /* GIF only — see render() */
+  .device.filled.bleed img{
+    width:calc(100% + 8px); height:calc(100% + 8px); margin:-4px;
   }
   .device.filled.tall{ aspect-ratio:1465/957; }
 
@@ -329,10 +339,8 @@
 
   /* ---------- FLOATING HEAD / SPEECH ---------- */
   .talker{
-    position:absolute; left:-14px; bottom:-30px;
     display:flex; align-items:flex-end; gap:12px;
-    max-width:78%;
-    z-index:6;
+    max-width:78%; margin:0 auto 24px;
   }
   .avatar{
     width:56px; height:56px; border-radius:50%;
@@ -425,7 +433,7 @@
     .ds-grid{ grid-template-columns:1fr; }
     /* stack the avatar under the bubble so the text gets the full card width */
     .talker{
-      position:static; margin-top:20px; max-width:100%; width:100%;
+      max-width:100%; width:100%; margin:0 0 20px;
       flex-direction:column-reverse; align-items:flex-start; gap:10px;
     }
     .talker .bubble{ width:100%; font-size:14.5px; padding:15px 17px; }
@@ -479,16 +487,16 @@
         <img class="mcp-logo" src="mcp-logo.png" alt="Modern Classrooms Project" width="1009" height="285">
       </div>
       <h1>You need a designer who ships pixels <em>and</em> understands mastery learning.<br>Hi, I'm <span class="hl-mark">Rahul</span>.</h1>
-      <p class="hero-sub">
-        I design end-to-end for K-12 products — journey maps to shipped UI to the copy in an error message —
-        with a masters grounded in <span class="hl-mark">mastery learning theory</span> and an accessibility practice that treats WCAG
-        as an input, not an afterthought. Explore three projects below, picked specifically for this role.
-      </p>
       <div class="hero-tags">
         <span class="tag">K-12 UX, 5 years</span>
         <span class="tag">WCAG 2.1 / CPACC in progress</span>
         <span class="tag">M.S. Learning Design & Technology</span>
       </div>
+      <p class="hero-sub">
+        I design end-to-end for K-12 products — journey maps to shipped UI to the copy in an error message —
+        with a masters grounded in <span class="hl-mark">mastery learning theory</span> and an accessibility practice that treats <span class="hl-mark">WCAG</span>
+        as an input, not an afterthought. Explore three projects below, picked specifically for this role.
+      </p>
     </div>
   </section>
 
@@ -519,17 +527,16 @@
             <div class="k" id="cap-k-chiron">Slide 1 of 5</div>
             <div class="scribble-strip" id="strip-chiron"></div>
           </div>
+          <div class="talker">
+            <div class="avatar">RS</div>
+            <div class="bubble" id="bubble-chiron">Every student hits a wall at a different concept. I wanted a tutor that notices the wall and stops to work through it — Socratically, not by handing over the answer.</div>
+          </div>
           <div class="device">
             <span class="placeholder-label" id="ph-chiron">[ placeholder UI — Chiron ]</span>
           </div>
           <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
             <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
           </button>
-
-          <div class="talker">
-            <div class="avatar">RS</div>
-            <div class="bubble" id="bubble-chiron">Every student hits a wall at a different concept. I wanted a tutor that notices the wall and stops to work through it — Socratically, not by handing over the answer.</div>
-          </div>
         </div>
       </div>
     </div>
@@ -563,17 +570,16 @@
             <div class="k" id="cap-k-students">Slide 1 of 6</div>
             <div class="scribble-strip" id="strip-students"></div>
           </div>
+          <div class="talker">
+            <div class="avatar">RS</div>
+            <div class="bubble" id="bubble-students">I redesigned our onboarding for better completion rates and better data quality. I worked with developers to solve critical problems with our flow.</div>
+          </div>
           <div class="device filled">
             <img id="img-students" src="" alt="">
           </div>
           <button class="nav-arrow right" data-dir="1" data-target="students" aria-label="Next slide">
             <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
           </button>
-
-          <div class="talker">
-            <div class="avatar">RS</div>
-            <div class="bubble" id="bubble-students">I redesigned our onboarding for better completion rates and better data quality. I worked with developers to solve critical problems with our flow.</div>
-          </div>
         </div>
       </div>
     </div>
@@ -607,17 +613,16 @@
             <div class="k" id="cap-k-educators">Slide 1 of 4</div>
             <div class="scribble-strip" id="strip-educators"></div>
           </div>
+          <div class="talker">
+            <div class="avatar">RS</div>
+            <div class="bubble" id="bubble-educators">A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.</div>
+          </div>
           <div class="device filled tall">
             <img id="img-educators" src="" alt="">
           </div>
           <button class="nav-arrow right" data-dir="1" data-target="educators" aria-label="Next slide">
             <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
           </button>
-
-          <div class="talker">
-            <div class="avatar">RS</div>
-            <div class="bubble" id="bubble-educators">A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.</div>
-          </div>
         </div>
       </div>
     </div>
@@ -782,7 +787,14 @@
       document.getElementById('cap-k-' + key).textContent = `Slide ${idx+1} of ${cfg.n}`;
       document.getElementById('bubble-' + key).textContent = cfg.bubbles[idx];
       if (cfg.images) {
-        document.getElementById('img-' + key).src = cfg.images[idx];
+        const src = cfg.images[idx];
+        const el = document.getElementById('img-' + key);
+        el.src = src;
+        // the onboarding GIF ships with a 1px dark stroke drawn around all four
+        // edges; nudge it under the container's clip. scoped to the GIF because
+        // the PNG screenshots have their own corner arcs that a bleed would drag
+        // inside the radius and expose as black.
+        el.closest('.device').classList.toggle('bleed', /\.gif$/i.test(src));
       } else {
         document.getElementById('ph-' + key).textContent = `[ placeholder UI — slide ${idx+1} ]`;
       }
