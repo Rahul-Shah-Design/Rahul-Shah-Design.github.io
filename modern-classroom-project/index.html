@@ -175,7 +175,7 @@
      sticky topbar -- so it greets a fresh page load and then scrolls away
      like any other content, rather than nagging the whole visit */
   .doodle-hint{
-    display:flex; align-items:flex-end; justify-content:flex-end; gap:5px;
+    display:flex; align-items:flex-end; justify-content:flex-end; gap:4px;
     max-width:var(--wrap); margin:0 auto; padding:2px 28px 0;
     color:var(--ink-faint); pointer-events:none;
   }
@@ -581,8 +581,12 @@
   </div>
 
   <div class="doodle-hint" aria-hidden="true">
-    <svg viewBox="0 0 70 65" width="34" height="32">
-      <path d="M22 54 C 38 54, 32 40, 22 20 C 30 15, 26 8, 18 11 C 12 13, 14 20, 22 20 C 34 20, 44 14, 50 8"
+    <!-- viewBox is cropped to the artwork (was 0 0 70 65 with ~20 units of dead
+         space to the right), so the tail actually ends near the text instead of
+         being held off by empty box. width/height keep the previous 0.5px-per-
+         unit scale, so the arrow is the same visual size, just not padded. -->
+    <svg viewBox="10 2 44 60" width="22" height="30">
+      <path d="M50 52 C 34 56, 25 40, 22 20 C 30 15, 26 8, 18 11 C 12 13, 14 20, 22 20 C 34 20, 44 14, 50 8"
             fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="M50 8 L 41 8 L 46 16 Z" fill="currentColor"/>
     </svg>
