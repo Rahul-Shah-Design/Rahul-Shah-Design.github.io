@@ -794,7 +794,9 @@
         // edges; nudge it under the container's clip. scoped to the GIF because
         // the PNG screenshots have their own corner arcs that a bleed would drag
         // inside the radius and expose as black.
-        el.closest('.device').classList.toggle('bleed', /\.gif$/i.test(src));
+        // matches both the deployed path and the inlined data URI the artifact
+        // build produces, so the two copies never diverge in behaviour
+        el.closest('.device').classList.toggle('bleed', /(?:\.gif$|^data:image\/gif)/i.test(src));
       } else {
         document.getElementById('ph-' + key).textContent = `[ placeholder UI — slide ${idx+1} ]`;
       }
