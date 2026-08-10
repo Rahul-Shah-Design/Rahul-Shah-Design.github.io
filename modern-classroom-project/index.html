@@ -303,9 +303,15 @@
     padding:10px 16px; border-radius:8px;
   }
   .device.filled{
-    max-width:860px; aspect-ratio:1465/834;
+    max-width:860px; aspect-ratio:1401/770;
     background-color:var(--paper); background-image:none;
-    border:none; padding:0; overflow:hidden; border-radius:14px;
+    border:none; padding:0; border-radius:14px;
+    /* the onboarding GIF has ~11px black arcs baked into its corners where the
+       export flattened transparency out to black; the radius here is wider than
+       those arcs, so overflow:hidden clips them away. do not add an inward bleed
+       to "help" — it drags the educator PNGs' own corner arcs inside the radius
+       and reintroduces the black it was meant to remove. */
+    overflow:hidden;
   }
   .device.filled img{
     width:100%; height:100%; object-fit:cover; display:block;
@@ -697,7 +703,7 @@
         "onboard-1.png",
         "onboard-2.png",
         "onboard-3.webp",
-        "onboard-4.webp",
+        "onboard-4.gif",
         "onboard-5.png",
         "onboard-6.png"
       ]
