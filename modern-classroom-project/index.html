@@ -548,7 +548,9 @@
     /* now that the card is gone, centre the arrows on the image rather than on
        the whole stage -- the stage also holds the caption, progress track and a
        bubble whose height varies with its text, which dragged them ~140px high */
-    .device-wrap{ position:relative; }
+    /* margin, not padding: padding would grow the wrapper and drag the
+       arrows' top:50% down off the image centre */
+    .device-wrap{ position:relative; margin-top:20px; }
     .nav-arrow.left{ left:-2px; }
     .nav-arrow.right{ right:-2px; }
     /* tighten the vertical rhythm now that the card isn't holding it apart */
