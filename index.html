@@ -343,7 +343,14 @@
     padding:10px 16px; border-radius:8px;
   }
   .device.filled{
-    max-width:860px; aspect-ratio:1401/770;
+    max-width:860px;
+    /* matches the five 1465x834 screenshots rather than the one GIF. At
+       1401/770 cover cropped ~6px off their top -- almost exactly the padding
+       the mockups carry above the browser window -- so they sat flush while the
+       educator slides, whose box matches their source, kept theirs. The GIF is
+       full-bleed with no padding to lose, so the slight side crop costs it
+       nothing. */
+    aspect-ratio:1465/834;
     background-color:var(--paper); background-image:none;
     border:none; padding:0; border-radius:14px;
     /* the onboarding GIF has ~11px black arcs baked into its corners where the
@@ -357,6 +364,13 @@
     width:100%; height:100%; object-fit:cover; display:block;
   }
   /* GIF only — see render() */
+  /* the GIF is 800x440 where the screenshots are 1465x834, so it gets its own
+     box. Sharing one box means cropping somebody: cover sliced the GIF's browser
+     chrome off at the sides, and contain letterboxed it, which lifted its baked-in
+     black corner arcs off the container edge where the radius was hiding them.
+     Its own aspect means every slide is cover with nothing cropped; the cost is
+     ~12px of height change stepping on and off slide 4. */
+  .device.filled.bleed{ aspect-ratio:800/440; }
   .device.filled.bleed img{
     width:calc(100% + 8px); height:calc(100% + 8px); margin:-4px;
   }
