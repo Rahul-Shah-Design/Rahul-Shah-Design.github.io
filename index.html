@@ -105,9 +105,12 @@
     opacity:0.42;
   }
   /* hero cluster, in the blank space right of the headline */
-  .d-h1{ top:-6px;  right:4px;   width:56px;  transform:rotate(-9deg); }
-  .d-h2{ top:186px; right:34px;  width:104px; transform:rotate(6deg); }
-  .d-h3{ top:322px; right:128px; width:74px;  transform:rotate(-4deg); }
+  /* widths are per-shape, not uniform: the crystal is tall and narrow (0.48
+     aspect) so it needs a much smaller width than the wide marks to carry the
+     same visual weight */
+  .d-h1{ top:-6px;  right:10px;  width:74px;  transform:rotate(-9deg); }
+  .d-h2{ top:176px; right:34px;  width:98px;  transform:rotate(6deg); }
+  .d-h3{ top:318px; right:132px; width:44px;  transform:rotate(-4deg); }
   /* margin doodles down the page — offsets stay inside the 130px gutter at 1300px */
   /* mountain sits in the right margin, moon in the left; each keeps its own
      size and tilt, only the side changes */
@@ -588,9 +591,9 @@
   <!-- HERO -->
   <section class="hero">
     <div class="wrap">
-      <img class="doodle d-h1" src="assets/doodle-moon.png" alt="">
-      <img class="doodle d-h2" src="assets/doodle-bird.png" alt="">
-      <img class="doodle d-h3" src="assets/doodle-mug.png" alt="">
+      <img class="doodle d-h1" src="assets/doodle-marks.png" alt="">
+      <img class="doodle d-h2" src="assets/doodle-canoe.png" alt="">
+      <img class="doodle d-h3" src="assets/doodle-crystal.png" alt="">
       <h1>A designer who ships pixels <em>and</em> understands how people learn.<br>Hi, I'm <span class="hl-mark">Rahul</span>.</h1>
       <div class="hero-tags">
         <span class="tag">K-12 UX, 5 years</span>
