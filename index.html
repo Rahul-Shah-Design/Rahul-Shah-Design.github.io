@@ -343,7 +343,14 @@
     padding:10px 16px; border-radius:8px;
   }
   .device.filled{
-    max-width:860px; aspect-ratio:1401/770;
+    max-width:860px;
+    /* matches the five 1465x834 screenshots rather than the one GIF. At
+       1401/770 cover cropped ~6px off their top -- almost exactly the padding
+       the mockups carry above the browser window -- so they sat flush while the
+       educator slides, whose box matches their source, kept theirs. The GIF is
+       full-bleed with no padding to lose, so the slight side crop costs it
+       nothing. */
+    aspect-ratio:1465/834;
     background-color:var(--paper); background-image:none;
     border:none; padding:0; border-radius:14px;
     /* the onboarding GIF has ~11px black arcs baked into its corners where the
@@ -357,6 +364,13 @@
     width:100%; height:100%; object-fit:cover; display:block;
   }
   /* GIF only — see render() */
+  /* the GIF is 800x440 where the screenshots are 1465x834, so it gets its own
+     box. Sharing one box means cropping somebody: cover sliced the GIF's browser
+     chrome off at the sides, and contain letterboxed it, which lifted its baked-in
+     black corner arcs off the container edge where the radius was hiding them.
+     Its own aspect means every slide is cover with nothing cropped; the cost is
+     ~12px of height change stepping on and off slide 4. */
+  .device.filled.bleed{ aspect-ratio:800/440; }
   .device.filled.bleed img{
     width:calc(100% + 8px); height:calc(100% + 8px); margin:-4px;
   }
@@ -375,6 +389,12 @@
   .slideshow.red .nav-arrow:hover{ background:var(--red-tint); border-color:var(--red); }
   .nav-arrow.left{ left:-18px; }
   .nav-arrow.right{ right:-18px; }
+  /* Deliberately static: the arrows are absolutely positioned and skip over a
+     static ancestor, so they keep resolving against .stage and every breakpoint
+     above mobile is untouched. It only becomes their containing block in the
+     mobile rule below, where the card is gone and centring on the stage leaves
+     them floating up by the avatar. */
+  .device-wrap{ position:static; width:100%; display:flex; justify-content:center; }
   .nav-arrow svg{ width:16px; height:16px; }
 
   /* ---------- FLOATING HEAD / SPEECH ---------- */
@@ -529,6 +549,12 @@
     /* without the card behind it, the track needs its own fill so the
        grid lines don't read through the scribbles */
     .scribble-extended{ background:var(--paper); }
+    /* now that the card is gone, centre the arrows on the image rather than on
+       the whole stage -- the stage also holds the caption, progress track and a
+       bubble whose height varies with its text, which dragged them ~140px high */
+    /* margin, not padding: padding would grow the wrapper and drag the
+       arrows' top:50% down off the image centre */
+    .device-wrap{ position:relative; margin-top:20px; }
     .nav-arrow.left{ left:-2px; }
     .nav-arrow.right{ right:-2px; }
     /* tighten the vertical rhythm now that the card isn't holding it apart */
@@ -637,9 +663,6 @@
 
       <div class="slideshow" id="ss-chiron">
                 <div class="stage">
-          <button class="nav-arrow left" data-dir="-1" data-target="chiron" aria-label="Previous slide">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
           <div class="frame-caption">
             <div class="k" id="cap-k-chiron">Slide 1 of 5</div>
             <div class="scribble-strip" id="strip-chiron"></div>
@@ -648,13 +671,19 @@
             <img class="avatar" src="assets/avatar-rahul.png" alt="Rahul Shah">
             <div class="bubble" id="bubble-chiron">Every student hits a wall at a different concept. I wanted a tutor that notices the wall and stops to work through it — Socratically, not by handing over the answer.</div>
           </div>
-          <div class="device">
-            <span class="placeholder-label" id="ph-chiron">[ placeholder UI — Chiron ]</span>
+        
+          <div class="device-wrap">
+            <button class="nav-arrow left" data-dir="-1" data-target="chiron" aria-label="Previous slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="device">
+              <span class="placeholder-label" id="ph-chiron">[ placeholder UI — Chiron ]</span>
+            </div>
+            <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
           </div>
-          <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
-        </div>
+</div>
       </div>
     </div>
   </section>
@@ -680,9 +709,6 @@
 
       <div class="slideshow" id="ss-students">
                 <div class="stage">
-          <button class="nav-arrow left" data-dir="-1" data-target="students" aria-label="Previous slide">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
           <div class="frame-caption">
             <div class="k" id="cap-k-students">Slide 1 of 6</div>
             <div class="scribble-strip" id="strip-students"></div>
@@ -691,13 +717,19 @@
             <img class="avatar" src="assets/avatar-rahul.png" alt="Rahul Shah">
             <div class="bubble" id="bubble-students">I redesigned our onboarding for better completion rates and better data quality. I worked with developers to solve critical problems with our flow.</div>
           </div>
-          <div class="device filled">
-            <img id="img-students" src="" alt="">
+        
+          <div class="device-wrap">
+            <button class="nav-arrow left" data-dir="-1" data-target="students" aria-label="Previous slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="device filled">
+              <img id="img-students" src="" alt="">
+            </div>
+            <button class="nav-arrow right" data-dir="1" data-target="students" aria-label="Next slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
           </div>
-          <button class="nav-arrow right" data-dir="1" data-target="students" aria-label="Next slide">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
-        </div>
+</div>
       </div>
     </div>
   </section>
@@ -723,9 +755,6 @@
 
       <div class="slideshow red" id="ss-educators">
                 <div class="stage">
-          <button class="nav-arrow left" data-dir="-1" data-target="educators" aria-label="Previous slide">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
           <div class="frame-caption">
             <div class="k" id="cap-k-educators">Slide 1 of 4</div>
             <div class="scribble-strip" id="strip-educators"></div>
@@ -734,13 +763,19 @@
             <img class="avatar" src="assets/avatar-rahul.png" alt="Rahul Shah">
             <div class="bubble" id="bubble-educators">A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.</div>
           </div>
-          <div class="device filled tall">
-            <img id="img-educators" src="" alt="">
+        
+          <div class="device-wrap">
+            <button class="nav-arrow left" data-dir="-1" data-target="educators" aria-label="Previous slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="device filled tall">
+              <img id="img-educators" src="" alt="">
+            </div>
+            <button class="nav-arrow right" data-dir="1" data-target="educators" aria-label="Next slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
           </div>
-          <button class="nav-arrow right" data-dir="1" data-target="educators" aria-label="Next slide">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
-        </div>
+</div>
       </div>
     </div>
   </section>
