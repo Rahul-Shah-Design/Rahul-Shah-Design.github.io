@@ -200,7 +200,7 @@
   }
 
   /* ---------- HERO ---------- */
-  .hero{ padding:96px 0 70px; }
+  .hero{ padding:80px 0 56px; }
   .eyebrow{
     font-family:'Rock Salt', cursive; font-size:13px;
     letter-spacing:0.01em; color:var(--red);
@@ -241,7 +241,7 @@
   .tag:nth-child(3){ background:var(--sticky-blue); transform:rotate(-1deg); }
 
   /* ---------- SECTION SCAFFOLD ---------- */
-  section.case{ padding:64px 0 10px; }
+  section.case{ padding:52px 0 10px; }
   .case-head{
     display:flex; align-items:flex-end; justify-content:space-between;
     flex-wrap:wrap; gap:16px; margin-bottom:10px;
@@ -297,7 +297,7 @@
 
   /* ---------- SLIDESHOW MODULE ---------- */
   .slideshow{
-    position:relative; margin-bottom:90px;
+    position:relative; margin-bottom:56px;
   }
   .scribble-strip{
     display:flex; justify-content:flex-start; align-items:center; gap:8px;
@@ -427,7 +427,7 @@
   }
 
   /* ---------- WHAT I'M KNOWN FOR — POLAROIDS ---------- */
-  .ds-section{ padding:70px 0; }
+  .ds-section{ padding:58px 0; }
   .ds-head{ max-width:560px; margin-bottom:44px; }
   .ds-head .case-index{ margin-bottom:10px; display:block; }
   .ds-head h3{ font-size:26px; font-weight:500; }
@@ -453,6 +453,10 @@
     box-shadow:0 6px 18px var(--sticky-shadow);
     transform:rotate(var(--tilt));
     transition:transform .18s ease, box-shadow .18s ease;
+    /* the delay lives on the resting state, so it applies on the way *back*
+       down -- the card holds its lift for a beat after the cursor leaves.
+       The :hover rule zeroes it so picking one up is still immediate. */
+    transition-delay:.14s;
   }
   /* scattered, not stacked — uneven angles and drops read as tossed on a desk */
   .polaroid:nth-child(1){ --tilt:-3deg;   margin-top:0;    }
@@ -462,6 +466,7 @@
   .polaroid:hover, .polaroid:focus-within{
     transform:rotate(0deg) translateY(-5px);
     box-shadow:0 14px 28px var(--sticky-shadow);
+    transition-delay:0s;
   }
   .polaroid-photo{
     aspect-ratio:1/1;
@@ -495,10 +500,10 @@
 
 
   /* ---------- RESUME ---------- */
-  .resume-section{ padding:70px 0 40px; }
+  .resume-section{ padding:56px 0 28px; }
 
   /* ---------- FOOTER ---------- */
-  .site-footer{ border-top:1px solid var(--line); padding:44px 0 64px; }
+  .site-footer{ border-top:1px solid var(--line); padding:40px 0 28px; }
   .footer-kicker{
     font-family:'Rock Salt', cursive; font-size:15px;
     color:var(--pen); margin-bottom:18px;
@@ -597,7 +602,8 @@
     .slideshow{ margin-bottom:44px; }
     section.case{ padding:46px 0 6px; }
     .ds-section{ padding:46px 0; }
-    .resume-section{ padding:46px 0 70px; }
+    .resume-section{ padding:46px 0 24px; }
+    .site-footer{ padding:34px 0 24px; }
     .hero{ padding:56px 0 48px; }
     .resume-doc{ padding:36px 24px; }
     .doodle-hint{ padding:2px 16px 0; }
