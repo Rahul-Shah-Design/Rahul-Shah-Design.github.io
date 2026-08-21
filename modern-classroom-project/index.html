@@ -503,7 +503,9 @@
   .resume-section{ padding:56px 0 28px; }
 
   /* ---------- FOOTER ---------- */
-  .site-footer{ border-top:1px solid var(--line); padding:40px 0 28px; }
+  /* no border-top: a 1px rule lands at an arbitrary point in the 28px grid
+     rhythm and reads as a stray line crossing the paper, not a divider */
+  .site-footer{ padding:40px 0 28px; }
   .footer-kicker{
     font-family:'Rock Salt', cursive; font-size:15px;
     color:var(--pen); margin-bottom:18px;
