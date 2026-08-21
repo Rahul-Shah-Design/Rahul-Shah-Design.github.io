@@ -138,12 +138,22 @@ def verify(html: str, page: Path) -> None:
     """Fail loudly rather than publish a page with a hole in it."""
     problems = []
 
-    for m in re.finditer(r"(?:src|href)=\"(?!data:|#|mailto:)([^\"]+)\"", html):
-        ref = m.group(1)
-        if ref.startswith(("http://", "https://")):
-            problems.append(f"external reference survives CSP-blocked: {ref[:80]}")
-        elif (page / ref).exists():
-            problems.append(f"local asset left as a relative path: {ref}")
+    for tag_m in re.finditer(r"<(\w+)\b([^>]*)>", html, re.S):
+        tag, attrs = tag_m.group(1).lower(), tag_m.group(2)
+        for m in re.finditer(r"(src|href)\s*=\s*\"([^\"]+)\"", attrs):
+            attr, ref = m.group(1), m.group(2)
+            if ref.startswith(("data:", "#", "mailto:", "tel:")):
+                continue
+            if ref.startswith(("http://", "https://")):
+                # an <a href> is somewhere the reader navigates *to*, not a
+                # subresource the page fetches, so the CSP has no say in it --
+                # only flag externals the browser would try to load inline
+                if not (tag == "a" and attr == "href"):
+                    problems.append(f"external reference survives CSP-blocked: {ref[:80]}")
+            elif (page / ref).exists():
+                # still applies to anchors: a local file has to be inlined or
+                # the link is dead once the page is lifted out of the repo
+                problems.append(f"local asset left as a relative path: {ref}")
 
     for m in re.finditer(r"[\"']([\w][\w ./-]*\.(?:png|jpe?g|gif|webp|svg|pdf))[\"']", html):
         if (page / m.group(1)).exists():
