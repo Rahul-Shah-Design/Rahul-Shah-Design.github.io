@@ -423,10 +423,15 @@
   .ds-head h3{ font-size:26px; font-weight:500; }
 
   .polaroid-row{
-    display:grid; grid-template-columns:repeat(3, 1fr);
-    gap:30px; justify-items:center;
+    display:grid; grid-template-columns:repeat(4, 1fr);
+    gap:22px; justify-items:center;
     /* room for the tilt + lifted hover state to not clip against neighbours */
     padding:10px 0 18px;
+  }
+  /* four across gets cramped before the mobile rule kicks in, so pair them up
+     in the middle range rather than letting each shrink toward unreadable */
+  @media (max-width:980px){
+    .polaroid-row{ grid-template-columns:repeat(2, 1fr); gap:26px; }
   }
   .polaroid{
     --tilt:0deg;
@@ -440,9 +445,10 @@
     transition:transform .18s ease, box-shadow .18s ease;
   }
   /* scattered, not stacked — uneven angles and drops read as tossed on a desk */
-  .polaroid:nth-child(1){ --tilt:-3deg;  margin-top:0;    }
-  .polaroid:nth-child(2){ --tilt:1.8deg; margin-top:18px; }
-  .polaroid:nth-child(3){ --tilt:-1.4deg; margin-top:6px; }
+  .polaroid:nth-child(1){ --tilt:-3deg;   margin-top:0;    }
+  .polaroid:nth-child(2){ --tilt:1.8deg;  margin-top:18px; }
+  .polaroid:nth-child(3){ --tilt:-1.4deg; margin-top:6px;  }
+  .polaroid:nth-child(4){ --tilt:2.4deg;  margin-top:14px; }
   .polaroid:hover, .polaroid:focus-within{
     transform:rotate(0deg) translateY(-5px);
     box-shadow:0 14px 28px var(--sticky-shadow);
@@ -479,7 +485,26 @@
 
 
   /* ---------- RESUME ---------- */
-  .resume-section{ padding:70px 0 100px; }
+  .resume-section{ padding:70px 0 40px; }
+
+  /* ---------- FOOTER ---------- */
+  .site-footer{ border-top:1px solid var(--line); padding:44px 0 64px; }
+  .footer-kicker{
+    font-family:'Rock Salt', cursive; font-size:15px;
+    color:var(--pen); margin-bottom:18px;
+  }
+  .footer-links{ display:flex; flex-wrap:wrap; gap:10px 26px; align-items:center; }
+  .footer-links a{
+    font-size:14px; color:var(--ink-soft); text-decoration:none;
+    border-bottom:1px solid var(--line); padding-bottom:2px;
+    transition:color .15s, border-color .15s;
+  }
+  .footer-links a:hover{ color:var(--pen-deep); border-color:var(--pen); }
+  .footer-links a:focus-visible{ outline:2px solid var(--pen); outline-offset:3px; }
+  .footer-note{
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px;
+    letter-spacing:0.04em; color:var(--ink-faint); margin-top:26px;
+  }
   .resume-head{
     display:flex; align-items:center; justify-content:space-between;
     margin-bottom:26px; flex-wrap:wrap; gap:14px;
@@ -530,7 +555,8 @@
     .polaroid-row{ grid-template-columns:1fr; gap:26px; }
     .polaroid:nth-child(1),
     .polaroid:nth-child(2),
-    .polaroid:nth-child(3){ margin-top:0; }
+    .polaroid:nth-child(3),
+    .polaroid:nth-child(4){ margin-top:0; }
     /* stack the avatar under the bubble so the text gets the full card width */
     .talker{
       max-width:100%; width:100%; margin:0 0 20px;
@@ -639,8 +665,8 @@
       <p class="hero-sub">
         I design end-to-end for K-12 products — journey maps to shipped UI to the copy in an error message —
         with a masters grounded in <span class="hl-mark">mastery learning theory</span> and an accessibility practice that treats <span class="hl-mark">WCAG</span>
-        as an input, not an afterthought. Explore three projects below — a thesis prototype, and work shipping
-        to 150,000+ students and the educators who guide them.
+        as an input, not an afterthought. Explore three projects below: a thesis prototype, plus shipped work
+        reaching 150,000+ students and the educators who guide them.
       </p>
     </div>
   </section>
@@ -702,11 +728,11 @@
           </div>
         </div>
         <p class="case-desc">
-        Encourage serves 150,000+ high school students on school-issued devices and unreliable wifi.
+        Encourage — Encoura&rsquo;s student app — serves 150,000+ high school students on school-issued devices and unreliable wifi.
         When the onboarding survey had to double in length, I used chunking and micro-interactions to keep it
         from feeling like a slog — then built the company's first in-app A/B testing infrastructure to validate it.
         </p>
-        <div class="status-pill shipped">Shipping Back to School 2026</div>
+        <div class="status-pill progress">Shipping Back to School 2026</div>
       </div>
 
       <div class="slideshow" id="ss-students">
@@ -788,7 +814,7 @@
       <div class="ds-head">
         <img class="doodle d-m4" src="assets/doodle-uxwuzhere.png" alt="">
         <span class="case-index">04 — WHAT I'M KNOWN FOR</span>
-        <h3>The three things teams pull me in for, whatever the project</h3>
+        <h3>What teams pull me in for, whatever the project</h3>
       </div>
       <div class="polaroid-row">
         <figure class="polaroid">
@@ -808,6 +834,12 @@
             <img src="assets/craft-design-system.webp" alt="A design system colour palette: eight named ramps — Navy, Seafoam, Neon, Orange, Fuschia, Mist, Teal and Sapphire — each stepped from darkest to lightest across numbered tint levels.">
           </div>
           <figcaption>Design Systems</figcaption>
+        </figure>
+        <figure class="polaroid">
+          <div class="polaroid-photo">
+            <span class="placeholder-label">[ image ]</span>
+          </div>
+          <figcaption>Cross-Platform</figcaption>
         </figure>
       </div>
     </div>
@@ -834,13 +866,6 @@
   const slideshows = {
     chiron: {
       n: 5,
-      captions: [
-        "The problem: one-size lectures don't teach mastery",
-        "Sketching the dialogue loop",
-        "Wireframing the check-for-understanding moment",
-        "First working prototype",
-        "What's next"
-      ],
       bubbles: [
         "Every student hits a wall at a different concept. I wanted a tutor that notices the wall and stops to work through it — Socratically, not by handing over the answer.",
         "I mapped the loop as question → student reasoning → targeted follow-up, not question → answer → next question.",
@@ -851,21 +876,13 @@
     },
     students: {
       n: 6,
-      captions: [
-        "The fix: chunked, pick-your-path steps",
-        "The old flow: one long checklist",
-        "The whiteboard before the pixels",
-        "Multi-select, built for thumbs",
-        "Verification, same care",
-        "The result: 83.69% completion, still"
-      ],
       bubbles: [
         "I redesigned our onboarding for better completion rates and better data quality. I worked with developers to solve critical problems with our flow.",
         "Here's the old design. Boxy, bland, and the one giant progress bar felt like a slog. I had been doodling new ideas for months in my spare time.",
-        "We also saw frustration with students in the classroom getting stuck on account verification. We also had to double our survey length to align with other data streams.",
+        "Watching students in classrooms, we saw them stall on account verification. At the same time the survey had to double in length to align with other data streams.",
         "I chunked the questions by topic, gave it a fresh new look, and added micro-interactions to keep up momentum. Hitting Next plays an animation for that section.",
-        "Developers quietly created an account at the beginning, moving verification to the end. We also let users change their email if they get stuck, in case their personal emails are blocked on school wifi.",
-        "The first A/B test infrastructure built at Encoura: completion held at 83.69% even with 2× the questions, just a 4.2-point dip."
+        "We moved account creation to the start, silently, and pushed verification to the end. Students can also swap their email if they get stuck, since personal inboxes are often blocked on school wifi.",
+        "The first A/B test infrastructure built at Encoura: completion held near 84% against 2× the questions — a 4.2-point dip."
       ],
       images: [
         "assets/onboard-1.png",
@@ -878,16 +895,10 @@
     },
     educators: {
       n: 4,
-      captions: [
-        "The empty state does the teaching",
-        "Groups the way a counselor already thinks",
-        "Four connection states, each with a next step",
-        "Adding students without losing your place"
-      ],
       bubbles: [
         "A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.",
         "Counselors don't hold one giant roster in their head — they think in class periods, graduation years, and caseloads. Groups mirror how they already organize their day.",
-        "I worked with developers to identify different stages of student onboarding. The statuses track these and give educators real time help on what a student needs to get unstuck.",
+        "I worked with developers to identify different stages of student onboarding. The statuses track these and give educators real-time help on what a student needs to get unstuck.",
         "Filter, search, and read connection status inline. Students already in the group stay checked and dimmed, so what you're actually adding is never ambiguous."
       ],
       images: [
@@ -1048,6 +1059,19 @@
   })();
 
 </script>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p class="footer-kicker">Let&rsquo;s talk</p>
+      <div class="footer-links">
+        <a href="mailto:rahulshah.design@gmail.com">rahulshah.design@gmail.com</a>
+        <a href="https://www.linkedin.com/in/rahul-shah-design/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">GitHub</a>
+        <a href="assets/resume.pdf" download="Rahul-Shah-Resume.pdf">R&eacute;sum&eacute; (PDF)</a>
+      </div>
+      <p class="footer-note">Designed and built by Rahul Shah</p>
+    </div>
+  </footer>
 
 <canvas id="doodle-ink" class="doodle-canvas" aria-hidden="true"></canvas>
 <canvas id="doodle-hl" class="doodle-canvas doodle-hl" aria-hidden="true"></canvas>
