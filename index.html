@@ -6,11 +6,54 @@
 <title>Rahul Shah — Product Design Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta name="theme-color" content="#FCFBF7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1520" media="(prefers-color-scheme: dark)">
+<script>
+  /* Runs before the first paint so a stored choice never shows up as a flash of
+     the other theme. No attribute at all means "follow the OS", which is what
+     the prefers-color-scheme block in the stylesheet handles. */
+  (function(){
+    try{
+      var saved = localStorage.getItem('rs-theme');
+      if(saved === 'dark' || saved === 'light'){
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    }catch(e){}
+  })();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Rock+Salt&display=swap" rel="stylesheet">
 <style>
+  /* ------------------------------------------------------------------
+     THEME TOKENS
+
+     Two families, and the split is the whole idea behind the dark theme:
+
+       --bg / --ink / --line / --pen / ...   the *page*. These flip.
+       --paper / --p-ink / --p-line / ...    ink laid on the white cards --
+                                             polaroids, slideshow cards, the
+                                             resume sheet. These do NOT flip,
+                                             because those cards stay light in
+                                             both themes: they frame light UI
+                                             screenshots, and a dark frame
+                                             around a white screenshot reads as
+                                             a mistake, not a theme.
+
+     So anything painted on the page uses the first family and anything sitting
+     on a card uses the second. In the light theme the two families hold the
+     same values, so light mode renders exactly as it did before the split --
+     the only thing that changed there is the switch in the top bar.
+
+     The one place they collide is mobile: under 720px the slideshow card is
+     dropped and its contents sit straight on the page, so the card family is
+     re-pointed at the page family for that breakpoint (see the 720px block).
+     ------------------------------------------------------------------ */
   :root{
+    color-scheme: light;
+
+    /* ---- the page ---- */
     --bg: #FCFBF7;
-    --paper: #FFFFFF;
+    --surface: #FFFFFF;                    /* small raised chrome on the page */
+    --topbar-bg: rgba(252,251,247,0.88);
     --ink: #182338;
     --ink-soft: #4A5670;
     --ink-faint: #8792A8;
@@ -23,14 +66,180 @@
     --mastery: #3F8A66;
     --sketch: #9FC1E8;
     --sketch-tint: #EAF2FC;
+    --grid: rgba(74,110,168,0.15);
+
+    /* ---- the cards ---- */
+    --paper: #FFFFFF;
+    --p-paper: #FFFFFF;                    /* small surfaces sitting on a card */
+    --p-ink: #182338;
+    --p-ink-faint: #8792A8;
+    --p-line: #D9E1EC;
+    --p-pen: #1D4ED8;
+    --p-pen-tint: #E4ECFC;
+    --p-red: #C43B4E;
+    --p-red-tint: #FBE3E6;
+    --p-sketch: #9FC1E8;
+    --p-sketch-tint: #EAF2FC;
+    --card-shadow: 0 1px 2px rgba(29,33,38,0.03);
+    --bubble-bg: #182338;
+    --bubble-fg: #F5F2EA;
+
+    /* ---- physical objects: sticky notes, marker, pen ---- */
+    /* these are things lying on the desk, so they keep their own colour in
+       both themes and only lose a little brightness in the dark */
     --hl-yellow: #F5E14F;
+    --sticky-yellow: #F5E14F;
     --sticky-pink: #FFB6D9;
     --sticky-blue: #BEDAF7;
     --sticky-green: #BFE7C9;
     --sticky-shadow: rgba(24,35,56,0.18);
-    --grid: rgba(74,110,168,0.15);
+
+    /* the swiped-marker treatment on inline text. Light multiplies a solid
+       yellow over dark ink the way a real highlighter does; dark can't --
+       multiply against a dark page just erases the swipe -- so it becomes a
+       translucent band with the text warmed instead. */
+    --hl-band: #F5E14F;
+    --hl-blend: multiply;
+    --hl-text: currentColor;
+    --hl-underline: none;
+
+    /* the drawing tools */
+    --doodle-ink: #1D4ED8;                 /* canvas pen stroke */
+    --doodle-hl: #F5E14F;                  /* canvas highlighter stroke */
+    --doodle-hl-blend: multiply;
+    --doodle-body: #182338;                /* barrel of the cursor artwork */
+    --doodle-filter: none;                 /* margin doodles are black ink... */
+    --doodle-alpha: 0.42;
+
+    /* the mobile progress track, which loses the card behind it -- see the
+       720px block. Light fills it white; dark can't, so it flips the strokes
+       instead of the fill. */
+    --scribble-fill: var(--paper);
+    --scribble-flip: none;
+
+    --icon-moon: block;
+    --icon-sun: none;
+
     --radius: 14px;
     --wrap: 1040px;
+  }
+
+  /* The dark theme. Written once as a token block and applied through two
+     selectors: the media query is the default (follow the OS), the attribute
+     is the in-page toggle overriding it in either direction. */
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+
+    --bg: #0F1520;
+    --surface: #1A2230;
+    --topbar-bg: rgba(15,21,32,0.86);
+    --ink: #E8EBF1;
+    --ink-soft: #AAB4C6;
+    --ink-faint: #78849B;
+    --line: #2B3548;
+    --pen: #85AAFF;
+    --pen-deep: #B3C8FF;
+    --pen-tint: rgba(133,170,255,0.16);
+    --red: #FF8FA0;
+    --red-tint: rgba(255,143,160,0.16);
+    --mastery: #6FC79B;
+    --sketch: #46608A;
+    --sketch-tint: rgba(133,170,255,0.07);
+    /* the grid survives as a blueprint rather than disappearing -- it is the
+       one thing that says "paper" once the paper is no longer cream */
+    --grid: rgba(126,163,224,0.085);
+
+    /* still light, just off pure white: at full #FFF a 800px card is the
+       brightest object on a dark page by a wide margin */
+    --paper: #F6F3EC;
+    --p-paper: #F6F3EC;
+    --card-shadow: 0 14px 34px rgba(0,0,0,0.42);
+    --bubble-bg: #2E3A50;
+    --bubble-fg: #EDF0F6;
+
+    --sticky-yellow: #E9D555;
+    --sticky-pink: #F0A7CD;
+    --sticky-blue: #AECDEF;
+    --sticky-green: #B0DBBD;
+    --sticky-shadow: rgba(0,0,0,0.5);
+
+    --hl-band: rgba(245,225,79,0.15);
+    --hl-blend: normal;
+    --hl-text: #FBF2C4;
+    --hl-underline: inset 0 -0.13em rgba(245,225,79,0.34);
+
+    --doodle-ink: #85AAFF;
+    /* screen, not multiply, so the swipe lightens the page instead of eating
+       it -- which needs a dark olive rather than a bright yellow, or every
+       stroke blows out to white */
+    --doodle-hl: #6B5C14;
+    --doodle-hl-blend: screen;
+    --doodle-body: #C6D0E2;
+    /* ...so inverting is exactly right: they are greyscale line art on
+       transparent, and invert turns black ink into white ink and leaves the
+       transparency alone */
+    --doodle-filter: invert(1);
+    --doodle-alpha: 0.5;
+
+    /* invert flips the lightness and hue-rotate puts the hue back, so the
+       scribbles lighten without the blue ones turning orange */
+    --scribble-fill: var(--surface);
+    --scribble-flip: invert(1) hue-rotate(180deg);
+
+    --icon-moon: none;
+    --icon-sun: block;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+
+      --bg: #0F1520;
+      --surface: #1A2230;
+      --topbar-bg: rgba(15,21,32,0.86);
+      --ink: #E8EBF1;
+      --ink-soft: #AAB4C6;
+      --ink-faint: #78849B;
+      --line: #2B3548;
+      --pen: #85AAFF;
+      --pen-deep: #B3C8FF;
+      --pen-tint: rgba(133,170,255,0.16);
+      --red: #FF8FA0;
+      --red-tint: rgba(255,143,160,0.16);
+      --mastery: #6FC79B;
+      --sketch: #46608A;
+      --sketch-tint: rgba(133,170,255,0.07);
+      --grid: rgba(126,163,224,0.085);
+
+      --paper: #F6F3EC;
+      --p-paper: #F6F3EC;
+      --card-shadow: 0 14px 34px rgba(0,0,0,0.42);
+      --bubble-bg: #2E3A50;
+      --bubble-fg: #EDF0F6;
+
+      --sticky-yellow: #E9D555;
+      --sticky-pink: #F0A7CD;
+      --sticky-blue: #AECDEF;
+      --sticky-green: #B0DBBD;
+      --sticky-shadow: rgba(0,0,0,0.5);
+
+      --hl-band: rgba(245,225,79,0.15);
+      --hl-blend: normal;
+      --hl-text: #FBF2C4;
+      --hl-underline: inset 0 -0.13em rgba(245,225,79,0.34);
+
+      --doodle-ink: #85AAFF;
+      --doodle-hl: #6B5C14;
+      --doodle-hl-blend: screen;
+      --doodle-body: #C6D0E2;
+      --doodle-filter: invert(1);
+      --doodle-alpha: 0.5;
+
+      --scribble-fill: var(--surface);
+      --scribble-flip: invert(1) hue-rotate(180deg);
+
+      --icon-moon: none;
+      --icon-sun: block;
+    }
   }
   *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
@@ -49,10 +258,14 @@
   p{ margin:0; }
   img{ max-width:100%; display:block; }
   a{ color:inherit; }
-  ::selection{ background:var(--hl-yellow); color:var(--ink); }
+  /* dark ink on the marker, not var(--ink): the swatch stays yellow in both
+     themes, so the text on it has to stay dark in both themes too */
+  ::selection{ background:var(--hl-yellow); color:var(--p-ink); }
   .hl-mark{
-    background-color:var(--hl-yellow);
-    mix-blend-mode:multiply;
+    background-color:var(--hl-band);
+    mix-blend-mode:var(--hl-blend);
+    color:var(--hl-text);
+    box-shadow:var(--hl-underline);
     /* em-based so the swipe stays proportional at headline and body sizes */
     padding:0 0.18em;
     border-radius:0.06em;
@@ -102,7 +315,8 @@
   .doodle{
     position:absolute; z-index:-1;
     pointer-events:none; user-select:none;
-    opacity:0.42;
+    opacity:var(--doodle-alpha);
+    filter:var(--doodle-filter);
   }
   /* hero cluster, in the blank space right of the headline */
   /* widths are per-shape, not uniform: the crystal is tall and narrow (0.48
@@ -135,7 +349,7 @@
   /* ---------- TOP BAR ---------- */
   .topbar{
     position:sticky; top:0; z-index:40;
-    background:rgba(252,251,247,0.88);
+    background:var(--topbar-bg);
     backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line);
   }
@@ -143,6 +357,9 @@
     max-width:var(--wrap); margin:0 auto; padding:14px 28px;
     display:flex; align-items:center; justify-content:space-between;
   }
+  /* the toolbar and the theme switch travel together on the right, so the
+     flex row stays two items and the toolbar doesn't drift to centre */
+  .topbar-right{ display:flex; align-items:center; gap:10px; }
   .mark{
     display:flex; align-items:center; gap:10px;
     font-family:'Fraunces', Georgia, serif; font-weight:600; font-size:16px;
@@ -166,14 +383,32 @@
     color:var(--ink-soft); cursor:pointer; -webkit-tap-highlight-color:transparent;
     transition:background .15s, border-color .15s;
   }
-  .dtool:hover{ background:var(--paper); }
+  .dtool:hover{ background:var(--surface); }
   .dtool:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
   .dtool.active{ background:var(--pen-tint); border-color:var(--sketch); }
   .dtool svg{ display:block; }
   .dtool-sep{ width:1px; height:20px; background:var(--line); margin:0 3px; flex:none; }
   .dtool-erase:hover{ background:var(--red-tint); }
+  /* ---------- THEME SWITCH ---------- */
+  .theme-toggle{
+    display:flex; align-items:center; justify-content:center;
+    width:38px; height:38px; padding:0; flex:none;
+    background:var(--surface); border:1px solid var(--line); border-radius:50%;
+    color:var(--ink-soft); cursor:pointer; -webkit-tap-highlight-color:transparent;
+    transition:background .15s, border-color .15s, color .15s;
+  }
+  .theme-toggle:hover{ color:var(--ink); border-color:var(--pen); }
+  .theme-toggle:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
+  .theme-toggle svg{ display:block; }
+  /* which face shows is a token, so the whole dark theme stays one block of
+     variables instead of a second set of duplicated rules */
+  .theme-toggle .tt-moon{ display:var(--icon-moon); }
+  .theme-toggle .tt-sun{ display:var(--icon-sun); }
+
   @media (max-width:380px){
     .dtool{ width:30px; height:30px; }
+    .theme-toggle{ width:32px; height:32px; }
+    .topbar-right{ gap:6px; }
   }
 
   /* full-document drawing surface. two canvases (ink + highlighter, which
@@ -181,7 +416,7 @@
      layer that only captures pointer events while a drawing tool is active,
      so normal clicks/links pass straight through in cursor mode. */
   .doodle-canvas{ position:absolute; top:0; left:0; width:100%; z-index:5; pointer-events:none; }
-  .doodle-hl{ mix-blend-mode:multiply; z-index:6; }
+  .doodle-hl{ mix-blend-mode:var(--doodle-hl-blend); z-index:6; }
   .doodle-hit{ position:absolute; top:0; left:0; width:100%; z-index:7; pointer-events:none; }
   body.doodle-drawing .doodle-hit{ pointer-events:auto; touch-action:none; }
 
@@ -217,7 +452,7 @@
     position:relative;
     font-size:12.5px; font-weight:600; padding:9px 16px;
     border-radius:1px 8px 8px 1px;
-    color:var(--ink);
+    color:var(--p-ink);
     box-shadow:2px 4px 7px var(--sticky-shadow);
     display:inline-flex; align-items:center;
   }
@@ -226,7 +461,7 @@
     background:linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.16) 50%);
     border-radius:0 0 8px 0;
   }
-  .tag:nth-child(1){ background:var(--hl-yellow); transform:rotate(-2deg); }
+  .tag:nth-child(1){ background:var(--sticky-yellow); transform:rotate(-2deg); }
   .tag:nth-child(2){ background:var(--sticky-pink); transform:rotate(1.5deg); }
   .tag:nth-child(3){ background:var(--sticky-blue); transform:rotate(-1deg); }
 
@@ -247,7 +482,7 @@
     position:relative;
     font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px;
     letter-spacing:0.05em; padding:8px 14px 8px 12px; border-radius:1px 8px 8px 1px;
-    color:var(--ink); height:fit-content;
+    color:var(--p-ink); height:fit-content;
     box-shadow:2px 4px 7px var(--sticky-shadow);
   }
   .status-pill::after{
@@ -296,7 +531,7 @@
   }
   .scribble-extended{
     width:100%; overflow:hidden;
-    border:1px solid var(--line);
+    border:1px solid var(--p-line);
     border-radius:999px;
     padding:3px 12px;
   }
@@ -308,12 +543,12 @@
   .stage{
     position:relative;
     background:var(--paper);
-    border:1px solid var(--line);
+    border:1px solid var(--p-line);
     border-radius:var(--radius);
     padding:38px;
     display:flex; flex-direction:column; align-items:center;
     min-height:440px; justify-content:center;
-    box-shadow:0 1px 2px rgba(29,33,38,0.03);
+    box-shadow:var(--card-shadow);
   }
 
   .frame-caption{
@@ -322,24 +557,24 @@
   }
   .frame-caption .k{
     font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px;
-    color:var(--ink-faint); letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--p-ink-faint); letter-spacing:0.06em; text-transform:uppercase;
     margin-bottom:6px;
   }
-  .frame-caption .t{ font-size:16px; font-weight:600; color:var(--ink); }
+  .frame-caption .t{ font-size:16px; font-weight:600; color:var(--p-ink); }
 
   .device{
     width:100%; max-width:560px; aspect-ratio:16/10;
-    background-color:var(--sketch-tint);
+    background-color:var(--p-sketch-tint);
     background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><path d='M8,40 Q28,10 48,40 T88,40 T128,40 T168,40' stroke='%239FC1E8' stroke-width='2.5' fill='none' opacity='0.55' stroke-linecap='round'/><path d='M-12,95 Q8,60 28,95 T68,95 T108,95 T148,95' stroke='%239FC1E8' stroke-width='2.5' fill='none' opacity='0.4' stroke-linecap='round'/><path d='M15,145 Q35,120 55,145 T95,145 T135,145' stroke='%239FC1E8' stroke-width='2' fill='none' opacity='0.3' stroke-linecap='round'/></svg>");
     background-size:170px 170px;
-    border:1.5px dashed var(--sketch); border-radius:10px;
+    border:1.5px dashed var(--p-sketch); border-radius:10px;
     display:flex; align-items:center; justify-content:center;
-    color:var(--ink-faint); font-family:'JetBrains Mono', ui-monospace, monospace;
+    color:var(--p-ink-faint); font-family:'JetBrains Mono', ui-monospace, monospace;
     font-size:12px; letter-spacing:0.04em; text-align:center; padding:20px;
     position:relative;
   }
   .device .placeholder-label{
-    background:var(--paper); border:1px dashed var(--ink-faint);
+    background:var(--p-paper); border:1px dashed var(--p-ink-faint);
     padding:10px 16px; border-radius:8px;
   }
   .device.filled{
@@ -379,14 +614,17 @@
   .nav-arrow{
     position:absolute; top:50%; transform:translateY(-50%);
     width:42px; height:42px; border-radius:50%;
-    background:var(--paper); border:1px solid var(--line);
+    background:var(--p-paper); border:1px solid var(--p-line);
+    /* the chevrons are drawn in currentColor so the button reads on the card
+       and, at mobile widths where the card is gone, straight on the page */
+    color:var(--p-ink);
     display:flex; align-items:center; justify-content:center;
     cursor:pointer; transition:background .15s, border-color .15s;
     user-select:none; z-index:5;
   }
-  .nav-arrow:hover{ background:var(--pen-tint); border-color:var(--pen); }
-  .nav-arrow:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
-  .slideshow.red .nav-arrow:hover{ background:var(--red-tint); border-color:var(--red); }
+  .nav-arrow:hover{ background:var(--p-pen-tint); border-color:var(--p-pen); }
+  .nav-arrow:focus-visible{ outline:2px solid var(--p-pen); outline-offset:2px; }
+  .slideshow.red .nav-arrow:hover{ background:var(--p-red-tint); border-color:var(--p-red); }
   .nav-arrow.left{ left:-18px; }
   .nav-arrow.right{ right:-18px; }
   /* Deliberately static: the arrows are absolutely positioned and skip over a
@@ -409,7 +647,7 @@
     flex-shrink:0; object-fit:cover; display:block;
   }
   .bubble{
-    background:var(--ink); color:#F5F2EA;
+    background:var(--bubble-bg); color:var(--bubble-fg);
     padding:14px 18px; border-radius:16px 16px 16px 4px;
     font-size:13.5px; line-height:1.5; font-weight:500;
     box-shadow:0 8px 20px rgba(29,33,38,0.18);
@@ -438,7 +676,7 @@
     margin:0; width:100%; max-width:320px;
     background:var(--paper);
     padding:14px 14px 0;
-    border:1px solid var(--line);
+    border:1px solid var(--p-line);
     border-radius:3px;
     box-shadow:0 6px 18px var(--sticky-shadow);
     transform:rotate(var(--tilt));
@@ -460,7 +698,7 @@
   }
   .polaroid-photo{
     aspect-ratio:1/1;
-    background-color:var(--sketch-tint);
+    background-color:var(--p-sketch-tint);
     background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><path d='M8,40 Q28,10 48,40 T88,40 T128,40 T168,40' stroke='%239FC1E8' stroke-width='2.5' fill='none' opacity='0.55' stroke-linecap='round'/><path d='M-12,95 Q8,60 28,95 T68,95 T108,95 T148,95' stroke='%239FC1E8' stroke-width='2.5' fill='none' opacity='0.4' stroke-linecap='round'/><path d='M15,145 Q35,120 55,145 T95,145 T135,145' stroke='%239FC1E8' stroke-width='2' fill='none' opacity='0.3' stroke-linecap='round'/></svg>");
     background-size:170px 170px;
     display:flex; align-items:center; justify-content:center;
@@ -472,14 +710,14 @@
   .polaroid-photo.contain{ background-color:#003359; background-image:none; }
   .polaroid-photo.contain img{ object-fit:contain; }
   .polaroid-photo .placeholder-label{
-    background:var(--paper); border:1px dashed var(--ink-faint);
+    background:var(--p-paper); border:1px dashed var(--p-ink-faint);
     padding:8px 12px; border-radius:8px;
     font-family:'JetBrains Mono', ui-monospace, monospace;
-    font-size:11px; letter-spacing:0.04em; color:var(--ink-faint);
+    font-size:11px; letter-spacing:0.04em; color:var(--p-ink-faint);
   }
   .polaroid figcaption{
     /* the wide bottom lip is what makes it read as a polaroid */
-    font-family:'Rock Salt', cursive; color:var(--pen);
+    font-family:'Rock Salt', cursive; color:var(--p-pen);
     font-size:13px; line-height:1.4; text-align:center;
     padding:20px 4px 24px;
   }
@@ -525,9 +763,9 @@
   }
   .dl-btn:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
   .resume-preview{
-    background:var(--paper); border:1px solid var(--line);
+    background:var(--paper); border:1px solid var(--p-line);
     border-radius:var(--radius); padding:0; overflow:hidden;
-    box-shadow:0 1px 2px rgba(29,33,38,0.03);
+    box-shadow:var(--card-shadow);
     max-width:800px; margin:0 auto;
   }
   .resume-embed{
@@ -577,11 +815,27 @@
     .stage{
       background:none; border:none; box-shadow:none;
       border-radius:0; padding:0; min-height:0;
+      /* ...and with the card gone, everything inside it is now sitting on the
+         page, so its ink has to become the page's ink. In the light theme the
+         two token families hold the same values and this changes nothing; in
+         the dark theme it is what keeps the caption, the chevrons and the
+         placeholder box readable once the white card is no longer behind them. */
+      --p-paper: var(--surface);
+      --p-ink: var(--ink);
+      --p-ink-faint: var(--ink-faint);
+      --p-line: var(--line);
+      --p-pen: var(--pen);
+      --p-pen-tint: var(--pen-tint);
+      --p-red: var(--red);
+      --p-red-tint: var(--red-tint);
+      --p-sketch: var(--sketch);
+      --p-sketch-tint: var(--sketch-tint);
     }
     .device.filled{ box-shadow:0 2px 14px rgba(24,35,56,0.10); }
     /* without the card behind it, the track needs its own fill so the
        grid lines don't read through the scribbles */
-    .scribble-extended{ background:var(--paper); }
+    .scribble-extended{ background:var(--scribble-fill); }
+    .scribble-extended-inner{ filter:var(--scribble-flip); }
     /* now that the card is gone, centre the arrows on the image rather than on
        the whole stage -- the stage also holds the caption, progress track and a
        bubble whose height varies with its text, which dragged them ~140px high */
@@ -608,6 +862,7 @@
   <div class="topbar">
     <div class="topbar-inner">
       <div class="mark"><img class="mark-dot" src="assets/avatar-rahul.png" alt=""> Rahul Shah</div>
+      <div class="topbar-right">
       <div class="doodle-toolbar" role="toolbar" aria-label="Draw on this page">
         <button type="button" class="dtool active" data-tool="cursor" aria-pressed="true" title="Cursor">
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -617,18 +872,18 @@
         <button type="button" class="dtool" data-tool="pen" aria-pressed="false" title="Pen">
           <svg viewBox="0 0 32 32" width="19" height="19" aria-hidden="true">
             <g transform="translate(-6 -2.6) rotate(45 12 27)">
-              <rect x="9.5" y="3" width="5" height="5" rx="1" fill="#1D4ED8"/>
-              <rect x="9.5" y="9" width="5" height="13" rx="1" fill="#182338"/>
-              <path d="M9.5 22 L14.5 22 L12 27 Z" fill="#1D4ED8"/>
+              <rect x="9.5" y="3" width="5" height="5" rx="1" style="fill:var(--pen)"/>
+              <rect x="9.5" y="9" width="5" height="13" rx="1" fill="currentColor"/>
+              <path d="M9.5 22 L14.5 22 L12 27 Z" style="fill:var(--pen)"/>
             </g>
           </svg>
         </button>
         <button type="button" class="dtool" data-tool="highlighter" aria-pressed="false" title="Highlighter">
           <svg viewBox="0 0 32 32" width="19" height="19" aria-hidden="true">
             <g transform="translate(-6.7 -1.9) rotate(45 13 26)">
-              <rect x="8.5" y="3" width="9" height="5" rx="1" fill="#182338"/>
-              <rect x="8.5" y="9" width="9" height="11" rx="1" fill="#F5E14F"/>
-              <path d="M9 20 L17 20 L14.5 26 L11.5 26 Z" fill="#182338"/>
+              <rect x="8.5" y="3" width="9" height="5" rx="1" fill="currentColor"/>
+              <rect x="8.5" y="9" width="9" height="11" rx="1" style="fill:var(--hl-yellow)"/>
+              <path d="M9 20 L17 20 L14.5 26 L11.5 26 Z" fill="currentColor"/>
             </g>
           </svg>
         </button>
@@ -636,11 +891,26 @@
         <button type="button" class="dtool dtool-erase" data-tool="erase" title="Clear drawing" aria-label="Clear drawing">
           <svg viewBox="0 0 32 32" width="19" height="19" aria-hidden="true">
             <g transform="rotate(45 16 16)">
-              <rect x="10" y="6"  width="12" height="13" rx="2" fill="#182338"/>
-              <rect x="10" y="17" width="12" height="9"  rx="2" fill="#F6C9D6" stroke="#182338" stroke-width="1.2"/>
+              <rect x="10" y="6"  width="12" height="13" rx="2" fill="currentColor"/>
+              <rect x="10" y="17" width="12" height="9"  rx="2" fill="#F6C9D6" stroke="currentColor" stroke-width="1.2"/>
             </g>
           </svg>
         </button>
+      </div>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode">
+        <!-- drawn by hand rather than pulled from an icon set, so the switch
+             sits in the same sketched register as the pen and the doodles -->
+        <svg class="tt-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
+             fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19.4 14.6a7.7 7.7 0 0 1-9.9-9.9 8.1 8.1 0 1 0 9.9 9.9Z"/>
+          <path d="M16.2 3.4l.7 1.7 1.7.7-1.7.7-.7 1.7-.7-1.7-1.7-.7 1.7-.7Z"/>
+        </svg>
+        <svg class="tt-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
+             fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15.9 12.2a3.9 3.9 0 1 1-4.1-3.9 3.9 3.9 0 0 1 4.1 3.9Z"/>
+          <path d="M12 2.3v2.4M12 19.3v2.4M4.4 4.6l1.7 1.7M17.9 18l1.7 1.7M2.3 12.1h2.4M19.3 11.9h2.4M4.6 19.6l1.7-1.7M18 6.1l1.7-1.7"/>
+        </svg>
+      </button>
       </div>
     </div>
   </div>
@@ -710,13 +980,13 @@
         
           <div class="device-wrap">
             <button class="nav-arrow left" data-dir="-1" data-target="chiron" aria-label="Previous slide">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
             <div class="device">
               <span class="placeholder-label" id="ph-chiron">[ placeholder UI — Chiron ]</span>
             </div>
             <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
 </div>
@@ -756,13 +1026,13 @@
         
           <div class="device-wrap">
             <button class="nav-arrow left" data-dir="-1" data-target="students" aria-label="Previous slide">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
             <div class="device filled">
               <img id="img-students" src="" alt="">
             </div>
             <button class="nav-arrow right" data-dir="1" data-target="students" aria-label="Next slide">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
 </div>
@@ -802,13 +1072,13 @@
         
           <div class="device-wrap">
             <button class="nav-arrow left" data-dir="-1" data-target="educators" aria-label="Previous slide">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
             <div class="device filled tall">
               <img id="img-educators" src="" alt="">
             </div>
             <button class="nav-arrow right" data-dir="1" data-target="educators" aria-label="Next slide">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
 </div>
@@ -1081,6 +1351,50 @@
     </div>
   </footer>
 
+<script>
+  (function(){
+    const root = document.documentElement;
+    const btn  = document.getElementById('theme-toggle');
+    const os   = window.matchMedia('(prefers-color-scheme: dark)');
+    const KEY  = 'rs-theme';
+
+    // no attribute means "whatever the OS says", so resolving the current
+    // theme is a two-step: explicit choice first, OS second
+    const current = ()=>{
+      const set = root.getAttribute('data-theme');
+      return (set === 'dark' || set === 'light') ? set : (os.matches ? 'dark' : 'light');
+    };
+
+    function relabel(){
+      const t = 'Switch to ' + (current() === 'dark' ? 'light' : 'dark') + ' mode';
+      btn.setAttribute('aria-label', t);
+      btn.title = t;
+    }
+
+    function announce(){
+      relabel();
+      // the doodle canvas draws in raw colours, not CSS variables, so it has
+      // to be told to repaint its stored strokes in the new palette
+      window.dispatchEvent(new CustomEvent('themechange'));
+    }
+
+    btn.addEventListener('click', ()=>{
+      const next = current() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try{ localStorage.setItem(KEY, next); }catch(e){}
+      announce();
+    });
+
+    // only relevant while no explicit choice is stored -- once the visitor has
+    // picked a side, the OS flipping at sunset shouldn't override them
+    const onOS = ()=>{ if(!root.hasAttribute('data-theme')) announce(); };
+    if (os.addEventListener) os.addEventListener('change', onOS);
+    else if (os.addListener) os.addListener(onOS);
+
+    relabel();
+  })();
+</script>
+
 <canvas id="doodle-ink" class="doodle-canvas" aria-hidden="true"></canvas>
 <canvas id="doodle-hl" class="doodle-canvas doodle-hl" aria-hidden="true"></canvas>
 <div id="doodle-hit" class="doodle-hit"></div>
@@ -1094,18 +1408,45 @@
     const hlCtx  = hlCanvas.getContext('2d');
     const buttons = [...document.querySelectorAll('.dtool')];
 
+    // colours live in CSS so the theme owns them in one place; they are read
+    // once per theme rather than per pointer event, which would put a style
+    // recalc inside the drawing loop
     const TOOL_STYLE = {
-      pen:         { color:'#1D4ED8', width:3,  ctx:()=>inkCtx },
-      highlighter: { color:'#F5E14F', width:16, ctx:()=>hlCtx  }
+      pen:         { token:'--doodle-ink', fallback:'#1D4ED8', width:3,  ctx:()=>inkCtx },
+      highlighter: { token:'--doodle-hl',  fallback:'#F5E14F', width:16, ctx:()=>hlCtx  }
     };
+    const palette = {};
+    function readPalette(){
+      const cs = getComputedStyle(document.documentElement);
+      const get = (name, fallback) => (cs.getPropertyValue(name).trim() || fallback);
+      Object.keys(TOOL_STYLE).forEach(k=>{
+        palette[k] = get(TOOL_STYLE[k].token, TOOL_STYLE[k].fallback);
+      });
+      palette.body = get('--doodle-body', '#182338');
+      palette.marker = get('--hl-yellow', '#F5E14F');
+    }
+    readPalette();
     // same shapes as the toolbar icons, rotated 45° around their own tip so
     // the tip point is invariant under rotation -- the hotspot below (12,27)
     // and (13,26) is that exact pivot, not an eyeballed approximation, so the
     // rendered nib lands precisely on the pixel that's actually drawn to
-    const CURSORS = {
-      pen: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'%3E%3Cg transform='rotate(45 12 27)'%3E%3Crect x='9.5' y='3' width='5' height='5' rx='1' fill='%231D4ED8'/%3E%3Crect x='9.5' y='9' width='5' height='13' rx='1' fill='%23182338'/%3E%3Cpath d='M9.5 22 L14.5 22 L12 27 Z' fill='%231D4ED8'/%3E%3C/g%3E%3C/svg%3E\") 12 27, crosshair",
-      highlighter: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'%3E%3Cg transform='rotate(45 13 26)'%3E%3Crect x='8.5' y='3' width='9' height='5' rx='1' fill='%23182338'/%3E%3Crect x='8.5' y='9' width='9' height='11' rx='1' fill='%23F5E14F'/%3E%3Cpath d='M9 20 L17 20 L14.5 26 L11.5 26 Z' fill='%23182338'/%3E%3C/g%3E%3C/svg%3E\") 13 26, crosshair"
-    };
+    // built from the palette rather than frozen as literals: on a dark page a
+    // navy barrel is a cursor you cannot see
+    const enc = c => encodeURIComponent(c);
+    function cursorFor(tool){
+      const body = enc(palette.body);
+      if (tool === 'pen'){
+        const nib = enc(palette.pen);
+        return "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'%3E%3Cg transform='rotate(45 12 27)'%3E%3Crect x='9.5' y='3' width='5' height='5' rx='1' fill='" + nib + "'/%3E%3Crect x='9.5' y='9' width='5' height='13' rx='1' fill='" + body + "'/%3E%3Cpath d='M9.5 22 L14.5 22 L12 27 Z' fill='" + nib + "'/%3E%3C/g%3E%3C/svg%3E\") 12 27, crosshair";
+      }
+      if (tool === 'highlighter'){
+        // the nib shows the marker's own yellow, not the muted colour it lays
+        // down on a dark page -- you pick up a highlighter, not a stroke
+        const nib = enc(palette.marker);
+        return "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'%3E%3Cg transform='rotate(45 13 26)'%3E%3Crect x='8.5' y='3' width='9' height='5' rx='1' fill='" + body + "'/%3E%3Crect x='8.5' y='9' width='9' height='11' rx='1' fill='" + nib + "'/%3E%3Cpath d='M9 20 L17 20 L14.5 26 L11.5 26 Z' fill='" + body + "'/%3E%3C/g%3E%3C/svg%3E\") 13 26, crosshair";
+      }
+      return 'auto';
+    }
 
     // in-memory only, on purpose -- this is a throwaway gimmick, not a
     // feature, and a stranger's leftover scribble greeting the next visitor
@@ -1138,7 +1479,7 @@
       hlCtx.clearRect(0,0,docW,docH);
       strokes.forEach(s=>{
         const style = TOOL_STYLE[s.tool];
-        if (style) strokePath(style.ctx(), s.points, style.color, style.width);
+        if (style) strokePath(style.ctx(), s.points, palette[s.tool], style.width);
       });
     }
 
@@ -1167,14 +1508,14 @@
         b.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
       document.body.classList.toggle('doodle-drawing', tool !== 'cursor');
-      hit.style.cursor = CURSORS[tool] || 'auto';
+      hit.style.cursor = cursorFor(tool);
     }
 
     function endStroke(){
       if (!current) return;
       if (current.points.length === 1){
         const style = TOOL_STYLE[current.tool];
-        strokePath(style.ctx(), current.points, style.color, style.width);
+        strokePath(style.ctx(), current.points, palette[current.tool], style.width);
       }
       strokes.push(current);
       current = null;
@@ -1209,10 +1550,18 @@
       const pt = [e.pageX/docW, e.pageY/docH];
       current.points.push(pt);
       const style = TOOL_STYLE[current.tool];
-      strokePath(style.ctx(), [prev, pt], style.color, style.width);
+      strokePath(style.ctx(), [prev, pt], palette[current.tool], style.width);
     });
     hit.addEventListener('pointerup', endStroke);
     hit.addEventListener('pointercancel', endStroke);
+
+    // a scribble made in one theme keeps its meaning in the other, so the
+    // strokes are re-inked rather than cleared
+    window.addEventListener('themechange', ()=>{
+      readPalette();
+      redraw();
+      if (activeTool !== 'cursor') hit.style.cursor = cursorFor(activeTool);
+    });
 
     setSize();
     redraw();
