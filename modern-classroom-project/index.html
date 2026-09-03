@@ -448,15 +448,10 @@
   .ds-head h3{ font-size:26px; font-weight:500; }
 
   .polaroid-row{
-    display:grid; grid-template-columns:repeat(4, 1fr);
+    display:grid; grid-template-columns:repeat(3, 1fr);
     gap:22px; justify-items:center;
     /* room for the tilt + lifted hover state to not clip against neighbours */
     padding:10px 0 18px;
-  }
-  /* four across gets cramped before the mobile rule kicks in, so pair them up
-     in the middle range rather than letting each shrink toward unreadable */
-  @media (max-width:980px){
-    .polaroid-row{ grid-template-columns:repeat(2, 1fr); gap:26px; }
   }
   .polaroid{
     --tilt:0deg;
@@ -477,7 +472,6 @@
   .polaroid:nth-child(1){ --tilt:-3deg;   margin-top:0;    }
   .polaroid:nth-child(2){ --tilt:1.8deg;  margin-top:18px; }
   .polaroid:nth-child(3){ --tilt:-1.4deg; margin-top:6px;  }
-  .polaroid:nth-child(4){ --tilt:2.4deg;  margin-top:14px; }
   .polaroid:hover, .polaroid:focus-within{
     transform:rotate(0deg) translateY(-5px);
     box-shadow:0 14px 28px var(--sticky-shadow);
@@ -496,12 +490,6 @@
      cropping to ~1 icon, and match its own navy so the letterbox is invisible */
   .polaroid-photo.contain{ background-color:#003359; background-image:none; }
   .polaroid-photo.contain img{ object-fit:contain; }
-  .polaroid-photo .placeholder-label{
-    background:var(--paper); border:1px dashed var(--ink-faint);
-    padding:8px 12px; border-radius:8px;
-    font-family:'JetBrains Mono', ui-monospace, monospace;
-    font-size:11px; letter-spacing:0.04em; color:var(--ink-faint);
-  }
   .polaroid figcaption{
     /* the wide bottom lip is what makes it read as a polaroid */
     font-family:'Rock Salt', cursive; color:var(--pen);
@@ -587,8 +575,7 @@
     .polaroid-row{ grid-template-columns:1fr; gap:26px; }
     .polaroid:nth-child(1),
     .polaroid:nth-child(2),
-    .polaroid:nth-child(3),
-    .polaroid:nth-child(4){ margin-top:0; }
+    .polaroid:nth-child(3){ margin-top:0; }
     /* stack the avatar under the bubble so the text gets the full card width */
     .talker{
       max-width:100%; width:100%; margin:0 0 20px;
@@ -873,12 +860,6 @@
           </div>
           <figcaption>Design Systems</figcaption>
         </figure>
-        <figure class="polaroid">
-          <div class="polaroid-photo">
-            <span class="placeholder-label">[ image ]</span>
-          </div>
-          <figcaption>Cross-Platform</figcaption>
-        </figure>
       </div>
     </div>
   </section>
@@ -892,7 +873,7 @@
         <a class="dl-btn" href="resume.pdf" download="Rahul-Shah-Resume.pdf">↓ Download PDF</a>
       </div>
       <div class="resume-preview">
-        <img class="resume-embed" src="resume.png" alt="Rahul Shah's resume — one page, covering Encoura, Chiron, Rochester Regional Health, Prudential Financial, education, and skills. Download the PDF for the accessible text version.">
+        <img class="resume-embed" src="resume.png" alt="Rahul Shah's r&eacute;sum&eacute; — one page: education, then Chiron, Encoura, Rochester Regional Health and Prudential Financial, followed by a skills list. Download the PDF for the accessible text version.">
       </div>
     </div>
   </section>
@@ -1130,7 +1111,7 @@
     <div class="wrap">
       <p class="footer-kicker">Let&rsquo;s talk</p>
       <div class="footer-links">
-        <a href="mailto:rahulshah.design@gmail.com">rahulshah.design@gmail.com</a>
+        <a href="mailto:hello@rahulshah.design">hello@rahulshah.design</a>
         <a href="https://www.linkedin.com/in/rahul-shah-design/" target="_blank" rel="noopener">LinkedIn</a>
         <a href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">GitHub</a>
         <a href="resume.pdf" download="Rahul-Shah-Resume.pdf">R&eacute;sum&eacute; (PDF)</a>
