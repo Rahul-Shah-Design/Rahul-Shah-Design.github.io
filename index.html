@@ -255,8 +255,23 @@
     background:linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.16) 50%);
     border-radius:0 0 8px 0;
   }
-  .status-pill.shipped{ background:var(--sticky-green); transform:rotate(1.5deg); }
-  .status-pill.progress{ background:var(--sticky-pink); transform:rotate(-1.5deg); }
+  /* the tilt is held in a variable so states that add to the transform (the
+     link hover below) can re-apply it instead of flattening the note */
+  .status-pill.shipped{ background:var(--sticky-green); --tilt:1.5deg; transform:rotate(var(--tilt)); }
+  .status-pill.progress{ background:var(--sticky-pink); --tilt:-1.5deg; transform:rotate(var(--tilt)); }
+  /* one note is a way out to the code; the others are plain labels */
+  a.status-pill{
+    display:block; color:var(--ink);
+    /* underlined so it reads as a link: nothing else about a sticky note
+       suggests you can click it, and the lift only shows once you are on it */
+    text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1px;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  a.status-pill:hover{
+    transform:rotate(var(--tilt)) translateY(-2px);
+    box-shadow:2px 7px 12px var(--sticky-shadow);
+  }
+  a.status-pill:focus-visible{ outline:2px solid var(--pen); outline-offset:3px; }
   .case-grid{
     display:grid;
     grid-template-columns:minmax(0, 580px) auto;
@@ -687,33 +702,35 @@
         <div class="case-head">
           <div>
           <div class="case-index">01 — PERSONAL PROJECT</div>
-          <h2 class="case-title">Chiron</h2>
+          <h2 class="case-title">Chiron — building a personalized, Socratic tutor out of an LLM</h2>
           </div>
         </div>
         <p class="case-desc">
-        A Socratic-dialogue adaptive tutor, grounded in mastery learning theory — my M.S. thesis project.
-        It's where the pedagogy and the pixels are both mine to get right.
+        A Claude skill that turns a conversation into a short course — modules, simulations it writes
+        on the spot, and knowledge checks that reach back to earlier ones. I think the future of
+        learning is personal: courses that start from what one learner already knows and cares
+        about, instead of a fixed path written for everyone.
         </p>
-        <div class="status-pill progress">In progress — thinking, not a finished product</div>
+        <a class="status-pill progress" href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">View on GitHub &rarr;</a>
       </div>
 
       <div class="slideshow" id="ss-chiron">
                 <div class="stage">
           <div class="frame-caption">
-            <div class="k" id="cap-k-chiron">Slide 1 of 5</div>
+            <div class="k" id="cap-k-chiron">Slide 1 of 4</div>
             <div class="scribble-strip" id="strip-chiron"></div>
           </div>
           <div class="talker">
             <img class="avatar" src="assets/avatar-rahul.png" alt="Rahul Shah">
-            <div class="bubble" id="bubble-chiron">Every student hits a wall at a different concept. I wanted a tutor that notices the wall and stops to work through it — Socratically, not by handing over the answer.</div>
+            <div class="bubble" id="bubble-chiron">This skill creates micro-courses based on your conversation. It chunks content, gates with knowledge checks, ties content into your interests based on memory, and leans on the power of LLMs with Socratic discussion.</div>
           </div>
         
           <div class="device-wrap">
             <button class="nav-arrow left" data-dir="-1" data-target="chiron" aria-label="Previous slide">
               <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
-            <div class="device">
-              <span class="placeholder-label" id="ph-chiron">[ placeholder UI — Chiron ]</span>
+            <div class="device filled">
+              <img id="img-chiron" src="" alt="">
             </div>
             <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
               <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -873,14 +890,25 @@
 
   const slideshows = {
     chiron: {
-      n: 5,
+      n: 4,
       bubbles: [
-        "Every student hits a wall at a different concept. I wanted a tutor that notices the wall and stops to work through it — Socratically, not by handing over the answer.",
-        "I mapped the loop as question → student reasoning → targeted follow-up, not question → answer → next question.",
-        "A student can't advance until they've actually demonstrated the reasoning, not just gotten lucky on an answer.",
-        "This part works today — rough UI, real logic underneath.",
-        "Next: refining how the tutor decides when a student has truly mastered a concept vs. just pattern-matched it."
-      ]
+        "This skill creates micro-courses based on your conversation. It chunks content, gates with knowledge checks, ties content into your interests based on memory, and leans on the power of LLMs with Socratic discussion.",
+        "The loop starts with a hook and asking the user for a first guess. This calibrates the course for learner expertise. The course gets attuned to jargon, complexity, and difficulty ramp.",
+        "LLMs can code on the fly. This skill leans on interactive simulations to demonstrate concepts and relationships. These offer stronger engagement than reading text alone.",
+        "Knowledge checks and module reviews that pull questions from earlier modules separate this from a glorified blog post. The skill constantly calibrates to a desirable difficulty and aims for a productive struggle.",
+      ],
+      images: [
+        "assets/chiron-1.webp",
+        "assets/chiron-2.webp",
+        "assets/chiron-3.webp",
+        "assets/chiron-4.webp",
+      ],
+      alts: [
+        "A course on eigenvectors generated out of a conversation: the chat lists the six plates it built and flags that the sample data is synthetic, beside the rendered plate separating 120 students into three labelled clusters.",
+        "The opening of a photography course — a scenario about shooting the aurora on a phone beside a tripod-mounted DSLR, an invitation to guess badly, the learner’s guess, and Chiron replying that two of the three are right.",
+        "A videography course module rendered as an interactive page: an explanation of what raising ISO actually changes, followed by a gate the reader has to clear before continuing.",
+        "A module review that pulls a question from module 2, showing the learner’s answer marked against the correct one, then reaches further back to a module 1 question with its answer still hidden.",
+      ],
     },
     students: {
       n: 6,
@@ -899,7 +927,15 @@
         "assets/onboard-4.gif",
         "assets/onboard-5.png",
         "assets/onboard-6.png"
-      ]
+      ],
+      alts: [
+        "The Encourage onboarding survey as it shipped, on a phone.",
+        "The previous onboarding design: boxed questions under a single full-length progress bar.",
+        "The account verification step students stalled on during classroom research.",
+        "The redesigned flow, questions chunked by topic, playing its section-complete animation on Next.",
+        "Account creation moved to the start of the flow, with the option to swap to a different email address.",
+        "The A/B test results comparing completion between the old and doubled-length surveys.",
+      ],
     },
     educators: {
       n: 4,
@@ -914,7 +950,13 @@
         "assets/educator-2.png",
         "assets/educator-3.png",
         "assets/educator-4.png"
-      ]
+      ],
+      alts: [
+        "The empty state for a brand-new group, showing the shape of the table to come and a single primary action.",
+        "The groups list, organized the way counselors think about their caseload — by class period and graduation year.",
+        "A group roster with per-student onboarding status shown inline.",
+        "The add-students panel: filter and search, with students already in the group checked and dimmed.",
+      ],
     }
   };
 
@@ -973,6 +1015,9 @@
         const src = cfg.images[idx];
         const el = document.getElementById('img-' + key);
         el.src = src;
+        // each frame shows something different, so the alt has to change with
+        // it -- one alt on the <img> would describe only the slide it loaded on
+        el.alt = cfg.alts ? cfg.alts[idx] : '';
         // the onboarding GIF ships with a 1px dark stroke drawn around all four
         // edges; nudge it under the container's clip. scoped to the GIF because
         // the PNG screenshots have their own corner arcs that a bleed would drag
