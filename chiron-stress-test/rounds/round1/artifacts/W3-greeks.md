@@ -356,9 +356,10 @@ Also, small thing: don't I lose a bit just from a day passing, independent of th
 
 You got the structure right and the sign right, and both for the right reasons — first-order
 term cancelled by construction, what remains is ½V_SS(ΔS)², you are short a convex thing so
-the term goes against you. The size is right too. The exact number is −$0.24 for an overnight
-move to $106 on this contract, and your ½Γ(ΔS)² estimate of −$0.48 is the correct
-approximation over-stating it, because delta was drifting up the whole way.
+the term goes against you. The size needs one correction. Your ½V_SS(ΔS)², with V_SS = 0.0265
+on this contract and ΔS = 6, gives −$0.48, and a full revaluation of the position overnight gives −$0.41 once the
+day's decay is credited back. Tenths of a dollar was the right unit; it is four of them, not
+one, and the approximation overstates it because delta was drifting upward the whole way.
 
 The part that isn't right is the last step, and it is the most interesting thing in this
 course, so I want to be precise about where it goes wrong.
@@ -805,9 +806,9 @@ lands from that average.
 
 **FIGURE 2.5 — What each dial does.**
 Two panels. Left: spread of quarter-end P&L against number of rebalances, log axis on both,
-a straight line of slope −½. Right: mean quarter-end P&L against realized volatility, a
-straight line crossing zero at 30% with slope about −$0.40 per volatility point. Both computed
-from 2,000 simulated paths per setting on this contract.
+close to a straight line of slope −½. Right: mean quarter-end P&L against realized
+volatility, a straight line crossing zero at 30% with slope about −$0.20 per volatility
+point. Both computed from 2,000 simulated paths per setting on this contract.
 
 | Rebalances | Mean | 5th–95th percentile |
 |---|---|---|
@@ -866,14 +867,14 @@ gaps — it moves $8 overnight in one jump. Which is true of your P&L?
 - **(c) You break even; that is the point of a hedge.**
   *Targets:* first-order thinking — the tangent mistaken for the curve.
   *Explanation:* The hedge cancels the first-order term only. Over an $8 move the curve has
-  pulled well away from its tangent: about −$0.85 on this contract, and no amount of choosing
-  a better single fraction fixes it, because no straight line follows a curve for $8.
+  pulled well away from its tangent: about −$0.85 by ½Γ(ΔS)² and −$0.80 on a full
+  revaluation, and no amount of choosing a better single fraction fixes it, because no straight line follows a curve for $8.
 - **(d) You lose roughly eight times what a $1 move would have cost.**
   *Targets:* linear scaling of the residual — carrying the first-order intuition into the
   second-order term.
   *Explanation:* Sixty-four times, not eight. The residual goes with the square of the move,
   which is why a quiet week of $1 moves is cheap and one $8 day is not. A $1 move costs
-  $0.013; an $8 move costs about $0.85.
+  $0.013; an $8 move costs about $0.80.
 
 ---
 

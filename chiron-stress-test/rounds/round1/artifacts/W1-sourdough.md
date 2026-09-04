@@ -662,7 +662,7 @@ screen and stays wherever you leave it.
 the jar, by the ten-degree rule.
 
 **What visibly changes:** the whole height curve stretches out as you go colder and squeezes up
-as you go warmer, like an accordion, with the peak marker riding along the top of it. Two
+as you go warmer, with the peak marker riding along the top of it. Two
 readouts move: **doubling time ___ hours** and **peak at ___ hours**. Above 104 °F a band
 across the top of the chart turns red, the curve stops climbing wherever it had got to, and
 stays flat.
@@ -757,8 +757,8 @@ whether the yeast in there is still alive. Which of these would actually tell yo
 
 ---
 
-**In one sentence:** your jar rises because a crowd doubles toward a ceiling the flour sets,
-and it falls because the acid softens the web faster than the yeast stops filling it.
+**In one sentence:** your jar made almost all of its gas by eleven at night and was holding
+seven percent of it, because the acid took the web apart faster than the yeast ran out of sugar.
 
 ---
 
