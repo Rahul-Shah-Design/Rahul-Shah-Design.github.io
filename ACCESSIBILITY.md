@@ -22,6 +22,7 @@ a Playwright keyboard/screen-reader-semantics test, and a manual review.
 | 11 | 1.4.1 Use of Color | Links in running text on the projects index were colour-only | Underlined; footer link restored to a visible link |
 | 12 | 2.1.1 / 4.1.2 | Doodle toolbar was a Tab and VoiceOver stop for a pointer-only feature; VoiceOver users reported getting stuck in it | Toolbar removed from the accessibility tree and Tab order (`aria-hidden`, `tabindex="-1"`); drawing stays available to pointer users |
 | 13 | 1.1.1 Non-text Content | Avatar in the speech bubble read as "Rahul Shah" with no context; arrow glyphs and emoji read aloud | Hidden "Rahul says:" text before each bubble (a `role="group"` was tried first and VoiceOver made users interact into it); decorative glyphs `aria-hidden` |
+| 13b | VoiceOver | Hero heading and intro paragraph read twice, the second time as "6 items", because WebKit exposes each inline `<em>` / highlight `<span>` separately | `data-flatten`: styled markup hidden from AT, hidden single-text twin generated from the DOM |
 | 14 | 3.2.5 / G201 | New-tab links gave no warning | Visually hidden "(opens in new tab)" |
 | 15 | 2.4.7 Focus Visible | Focus ring on enlargeable images was clipped by `overflow:hidden` | Inset ring; explicit focus styles on project cards |
 | 16 | — | Sticky top bar could cover a focused element after Tab | `scroll-padding-top` |

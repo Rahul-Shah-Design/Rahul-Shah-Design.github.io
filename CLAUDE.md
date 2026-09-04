@@ -125,6 +125,11 @@ holds the audit record and the open items. Keep these conventions when editing t
   commentary bubble carry `aria-live="polite" aria-atomic="true"`. Short status messages
   (animation pause/play) go through `announce()`, which writes to the hidden `#sr-status`
   region. Only write text that actually changed, or it gets re-announced.
+- **Styled inline text gets `data-flatten`.** VoiceOver reads a block that contains `<em>`
+  or a highlight `<span>` twice, the second time as "N items". Any heading or paragraph
+  with inline styling carries `data-flatten`; a small script hides the styled markup from
+  assistive tech and adds a hidden single-text-node twin built from the DOM, so the spoken
+  copy never drifts from the visible copy. The hero `h1` and `.hero-sub` use it.
 - **Prefer hidden text over ARIA groups.** VoiceOver makes users "interact" into a
   `role="group"`, which reads as getting stuck. The speech bubble is introduced by a
   visually hidden "Rahul says:" span instead.
