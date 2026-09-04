@@ -12,7 +12,8 @@
     --surface2: #1e2230;
     --border: #2a2f40;
     --text: #e8eaf0;
-    --muted: #6b7280;
+    /* was #6b7280 (3.3:1 on the card tags) -- lifted to clear 4.5:1 on every surface */
+    --muted: #8b92a3;
     --accent: #4a90e2;
     --gold: #f0b429;
     --font-display: 'DM Serif Display', serif;
@@ -20,6 +21,12 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* visually hidden but still read by screen readers */
+  .sr-only {
+    position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
 
   body {
     font-family: var(--font-body);
@@ -66,12 +73,15 @@
     max-width: 480px;
   }
 
+  /* underlined: colour alone can't mark a link inside running text */
   .tagline a {
     color: var(--accent);
-    text-decoration: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
-  .tagline a:hover { text-decoration: underline; }
+  .tagline a:hover { text-decoration-thickness: 2px; }
+  .tagline a:focus-visible, footer a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
 
   /* DIVIDER */
   .divider {
@@ -128,6 +138,8 @@
   }
 
   .card:hover::before { opacity: 1; }
+  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-color: #3a4060; }
+  .card:focus-visible::before { opacity: 1; }
 
   .card-icon {
     font-size: 26px;
@@ -198,6 +210,13 @@
   }
 
   footer span { color: var(--gold); }
+  footer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card, .card::before, .card-footer svg { transition: none; }
+    .card:hover { transform: none; }
+    .card:hover .card-footer svg { transform: none; }
+  }
 
   /* RESPONSIVE */
   @media (max-width: 600px) {
@@ -212,7 +231,7 @@
 <header>
   <p class="eyebrow">Vibe Coded with Claude</p>
   <h1>Rahul Shah<br><em>Design &amp; Projects</em></h1>
-  <p class="tagline">A collection of small tools and experiments built by vibe coding with <a href="https://claude.ai/code" target="_blank">Claude Code</a>. Each project lives in its own folder in this repo.</p>
+  <p class="tagline">A collection of small tools and experiments built by vibe coding with <a href="https://claude.ai/code" target="_blank" rel="noopener">Claude Code<span class="sr-only"> (opens in new tab)</span></a>. Each project lives in its own folder in this repo.</p>
 </header>
 
 <div class="divider"><hr></div>
@@ -220,7 +239,7 @@
 <main class="projects">
 
   <a class="card" href="BudgetTracker/budget-tracker.html" style="--card-accent: #4a90e2;">
-    <div class="card-icon">💰</div>
+    <div class="card-icon" aria-hidden="true">💰</div>
     <div class="card-meta">
       <span class="card-title">Budget Tracker</span>
       <span class="card-tag">Finance</span>
@@ -228,14 +247,14 @@
     <p class="card-desc">A single-file budgeting SPA. Track monthly expenses and income across Needs, Wants &amp; Savings buckets, with a paycheck calculator and YTD dashboard chart.</p>
     <div class="card-footer">
       Open app
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
         <path d="M3 8h10M9 4l4 4-4 4"/>
       </svg>
     </div>
   </a>
 
   <a class="card" href="GrindLog/index.html" style="--card-accent: #c8f542;">
-    <div class="card-icon">💪</div>
+    <div class="card-icon" aria-hidden="true">💪</div>
     <div class="card-meta">
       <span class="card-title">GrindLog</span>
       <span class="card-tag">Fitness</span>
@@ -243,7 +262,7 @@
     <p class="card-desc">A daily fitness tracker PWA. Logs Fighter pull-up program sets, C25K runs, and morning stretches — with a 28-day dot grid, streak stats, and JSON/CSV export.</p>
     <div class="card-footer">
       Open app
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
         <path d="M3 8h10M9 4l4 4-4 4"/>
       </svg>
     </div>
@@ -253,7 +272,7 @@
 </main>
 
 <footer>
-  Built with <span>♥</span> and Claude &nbsp;·&nbsp; <a href="https://github.com/Rahul-Shah-Design/Rahul-Shah-Design.github.io" style="color: inherit; text-decoration: none;">GitHub</a>
+  Built with <span aria-hidden="true">♥</span><span class="sr-only">love</span> and Claude &nbsp;·&nbsp; <a href="https://github.com/Rahul-Shah-Design/Rahul-Shah-Design.github.io">GitHub</a>
 </footer>
 
 </body>

@@ -13,7 +13,9 @@
     --paper: #FFFFFF;
     --ink: #182338;
     --ink-soft: #4A5670;
-    --ink-faint: #8792A8;
+    /* was #8792A8 (3.0:1) -- lifted so the 11px captions and eyebrows clear
+       the 4.5:1 text minimum on both the paper and the grid background */
+    --ink-faint: #66718A;
     --line: #D9E1EC;
     --pen: #1D4ED8;
     --pen-deep: #1440B0;
@@ -33,7 +35,9 @@
     --wrap: 1040px;
   }
   *{ box-sizing:border-box; }
-  html{ scroll-behavior:smooth; }
+  /* scroll-padding keeps a focused or anchored element from landing under
+     the sticky top bar */
+  html{ scroll-behavior:smooth; scroll-padding-top:84px; }
   body{
     margin:0;
     background-color:var(--bg);
@@ -60,9 +64,31 @@
 
   .wrap{ max-width:var(--wrap); margin:0 auto; padding:0 28px; position:relative; }
 
+  /* ---------- ACCESSIBILITY UTILITIES ---------- */
+  /* visually hidden but still read by screen readers */
+  .sr-only{
+    position:absolute !important; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+  /* first tab stop on the page; parked off-screen until it has focus */
+  .skip-link{
+    position:absolute; left:16px; top:-100px; z-index:60;
+    background:var(--ink); color:var(--bg); padding:12px 18px; border-radius:8px;
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:13px;
+    letter-spacing:0.03em; text-decoration:none;
+  }
+  .skip-link:focus{ top:12px; outline:2px solid var(--pen); outline-offset:2px; }
+
   /* ---------- IMAGE LIGHTBOX ---------- */
-  .zoomable{ cursor:zoom-in; }
-  .zoomable:focus-visible{ outline:2px solid var(--pen); outline-offset:3px; }
+  /* a real <button> around each enlargeable image: native keyboard and
+     screen-reader semantics instead of role=button on an <img> */
+  .zoom-btn{
+    display:block; width:100%; height:100%; padding:0; margin:0; border:0;
+    background:none; cursor:zoom-in; font:inherit; color:inherit;
+  }
+  /* the ring is inset because every container that holds one of these
+     clips overflow, which would swallow an outline drawn outside */
+  .zoom-btn:focus-visible{ outline:3px solid var(--pen); outline-offset:-3px; }
   .lightbox{
     position:fixed; inset:0; z-index:100;
     background:rgba(24,35,56,0.93);
@@ -82,15 +108,22 @@
     max-width:none; max-height:none;
     width:auto; cursor:zoom-out;
   }
-  .lightbox-close{
-    position:fixed; top:14px; right:16px; z-index:101;
-    width:44px; height:44px; border-radius:50%;
+  .lightbox-close, .lightbox-zoom{
+    position:fixed; top:14px; z-index:101;
+    height:44px; border-radius:22px;
     border:1px solid rgba(245,242,234,0.35);
     background:rgba(24,35,56,0.75); color:#F5F2EA;
-    font-size:24px; line-height:1; cursor:pointer;
+    line-height:1; cursor:pointer;
     display:flex; align-items:center; justify-content:center;
   }
-  .lightbox-close:focus-visible{ outline:2px solid #F5F2EA; outline-offset:2px; }
+  .lightbox-close{ right:16px; width:44px; font-size:24px; }
+  /* keyboard route to the zoom that tapping the image gives pointer users */
+  .lightbox-zoom{
+    right:70px; padding:0 16px;
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:12px;
+    letter-spacing:0.04em;
+  }
+  .lightbox-close:focus-visible, .lightbox-zoom:focus-visible{ outline:2px solid #F5F2EA; outline-offset:2px; }
   .lightbox-hint{
     position:fixed; left:50%; bottom:14px; transform:translateX(-50%);
     font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px;
@@ -168,7 +201,9 @@
   }
   .dtool:hover{ background:var(--paper); }
   .dtool:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
-  .dtool.active{ background:var(--pen-tint); border-color:var(--sketch); }
+  /* the pen-blue border is what carries the pressed state: the tint alone is
+     1.15:1 against the bar, well under the 3:1 non-text minimum */
+  .dtool.active{ background:var(--pen-tint); border-color:var(--pen); }
   .dtool svg{ display:block; }
   .dtool-sep{ width:1px; height:20px; background:var(--line); margin:0 3px; flex:none; }
   .dtool-erase:hover{ background:var(--red-tint); }
@@ -221,7 +256,8 @@
     line-height:1.65; color:var(--ink-soft);
   }
   .hero-tags{
-    margin-top:26px; display:flex; gap:18px; flex-wrap:wrap;
+    margin:26px 0 0; padding:0; list-style:none;
+    display:flex; gap:18px; flex-wrap:wrap;
   }
   .tag{
     position:relative;
@@ -401,6 +437,21 @@
   }
   .device.filled.tall{ aspect-ratio:1465/957; }
 
+  /* pause / play for the animated GIFs (WCAG 2.2.2). Sits over the bottom
+     corner of whichever image it controls. */
+  .gif-toggle{
+    position:absolute; right:10px; bottom:10px; z-index:2;
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px;
+    letter-spacing:0.03em;
+    background:rgba(24,35,56,0.88); color:#F5F2EA;
+    border:1px solid rgba(245,242,234,0.35); border-radius:100px;
+    padding:0 12px; min-height:32px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .gif-toggle:hover{ background:var(--ink); }
+  .gif-toggle:focus-visible{ outline:2px solid #F5F2EA; outline-offset:2px; }
+  .gif-toggle[hidden]{ display:none; }
+
   .nav-arrow{
     position:absolute; top:50%; transform:translateY(-50%);
     width:42px; height:42px; border-radius:50%;
@@ -411,6 +462,10 @@
   }
   .nav-arrow:hover{ background:var(--pen-tint); border-color:var(--pen); }
   .nav-arrow:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
+  /* aria-disabled rather than disabled so the button keeps focus at either
+     end of the strip instead of dropping a keyboard user back to the top */
+  .slideshow .nav-arrow[aria-disabled="true"]{ opacity:.38; cursor:default; }
+  .slideshow .nav-arrow[aria-disabled="true"]:hover{ background:var(--paper); border-color:var(--line); }
   .slideshow.red .nav-arrow:hover{ background:var(--red-tint); border-color:var(--red); }
   .nav-arrow.left{ left:-18px; }
   .nav-arrow.right{ right:-18px; }
@@ -445,7 +500,7 @@
   .ds-section{ padding:58px 0; }
   .ds-head{ max-width:560px; margin-bottom:44px; }
   .ds-head .case-index{ margin-bottom:10px; display:block; }
-  .ds-head h3{ font-size:26px; font-weight:500; }
+  .ds-head h2{ font-size:26px; font-weight:500; }
 
   .polaroid-row{
     display:grid; grid-template-columns:repeat(3, 1fr);
@@ -478,6 +533,7 @@
     transition-delay:0s;
   }
   .polaroid-photo{
+    position:relative;
     aspect-ratio:1/1;
     background-color:var(--sketch-tint);
     background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><path d='M8,40 Q28,10 48,40 T88,40 T128,40 T168,40' stroke='%239FC1E8' stroke-width='2.5' fill='none' opacity='0.55' stroke-linecap='round'/><path d='M-12,95 Q8,60 28,95 T68,95 T108,95 T148,95' stroke='%239FC1E8' stroke-width='2.5' fill='none' opacity='0.4' stroke-linecap='round'/><path d='M15,145 Q35,120 55,145 T95,145 T135,145' stroke='%239FC1E8' stroke-width='2' fill='none' opacity='0.3' stroke-linecap='round'/></svg>");
@@ -529,7 +585,7 @@
     display:flex; align-items:center; justify-content:space-between;
     margin-bottom:26px; flex-wrap:wrap; gap:14px;
   }
-  .resume-head h3{ font-size:26px; font-weight:500; }
+  .resume-head h2{ font-size:26px; font-weight:500; }
   .dl-btn{
     font-family:'JetBrains Mono', ui-monospace, monospace; font-size:12px;
     background:var(--ink); color:var(--bg); border:none;
@@ -615,18 +671,22 @@
 </style>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <!-- one polite live region for short status messages (tool changes,
+       animation pause/play). Screen readers read it; nobody sees it. -->
+  <div id="sr-status" class="sr-only" role="status"></div>
 
-
-  <div class="topbar">
+  <header class="topbar">
     <div class="topbar-inner">
       <div class="mark"><img class="mark-dot" src="avatar-rahul.png" alt=""> Rahul Shah</div>
-      <div class="doodle-toolbar" role="toolbar" aria-label="Draw on this page">
-        <button type="button" class="dtool active" data-tool="cursor" aria-pressed="true" title="Cursor">
+      <p id="doodle-help" class="sr-only">Pick the pen or highlighter, then draw anywhere on the page with a mouse, finger or stylus. Press Escape to put the tool down. Drawing is a decorative extra; nothing on the site depends on it.</p>
+      <div class="doodle-toolbar" role="toolbar" aria-label="Draw on this page" aria-describedby="doodle-help">
+        <button type="button" class="dtool active" data-tool="cursor" aria-pressed="true" title="Cursor" aria-label="Cursor">
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
             <path d="M6 3 L6 19 L10 15.2 L12.6 21 L15 19.9 L12.4 14.3 L18 13.6 Z" fill="currentColor"/>
           </svg>
         </button>
-        <button type="button" class="dtool" data-tool="pen" aria-pressed="false" title="Pen">
+        <button type="button" class="dtool" data-tool="pen" aria-pressed="false" title="Pen" aria-label="Pen">
           <svg viewBox="0 0 32 32" width="19" height="19" aria-hidden="true">
             <g transform="translate(-6 -2.6) rotate(45 12 27)">
               <rect x="9.5" y="3" width="5" height="5" rx="1" fill="#1D4ED8"/>
@@ -635,7 +695,7 @@
             </g>
           </svg>
         </button>
-        <button type="button" class="dtool" data-tool="highlighter" aria-pressed="false" title="Highlighter">
+        <button type="button" class="dtool" data-tool="highlighter" aria-pressed="false" title="Highlighter" aria-label="Highlighter">
           <svg viewBox="0 0 32 32" width="19" height="19" aria-hidden="true">
             <g transform="translate(-6.7 -1.9) rotate(45 13 26)">
               <rect x="8.5" y="3" width="9" height="5" rx="1" fill="#182338"/>
@@ -655,7 +715,7 @@
         </button>
       </div>
     </div>
-  </div>
+  </header>
 
   <div class="doodle-hint" aria-hidden="true">
     <!-- viewBox is cropped to the artwork (was 0 0 70 65 with ~20 units of dead
@@ -670,8 +730,9 @@
     <span>doodle on my site!</span>
   </div>
 
+  <main id="main">
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero" aria-label="Introduction">
     <div class="wrap">
       <img class="doodle d-h1" src="doodle-tictactoe.png" alt="">
       <img class="doodle d-h2" src="doodle-canoe.png" alt="">
@@ -680,11 +741,11 @@
         <img class="mcp-logo" src="mcp-logo.png" alt="Modern Classrooms Project" width="1009" height="285">
       </div>
       <h1>You need a designer who ships pixels <em>and</em> understands mastery learning.<br>Hi, I'm <span class="hl-mark">Rahul</span>.</h1>
-      <div class="hero-tags">
-        <span class="tag">K-12 UX, 5 years</span>
-        <span class="tag">WCAG 2.1 / CPACC in progress</span>
-        <span class="tag">M.S. Learning Design & Technology</span>
-      </div>
+      <ul class="hero-tags" aria-label="Highlights">
+        <li class="tag">K-12 UX, 5 years</li>
+        <li class="tag">WCAG 2.1 / CPACC in progress</li>
+        <li class="tag">M.S. Learning Design &amp; Technology</li>
+      </ul>
       <p class="hero-sub">
         I design end-to-end for K-12 products — journey maps to shipped UI to the copy in an error message —
         with a masters grounded in <span class="hl-mark">mastery learning theory</span> and an accessibility practice that treats <span class="hl-mark">WCAG</span>
@@ -694,14 +755,14 @@
   </section>
 
   <!-- CASE 1: CHIRON -->
-  <section class="case" id="chiron">
+  <section class="case" id="chiron" aria-labelledby="title-chiron">
     <div class="wrap">
       <img class="doodle d-m3" src="doodle-star.png" alt="">
       <div class="case-grid long-note">
         <div class="case-head">
           <div>
           <div class="case-index">01 — PERSONAL PROJECT</div>
-          <h2 class="case-title">Chiron — building a personalized, Socratic tutor out of an LLM</h2>
+          <h2 class="case-title" id="title-chiron">Chiron — building a personalized, Socratic tutor out of an LLM</h2>
           </div>
         </div>
         <p class="case-desc">
@@ -711,18 +772,18 @@
         about, instead of a fixed path written for everyone. It's the closest thing I have to a working prototype
         of the pedagogy MCP is built on.
         </p>
-        <a class="status-pill progress" href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">View on GitHub &rarr;</a>
+        <a class="status-pill progress" href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">&rarr;</span><span class="sr-only"> (opens in new tab)</span></a>
       </div>
 
-      <div class="slideshow" id="ss-chiron">
+      <div class="slideshow" id="ss-chiron" role="region" aria-roledescription="carousel" aria-label="Chiron screenshots">
                 <div class="stage">
           <div class="frame-caption">
-            <div class="k" id="cap-k-chiron">Slide 1 of 4</div>
-            <div class="scribble-strip" id="strip-chiron"></div>
+            <div class="k" id="cap-k-chiron" aria-live="polite" aria-atomic="true">Slide 1 of 4</div>
+            <div class="scribble-strip" id="strip-chiron" aria-hidden="true"></div>
           </div>
-          <div class="talker">
-            <img class="avatar" src="avatar-rahul.png" alt="Rahul Shah">
-            <div class="bubble" id="bubble-chiron">This skill creates micro-courses based on your conversation. It chunks content, gates with knowledge checks, ties content into your interests based on memory, and leans on the power of LLMs with Socratic discussion.</div>
+          <div class="talker" role="group" aria-label="Rahul's commentary">
+            <img class="avatar" src="avatar-rahul.png" alt="">
+            <div class="bubble" id="bubble-chiron" aria-live="polite" aria-atomic="true">This skill creates micro-courses based on your conversation. It chunks content, gates with knowledge checks, ties content into your interests based on memory, and leans on the power of LLMs with Socratic discussion.</div>
           </div>
         
           <div class="device-wrap">
@@ -730,7 +791,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
             <div class="device filled">
-              <img id="img-chiron" src="" alt="">
+              <button type="button" class="zoom-btn" id="zoom-chiron" aria-label="Enlarge image"><img id="img-chiron" src="" alt=""></button>
             </div>
             <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
               <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -742,14 +803,14 @@
   </section>
 
   <!-- CASE 2: ENCOURAGE STUDENTS -->
-  <section class="case" id="students">
+  <section class="case" id="students" aria-labelledby="title-students">
     <div class="wrap">
       <img class="doodle d-m1" src="doodle-icecream.png" alt="">
       <div class="case-grid">
         <div class="case-head">
           <div>
           <div class="case-index">02 — ENCOURA, STUDENT APP</div>
-          <h2 class="case-title">Encourage — redesigning onboarding under a 100% content increase</h2>
+          <h2 class="case-title" id="title-students">Encourage — redesigning onboarding under a 100% content increase</h2>
           </div>
         </div>
         <p class="case-desc">
@@ -760,15 +821,15 @@
         <div class="status-pill progress">Shipping Back to School 2026</div>
       </div>
 
-      <div class="slideshow" id="ss-students">
+      <div class="slideshow" id="ss-students" role="region" aria-roledescription="carousel" aria-label="Encourage onboarding screenshots">
                 <div class="stage">
           <div class="frame-caption">
-            <div class="k" id="cap-k-students">Slide 1 of 6</div>
-            <div class="scribble-strip" id="strip-students"></div>
+            <div class="k" id="cap-k-students" aria-live="polite" aria-atomic="true">Slide 1 of 6</div>
+            <div class="scribble-strip" id="strip-students" aria-hidden="true"></div>
           </div>
-          <div class="talker">
-            <img class="avatar" src="avatar-rahul.png" alt="Rahul Shah">
-            <div class="bubble" id="bubble-students">I redesigned our onboarding for better completion rates and better data quality. I worked with developers to solve critical problems with our flow.</div>
+          <div class="talker" role="group" aria-label="Rahul's commentary">
+            <img class="avatar" src="avatar-rahul.png" alt="">
+            <div class="bubble" id="bubble-students" aria-live="polite" aria-atomic="true">I redesigned our onboarding for better completion rates and better data quality. I worked with developers to solve critical problems with our flow.</div>
           </div>
         
           <div class="device-wrap">
@@ -776,7 +837,8 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
             <div class="device filled">
-              <img id="img-students" src="" alt="">
+              <button type="button" class="zoom-btn" id="zoom-students" aria-label="Enlarge image"><img id="img-students" src="" alt=""></button>
+              <button type="button" class="gif-toggle" id="gif-students" hidden>Pause animation</button>
             </div>
             <button class="nav-arrow right" data-dir="1" data-target="students" aria-label="Next slide">
               <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -788,14 +850,14 @@
   </section>
 
   <!-- CASE 3: ENCOURAGE EDUCATORS -->
-  <section class="case red-case" id="educators">
+  <section class="case red-case" id="educators" aria-labelledby="title-educators">
     <div class="wrap">
       <img class="doodle d-m2" src="doodle-hangman.png" alt="">
       <div class="case-grid">
         <div class="case-head">
           <div>
           <div class="case-index">03 — ENCOURA, EDUCATOR TOOLS</div>
-          <h2 class="case-title">Encourage for Educators — designing for the counselor's workflow</h2>
+          <h2 class="case-title" id="title-educators">Encourage for Educators — designing for the counselor's workflow</h2>
           </div>
         </div>
         <p class="case-desc">
@@ -806,15 +868,15 @@
         <div class="status-pill shipped">Shipped</div>
       </div>
 
-      <div class="slideshow red" id="ss-educators">
+      <div class="slideshow red" id="ss-educators" role="region" aria-roledescription="carousel" aria-label="Encourage for Educators screenshots">
                 <div class="stage">
           <div class="frame-caption">
-            <div class="k" id="cap-k-educators">Slide 1 of 4</div>
-            <div class="scribble-strip" id="strip-educators"></div>
+            <div class="k" id="cap-k-educators" aria-live="polite" aria-atomic="true">Slide 1 of 4</div>
+            <div class="scribble-strip" id="strip-educators" aria-hidden="true"></div>
           </div>
-          <div class="talker">
-            <img class="avatar" src="avatar-rahul.png" alt="Rahul Shah">
-            <div class="bubble" id="bubble-educators">A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.</div>
+          <div class="talker" role="group" aria-label="Rahul's commentary">
+            <img class="avatar" src="avatar-rahul.png" alt="">
+            <div class="bubble" id="bubble-educators" aria-live="polite" aria-atomic="true">A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.</div>
           </div>
         
           <div class="device-wrap">
@@ -822,7 +884,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
             <div class="device filled tall">
-              <img id="img-educators" src="" alt="">
+              <button type="button" class="zoom-btn" id="zoom-educators" aria-label="Enlarge image"><img id="img-educators" src="" alt=""></button>
             </div>
             <button class="nav-arrow right" data-dir="1" data-target="educators" aria-label="Next slide">
               <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -834,17 +896,18 @@
   </section>
 
   <!-- DESIGN SYSTEM CALLOUT -->
-  <section class="ds-section">
+  <section class="ds-section" aria-labelledby="title-craft">
     <div class="wrap">
       <div class="ds-head">
         <img class="doodle d-m4" src="doodle-uxwuzhere.png" alt="">
         <span class="case-index">04 — WHAT I'M KNOWN FOR</span>
-        <h3>What teams pull me in for, whatever the project</h3>
+        <h2 id="title-craft">What teams pull me in for, whatever the project</h2>
       </div>
       <div class="polaroid-row">
         <figure class="polaroid">
           <div class="polaroid-photo contain">
-            <img src="craft-micro.gif" alt="A bottom navigation bar with four tabs — Home, Profile, Explore, Feedback — cycling through hover and active states, each icon filling in or spinning as it's selected.">
+            <img id="img-craft-micro" src="craft-micro.gif" data-poster="craft-micro-poster.webp" alt="A bottom navigation bar with four tabs — Home, Profile, Explore, Feedback — cycling through hover and active states, each icon filling in or spinning as it's selected.">
+            <button type="button" class="gif-toggle" data-for="img-craft-micro">Pause animation</button>
           </div>
           <figcaption>Micro-interactions</figcaption>
         </figure>
@@ -865,18 +928,19 @@
   </section>
 
   <!-- RESUME -->
-  <section class="resume-section" id="resume">
+  <section class="resume-section" id="resume" aria-labelledby="title-resume">
     <div class="wrap">
       <img class="doodle d-m5" src="doodle-morse.png" alt="">
       <div class="resume-head">
-        <h3>Résumé</h3>
-        <a class="dl-btn" href="resume.pdf" download="Rahul-Shah-Resume.pdf">↓ Download PDF</a>
+        <h2 id="title-resume">Résumé</h2>
+        <a class="dl-btn" href="resume.pdf" download="Rahul-Shah-Resume.pdf"><span aria-hidden="true">↓</span> Download PDF</a>
       </div>
       <div class="resume-preview">
-        <img class="resume-embed" src="resume.png" alt="Rahul Shah's r&eacute;sum&eacute; — one page: education, then Chiron, Encoura, Rochester Regional Health and Prudential Financial, followed by a skills list. Download the PDF for the accessible text version.">
+        <button type="button" class="zoom-btn" aria-label="Enlarge résumé image"><img class="resume-embed" src="resume.png" alt="Rahul Shah's r&eacute;sum&eacute; — one page: education, then Chiron, Encoura, Rochester Regional Health and Prudential Financial, followed by a skills list. Download the PDF for the accessible text version."></button>
       </div>
     </div>
   </section>
+  </main>
 
 <script src="lottie_svg.min.js"></script>
 <script>
@@ -922,6 +986,9 @@
         "onboard-5.png",
         "onboard-6.png"
       ],
+      // slide index -> first-frame still, for the pause control and for
+      // visitors whose OS asks for reduced motion
+      posters: { 3: "onboard-4-poster.webp" },
       alts: [
         "The Encourage onboarding survey as it shipped, on a phone.",
         "The previous onboarding design: boxed questions under a single full-length progress bar.",
@@ -956,6 +1023,43 @@
 
   const SCRIBBLE_EXT_COUNT = 6;
 
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  // short spoken status messages; the region is emptied first so the same
+  // message twice in a row is still announced twice
+  const srStatus = document.getElementById('sr-status');
+  function announce(msg){
+    srStatus.textContent = '';
+    setTimeout(()=>{ srStatus.textContent = msg; }, 50);
+  }
+
+  // ---------- animated GIFs: one pause/play preference for the page ----------
+  // <img> cannot stop a GIF mid-loop, so "paused" swaps in a still of the
+  // first frame. A reduced-motion OS setting starts everything paused.
+  const gifs = (function(){
+    let paused = reduceMotion.matches;
+    const subs = [];
+    const apply = ()=> subs.forEach(fn => fn(paused));
+    if (reduceMotion.addEventListener) reduceMotion.addEventListener('change', e=>{ paused = e.matches; apply(); });
+    return {
+      isPaused: ()=> paused,
+      label: p => p ? 'Play animation' : 'Pause animation',
+      subscribe(fn){ subs.push(fn); fn(paused); },
+      toggle(){
+        paused = !paused;
+        apply();
+        announce(paused ? 'Animations paused.' : 'Animations playing.');
+      }
+    };
+  })();
+
+  document.querySelectorAll('.gif-toggle[data-for]').forEach(btn=>{
+    const img = document.getElementById(btn.dataset.for);
+    const gif = img.getAttribute('src'), poster = img.dataset.poster;
+    gifs.subscribe(p=>{ img.src = p ? poster : gif; btn.textContent = gifs.label(p); });
+    btn.addEventListener('click', gifs.toggle);
+  });
+
   function buildExtendedScribble(key){
     const strip = document.getElementById('strip-' + key);
     const holder = document.createElement('div');
@@ -976,12 +1080,17 @@
     let shown = 0;
     anim.addEventListener('DOMLoaded', ()=>{
       anim.setDirection(1);
-      anim.playSegments([0, per], true);
+      if (reduceMotion.matches) anim.goToAndStop(per, true);
+      else anim.playSegments([0, per], true);
       shown = 1;
     });
     return function sync(target){
       if(target === shown) return;
-      if(target > shown){
+      if (reduceMotion.matches){
+        // land on the finished state rather than drawing the scribble in
+        anim.resetSegments(true);
+        anim.goToAndStop(target * per, true);
+      } else if(target > shown){
         anim.setDirection(1);
         anim.playSegments([shown * per, target * per], true);
       } else {
@@ -999,42 +1108,68 @@
     const strip = document.getElementById('strip-' + key);
     strip.style.setProperty('--n', cfg.n);
 
+    const region  = document.getElementById('ss-' + key);
+    const cap     = document.getElementById('cap-k-' + key);
+    const bubble  = document.getElementById('bubble-' + key);
+    const img     = document.getElementById('img-' + key);
+    const zoomBtn = document.getElementById('zoom-' + key);
+    const gifBtn  = document.getElementById('gif-' + key);
+    const arrows  = [...document.querySelectorAll(`[data-target="${key}"]`)];
+
     const syncExtended = buildExtendedScribble(key);
     const syncMarks = ()=> syncExtended(idx + 1);
 
+    // only write text that actually changed: both the caption and the bubble are
+    // live regions, and rewriting identical text would re-announce it
+    const setText = (el, s)=>{ if (el.textContent !== s) el.textContent = s; };
+
     function render(){
-      document.getElementById('cap-k-' + key).textContent = `Slide ${idx+1} of ${cfg.n}`;
-      document.getElementById('bubble-' + key).textContent = cfg.bubbles[idx];
-      if (cfg.images) {
-        const src = cfg.images[idx];
-        const el = document.getElementById('img-' + key);
-        el.src = src;
-        // each frame shows something different, so the alt has to change with
-        // it -- one alt on the <img> would describe only the slide it loaded on
-        el.alt = cfg.alts ? cfg.alts[idx] : '';
-        // the onboarding GIF ships with a 1px dark stroke drawn around all four
-        // edges; nudge it under the container's clip. scoped to the GIF because
-        // the PNG screenshots have their own corner arcs that a bleed would drag
-        // inside the radius and expose as black.
-        // matches both the deployed path and the inlined data URI the artifact
-        // build produces, so the two copies never diverge in behaviour
-        el.closest('.device').classList.toggle('bleed', /(?:\.gif$|^data:image\/gif)/i.test(src));
-      } else {
-        document.getElementById('ph-' + key).textContent = `[ placeholder UI — slide ${idx+1} ]`;
+      setText(cap, `Slide ${idx+1} of ${cfg.n}`);
+      setText(bubble, cfg.bubbles[idx]);
+
+      // each frame shows something different, so the alt has to change with
+      // it -- one alt on the <img> would describe only the slide it loaded on
+      const alt = cfg.alts ? cfg.alts[idx] : '';
+      const poster = cfg.posters && cfg.posters[idx];
+      img.src = poster && gifs.isPaused() ? poster : cfg.images[idx];
+      img.alt = alt;
+      zoomBtn.setAttribute('aria-label', alt ? 'Enlarge image: ' + alt : 'Enlarge image');
+
+      // the onboarding GIF ships with a 1px dark stroke drawn around all four
+      // edges; nudge it under the container's clip. Keyed on the slide, not the
+      // src, so the GIF and its first-frame still share the same 800x440 box.
+      img.closest('.device').classList.toggle('bleed', !!poster);
+      if (gifBtn){
+        gifBtn.hidden = !poster;
+        gifBtn.textContent = gifs.label(gifs.isPaused());
       }
+
+      arrows.forEach(btn=>{
+        const dir = parseInt(btn.dataset.dir, 10);
+        const atEnd = dir < 0 ? idx === 0 : idx === cfg.n - 1;
+        btn.setAttribute('aria-disabled', atEnd ? 'true' : 'false');
+      });
     }
 
-    document.querySelectorAll(`[data-target="${key}"]`).forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const dir = parseInt(btn.dataset.dir, 10);
-        const next = Math.max(0, Math.min(cfg.n - 1, idx + dir));
-        if(next !== idx){
-          idx = next;
-          syncMarks();
-        }
-        render();
-      });
+    function go(dir){
+      const next = Math.max(0, Math.min(cfg.n - 1, idx + dir));
+      if(next !== idx){
+        idx = next;
+        syncMarks();
+      }
+      render();
+    }
+
+    arrows.forEach(btn=>{
+      btn.addEventListener('click', ()=> go(parseInt(btn.dataset.dir, 10)));
     });
+    // left / right arrow keys work anywhere inside the carousel
+    region.addEventListener('keydown', e=>{
+      if (e.key === 'ArrowLeft'){ e.preventDefault(); go(-1); }
+      else if (e.key === 'ArrowRight'){ e.preventDefault(); go(1); }
+    });
+    if (gifBtn) gifBtn.addEventListener('click', gifs.toggle);
+    if (cfg.posters) gifs.subscribe(render);
 
     render();
   }
@@ -1051,30 +1186,47 @@
 
     const big = document.createElement('img');
     big.alt = '';
+    const zoomBtn = document.createElement('button');
+    zoomBtn.type = 'button';
+    zoomBtn.className = 'lightbox-zoom';
+    zoomBtn.textContent = 'Zoom in';
     const closeBtn = document.createElement('button');
     closeBtn.type = 'button';
     closeBtn.className = 'lightbox-close';
     closeBtn.setAttribute('aria-label', 'Close enlarged image');
-    closeBtn.innerHTML = '&times;';
+    closeBtn.innerHTML = '<span aria-hidden="true">&times;</span>';
     const hint = document.createElement('div');
     hint.className = 'lightbox-hint';
-    hint.textContent = 'Tap image to zoom · pinch to zoom further · Esc to close';
+    hint.setAttribute('aria-hidden', 'true');
+    hint.textContent = 'Tap image or press Zoom to magnify · pinch to zoom further · Esc to close';
 
     lb.appendChild(big);
+    lb.appendChild(zoomBtn);
     lb.appendChild(closeBtn);
     lb.appendChild(hint);
     document.body.appendChild(lb);
 
     let lastFocus = null;
+    let inerted = [];
+
+    function setZoom(on){
+      lb.classList.toggle('zoomed', on);
+      zoomBtn.textContent = on ? 'Zoom out' : 'Zoom in';
+    }
 
     function openLightbox(src, alt){
       lastFocus = document.activeElement;
       big.src = src;
       big.alt = alt || '';
+      lb.setAttribute('aria-label', alt ? 'Enlarged image: ' + alt : 'Enlarged image');
       lb.classList.add('open');
-      lb.classList.remove('zoomed');
+      setZoom(false);
       lb.scrollTop = 0; lb.scrollLeft = 0;
       document.body.style.overflow = 'hidden';
+      // everything behind the dialog is made inert so neither Tab nor a screen
+      // reader's virtual cursor can wander back into the page while it is open
+      inerted = [...document.body.children].filter(el => el !== lb && !el.hasAttribute('inert'));
+      inerted.forEach(el => el.setAttribute('inert', ''));
       closeBtn.focus();
     }
 
@@ -1082,26 +1234,34 @@
       lb.classList.remove('open', 'zoomed');
       big.removeAttribute('src');
       document.body.style.overflow = '';
+      inerted.forEach(el => el.removeAttribute('inert'));
+      inerted = [];
       if(lastFocus && lastFocus.focus) lastFocus.focus();
     }
 
     closeBtn.addEventListener('click', closeLightbox);
+    zoomBtn.addEventListener('click', ()=> setZoom(!lb.classList.contains('zoomed')));
     lb.addEventListener('click', e => { if(e.target === lb) closeLightbox(); });
-    big.addEventListener('click', () => lb.classList.toggle('zoomed'));
+    big.addEventListener('click', () => setZoom(!lb.classList.contains('zoomed')));
+    // on the document, not the dialog: tapping the image to zoom drops focus
+    // onto <body>, and Escape still has to close from there
     document.addEventListener('keydown', e => {
       if(e.key === 'Escape' && lb.classList.contains('open')) closeLightbox();
     });
+    lb.addEventListener('keydown', e => {
+      // belt and braces with inert: keep Tab cycling between the two controls
+      if(e.key === 'Tab'){
+        const order = [zoomBtn, closeBtn];
+        const i = order.indexOf(document.activeElement);
+        const next = e.shiftKey ? (i <= 0 ? order.length - 1 : i - 1) : (i === order.length - 1 ? 0 : i + 1);
+        e.preventDefault();
+        order[next].focus();
+      }
+    });
 
-    document.querySelectorAll('.device.filled img, .resume-embed').forEach(img => {
-      img.classList.add('zoomable');
-      img.setAttribute('role', 'button');
-      img.setAttribute('tabindex', '0');
-      img.setAttribute('aria-label', img.alt ? 'Enlarge image: ' + img.alt : 'Enlarge image');
-      const fire = () => openLightbox(img.currentSrc || img.src, img.alt);
-      img.addEventListener('click', fire);
-      img.addEventListener('keydown', e => {
-        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); fire(); }
-      });
+    document.querySelectorAll('.zoom-btn').forEach(btn => {
+      const img = btn.querySelector('img');
+      btn.addEventListener('click', () => openLightbox(img.currentSrc || img.src, img.alt));
     });
   })();
 
@@ -1110,12 +1270,12 @@
   <footer class="site-footer">
     <div class="wrap">
       <p class="footer-kicker">Let&rsquo;s talk</p>
-      <div class="footer-links">
+      <nav class="footer-links" aria-label="Contact">
         <a href="mailto:rahulshah.design@gmail.com">rahulshah.design@gmail.com</a>
-        <a href="https://www.linkedin.com/in/rahul-shah-design/" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/rahul-shah-design/" target="_blank" rel="noopener">LinkedIn<span class="sr-only"> (opens in new tab)</span></a>
+        <a href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">GitHub<span class="sr-only"> (opens in new tab)</span></a>
         <a href="resume.pdf" download="Rahul-Shah-Resume.pdf">R&eacute;sum&eacute; (PDF)</a>
-      </div>
+      </nav>
       <p class="footer-note">Designed and built by Rahul Shah</p>
     </div>
   </footer>
@@ -1197,7 +1357,14 @@
       redraw();
     }
 
-    function setTool(tool){
+    const TOOL_MSG = {
+      cursor:      'Cursor. Drawing off.',
+      pen:         'Pen. Draw anywhere on the page with a mouse, finger or stylus. Press Escape to stop.',
+      highlighter: 'Highlighter. Draw anywhere on the page with a mouse, finger or stylus. Press Escape to stop.'
+    };
+
+    function setTool(tool, msg){
+      const changed = tool !== activeTool;
       activeTool = tool;
       buttons.forEach(b=>{
         if (b.dataset.tool === 'erase') return;
@@ -1207,6 +1374,7 @@
       });
       document.body.classList.toggle('doodle-drawing', tool !== 'cursor');
       hit.style.cursor = CURSORS[tool] || 'auto';
+      if (msg || changed) announce(msg || TOOL_MSG[tool]);
     }
 
     function endStroke(){
@@ -1225,11 +1393,23 @@
         if (tool === 'erase'){
           strokes = [];
           redraw();
-          setTool('cursor');
+          setTool('cursor', 'Drawing cleared.');
           return;
         }
         setTool(tool);
       });
+    });
+
+    // arrow keys step through the toolbar, as the toolbar role promises
+    document.querySelector('.doodle-toolbar').addEventListener('keydown', e=>{
+      const i = buttons.indexOf(document.activeElement);
+      if (i < 0) return;
+      let j = null;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') j = (i + 1) % buttons.length;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') j = (i - 1 + buttons.length) % buttons.length;
+      else if (e.key === 'Home') j = 0;
+      else if (e.key === 'End') j = buttons.length - 1;
+      if (j !== null){ e.preventDefault(); buttons[j].focus(); }
     });
 
     document.addEventListener('keydown', e=>{

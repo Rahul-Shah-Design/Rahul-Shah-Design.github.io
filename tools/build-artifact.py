@@ -159,8 +159,9 @@ def verify(html: str, page: Path) -> None:
         if (page / m.group(1)).exists():
             problems.append(f"local asset left un-inlined in a string: {m.group(1)}")
 
+    # word boundary so <header> and <headline> do not read as a leftover <head>
     for tag in ("<!DOCTYPE", "<html", "<body", "<head"):
-        if tag.lower() in html.lower():
+        if re.search(re.escape(tag) + r"\b", html, re.I):
             problems.append(f"document scaffolding survives: {tag}")
 
     if problems:

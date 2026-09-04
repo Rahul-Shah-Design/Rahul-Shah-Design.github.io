@@ -112,6 +112,37 @@ Consequences for page code:
 - `build/` and `.artifact-cache/` are gitignored. Fonts are cached on first run so
   later builds need no network; the build is byte-for-byte reproducible.
 
+## Accessibility Conventions (root page and employer pages)
+
+The portfolio pages were audited against WCAG 2.1 AA in September 2026; `ACCESSIBILITY.md`
+holds the audit record and the open items. Keep these conventions when editing them:
+
+- **Landmarks and headings.** `<header>` (top bar), one `<main id="main">`, `<footer>`. Every
+  `<section>` gets `aria-labelledby` pointing at its heading. Case-study titles are `h2`;
+  do not skip heading levels.
+- **Skip link** is the first tab stop and targets `#main`. Keep it first in `<body>`.
+- **Anything that updates in place is a live region.** The "Slide X of N" caption and the
+  commentary bubble carry `aria-live="polite" aria-atomic="true"`. Short status messages
+  (tool changes, animation pause/play) go through `announce()`, which writes to the hidden
+  `#sr-status` region. Only write text that actually changed, or it gets re-announced.
+- **Slideshows** are `role="region" aria-roledescription="carousel"` with an `aria-label`.
+  Prev/Next use `aria-disabled` at the ends (never `disabled`, which would drop focus).
+  Left/Right arrow keys navigate anywhere inside the region.
+- **Enlargeable images** are `<img>` inside a real `<button class="zoom-btn">`; the button's
+  `aria-label` is updated in `render()` alongside the alt. The lightbox is `role="dialog"
+  aria-modal="true"`, makes the rest of the page `inert`, traps Tab, and returns focus on close.
+- **Animated GIFs need a still.** Every GIF has a first-frame poster (`*-poster.webp`, made by
+  drawing the GIF onto a canvas) and a "Pause animation" button. One page-wide preference
+  drives all of them and starts paused under `prefers-reduced-motion`. The Lottie scribble
+  jumps to its end state under reduced motion instead of drawing in.
+- **Contrast.** Text needs 4.5:1; UI state indicators need 3:1. `--ink-faint` is the
+  lightest text colour allowed on paper or the grid. The doodle toolbar's pressed state is
+  carried by the `--pen` border, not the tint.
+- **Links that open a new tab** carry a visually hidden " (opens in new tab)" span. Arrow
+  glyphs that decorate a link are `aria-hidden`.
+- The freehand drawing feature is pointer-only by nature (the WCAG 2.1.1 path-dependent
+  exception); the toolbar itself is fully keyboard operable and announces tool changes.
+
 ## GitHub Pages
 
 This site is served via GitHub Pages from the `main` branch root. The portfolio is live at:
