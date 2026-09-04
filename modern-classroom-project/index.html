@@ -744,13 +744,13 @@
       <div class="eyebrow">Prepared for
         <img class="mcp-logo" src="mcp-logo.png" alt="Modern Classrooms Project" width="1009" height="285">
       </div>
-      <h1>You need a designer who ships pixels <em>and</em> understands mastery learning.<br>Hi, I'm <span class="hl-mark">Rahul</span>.</h1>
+      <h1 data-flatten>You need a designer who ships pixels <em>and</em> understands mastery learning.<br>Hi, I'm <span class="hl-mark">Rahul</span>.</h1>
       <ul class="hero-tags" aria-label="Highlights">
         <li class="tag">K-12 UX, 5 years</li>
         <li class="tag">WCAG 2.1 / CPACC in progress</li>
         <li class="tag">M.S. Learning Design &amp; Technology</li>
       </ul>
-      <p class="hero-sub">
+      <p class="hero-sub" data-flatten>
         I design end-to-end for K-12 products — journey maps to shipped UI to the copy in an error message —
         with a masters grounded in <span class="hl-mark">mastery learning theory</span> and an accessibility practice that treats <span class="hl-mark">WCAG</span>
         as an input, not an afterthought. Explore three projects below, picked specifically for this role.
@@ -1039,6 +1039,25 @@
     srStatus.textContent = '';
     setTimeout(()=>{ srStatus.textContent = msg; }, 50);
   }
+
+  // ---------- VoiceOver: read styled text once ----------
+  // WebKit exposes every inline element in a text block (the <em>, a highlight
+  // <span>) as its own accessibility object, so VoiceOver reads the block whole
+  // and then again as "6 items". Hide the styled markup from assistive tech
+  // and add a visually hidden twin holding the same words in one text node.
+  // Built from the DOM so the spoken copy can never drift from the visible copy.
+  document.querySelectorAll('[data-flatten]').forEach(el=>{
+    const words = [...el.childNodes]
+      .map(n => n.nodeName === 'BR' ? ' ' : n.textContent)
+      .join('').replace(/\s+/g, ' ').trim();
+    const shown = document.createElement('span');
+    shown.setAttribute('aria-hidden', 'true');
+    while (el.firstChild) shown.appendChild(el.firstChild);
+    const spoken = document.createElement('span');
+    spoken.className = 'sr-only';
+    spoken.textContent = words;
+    el.append(shown, spoken);
+  });
 
   // ---------- animated GIFs: one pause/play preference for the page ----------
   // <img> cannot stop a GIF mid-loop, so "paused" swaps in a still of the
