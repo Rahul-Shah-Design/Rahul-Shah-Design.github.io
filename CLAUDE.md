@@ -123,8 +123,11 @@ holds the audit record and the open items. Keep these conventions when editing t
 - **Skip link** is the first tab stop and targets `#main`. Keep it first in `<body>`.
 - **Anything that updates in place is a live region.** The "Slide X of N" caption and the
   commentary bubble carry `aria-live="polite" aria-atomic="true"`. Short status messages
-  (tool changes, animation pause/play) go through `announce()`, which writes to the hidden
-  `#sr-status` region. Only write text that actually changed, or it gets re-announced.
+  (animation pause/play) go through `announce()`, which writes to the hidden `#sr-status`
+  region. Only write text that actually changed, or it gets re-announced.
+- **Prefer hidden text over ARIA groups.** VoiceOver makes users "interact" into a
+  `role="group"`, which reads as getting stuck. The speech bubble is introduced by a
+  visually hidden "Rahul says:" span instead.
 - **Slideshows** are `role="region" aria-roledescription="carousel"` with an `aria-label`.
   Prev/Next use `aria-disabled` at the ends (never `disabled`, which would drop focus).
   Left/Right arrow keys navigate anywhere inside the region.
@@ -140,8 +143,10 @@ holds the audit record and the open items. Keep these conventions when editing t
   carried by the `--pen` border, not the tint.
 - **Links that open a new tab** carry a visually hidden " (opens in new tab)" span. Arrow
   glyphs that decorate a link are `aria-hidden`.
-- The freehand drawing feature is pointer-only by nature (the WCAG 2.1.1 path-dependent
-  exception); the toolbar itself is fully keyboard operable and announces tool changes.
+- **The doodle toolbar is deliberately invisible to assistive tech** (`aria-hidden` plus
+  `tabindex="-1"` on its buttons). Freehand drawing is pointer-only by nature (the WCAG 2.1.1
+  path-dependent exception), so a screen-reader or keyboard user could reach the buttons but
+  never use what they switch on; VoiceOver testing showed it as a dead end. Keep it that way.
 
 ## GitHub Pages
 
