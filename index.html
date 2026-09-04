@@ -662,21 +662,25 @@
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <!-- one polite live region for short status messages (tool changes,
-       animation pause/play). Screen readers read it; nobody sees it. -->
+  <!-- one polite live region for short status messages (animation
+       pause/play). Screen readers read it; nobody sees it. -->
   <div id="sr-status" class="sr-only" role="status"></div>
 
   <header class="topbar">
     <div class="topbar-inner">
       <div class="mark"><img class="mark-dot" src="assets/avatar-rahul.png" alt=""> Rahul Shah</div>
-      <p id="doodle-help" class="sr-only">Pick the pen or highlighter, then draw anywhere on the page with a mouse, finger or stylus. Press Escape to put the tool down. Drawing is a decorative extra; nothing on the site depends on it.</p>
-      <div class="doodle-toolbar" role="toolbar" aria-label="Draw on this page" aria-describedby="doodle-help">
-        <button type="button" class="dtool active" data-tool="cursor" aria-pressed="true" title="Cursor" aria-label="Cursor">
+      <!-- Hidden from assistive tech and the Tab order on purpose. Freehand
+           drawing is pointer-only by nature (the WCAG 2.1.1 path-dependent
+           exception), so a screen reader or keyboard user could reach these
+           buttons but never use what they switch on. VoiceOver testing showed
+           the toolbar as a dead end to wade through, so it is decorative UI. -->
+      <div class="doodle-toolbar" aria-hidden="true">
+        <button type="button" class="dtool active" data-tool="cursor" tabindex="-1" title="Cursor">
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
             <path d="M6 3 L6 19 L10 15.2 L12.6 21 L15 19.9 L12.4 14.3 L18 13.6 Z" fill="currentColor"/>
           </svg>
         </button>
-        <button type="button" class="dtool" data-tool="pen" aria-pressed="false" title="Pen" aria-label="Pen">
+        <button type="button" class="dtool" data-tool="pen" tabindex="-1" title="Pen">
           <svg viewBox="0 0 32 32" width="19" height="19" aria-hidden="true">
             <g transform="translate(-6 -2.6) rotate(45 12 27)">
               <rect x="9.5" y="3" width="5" height="5" rx="1" fill="#1D4ED8"/>
@@ -685,7 +689,7 @@
             </g>
           </svg>
         </button>
-        <button type="button" class="dtool" data-tool="highlighter" aria-pressed="false" title="Highlighter" aria-label="Highlighter">
+        <button type="button" class="dtool" data-tool="highlighter" tabindex="-1" title="Highlighter">
           <svg viewBox="0 0 32 32" width="19" height="19" aria-hidden="true">
             <g transform="translate(-6.7 -1.9) rotate(45 13 26)">
               <rect x="8.5" y="3" width="9" height="5" rx="1" fill="#182338"/>
@@ -695,7 +699,7 @@
           </svg>
         </button>
         <div class="dtool-sep"></div>
-        <button type="button" class="dtool dtool-erase" data-tool="erase" title="Clear drawing" aria-label="Clear drawing">
+        <button type="button" class="dtool dtool-erase" data-tool="erase" tabindex="-1" title="Clear drawing">
           <svg viewBox="0 0 32 32" width="19" height="19" aria-hidden="true">
             <g transform="rotate(45 16 16)">
               <rect x="10" y="6"  width="12" height="13" rx="2" fill="#182338"/>
@@ -768,7 +772,8 @@
             <div class="k" id="cap-k-chiron" aria-live="polite" aria-atomic="true">Slide 1 of 4</div>
             <div class="scribble-strip" id="strip-chiron" aria-hidden="true"></div>
           </div>
-          <div class="talker" role="group" aria-label="Rahul's commentary">
+          <div class="talker">
+            <span class="sr-only">Rahul says:</span>
             <img class="avatar" src="assets/avatar-rahul.png" alt="">
             <div class="bubble" id="bubble-chiron" aria-live="polite" aria-atomic="true">This skill creates micro-courses based on your conversation. It chunks content, gates with knowledge checks, ties content into your interests based on memory, and leans on the power of LLMs with Socratic discussion.</div>
           </div>
@@ -814,7 +819,8 @@
             <div class="k" id="cap-k-students" aria-live="polite" aria-atomic="true">Slide 1 of 6</div>
             <div class="scribble-strip" id="strip-students" aria-hidden="true"></div>
           </div>
-          <div class="talker" role="group" aria-label="Rahul's commentary">
+          <div class="talker">
+            <span class="sr-only">Rahul says:</span>
             <img class="avatar" src="assets/avatar-rahul.png" alt="">
             <div class="bubble" id="bubble-students" aria-live="polite" aria-atomic="true">I redesigned our onboarding for better completion rates and better data quality. I worked with developers to solve critical problems with our flow.</div>
           </div>
@@ -861,7 +867,8 @@
             <div class="k" id="cap-k-educators" aria-live="polite" aria-atomic="true">Slide 1 of 4</div>
             <div class="scribble-strip" id="strip-educators" aria-hidden="true"></div>
           </div>
-          <div class="talker" role="group" aria-label="Rahul's commentary">
+          <div class="talker">
+            <span class="sr-only">Rahul says:</span>
             <img class="avatar" src="assets/avatar-rahul.png" alt="">
             <div class="bubble" id="bubble-educators" aria-live="polite" aria-atomic="true">A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.</div>
           </div>
@@ -1344,24 +1351,15 @@
       redraw();
     }
 
-    const TOOL_MSG = {
-      cursor:      'Cursor. Drawing off.',
-      pen:         'Pen. Draw anywhere on the page with a mouse, finger or stylus. Press Escape to stop.',
-      highlighter: 'Highlighter. Draw anywhere on the page with a mouse, finger or stylus. Press Escape to stop.'
-    };
-
-    function setTool(tool, msg){
-      const changed = tool !== activeTool;
+    function setTool(tool){
       activeTool = tool;
       buttons.forEach(b=>{
         if (b.dataset.tool === 'erase') return;
         const on = b.dataset.tool === tool;
         b.classList.toggle('active', on);
-        b.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
       document.body.classList.toggle('doodle-drawing', tool !== 'cursor');
       hit.style.cursor = CURSORS[tool] || 'auto';
-      if (msg || changed) announce(msg || TOOL_MSG[tool]);
     }
 
     function endStroke(){
@@ -1380,24 +1378,13 @@
         if (tool === 'erase'){
           strokes = [];
           redraw();
-          setTool('cursor', 'Drawing cleared.');
+          setTool('cursor');
           return;
         }
         setTool(tool);
       });
     });
 
-    // arrow keys step through the toolbar, as the toolbar role promises
-    document.querySelector('.doodle-toolbar').addEventListener('keydown', e=>{
-      const i = buttons.indexOf(document.activeElement);
-      if (i < 0) return;
-      let j = null;
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') j = (i + 1) % buttons.length;
-      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') j = (i - 1 + buttons.length) % buttons.length;
-      else if (e.key === 'Home') j = 0;
-      else if (e.key === 'End') j = buttons.length - 1;
-      if (j !== null){ e.preventDefault(); buttons[j].focus(); }
-    });
 
     document.addEventListener('keydown', e=>{
       if (e.key === 'Escape' && activeTool !== 'cursor') setTool('cursor');

@@ -20,8 +20,8 @@ a Playwright keyboard/screen-reader-semantics test, and a manual review.
 | 9 | 1.4.3 Contrast (Minimum) | `--ink-faint` (#8792A8) was 3.0:1 for 11–14px captions, eyebrows, footer note; projects index `--muted` was 3.3–3.9:1 | `#66718A` (4.7:1+) and `#8b92a3` (5.0:1+) |
 | 10 | 1.4.11 Non-text Contrast | Doodle toolbar pressed state relied on a 1.15:1 tint | Pressed border uses `--pen` (6.5:1) |
 | 11 | 1.4.1 Use of Color | Links in running text on the projects index were colour-only | Underlined; footer link restored to a visible link |
-| 12 | 4.1.2 | Toolbar buttons named only by `title`; `role="toolbar"` without arrow-key movement | `aria-label` on each; Arrow/Home/End move focus; help text via `aria-describedby`; tool changes and "Drawing cleared" announced |
-| 13 | 1.1.1 Non-text Content | Avatar in the speech bubble read as "Rahul Shah" with no context; arrow glyphs and emoji read aloud | Bubble wrapped in a group labelled "Rahul's commentary"; decorative glyphs `aria-hidden` |
+| 12 | 2.1.1 / 4.1.2 | Doodle toolbar was a Tab and VoiceOver stop for a pointer-only feature; VoiceOver users reported getting stuck in it | Toolbar removed from the accessibility tree and Tab order (`aria-hidden`, `tabindex="-1"`); drawing stays available to pointer users |
+| 13 | 1.1.1 Non-text Content | Avatar in the speech bubble read as "Rahul Shah" with no context; arrow glyphs and emoji read aloud | Hidden "Rahul says:" text before each bubble (a `role="group"` was tried first and VoiceOver made users interact into it); decorative glyphs `aria-hidden` |
 | 14 | 3.2.5 / G201 | New-tab links gave no warning | Visually hidden "(opens in new tab)" |
 | 15 | 2.4.7 Focus Visible | Focus ring on enlargeable images was clipped by `overflow:hidden` | Inset ring; explicit focus styles on project cards |
 | 16 | — | Sticky top bar could cover a focused element after Tab | `scroll-padding-top` |
@@ -39,10 +39,12 @@ a Playwright keyboard/screen-reader-semantics test, and a manual review.
 3. **Flash check on the GIFs (2.3.1).** Neither GIF looks like it flashes more than three
    times a second, but only a tool like PEAT or a frame-by-frame look can confirm it. If you
    ever swap in a new GIF, re-check.
-4. **Screen-reader pass on real hardware.** The semantics are verified in the DOM; the actual
-   spoken experience should be checked with VoiceOver on Safari and NVDA on Chrome. Listen
+4. **Screen-reader pass on real hardware.** VoiceOver on Safari has been tried once (it
+   surfaced the toolbar and group issues above, now fixed). NVDA on Chrome has not. Listen
    for: the carousel region name on entry, "Slide 2 of 4" followed by the commentary after
-   Next, and the dialog name when enlarging an image.
+   Next, and the dialog name when enlarging an image. Note that Tab only visits links and
+   buttons; headings and paragraphs are read with VO+Right Arrow or the rotor (VO+U), and
+   that is the expected behaviour, not a defect.
 5. **Text spacing (1.4.12) and 200% zoom (1.4.4).** Reflow at 320px passes with no horizontal
    scroll. Do a quick pass with a text-spacing bookmarklet and at 200% browser zoom on a
    real device to confirm the sticky notes and speech bubble do not clip.
@@ -54,4 +56,5 @@ a Playwright keyboard/screen-reader-semantics test, and a manual review.
 - `ClaudeProjects/BudgetTracker`, `ClaudeProjects/GrindLog`, `ClaudeProjects/User State Map`.
   These are full apps with forms, modals and charts and each deserves its own audit.
 - The freehand doodle feature cannot be made keyboard-operable; WCAG 2.1.1 exempts
-  path-dependent input, and the site does not depend on it.
+  path-dependent input, and the site does not depend on it. Its toolbar is hidden from
+  assistive tech for that reason.
