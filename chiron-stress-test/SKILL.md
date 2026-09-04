@@ -302,6 +302,12 @@ scenario, different numbers, the same underlying discrimination. An item that as
 which control adds real photons should come back as a situation where they must decide
 which control to move and why.
 
+**The test: set the earlier item's correct answer beside the new one. If they are the
+same thing — the same number, the same option, the same ordering — you have reissued the
+item, whatever changed in the stem.** A new format wrapped around an unchanged answer is
+the same recognition in a new costume. Writing *reformulated* in the plan is not doing
+it; the answers have to differ.
+
 Say nothing to the learner about interleaving. Do not apologise for the difficulty, do
 not flag which items are callbacks, do not soften the set.
 
