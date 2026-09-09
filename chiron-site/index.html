@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chiron Course Tutor</title>
+<meta name="description" content="Chiron is a Claude Skill that finds where you get stuck, then builds two or three interactive lesson modules around exactly that, plus a flashcard deck you write yourself.">
+<meta name="color-scheme" content="dark">
+<style>
+  :root {
+    --bg: #15171c;
+    --bg-2: #1d2027;
+    --bg-3: #252932;
+    --line: #363b45;
+    --ink: #ebe9e4;
+    --ink-2: #b6b3ab;
+    --ink-3: #9a978f;
+    --accent: #4fd1bb;
+    --accent-ink: #0c1a17;
+    --accent-deep: #159d8a;
+    --purple: #7c5cbf;
+    --warm: #f0a469;
+    --warm-line: #c2540a;
+    --paper: #f7f5f0;
+    --paper-ink: #2a2530;
+    --paper-ink-2: #4a4550;
+    --measure: 68ch;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Charter, "Book Antiqua", Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-padding-top: 5rem; }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--serif);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  h1 { font-size: clamp(2.4rem, 6vw, 4rem); }
+  h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); margin-bottom: 1.25rem; }
+  h3 { font-size: 1.4rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h4 { font-size: 1.15rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p, li, dd, dt, figcaption { max-width: var(--measure); }
+  p { margin: 0 0 1.1rem; }
+  ul, ol { padding-left: 1.4rem; }
+  li { margin-bottom: 0.5rem; }
+  a { color: var(--accent); text-underline-offset: 0.15em; }
+  a:hover { text-decoration-thickness: 2px; }
+  code {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    background: var(--bg-3);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .skip-link {
+    position: absolute;
+    top: 0; left: 0;
+    transform: translateY(-120%);
+    background: var(--accent);
+    color: var(--accent-ink);
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    z-index: 100;
+    text-decoration: none;
+  }
+  .skip-link:focus { position: fixed; transform: none; outline-offset: -3px; }
+
+  /* Sticky nav */
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .site-nav .inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding-inline: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .site-nav .brand {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 0.9rem 0;
+  }
+  .site-nav ul {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex;
+    gap: 0.25rem;
+  }
+  .site-nav li { margin: 0; }
+  .site-nav ul a {
+    display: block;
+    padding: 0.9rem 0.6rem;
+    color: var(--ink-2);
+    text-decoration: none;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+  }
+  .site-nav ul a:hover { color: var(--ink); }
+  .site-nav ul a[aria-current="true"] {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+  .site-nav ul a:focus-visible { outline-offset: -3px; }
+
+  /* Layout. Keep the inline padding in one place: every rule below sets only
+     block padding, so nothing can knock the gutters off with a shorthand. */
+  .wrap {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding-inline: 1.25rem;
+  }
+  section {
+    padding-block: 5rem;
+    border-top: 1px solid var(--line);
+  }
+  section:first-of-type { border-top: 0; }
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 0.75rem;
+  }
+  .lede { font-size: 1.2rem; color: var(--ink); }
+
+  /* Hero */
+  .hero {
+    padding-block: 6rem 5rem;
+    border-top: 0;
+  }
+  .hero h1 { margin-bottom: 1.5rem; }
+  .hero .what { font-size: 1.35rem; line-height: 1.45; max-width: 34em; }
+  .hero .not { color: var(--ink-2); font-size: 1.1rem; max-width: 42em; }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 2rem 0 1.5rem;
+  }
+  .btn {
+    display: inline-block;
+    padding: 0.8rem 1.3rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    border: 2px solid transparent;
+  }
+  .btn-primary {
+    background: var(--accent-deep);
+    color: var(--accent-ink);
+    border-color: var(--accent-deep);
+  }
+  .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--ink-3);
+  }
+  .btn-secondary:hover { border-color: var(--ink); }
+  .hero .fine { color: var(--ink-2); font-size: 0.95rem; }
+
+  /* TODO placeholder marker: visible, and named in text, not colour alone */
+  .todo {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--warm);
+    background: #33200f;
+    border: 1px dashed var(--warm-line);
+    border-radius: 4px;
+    padding: 0.05em 0.4em;
+    vertical-align: middle;
+    margin-left: 0.4em;
+  }
+
+  /* Flow diagram card */
+  .flow-card {
+    background: var(--paper);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 2rem 0 1rem;
+    overflow-x: auto;
+  }
+  .flow-card svg {
+    display: block;
+    width: 100%;
+    min-width: 700px;
+    height: auto;
+  }
+  .flow-note { color: var(--ink-3); font-size: 0.9rem; margin-bottom: 2.5rem; }
+
+  /* Stage list */
+  .stages { list-style: none; padding: 0; margin: 0; counter-reset: stage; }
+  .stages > li {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 0.5rem 1rem;
+    margin-bottom: 2rem;
+    counter-increment: stage;
+  }
+  .stages > li::before {
+    content: counter(stage);
+    font-family: var(--serif);
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--ink-3);
+    padding-top: 0.15rem;
+  }
+  .stages h3 { margin: 0 0 0.4rem; grid-column: 2; }
+  .stages p { grid-column: 2; }
+  .stages p:last-child { margin-bottom: 0; }
+
+  /* Figures */
+  figure {
+    margin: 2.5rem 0;
+  }
+  .shot {
+    display: block;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.5rem;
+    overflow-x: auto;
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+  figcaption {
+    margin-top: 0.85rem;
+    color: var(--ink-2);
+    font-size: 0.97rem;
+    line-height: 1.55;
+  }
+  figcaption strong { color: var(--ink); }
+  .shot-link {
+    font-size: 0.85rem;
+    color: var(--ink-3);
+    display: inline-block;
+    margin-top: 0.35rem;
+  }
+  .shot-link a { color: var(--accent); }
+
+  figure, .stages > li > *, .steps li > * { min-width: 0; }
+  .shot { max-width: 54rem; }
+
+  /* Rule callout */
+  .rule {
+    border-left: 3px solid var(--accent-deep);
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    margin: 2rem 0;
+    max-width: var(--measure);
+  }
+  .rule p:last-child { margin-bottom: 0; }
+
+  /* Research list */
+  .research { margin: 2rem 0; padding: 0; }
+  .research > div {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.4rem 2rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .research > div:last-child { border-bottom: 1px solid var(--line); }
+  .research dt { font-weight: 600; color: var(--ink); }
+  .research dt span { display: block; font-weight: 400; color: var(--ink-3); font-size: 0.92rem; margin-top: 0.15rem; }
+  .research dd { margin: 0; color: var(--ink-2); }
+  @media (min-width: 52rem) {
+    .research > div { grid-template-columns: minmax(0, 18rem) minmax(0, 1fr); }
+  }
+
+  /* Caveat, set in normal type */
+  .caveat {
+    background: var(--bg-2);
+    border: 1px solid var(--warm-line);
+    border-radius: 8px;
+    padding: 1.5rem 1.5rem 0.5rem;
+    margin: 2.5rem 0 0.5rem;
+    max-width: 44rem;
+  }
+  .caveat h3 { margin-top: 0; font-size: 1.25rem; }
+
+  /* Limitations */
+  .limits { list-style: none; padding: 0; margin: 0; }
+  .limits li {
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--line);
+    max-width: var(--measure);
+  }
+  .limits li:last-child { border-bottom: 1px solid var(--line); }
+  .limits h3 { margin: 0 0 0.4rem; font-size: 1.25rem; }
+  .limits p:last-child { margin-bottom: 0; }
+
+  /* Steps */
+  .steps { counter-reset: step; list-style: none; padding: 0; margin: 1.5rem 0; }
+  .steps li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    gap: 0.25rem 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .steps li::before {
+    content: counter(step);
+    display: inline-grid;
+    place-items: center;
+    width: 1.9rem; height: 1.9rem;
+    border-radius: 50%;
+    background: var(--bg-3);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-top: 0.15rem;
+  }
+  .steps li > * { grid-column: 2; }
+  .steps li p:last-child { margin-bottom: 0; }
+  .steps h3 { margin: 0 0 0.35rem; font-size: 1.2rem; }
+
+  .files { font-family: var(--mono); font-size: 0.92rem; list-style: none; padding: 0; }
+  .files li { margin-bottom: 0.35rem; color: var(--ink-2); }
+  .files li span { font-family: var(--sans); color: var(--ink-3); font-size: 0.9rem; }
+
+  .phrases { list-style: none; padding: 0; margin: 1rem 0; }
+  .phrases li { display: grid; grid-template-columns: minmax(8rem, 12rem) 1fr; gap: 1rem; padding: 0.6rem 0; border-top: 1px solid var(--line); }
+  .phrases li:last-child { border-bottom: 1px solid var(--line); }
+  .phrases code { white-space: nowrap; }
+  @media (max-width: 30rem) {
+    .phrases li { grid-template-columns: 1fr; gap: 0.25rem; }
+  }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 3rem 0 4rem;
+    color: var(--ink-2);
+    font-size: 0.95rem;
+  }
+  footer p { margin-bottom: 0.75rem; }
+
+  @media (max-width: 40rem) {
+    body { font-size: 1rem; }
+    section { padding-block: 3.5rem; }
+    .hero { padding-block: 3.5rem 3rem; }
+    .hero .what { font-size: 1.2rem; }
+    .stages > li { grid-template-columns: 2.25rem 1fr; }
+    .stages > li::before { font-size: 1.5rem; }
+    /* Keep screenshot text readable: scroll inside the frame instead of shrinking */
+    .shot img { min-width: 620px; }
+    .shot.narrow img { min-width: 0; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="site-nav">
+  <nav class="inner" aria-label="Page sections">
+    <a class="brand" href="#top">Chiron</a>
+    <ul>
+      <li><a href="#loop">The loop</a></li>
+      <li><a href="#why">Why</a></li>
+      <li><a href="#module">Modules</a></li>
+      <li><a href="#cards">Cards</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#limits">Limitations</a></li>
+      <li><a href="#install">Install</a></li>
+      <li><a href="#use">Use</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+
+<section class="hero wrap" id="top" aria-labelledby="hero-title">
+  <p class="eyebrow">An independent Claude Skill</p>
+  <h1 id="hero-title">Chiron Course Tutor</h1>
+  <p class="what">Say what you want to learn. Chiron asks before it teaches, one or two questions at a time, to find where you get stuck, then builds two or three interactive lesson modules around exactly that, and a flashcard deck you write yourself.</p>
+  <p class="not">It is not a chatbot that answers every question with another question, and not a course generator that hands a beginner and an expert the same material.</p>
+  <div class="actions">
+    <a class="btn btn-primary" href="#TODO-download-url">Get the skill <span class="todo">TODO<span class="visually-hidden"> placeholder link, to be filled in</span></span></a>
+    <a class="btn btn-secondary" href="#loop">See how it works</a>
+  </div>
+  <p class="fine">Runs as a Skill inside Claude. No account, server or database of its own. Not an Anthropic product.</p>
+</section>
+
+<section class="wrap" id="loop" aria-labelledby="loop-title">
+  <p class="eyebrow">The core loop</p>
+  <h2 id="loop-title">Elicit to the impasse. Then tell, composed. Then practice. Then apply.</h2>
+  <p class="lede">That one sentence is the whole design. The questions at the start are not there to make you derive the content. They are there to get you to the wall, the specific thing you can feel you are missing, because an explanation delivered at the wall lands and one delivered before it doesn't. Once you are at the wall, more questions are withholding. So the questions stop and the module gets built.</p>
+
+  <div class="flow-card" role="group" aria-label="Diagram of the Chiron learner flow">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 660" role="img" aria-labelledby="flow-title flow-desc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title id="flow-title">The Chiron learner flow</title>
+  <desc id="flow-desc">Hook leads to Plan. Then, for each of two or three modules: Elicit, then Build, then Boundary. A misconception found while eliciting branches to Confront before the build. The boundary hands over card fronts, and the loop returns to the next module's elicit step. After the last module, Close. Purple boxes happen in chat, teal boxes are files the learner keeps, and the orange box is a branch taken only when a misconception surfaces.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#4a4550"/>
+    </marker>
+  </defs>
+  <rect width="760" height="660" fill="#f7f5f0"/>
+
+  <!-- stage 1: hook -->
+  <g>
+    <rect x="40" y="36" width="220" height="70" rx="8" fill="#7c5cbf"/>
+    <text x="150" y="65" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">1 · Hook</text>
+    <text x="150" y="88" text-anchor="middle" font-size="12.5" fill="#ffffff">one scenario, one question</text>
+  </g>
+  <path d="M260 71 L318 71" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- stage 2: plan -->
+  <g>
+    <rect x="320" y="36" width="220" height="70" rx="8" fill="#0f7a6c"/>
+    <text x="430" y="65" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">2 · Plan</text>
+    <text x="430" y="88" text-anchor="middle" font-size="12.5" fill="#ffffff">written before any teaching</text>
+  </g>
+  <path d="M430 106 L430 150 L150 150 L150 178" fill="none" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- loop box -->
+  <rect x="30" y="160" width="700" height="330" rx="12" fill="none" stroke="#6f6a78" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="46" y="180" font-size="12" font-weight="600" fill="#4a4550" letter-spacing="0.08em">FOR EACH MODULE · TWO OR THREE</text>
+
+  <!-- stage 3: elicit -->
+  <g>
+    <rect x="50" y="200" width="200" height="70" rx="8" fill="#7c5cbf"/>
+    <text x="150" y="229" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">3 · Elicit</text>
+    <text x="150" y="252" text-anchor="middle" font-size="12.5" fill="#ffffff">one or two questions, then stop</text>
+  </g>
+  <path d="M250 235 L318 235" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="284" y="226" text-anchor="middle" font-size="11" fill="#4a4550">wall found</text>
+
+  <!-- stage 4: build -->
+  <g>
+    <rect x="320" y="200" width="200" height="70" rx="8" fill="#0f7a6c"/>
+    <text x="420" y="229" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">4 · Build</text>
+    <text x="420" y="252" text-anchor="middle" font-size="12.5" fill="#ffffff">a module opening on that wall</text>
+  </g>
+  <path d="M520 235 L558 235" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- stage 5: boundary -->
+  <g>
+    <rect x="560" y="200" width="150" height="70" rx="8" fill="#7c5cbf"/>
+    <text x="635" y="229" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">5 · Boundary</text>
+    <text x="635" y="252" text-anchor="middle" font-size="12.5" fill="#ffffff">answer in chat</text>
+  </g>
+
+  <!-- confront branch -->
+  <path d="M150 270 L150 328" stroke="#c2540a" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="160" y="304" font-size="11" fill="#8a3b07">misconception</text>
+  <g>
+    <rect x="50" y="330" width="200" height="70" rx="8" fill="#ffffff" stroke="#c2540a" stroke-width="2"/>
+    <text x="150" y="359" text-anchor="middle" font-size="17" font-weight="600" fill="#8a3b07">Confront</text>
+    <text x="150" y="382" text-anchor="middle" font-size="12.5" fill="#4a4550">a case your model gets wrong</text>
+  </g>
+  <path d="M250 365 L300 365 L300 270" fill="none" stroke="#c2540a" stroke-width="2"/>
+  <path d="M300 272 L318 250" fill="none" stroke="#c2540a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- cards -->
+  <path d="M635 270 L635 328" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="560" y="330" width="150" height="70" rx="8" fill="#0f7a6c"/>
+    <text x="635" y="359" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">Cards</text>
+    <text x="635" y="382" text-anchor="middle" font-size="12.5" fill="#ffffff">you write the backs</text>
+  </g>
+  <!-- loop back to elicit -->
+  <path d="M635 400 L635 450 L420 450" fill="none" stroke="#4a4550" stroke-width="2"/>
+  <path d="M420 450 L110 450" fill="none" stroke="#4a4550" stroke-width="2"/>
+  <path d="M110 450 L40 450 L40 235 L48 235" fill="none" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="290" y="470" text-anchor="middle" font-size="11" fill="#4a4550">next module</text>
+
+  <!-- to close -->
+  <path d="M420 450 L420 528" fill="none" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="430" y="510" font-size="11" fill="#4a4550">after the last module</text>
+
+  <!-- stage 6: close -->
+  <g>
+    <rect x="310" y="530" width="220" height="70" rx="8" fill="#7c5cbf"/>
+    <text x="420" y="559" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">6 · Close</text>
+    <text x="420" y="582" text-anchor="middle" font-size="12.5" fill="#ffffff">the throughline, then one next thing</text>
+  </g>
+
+  <!-- legend -->
+  <g font-size="12" fill="#4a4550">
+    <rect x="40" y="620" width="14" height="14" rx="3" fill="#7c5cbf"/><text x="60" y="632">in chat</text>
+    <rect x="130" y="620" width="14" height="14" rx="3" fill="#0f7a6c"/><text x="150" y="632">a file you keep</text>
+    <rect x="270" y="620" width="14" height="14" rx="3" fill="#ffffff" stroke="#c2540a" stroke-width="2"/><text x="290" y="632">only when a misconception surfaces</text>
+  </g>
+</svg>
+  </div>
+  <p class="flow-note">Purple stages happen in chat. Teal stages are files you keep. The orange branch is taken only when a misconception surfaces. This diagram is a stand-in drawn from the skill's own flow description and will be replaced by the original learner-flow figure. <span class="todo">TODO<span class="visually-hidden"> placeholder, to be replaced</span></span></p>
+
+  <ol class="stages">
+    <li>
+      <h3>Hook</h3>
+      <p>You get one scenario ending in one question. It asks for a prediction and the reason behind it, because wrong models predict wrong but define fine. Chiron says up front that this is one question before the outline, so it is not a test in disguise, and that a guess is fine.</p>
+      <p>Your answer is the diagnostic. Before writing the scenario, Chiron writes down the two or three wrong models people usually arrive with, and checks that each of them would answer the question differently from the correct one. If they wouldn't, the scenario is vivid but useless, and it gets changed. What your answer revealed is never read back to you. That would be grading the person, not the work.</p>
+    </li>
+    <li>
+      <h3>Plan</h3>
+      <p>Before any teaching, Chiron writes the whole course down: your goal, a throughline question the course exists to answer, every claim that answer needs, and those claims grouped into two or three modules. Each claim is tagged fact, rule or principle, and the tag decides its first move. A fact is told, never elicited. A rule gets a worked example. A principle gets a question, if your hook answer showed something to build on.</p>
+      <p>The plan is a file you can open. Its name ends in "(ignore)", because it is Chiron's own tracking, re-read at every module boundary so the course is followed rather than drifted from. You see the module list as a numbered list of names, one line each, and the message ends on the first module's question.</p>
+    </li>
+    <li>
+      <h3>Elicit, then build</h3>
+      <p>Each module opens with one question aimed at its central mechanism. Chiron reads your answer for one of three things: you have it, you can name the wall, or you have nothing to build from. Any of the three ends the questions. A partial answer earns one more question, aimed at the correct fragment. Two is the ceiling, and if your hook showed no background at all, one is.</p>
+      <p>The module is built in the same turn. It opens on what the exchange just revealed, in your words, not on "in this module we will". If you already had the idea, the module compresses and opens on practice instead of explaining what you know.</p>
+    </li>
+    <li>
+      <h3>Confront</h3>
+      <p>A slip gets a one-word correction. A missing prerequisite gets delivered. A misconception, a coherent wrong model that still feels like it works, gets neither, because telling does not dislodge a model that still seems to work. Instead Chiron puts a case in front of you where your model makes a prediction, asks for the prediction, then shows the outcome. The gap is the correction. Then it asks what your model would have to change, and that turn is yours.</p>
+    </li>
+    <li>
+      <h3>Boundary</h3>
+      <p>Every module ends with a question its checks cannot grade: an application, answered back in chat. Chiron responds to that answer directly, saying what was right, what it misses, and the correction. Anything you asked gets answered in full, now, in text. Then, if the module had terms you need to know cold, it hands over a short list of card fronts and asks you to write the backs in your own words.</p>
+      <p>The next module does not build until the backs are written. You can wave the cards off with "skip the cards" or "next". Skip twice and Chiron stops offering them for the rest of the course and says so.</p>
+    </li>
+    <li>
+      <h3>Close</h3>
+      <p>You answer the throughline question in full. Chiron names what changed between your first attempt and this one. Then one case in an unfamiliar setting, same mechanism, different surface, to see whether the idea survives leaving home. Then one specific next thing to learn, with a one-sentence reason. Not a menu.</p>
+    </li>
+  </ol>
+
+  <figure>
+    <div class="shot">
+      <img src="assets/hook-and-attempt.png" width="1588" height="1246" loading="lazy" alt="Chat transcript. Chiron sets a scene: 23:30 on September 18th at the Skaftafell campsite with the aurora out, a DSLR on a tripod at f/2.8, 8 seconds, ISO 3200, and an iPhone on auto that produces a dark grainy smear of the same sky. It asks what each of the three numbers is doing, which one the phone got wrong, and what to change on the phone, then says a bad guess in one or two sentences is fine. The learner replies that the f-stop is how big the shutter opens, 8 seconds is how long it stays open, and ISO is how sensitive the sensor is. Chiron answers that two of the three are right, that the word sensitive hides the whole mechanism, and that it is building module 1 around exactly that.">
+    </div>
+    <figcaption><strong>The hook, from a course on night photography.</strong> One scenario, one question, and a request for a prediction with the reasoning. The learner's guess is read as the diagnostic: two of the three dials were right, and the word "sensitive" is where the wrong model lives. That is what module 1 opens on.</figcaption>
+  </figure>
+</section>
+
+<section class="wrap" id="why" aria-labelledby="why-title">
+  <p class="eyebrow">The argument</p>
+  <h2 id="why-title">Why not just ask a chatbot, or take a generic course</h2>
+  <p class="lede">Chiron is built against two specific failures. Both are easy to fall into, both look reasonable from the inside, and the skill's rules exist mainly to keep it out of them.</p>
+
+  <h3>The tutor that keeps asking</h3>
+  <p>Ask a tutoring chatbot to explain something and a familiar pattern appears: it answers with a question. That is fine while the question is doing work. It stops being fine the moment you are stuck, because every question after that is asked of someone who has already shown they cannot get there. It reads as evasive. It is slow. And the tutor cannot notice it from the inside, because each individual question still looks like good teaching.</p>
+  <p>The skill's own name for this is fishing, and it treats it as the failure that loses learners fastest. Its answer is to give the questions one job: find the point of confusion. Then stop. The limits are fixed rules rather than judgment calls. Two questions per module at most. One, if your first answer showed no background. None for a plain fact, because there is nothing to construct. And "just tell me" ends the questions in that turn, every time.</p>
+  <p>The rules are strict because the costs are lopsided. Asking too long loses the learner. Telling too early costs one check.</p>
+
+  <h3>The course that never asked</h3>
+  <p>Ask a model for a course on a topic and you get a course on that topic: an outline, objectives, sections in a sensible order. It is the same course for an expert and a total beginner, because nothing was asked first. It cannot adapt to what you said, since you did not say anything. And it opens with "in this module we will", which is the sound of material written before anyone knew who it was for.</p>
+  <p>Chiron does not build before it has a diagnostic answer, and the plan is derived from that answer: your goal, then the one performance that would show the goal is met, then only the claims that performance needs. A claim the throughline does not need is not in the course, however interesting. If your hook revealed a wrong model, that model becomes a wrong option in the end-of-module check, and the section carrying the correct claim names your wrong model first and says where it fails, because stating the correct model alone leaves the wrong one standing beside it.</p>
+
+  <h3>Where each thing lives</h3>
+  <p>The split between chat and modules is not cosmetic. Telling in chat drifts: every turn is pulled toward the last message, and the learner ends up steering. So the teaching is written in one pass as a module, holding the whole argument. Chat keeps the two jobs only chat can do: find where you are stuck, and read an answer nobody anticipated.</p>
+  <div class="rule">
+    <p>Composition goes in the module. Response goes in chat. Anything gradable, a multiple-choice item with misconception distractors, set the control, order these steps, lives in the module. Anything whose value is that someone reads it, free recall, apply this to your situation, the throughline, the card backs, lives in chat.</p>
+  </div>
+</section>
+
+<section class="wrap" id="module" aria-labelledby="module-title">
+  <p class="eyebrow">The artifact</p>
+  <h2 id="module-title">What a module actually is</h2>
+  <p class="lede">A module is one self-contained HTML file, written in one pass, in your world: your domain, your examples, and the scenario from your first answer where the plan makes it fit. It has a title, a stated arc, sections that follow from each other, and a closing line that folds the whole thing back into one sentence. Each section carries its claim, the explanation, a figure or instrument beside it, and a line saying what to notice.</p>
+  <p>Support fades on purpose. Module 1 gates every section and works its examples through. The last module gates less, explains less, and puts the problem before the explanation.</p>
+
+  <h3>Checks that are graded, with a reason for every option</h3>
+  <p>Every module carries checks in two places. Gate items sit between sections, one at each boundary the plan marks. An end-of-module set of four to six items sits after the last section. Each option is graded with its own explanation, so a wrong answer says why that answer was wrong. That is the entire value of writing wrong options that encode real misconceptions, and an item that only says "incorrect" has thrown it away. Options are parallel in length, because learners have learned that the longest, most hedged option is usually the right one.</p>
+  <p>From module 2 onward, at least a third of the set comes from earlier modules, reworded so the answer differs. The item that asked which control adds real light comes back as a situation where you must decide which control to move. Chiron says nothing about this. It does not flag the callbacks or soften the set.</p>
+
+  <figure>
+    <div class="shot">
+      <img src="assets/module-check-set.png" width="1560" height="1636" loading="lazy" alt="An end-of-module check set headed 'End of module, work all five'. Item 1 asks which pairing is the actual reason Iceland is above sea level, with four options: a spreading ridge on its own; a mantle plume on its own; a spreading ridge and a mantle plume in the same place, where the plume thickens the crust enough to lift the ridge crest out of the water; and the ridge being older here than anywhere else on the Atlantic. The learner chose the mantle plume on its own and the feedback reads: Not this one. A plume alone gives you an island with no rift down its middle, that's Hawaii. Item 2 asks what elevation a normal mid-ocean ridge crest sits at with no plume; the learner chose about 2.5 km below sea level and the feedback reads: Right. Even the high point of the system sits about 2.5 km down without a plume to lift it.">
+    </div>
+    <figcaption><strong>An end-of-module set, from a course on Iceland's geology.</strong> Choosing "a mantle plume, on its own" gets an explanation of why that particular answer fails: a plume alone gives you Hawaii, an island with no rift down its middle. Every item starts live. Nothing in the set waits on an earlier gate.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="shot">
+        <img src="assets/module-gate-item.webp" width="1600" height="1778" loading="lazy" alt="A module section headed 'ISO does not make the sensor more sensitive'. Three paragraphs explain that the silicon has one fixed sensitivity, that ISO changes the gain applied to the count after the shutter closes, and that multiplying the signal by sixteen multiplies its randomness too, so the grain was always there and gain made it visible. A pull quote reads: Shutter and aperture buy you real light. ISO buys you the appearance of light, on credit, and the interest is noise. Below it a box labelled 'Gate, clear this to continue' asks: you're at Jökulsárlón at dusk, you leave shutter and aperture alone and change ISO from 800 to 1600, how many photons did the sensor collect? Four options: twice as many, exactly the same number, half as many because the sensor reads out faster, and depends which lens you're on.">
+    </div>
+    <figcaption><strong>A section, and the gate that follows it,</strong> from the night photography course. The rule the spec sets for a gate: it must be passable from what the module has already said, and clearing it means answering and reading the explanation rather than answering correctly. This shot is from an earlier build and is here for the shape of a module's prose and checks, not as a picture of the current interaction. The end-of-module set has since been made to start live in every build, with nothing for it to wait on.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="shot narrow">
+        <img src="assets/module-handoff-block.png" width="1510" height="440" loading="lazy" alt="A closing block headed 'The close: the airport window, one last time'. It reads: You're back at the window. The airliner rolls past with no flame; that evening the fighter takes off inside an orange cone. Answer the whole thing in chat now: same machine or not, and what accounts for every difference you can see? Below the text is a button labelled Copy question.">
+    </div>
+    <figcaption><strong>The handoff block.</strong> A module never ends on its last paragraph. The final thing in the file prints the boundary question in full and sends you back to chat, because the module cannot read free text. No input box, no submit button. Your next message is your answer.</figcaption>
+  </figure>
+
+  <h3>An instrument only when it can show what a sentence cannot</h3>
+  <p>When a claim's mechanism has a quantity you can turn, a rate, a threshold, a price, an angle, Chiron can build a control for it and let the prose shrink to what to move and what to watch. But having a variable is necessary, not sufficient. Before building, Chiron writes down the one sentence the instrument would let you skip, and asks whether moving the control would show anything that sentence does not already say.</p>
+  <div class="rule">
+    <p>It is an instrument only if you can name the control, the variable it changes, and what visibly changes. If you cannot name all three, it is a diagram, and it gets labelled as one. And if the relationship is a single control moving one way with no surprise in it, the instrument is decoration: you would drag a slider to confirm what you were just told, which is weaker than being told and shown one number. It earns its place when there is a real question the control answers: a threshold, a turn in the curve, or a trade-off between two things you have to weigh.</p>
+  </div>
+  <p>There is no quota in either direction. A module built entirely from prose and static figures is not under-built if none of its claims had a question hiding in a control. The order of the copy matters as much as the control itself: the prediction is asked before the control appears on the page, because a learner with a live slider in front of them will drag it before reading anything below it.</p>
+
+  <figure>
+    <div class="shot">
+        <img src="assets/instrument-cooling-rate.webp" width="1390" height="940" loading="lazy" alt="A top-down view of a cooling lava surface drawn as a crack pattern of large irregular polygons. Below it three readouts: cooling rate, slow; typical column width, about 50 cm; regularity, high. Under those, a slider running from 'slow (insulated, deep)' on the left to 'fast (thin, quenched)' on the right, with the handle near the slow end.">
+    </div>
+    <figcaption><strong>Cooling rate, from a module on reading Iceland's basalt.</strong> The control is cooling rate. The variable is how the lava surface fractures. What visibly changes is the width and regularity of the columns, computed live rather than drawn once. All three can be named, so it passed the test.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="shot">
+        <img src="assets/instrument-night-exposure.webp" width="1490" height="1638" loading="lazy" alt="A panel titled 'Night exposure calculator'. A rendered night sky shows vertical green aurora curtains and short white star trails above a black horizon. Below it, a row of three buttons for what the sky is doing, with 'Clear curtain' selected out of faint arc, clear curtain and dancing; a row of three buttons for where the phone is, with 'On a tripod, max 30 s' selected out of in your hand, propped on a rock and on a tripod; an exposure slider reading 8 s; and an ISO slider reading ISO 1600.">
+    </div>
+    <figcaption><strong>Night exposure, from the aurora course.</strong> Four controls, sky state, support, exposure time and ISO, and a rendered sky that changes with them. The support choice sets a ceiling on exposure time, the tripod reads "max 30 s", so there are two things to weigh against each other rather than one number to read off.</figcaption>
+  </figure>
+
+  <h3>Figures show real output</h3>
+  <p>If a figure plots data, the data is computed by running the code, and the real numbers are plotted. A scree plot with an invented elbow, a payoff curve with guessed numbers, a distribution drawn by hand: these are worse than no figure, because they teach a shape that is not true. Where a figure is a schematic rather than data, that is fine, and it is labelled as one. Drawn shapes are for things a child could draw. The moment accuracy depends on the drawing, it has to be computed output.</p>
+  <p>The same rule covers photographs. When the claim is about what something looks like, a bird, a rock formation, a camera's controls, the module embeds a real photo rather than drawing an approximation. A schematic teaches structure and a photo teaches appearance, and neither substitutes for the other.</p>
+
+  <figure>
+    <div class="shot">
+      <img src="assets/figure-pca-reveal.webp" width="1600" height="1350" loading="lazy" alt="A light-themed module section labelled 'Plate 04, the reveal' and headed 'The same students, on the two eigenvectors'. The text says: now plot each student not on raw metrics but on their score along the top two eigenvectors PCA found; the fog resolves into three constellations, and PCA was never told the groups existed. Below is a dark scatter plot with axes labelled component 1 and component 2, showing three separated clusters of dots coloured and keyed as Planners, Writers and Browsers. A caption explains that left to right is component 1, quick-hit planning behaviour on the right and deep essay-writing on the left, and that up and down is component 2, overall activity, so the disengaged browsers sink to the bottom.">
+    </div>
+    <figcaption><strong>A computed figure, from a module on eigenvectors.</strong> The scatter is the output of an actual principal-component run on a small dataset built for the lesson, with three groups planted so the method would have something to recover. The dots are where the numbers put them. The learner was told, in chat, that the data was synthetic and that real data would be messier.</figcaption>
+  </figure>
+</section>
+
+<section class="wrap" id="cards" aria-labelledby="cards-title">
+  <p class="eyebrow">The deck</p>
+  <h2 id="cards-title">A flashcard deck in your words, that works offline</h2>
+  <p class="lede">Every course gets one file, <code>flashcards.html</code>. It grows at each module boundary and you keep it. The back of every card is yours, verbatim. Chiron never writes one, and never edits one, even a good one. If a back was corrected at the boundary, the corrected version is what you typed after the push, not Chiron's phrasing.</p>
+
+  <h3>What a card can be</h3>
+  <ul>
+    <li><strong>A term.</strong> The front is the term alone. The back is your definition.</li>
+    <li><strong>A distinction.</strong> The front is "X vs Y". The back is the difference, in your words.</li>
+    <li><strong>A misconception.</strong> The front is "Why is it wrong to say:" followed by the wrong belief you actually held. The back is your corrected reasoning. These come only from misconceptions that surfaced during the course.</li>
+    <li><strong>A perceptual category.</strong> The front shows one real photo drawn at random from a pool of three or more, so you learn the category rather than the picture. The back is the distinguishing features, as you described them.</li>
+  </ul>
+  <p>"What is such-and-such principle" is not a card type. A principle is checked by applying it, in chat, not by recognising its name.</p>
+
+  <h3>How a card progresses</h3>
+  <p>The scheduler is deliberately small. Each card carries a streak and a status, learning or mastered. There is no ease factor, no computed interval and no due date. Reviewing a card gives you two buttons, Right and Wrong.</p>
+  <ul>
+    <li><strong>Right</strong> adds one to the streak. At a streak of two, the card becomes mastered and leaves the default queue.</li>
+    <li><strong>Wrong</strong> resets the streak to zero, keeps the card in learning, and puts it back at the front of the queue, so a miss comes around again soon instead of being logged and passed over.</li>
+  </ul>
+  <p>The deck does not record when a card was last seen, only how it went. The default queue is every card still in learning, and the count reads "N to review", not "N due", because there is no date logic to have a due set from. A toggle switches the view between Learning, Mastered and All, so a mastered card can still be browsed or reviewed by hand. A reset button, per filter, sets every card in view back to a streak of zero and learning, which is the way back in for a mastered card you want to see again.</p>
+  <p>This is a Leitner-style ladder, not a full spaced-repetition algorithm, and that is a choice for a small, low-stakes deck rather than an oversight. A stronger scheduler is a separate future build, not part of this version.</p>
+
+  <h3>The rest of the deck</h3>
+  <ul>
+    <li>Back-first mode hides the front so you recall the term from your own definition.</li>
+    <li>Shuffle within the current queue, and a filter by module. Nothing else to filter or sort by: one course per deck, so no course picker, and no type filter.</li>
+    <li>Keyboard: 1 for Wrong, 2 for Right, space to flip.</li>
+    <li>A save button downloads the deck as <code>flashcards.html</code> with the updated card data inside, so the copy you keep remembers every streak and status.</li>
+    <li>No frameworks, no CDN, no network. Inline CSS and JS. It works as an artifact in the conversation and as a file opened from disk, and it is readable at 380 pixels wide.</li>
+  </ul>
+
+  <figure>
+    <div class="shot narrow">
+      <img src="assets/flashcard-learner-back.webp" width="1365" height="525" loading="lazy" alt="The answer side of a flashcard, tagged M1, term. The text reads: a crack in the earth's crust that runs along the atlantic ocean. Plates are moving apart from each other and the rift grows. Underneath, in smaller italic type: your definition.">
+    </div>
+    <figcaption><strong>A card's back, in the learner's own words,</strong> from the Iceland course. Cropped from an earlier build of the deck, whose review controls differed from the shipped version. What has not changed is the part shown: the definition is the learner's, tagged with the module it came from, and Chiron did not touch it.</figcaption>
+  </figure>
+</section>
+
+<section class="wrap" id="research" aria-labelledby="research-title">
+  <p class="eyebrow">Grounding</p>
+  <h2 id="research-title">What the design is built on</h2>
+  <p class="lede">Each rule above maps to a specific finding in the learning-science literature. Here is the finding and the decision it produced.</p>
+
+  <dl class="research">
+    <div>
+      <dt>Time for telling, productive failure, and impasse-driven learning <span>Schwartz and Bransford; Kapur; VanLehn</span></dt>
+      <dd>Telling lands when it answers a wall the learner just hit, not before it and not long after. So Chiron stops asking once you hit a wall, not once you have derived the whole thing, and builds the module in that same turn.</dd>
+    </div>
+    <div>
+      <dt>What matters is what the learner is doing, not how the tutor is asking <span>Chi and colleagues; the ICAP framework</span></dt>
+      <dd>Passive, active, constructive and interactive engagement produce different learning, in that order. This is why the checks are graded rather than read, why every module ends with an application answered in prose, and why the flashcard backs are written by you.</dd>
+    </div>
+    <div>
+      <dt>The interaction plateau <span>VanLehn</span></dt>
+      <dd>Tutoring at a grain finer than a full step does not add measurable benefit. Applied as a hard cap of one or two questions per module rather than open-ended probing.</dd>
+    </div>
+    <div>
+      <dt>Structured escalation instead of open-ended fishing <span>Graesser's AutoTutor</span></dt>
+      <dd>The elicit turns have a fixed shape and a fixed end: one question aimed at the mechanism, at most one more aimed at the correct fragment of a partial answer, then telling. The escalation is structured, not improvised.</dd>
+    </div>
+    <div>
+      <dt>Interleaved and spaced review over blocked practice <span>the desirable-difficulties literature, Bjork</span></dt>
+      <dd>From module 2 on, at least a third of each end-of-module set pulls forward from earlier modules, reformulated so the answer differs. It feels harder and you will get more of them wrong. That is the mechanism working.</dd>
+    </div>
+    <div>
+      <dt>The pretesting effect <span>Kornell, Hays and Bjork</span></dt>
+      <dd>Even a wrong guess before content improves later retention of that content. That is the whole justification for the hook coming before any teaching, and for the predict-first move at the start of a section whose claim is a behaviour.</dd>
+    </div>
+    <div>
+      <dt>Two correct spaced repetitions as a mastery bar <span>matching Anki's default graduation criterion</span></dt>
+      <dd>A deliberately modest standard, chosen over a more complex algorithm for a small, low-stakes deck. This is the streak of two that marks a card mastered.</dd>
+    </div>
+  </dl>
+
+  <div class="caveat" role="note" aria-labelledby="caveat-title">
+    <h3 id="caveat-title">What this does and does not claim</h3>
+    <p>These are established findings about human learning, and the design follows them. Chiron itself has not been through a controlled study. "Built on the research" is an accurate description. "Proven to improve learning outcomes" would not be, and this page does not make that claim.</p>
+  </div>
+</section>
+
+<section class="wrap" id="limits" aria-labelledby="limits-title">
+  <p class="eyebrow">Known limitations</p>
+  <h2 id="limits-title">Three things it does not do yet</h2>
+  <ul class="limits">
+    <li>
+      <h3>Modules pull fonts over the network</h3>
+      <p>Course modules load their typefaces from Google Fonts. They still work offline, just with plainer type. The flashcard deck has no such dependency and is fully offline by design. The inconsistency is a known, still-open item.</p>
+    </li>
+    <li>
+      <h3>Named and iconic images cannot be fetched automatically</h3>
+      <p>A specific painting, a film still, a public figure's photo: copyright and safety policy block that category of image search regardless of the image's actual legal status. This is a real constraint for an art, design or media-history course, where the artwork is the subject. The fallback is to ask you to upload your own photo of the subject, which then gets embedded into the module, or to link to a legitimate source and let the description do the teaching. Chiron will not draw a stand-in for a real artwork, because an invented painting teaches the wrong face.</p>
+    </li>
+    <li>
+      <h3>One learner, one course, one conversation</h3>
+      <p>Chiron is built for a single learner working through a single course in one conversation at a time. There is no multi-user mode and no classroom mode.</p>
+    </li>
+  </ul>
+</section>
+
+<section class="wrap" id="install" aria-labelledby="install-title">
+  <p class="eyebrow">Install</p>
+  <h2 id="install-title">Get the skill</h2>
+  <p class="lede">A Claude Skill is a folder of instructions Claude follows. Chiron is one such folder. There is no account to create, no server, and no database of its own. All state, the plan, the modules and the deck, lives in files you download.</p>
+  <ol class="steps">
+    <li>
+      <h3>Download the zip</h3>
+      <p><a href="#TODO-download-url">chiron-course-tutor.zip</a> <span class="todo">TODO<span class="visually-hidden"> placeholder link, to be filled in</span></span></p>
+    </li>
+    <li>
+      <h3>Add it wherever your Claude surface manages Skills</h3>
+      <p>Claude.ai, the Claude apps, or Claude Desktop. It runs anywhere Skills and file or artifact creation are both available. Where an optional tool is missing on a surface, image search, say, or the tappable prompt, Chiron does that step another way rather than skipping it.</p>
+    </li>
+    <li>
+      <h3>Start a conversation</h3>
+      <p>Say what you want to learn. The next section covers what happens from there.</p>
+    </li>
+  </ol>
+
+  <h3>What is in the folder</h3>
+  <ul class="files">
+    <li>SKILL.md <span>the router: identity, the flow, and the rules for each stage</span></li>
+    <li>references/teaching-voice.md <span>the writing register, in modules and in chat</span></li>
+    <li>references/plan-schema.md <span>the format of the plan file</span></li>
+    <li>references/module-build.md <span>how a module is composed: arc, figures, checks, instruments, the handoff</span></li>
+    <li>references/flashcard-deck.md <span>the deck spec described above</span></li>
+    <li>references/example-run.md <span>one abridged course, showing the shape of every message type</span></li>
+  </ul>
+</section>
+
+<section class="wrap" id="use" aria-labelledby="use-title">
+  <p class="eyebrow">Use</p>
+  <h2 id="use-title">Say what you want to learn, or say "Chiron"</h2>
+  <p class="lede">Ask for a course, a lesson, a crash course, a primer, a walkthrough or a deep dive. Say you want to learn, understand or master something properly. Ask to be tutored or quizzed. Or just say "Chiron". A plain question that wants an answer, "how does X work", gets a paragraph, not a course, unless you ask to be taught it.</p>
+
+  <p>The first thing back is not an outline. It is one line saying the outline is coming, then a scenario, then one question. Answer it, badly if you like. If Chiron still does not know what you want to be able to do with the topic, it asks that, once. Two turns is the ceiling before the plan. Then you get the module list, one line each, and the first module's question, and the course is under way.</p>
+  <p>If your goal is "just curious" or "no idea", Chiron picks the most common real use of the topic, treats it as the goal, and names it so you can correct it.</p>
+
+  <figure>
+    <div class="shot">
+      <img src="assets/invoke-and-diagnostic.webp" width="1600" height="893" loading="lazy" alt="A chat. The learner's message invokes the skill with a slash command, /chiron-course-tutor, and says: I want to learn the geology of Iceland so when I am visiting I can better appreciate the stuff around me. Chiron replies that it will lay out the whole course in a moment, three modules each built around a place the learner is actually going, but first one question so it builds for where they already are and not from zero. It describes standing at Þingvellir on the floor of a valley between two walls of dark rock, with a sign saying this is a boundary between the North American and Eurasian plates, and asks which way the two plates are moving relative to each other, toward, apart or sliding past, and what about the landscape makes them pick that one. It ends: a guess is completely fine, it doesn't need to be right, it just tells me where to start.">
+    </div>
+    <figcaption><strong>The first exchange.</strong> The learner names a topic and a reason. Chiron's reply says the outline is coming, asks one question, and ends on it. Nothing else is in the message, because anything after the ask competes with it.</figcaption>
+  </figure>
+
+  <h3>Things you can say at any point</h3>
+  <ul class="phrases">
+    <li><code>just tell me</code><span>Ends the questions in that turn. The module gets built.</span></li>
+    <li><code>next</code><span>A valid answer to any boundary question. Skipping three boundaries makes the course shorter, not the questions harder.</span></li>
+    <li><code>skip the cards</code><span>Waves off a card block. Honoured once without comment. Skip twice and the cards stop for the rest of the course.</span></li>
+    <li><code>I've got this</code><span>Closes the course early: anything still outstanding in one pass, the throughline, the last cards, done.</span></li>
+  </ul>
+  <p>You will never hear the machinery. Words like impasse, elicit, claim state or contingency are Chiron's, not yours, and it keeps them to itself.</p>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Chiron Course Tutor is an independent project, built by one person as a learning tool and portfolio piece. <span class="todo">TODO author name<span class="visually-hidden">, placeholder to be filled in</span></span></p>
+    <p>It is not an Anthropic product, and it is not affiliated with or endorsed by Anthropic. Claude is made by Anthropic. A Skill is a set of instructions Claude follows, and this is one.</p>
+    <p><a href="#TODO-repo-url">Source repository</a> <span class="todo">TODO<span class="visually-hidden"> placeholder link, to be filled in</span></span> · <a href="#TODO-contact-url">Contact</a> <span class="todo">TODO<span class="visually-hidden"> placeholder link, to be filled in</span></span></p>
+  </div>
+</footer>
+
+<script>
+  // A frame that scrolls sideways needs a keyboard path into it (WCAG 2.1.1).
+  // Only frames that actually overflow get a tab stop, so nothing spurious is added
+  // at widths where the whole image already fits.
+  (function () {
+    var frames = Array.prototype.slice.call(document.querySelectorAll('.shot, .flow-card'));
+    if (!frames.length) return;
+    function sync() {
+      frames.forEach(function (f) {
+        var scrolls = f.scrollWidth > f.clientWidth + 1;
+        if (scrolls) {
+          f.setAttribute('tabindex', '0');
+          if (!f.hasAttribute('role')) {
+            f.setAttribute('role', 'group');
+            var img = f.querySelector('img');
+            f.setAttribute('aria-label', 'Screenshot, scrollable sideways');
+            if (img) { img.setAttribute('aria-describedby', ''); img.removeAttribute('aria-describedby'); }
+          }
+        } else {
+          f.removeAttribute('tabindex');
+        }
+      });
+    }
+    sync();
+    window.addEventListener('resize', sync);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(sync);
+    window.addEventListener('load', sync);
+  })();
+
+  // Mark the section currently in view in the sticky nav. Everything works without this.
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.site-nav ul a[href^="#"]'));
+    if (!links.length || !('IntersectionObserver' in window)) return;
+    var byId = {};
+    links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+    var sections = Object.keys(byId).map(function (id) { return document.getElementById(id); }).filter(Boolean);
+    var current = null;
+    function setCurrent(id) {
+      if (id === current) return;
+      current = id;
+      links.forEach(function (a) {
+        if (a.getAttribute('href').slice(1) === id) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+    }
+    var visible = {};
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { visible[e.target.id] = e.isIntersecting ? e.intersectionRatio : 0; });
+      var best = null, bestRatio = 0;
+      sections.forEach(function (s) {
+        if (visible[s.id] > bestRatio) { bestRatio = visible[s.id]; best = s.id; }
+      });
+      if (best) setCurrent(best);
+    }, { rootMargin: '-40% 0px -50% 0px', threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] });
+    sections.forEach(function (s) { io.observe(s); });
+  })();
+</script>
+</body>
+</html>

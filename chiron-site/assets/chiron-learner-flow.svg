@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 660" width="760" height="660" role="img" aria-labelledby="flow-title flow-desc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title id="flow-title">The Chiron learner flow</title>
+  <desc id="flow-desc">Hook leads to Plan. Then, for each of two or three modules: Elicit, then Build, then Boundary. A misconception found while eliciting branches to Confront before the build. The boundary hands over card fronts, and the loop returns to the next module's elicit step. After the last module, Close. Purple boxes happen in chat, teal boxes are files the learner keeps, and the orange box is a branch taken only when a misconception surfaces.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#4a4550"/>
+    </marker>
+  </defs>
+  <rect width="760" height="660" fill="#f7f5f0"/>
+
+  <!-- stage 1: hook -->
+  <g>
+    <rect x="40" y="36" width="220" height="70" rx="8" fill="#7c5cbf"/>
+    <text x="150" y="65" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">1 · Hook</text>
+    <text x="150" y="88" text-anchor="middle" font-size="12.5" fill="#ffffff">one scenario, one question</text>
+  </g>
+  <path d="M260 71 L318 71" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- stage 2: plan -->
+  <g>
+    <rect x="320" y="36" width="220" height="70" rx="8" fill="#0f7a6c"/>
+    <text x="430" y="65" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">2 · Plan</text>
+    <text x="430" y="88" text-anchor="middle" font-size="12.5" fill="#ffffff">written before any teaching</text>
+  </g>
+  <path d="M430 106 L430 150 L150 150 L150 178" fill="none" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- loop box -->
+  <rect x="30" y="160" width="700" height="330" rx="12" fill="none" stroke="#6f6a78" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="46" y="180" font-size="12" font-weight="600" fill="#4a4550" letter-spacing="0.08em">FOR EACH MODULE · TWO OR THREE</text>
+
+  <!-- stage 3: elicit -->
+  <g>
+    <rect x="50" y="200" width="200" height="70" rx="8" fill="#7c5cbf"/>
+    <text x="150" y="229" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">3 · Elicit</text>
+    <text x="150" y="252" text-anchor="middle" font-size="12.5" fill="#ffffff">one or two questions, then stop</text>
+  </g>
+  <path d="M250 235 L318 235" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="284" y="226" text-anchor="middle" font-size="11" fill="#4a4550">wall found</text>
+
+  <!-- stage 4: build -->
+  <g>
+    <rect x="320" y="200" width="200" height="70" rx="8" fill="#0f7a6c"/>
+    <text x="420" y="229" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">4 · Build</text>
+    <text x="420" y="252" text-anchor="middle" font-size="12.5" fill="#ffffff">a module opening on that wall</text>
+  </g>
+  <path d="M520 235 L558 235" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- stage 5: boundary -->
+  <g>
+    <rect x="560" y="200" width="150" height="70" rx="8" fill="#7c5cbf"/>
+    <text x="635" y="229" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">5 · Boundary</text>
+    <text x="635" y="252" text-anchor="middle" font-size="12.5" fill="#ffffff">answer in chat</text>
+  </g>
+
+  <!-- confront branch -->
+  <path d="M150 270 L150 328" stroke="#c2540a" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="160" y="304" font-size="11" fill="#8a3b07">misconception</text>
+  <g>
+    <rect x="50" y="330" width="200" height="70" rx="8" fill="#ffffff" stroke="#c2540a" stroke-width="2"/>
+    <text x="150" y="359" text-anchor="middle" font-size="17" font-weight="600" fill="#8a3b07">Confront</text>
+    <text x="150" y="382" text-anchor="middle" font-size="12.5" fill="#4a4550">a case your model gets wrong</text>
+  </g>
+  <path d="M250 365 L300 365 L300 270" fill="none" stroke="#c2540a" stroke-width="2"/>
+  <path d="M300 272 L318 250" fill="none" stroke="#c2540a" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- cards -->
+  <path d="M635 270 L635 328" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="560" y="330" width="150" height="70" rx="8" fill="#0f7a6c"/>
+    <text x="635" y="359" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">Cards</text>
+    <text x="635" y="382" text-anchor="middle" font-size="12.5" fill="#ffffff">you write the backs</text>
+  </g>
+  <!-- loop back to elicit -->
+  <path d="M635 400 L635 450 L420 450" fill="none" stroke="#4a4550" stroke-width="2"/>
+  <path d="M420 450 L110 450" fill="none" stroke="#4a4550" stroke-width="2"/>
+  <path d="M110 450 L40 450 L40 235 L48 235" fill="none" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="290" y="470" text-anchor="middle" font-size="11" fill="#4a4550">next module</text>
+
+  <!-- to close -->
+  <path d="M420 450 L420 528" fill="none" stroke="#4a4550" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="430" y="510" font-size="11" fill="#4a4550">after the last module</text>
+
+  <!-- stage 6: close -->
+  <g>
+    <rect x="310" y="530" width="220" height="70" rx="8" fill="#7c5cbf"/>
+    <text x="420" y="559" text-anchor="middle" font-size="17" font-weight="600" fill="#ffffff">6 · Close</text>
+    <text x="420" y="582" text-anchor="middle" font-size="12.5" fill="#ffffff">the throughline, then one next thing</text>
+  </g>
+
+  <!-- legend -->
+  <g font-size="12" fill="#4a4550">
+    <rect x="40" y="620" width="14" height="14" rx="3" fill="#7c5cbf"/><text x="60" y="632">in chat</text>
+    <rect x="130" y="620" width="14" height="14" rx="3" fill="#0f7a6c"/><text x="150" y="632">a file you keep</text>
+    <rect x="270" y="620" width="14" height="14" rx="3" fill="#ffffff" stroke="#c2540a" stroke-width="2"/><text x="290" y="632">only when a misconception surfaces</text>
+  </g>
+</svg>
