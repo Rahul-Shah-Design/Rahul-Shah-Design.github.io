@@ -57,6 +57,7 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 |---|---|---|
 | Budget Tracker | `ClaudeProjects/BudgetTracker/` | Single-file budgeting SPA with paycheck calculator and YTD dashboard |
 | User State Map | `ClaudeProjects/User State Map/` | Interactive US map of college destination flows by state |
+| Atlas Run | `ClaudeProjects/atlas-run/` | Geography quiz game — pick/find/type countries on an interactive D3 world map |
 
 ## Employer-Specific Portfolio Pages
 
