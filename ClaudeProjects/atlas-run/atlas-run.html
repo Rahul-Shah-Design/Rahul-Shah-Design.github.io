@@ -73,7 +73,7 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 .qhead{display:flex;align-items:center;gap:10px;padding-top:4px}
 .progress{flex:1;height:8px;border-radius:4px;background:var(--paper);overflow:hidden}
 .progress span{display:block;height:100%;width:0;background:var(--ink);transition:width .3s}
-.map{position:relative;height:clamp(260px,50vh,520px);border-radius:18px;overflow:hidden;border:1px solid var(--ocean-line);background:var(--ocean);touch-action:none}
+.map{position:relative;height:clamp(220px,38vh,420px);border-radius:18px;overflow:hidden;border:1px solid var(--ocean-line);background:var(--ocean);touch-action:none}
 .map svg{display:block;width:100%;height:100%;user-select:none;-webkit-user-select:none}
 .zoomctl{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px}
 .zoomctl button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--paper);font-size:18px;line-height:1}
@@ -190,7 +190,6 @@ const MODES = [
   ["mixed","Mixed","All three, shuffled."]];
 const LENS = [["10","10"],["20","20"],["all","All"]];
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const touch = matchMedia("(pointer: coarse)").matches;
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; };
@@ -282,15 +281,7 @@ const MapV = {
       .attr("text-anchor","middle").attr("dominant-baseline", c.s?"auto":"middle")
       .attr("font-size",14/k).attr("stroke-width",4/k).text(c.n);
   },
-  reset(){ C.forEach(c=>this.mark(c,null)); d3.select("#lbls").html(""); },
-  // Grow the map into any empty screen below the panel. iOS scrolls a focused input as far as the
-  // page allows, so empty space under the text box is where the keyboard scrolls the map away to.
-  fill(on){
-    const m = $("map"); m.style.height = "";
-    if(on){ const spare = innerHeight - ($("play").getBoundingClientRect().bottom + scrollY);
-      if(spare > 0) m.style.height = (m.offsetHeight + spare) + "px"; }
-    if(this.svg) this.size();
-  }
+  reset(){ C.forEach(c=>this.mark(c,null)); d3.select("#lbls").html(""); }
 };
 
 /* ---------- Name matching for Type it ---------- */
@@ -362,7 +353,7 @@ const G = {
         setTimeout(()=>$("ti") && $("ti").focus({preventScroll:true}), 50);
       }
     }
-    MapV.fill(m==="type" && touch); MapV.fit(box);
+    MapV.fit(box);
   },
   distractors(c){
     const pool = C.filter(o=>o!==c && (this.scope==="world"||o.r===this.scope) && MapV.geo(o).c);
