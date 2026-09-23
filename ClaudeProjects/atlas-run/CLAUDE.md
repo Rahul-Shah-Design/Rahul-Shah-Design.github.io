@@ -41,6 +41,13 @@ countries also get an invisible larger `circle.hit` hit-target so they're tappab
 `MapV.fit()` animates the viewport to a bounding box — used both to frame the current question
 and, on a miss, to reframe around the correct answer plus whatever the player tapped.
 
+**Type-mode map height (`MapV.fill`):** on touch devices, a "type it" question grows the map into
+any empty screen below the panel, so the text box is the last thing on the page. iOS scrolls a
+focused input as far as the page (or the viewport, if the page is shorter) allows, so any empty
+space under the text box is room for the keyboard to scroll the map out of view. For the same
+reason, "I don't know" sits beside the prompt rather than under the input, and `#play` carries no
+extra bottom padding. `fill()` runs before `fit()` in `G.next()` so the framing uses the new size.
+
 **Answer checking:**
 - `pick`/`find` compare object identity against the country record.
 - `type` runs input through `judge()`: normalizes the string (`norm()` strips accents/diacritics,
