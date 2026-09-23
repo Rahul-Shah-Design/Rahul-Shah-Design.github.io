@@ -31,14 +31,16 @@
   --target:#C9A94E; --right:#5E9A4E; --wrong:#B0605A; --red:#FF6B6B; --ok:#6BCB8B; --line:#E6EEF31f;
 }
 *{box-sizing:border-box}
-:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{padding-top:env(safe-area-inset-top,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--ocean);color:var(--ink);font:17px/1.5 var(--body)}
 button,input{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:3px solid var(--red);outline-offset:2px}
 [hidden]{display:none!important}
-.app{max-width:640px;margin:0 auto;padding:12px 16px 32px}
+.app{max-width:640px;margin:0 auto;padding:12px 16px 0}
+#setup,#results{padding-bottom:calc(32px + env(safe-area-inset-bottom,0px))}
+#play{padding-bottom:max(0px,calc(env(safe-area-inset-bottom,0px) - 16px))}
 h1{font:800 40px/1 var(--display);letter-spacing:-.03em;margin:18px 0 6px}
 h2{font:600 18px/1.2 var(--display);margin:26px 0 10px}
 p{margin:0 0 12px;max-width:62ch}
@@ -103,9 +105,12 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 .answers button:disabled{cursor:default}
 .typebox{display:flex;gap:8px}
 .typebox input{flex:1;min-width:0;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--ocean);font-size:18px}
-.row{display:flex;gap:8px;margin-top:12px;align-items:center}
-.row .grow{flex:1}
+.qline{display:flex;align-items:flex-start;gap:12px;margin:0 0 12px}
+.qline .prompt{flex:1;margin:0}
+.skip{flex:none;margin-top:1px;padding:6px 12px;font-size:15px}
+.next{width:fit-content;margin:12px 0 0 auto;padding:12px 22px}
 .feedback{margin:12px 0 0;font-size:16px}
+.feedback:empty{margin:0}
 .feedback.good{color:var(--ok);font-weight:700}
 .feedback.bad{border-left:4px solid var(--red);padding-left:10px}
 
@@ -141,14 +146,13 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
     <div class="zoomctl"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="zfit" aria-label="Reset view">⤢</button></div>
   </div>
   <div class="panel">
-    <p class="prompt" id="prompt" tabindex="-1"></p>
+    <div class="qline">
+      <p class="prompt" id="prompt" tabindex="-1"></p>
+      <button class="ghost skip" id="skipBtn">I don't know</button>
+    </div>
     <div id="answer"></div>
     <p class="feedback" id="fb" aria-live="polite"></p>
-    <div class="row">
-      <button class="ghost" id="skipBtn">I don't know</button>
-      <span class="grow"></span>
-      <button class="primary" id="nextBtn" style="width:auto" hidden>Next</button>
-    </div>
+    <button class="primary next" id="nextBtn" hidden>Next</button>
   </div>
 </section>
 
@@ -186,6 +190,7 @@ const MODES = [
   ["mixed","Mixed","All three, shuffled."]];
 const LENS = [["10","10"],["20","20"],["all","All"]];
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const touch = matchMedia("(pointer: coarse)").matches;
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; };
@@ -277,7 +282,15 @@ const MapV = {
       .attr("text-anchor","middle").attr("dominant-baseline", c.s?"auto":"middle")
       .attr("font-size",14/k).attr("stroke-width",4/k).text(c.n);
   },
-  reset(){ C.forEach(c=>this.mark(c,null)); d3.select("#lbls").html(""); }
+  reset(){ C.forEach(c=>this.mark(c,null)); d3.select("#lbls").html(""); },
+  // Grow the map into any empty screen below the panel. iOS scrolls a focused input as far as the
+  // page allows, so empty space under the text box is where the keyboard scrolls the map away to.
+  fill(on){
+    const m = $("map"); m.style.height = "";
+    if(on){ const spare = innerHeight - ($("play").getBoundingClientRect().bottom + scrollY);
+      if(spare > 0) m.style.height = (m.offsetHeight + spare) + "px"; }
+    if(this.svg) this.size();
+  }
 };
 
 /* ---------- Name matching for Type it ---------- */
@@ -326,13 +339,14 @@ const G = {
     $("count").textContent = `${this.done}/${this.total}`;
     $("bar").style.width = (this.done/this.total*100)+"%";
     const c = this.q.c, geo = MapV.geo(c);
+    let box;
     if(m==="find"){
       $("prompt").textContent = `Find ${c.n}`;
       $("answer").innerHTML = `<p class="small muted" style="margin:0">Tap it on the map. Pinch or use + to zoom.${c.s?" Small countries have a circle.":""}</p>`;
-      MapV.fit(MapV.scopeBox());
+      box = MapV.scopeBox();
       MapV.onTap = t => this.answer(t===c, t);
     } else {
-      MapV.mark(c,"target"); MapV.fit(MapV.context(geo.b));
+      MapV.mark(c,"target"); box = MapV.context(geo.b);
       if(m==="pick"){
         $("prompt").textContent = "Which country is this?";
         const opts = shuffle([c, ...this.distractors(c)]);
@@ -348,6 +362,7 @@ const G = {
         setTimeout(()=>$("ti") && $("ti").focus({preventScroll:true}), 50);
       }
     }
+    MapV.fill(m==="type" && touch); MapV.fit(box);
   },
   distractors(c){
     const pool = C.filter(o=>o!==c && (this.scope==="world"||o.r===this.scope) && MapV.geo(o).c);
