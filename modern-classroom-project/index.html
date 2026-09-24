@@ -497,6 +497,19 @@
     box-shadow:0 8px 20px rgba(29,33,38,0.18);
     min-height:20px;
   }
+  /* the bubble slides up the first time it scrolls into view and again on every
+     slide change. The hidden start state is added by JS, so the text is never
+     lost if the script doesn't run. */
+  .bubble.bubble-wait{ opacity:0; }
+  .bubble.bubble-in{ animation:bubble-in .32s cubic-bezier(.22,.8,.36,1) both; }
+  @keyframes bubble-in{
+    from{ opacity:0; transform:translateY(8px); }
+    to{ opacity:1; transform:none; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .bubble.bubble-wait{ opacity:1; }
+    .bubble.bubble-in{ animation:none; }
+  }
 
   /* ---------- WHAT I'M KNOWN FOR — POLAROIDS ---------- */
   .ds-section{ padding:58px 0; }
@@ -1149,6 +1162,20 @@
     // live regions, and rewriting identical text would re-announce it
     const setText = (el, s)=>{ if (el.textContent !== s) el.textContent = s; };
 
+    // replay the slide-up: dropping and re-adding the class restarts the keyframes
+    function popBubble(){
+      bubble.classList.remove('bubble-wait', 'bubble-in');
+      void bubble.offsetWidth;
+      bubble.classList.add('bubble-in');
+    }
+    if ('IntersectionObserver' in window){
+      bubble.classList.add('bubble-wait');
+      const io = new IntersectionObserver(entries=>{
+        if (entries.some(e=>e.isIntersecting)){ io.disconnect(); popBubble(); }
+      }, { threshold:0.5 });
+      io.observe(bubble);
+    }
+
     function render(){
       setText(cap, `Slide ${idx+1} of ${cfg.n}`);
       setText(bubble, cfg.bubbles[idx]);
@@ -1179,11 +1206,13 @@
 
     function go(dir){
       const next = Math.max(0, Math.min(cfg.n - 1, idx + dir));
-      if(next !== idx){
+      const moved = next !== idx;
+      if(moved){
         idx = next;
         syncMarks();
       }
       render();
+      if(moved) popBubble();
     }
 
     arrows.forEach(btn=>{
