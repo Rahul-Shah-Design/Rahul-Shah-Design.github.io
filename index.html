@@ -159,6 +159,8 @@
   @media (max-width:1299px){
     .d-m1, .d-m2, .d-m3, .d-m4, .d-m5{ display:none; }
   }
+  /* 900px matches where .case-grid drops the status sticky notes inline, so the
+     hero art and the sticky notes change behaviour at the same width */
   @media (max-width:900px){
     .d-h1, .d-h2, .d-h3{ display:none; }
   }
@@ -292,6 +294,8 @@
   /* the tilt is held in a variable so states that add to the transform (the
      link hover below) can re-apply it instead of flattening the note */
   .status-pill.shipped{ background:var(--sticky-green); --tilt:1.5deg; transform:rotate(var(--tilt)); }
+  /* "Shipped" alone made a scrap of a note; hold it to the GitHub note's width */
+  .status-pill.shipped{ min-width:146px; text-align:center; }
   .status-pill.progress{ background:var(--sticky-pink); --tilt:-1.5deg; transform:rotate(var(--tilt)); }
   /* one note is a way out to the code; the others are plain labels */
   a.status-pill{
@@ -307,14 +311,27 @@
   }
   a.status-pill:focus-visible{ outline:2px solid var(--pen); outline-offset:3px; }
   .case-grid{
-    display:grid; row-gap:16px;
+    display:grid;
+    grid-template-columns:minmax(0, 580px) auto;
+    grid-template-areas:
+      "head head"
+      "desc note";
+    column-gap:160px; row-gap:16px;
+    align-items:center;
     margin-bottom:36px;
   }
-  /* the sticky note rides beside the handwritten eyebrow, so it reads as a
-     margin annotation on the case rather than floating out in the gutter */
-  .case-kicker{
-    display:flex; align-items:center; flex-wrap:wrap; gap:8px 18px;
+  .case-grid > .case-head{ grid-area:head; }
+  .case-grid > .case-desc{ grid-area:desc; }
+  .case-grid > .status-pill{ grid-area:note; justify-self:start; }
+
+  /* a long note reads better up beside the title than crowding the blurb */
+  .case-grid.long-note{
+    grid-template-areas:
+      "head note"
+      "desc desc";
+    column-gap:40px;
   }
+  .case-grid.long-note > .status-pill{ justify-self:end; align-self:end; }
 
   .case-desc{
     max-width:580px; color:var(--ink-soft); font-size:15px;
@@ -583,6 +600,18 @@
     *{ transition-duration:0.01ms !important; }
   }
 
+  @media (max-width:900px){
+    .case-grid, .case-grid.long-note{
+      grid-template-columns:1fr;
+      grid-template-areas:
+        "head"
+        "desc"
+        "note";
+      column-gap:0;
+    }
+    .case-grid > .status-pill,
+    .case-grid.long-note > .status-pill{ justify-self:start; align-self:auto; }
+  }
 
   @media (max-width:720px){
     .hero h1{ font-size:36px; }
@@ -723,13 +752,10 @@
   <section class="case" id="chiron" aria-labelledby="title-chiron">
     <div class="wrap">
       <img class="doodle d-m3" src="assets/doodle-star.png" alt="">
-      <div class="case-grid">
+      <div class="case-grid long-note">
         <div class="case-head">
           <div>
-          <div class="case-kicker">
-            <div class="case-index">01 — PERSONAL PROJECT</div>
-            <a class="status-pill progress" href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">&rarr;</span><span class="sr-only"> (opens in new tab)</span></a>
-          </div>
+          <div class="case-index">01 — PERSONAL PROJECT</div>
           <h2 class="case-title" id="title-chiron">Chiron — building a personalized, Socratic tutor out of an LLM</h2>
           </div>
         </div>
@@ -739,6 +765,7 @@
         learning is personal: courses that start from what one learner already knows and cares
         about, instead of a fixed path written for everyone.
         </p>
+        <a class="status-pill progress" href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">&rarr;</span><span class="sr-only"> (opens in new tab)</span></a>
       </div>
 
       <div class="slideshow" id="ss-chiron" role="region" aria-roledescription="carousel" aria-label="Chiron screenshots">
@@ -776,10 +803,7 @@
       <div class="case-grid">
         <div class="case-head">
           <div>
-          <div class="case-kicker">
-            <div class="case-index">02 — ENCOURA, STUDENT APP</div>
-            <div class="status-pill progress">Shipping Back to School 2026</div>
-          </div>
+          <div class="case-index">02 — ENCOURA, STUDENT APP</div>
           <h2 class="case-title" id="title-students">Encourage — redesigning onboarding under a 100% content increase</h2>
           </div>
         </div>
@@ -788,6 +812,7 @@
         When the onboarding survey had to double in length, I used chunking and micro-interactions to keep it
         from feeling like a slog — then built the company's first in-app A/B testing infrastructure to validate it.
         </p>
+        <div class="status-pill progress">Shipping Back to School 2026</div>
       </div>
 
       <div class="slideshow" id="ss-students" role="region" aria-roledescription="carousel" aria-label="Encourage onboarding screenshots">
@@ -826,10 +851,7 @@
       <div class="case-grid">
         <div class="case-head">
           <div>
-          <div class="case-kicker">
-            <div class="case-index">03 — ENCOURA, EDUCATOR TOOLS</div>
-            <div class="status-pill shipped">Shipped</div>
-          </div>
+          <div class="case-index">03 — ENCOURA, EDUCATOR TOOLS</div>
           <h2 class="case-title" id="title-educators">Encourage for Educators — designing for the counselor's workflow</h2>
           </div>
         </div>
@@ -838,6 +860,7 @@
         use daily to support hundreds of students at once. It's designing for someone managing many learners'
         progress at different paces, simultaneously.
         </p>
+        <div class="status-pill shipped">Shipped</div>
       </div>
 
       <div class="slideshow red" id="ss-educators" role="region" aria-roledescription="carousel" aria-label="Encourage for Educators screenshots">
