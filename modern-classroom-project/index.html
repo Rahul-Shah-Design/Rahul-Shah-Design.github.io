@@ -159,8 +159,6 @@
   @media (max-width:1299px){
     .d-m1, .d-m2, .d-m3, .d-m4, .d-m5{ display:none; }
   }
-  /* 900px matches where .case-grid drops the status sticky notes inline, so the
-     hero art and the sticky notes change behaviour at the same width */
   @media (max-width:900px){
     .d-h1, .d-h2, .d-h3{ display:none; }
   }
@@ -319,27 +317,14 @@
   }
   a.status-pill:focus-visible{ outline:2px solid var(--pen); outline-offset:3px; }
   .case-grid{
-    display:grid;
-    grid-template-columns:minmax(0, 580px) auto;
-    grid-template-areas:
-      "head head"
-      "desc note";
-    column-gap:160px; row-gap:16px;
-    align-items:center;
+    display:grid; row-gap:16px;
     margin-bottom:36px;
   }
-  .case-grid > .case-head{ grid-area:head; }
-  .case-grid > .case-desc{ grid-area:desc; }
-  .case-grid > .status-pill{ grid-area:note; justify-self:start; }
-
-  /* a long note reads better up beside the title than crowding the blurb */
-  .case-grid.long-note{
-    grid-template-areas:
-      "head note"
-      "desc desc";
-    column-gap:40px;
+  /* the sticky note rides beside the handwritten eyebrow, so it reads as a
+     margin annotation on the case rather than floating out in the gutter */
+  .case-kicker{
+    display:flex; align-items:center; flex-wrap:wrap; gap:8px 18px;
   }
-  .case-grid.long-note > .status-pill{ justify-self:end; align-self:end; }
 
   .case-desc{
     max-width:580px; color:var(--ink-soft); font-size:15px;
@@ -608,18 +593,6 @@
     *{ transition-duration:0.01ms !important; }
   }
 
-  @media (max-width:900px){
-    .case-grid, .case-grid.long-note{
-      grid-template-columns:1fr;
-      grid-template-areas:
-        "head"
-        "desc"
-        "note";
-      column-gap:0;
-    }
-    .case-grid > .status-pill,
-    .case-grid.long-note > .status-pill{ justify-self:start; align-self:auto; }
-  }
 
   @media (max-width:720px){
     .hero h1{ font-size:36px; }
@@ -762,10 +735,13 @@
   <section class="case" id="chiron" aria-labelledby="title-chiron">
     <div class="wrap">
       <img class="doodle d-m3" src="doodle-star.png" alt="">
-      <div class="case-grid long-note">
+      <div class="case-grid">
         <div class="case-head">
           <div>
-          <div class="case-index">01 — PERSONAL PROJECT</div>
+          <div class="case-kicker">
+            <div class="case-index">01 — PERSONAL PROJECT</div>
+            <a class="status-pill progress" href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">&rarr;</span><span class="sr-only"> (opens in new tab)</span></a>
+          </div>
           <h2 class="case-title" id="title-chiron">Chiron — building a personalized, Socratic tutor out of an LLM</h2>
           </div>
         </div>
@@ -776,7 +752,6 @@
         about, instead of a fixed path written for everyone. It's the closest thing I have to a working prototype
         of the pedagogy MCP is built on.
         </p>
-        <a class="status-pill progress" href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">&rarr;</span><span class="sr-only"> (opens in new tab)</span></a>
       </div>
 
       <div class="slideshow" id="ss-chiron" role="region" aria-roledescription="carousel" aria-label="Chiron screenshots">
@@ -814,7 +789,10 @@
       <div class="case-grid">
         <div class="case-head">
           <div>
-          <div class="case-index">02 — ENCOURA, STUDENT APP</div>
+          <div class="case-kicker">
+            <div class="case-index">02 — ENCOURA, STUDENT APP</div>
+            <div class="status-pill progress">Shipping Back to School 2026</div>
+          </div>
           <h2 class="case-title" id="title-students">Encourage — redesigning onboarding under a 100% content increase</h2>
           </div>
         </div>
@@ -823,7 +801,6 @@
         When the onboarding survey had to double in length, I used chunking and micro-interactions to keep it
         from feeling like a slog — then built the company's first in-app A/B testing infrastructure to validate it.
         </p>
-        <div class="status-pill progress">Shipping Back to School 2026</div>
       </div>
 
       <div class="slideshow" id="ss-students" role="region" aria-roledescription="carousel" aria-label="Encourage onboarding screenshots">
@@ -862,7 +839,10 @@
       <div class="case-grid">
         <div class="case-head">
           <div>
-          <div class="case-index">03 — ENCOURA, EDUCATOR TOOLS</div>
+          <div class="case-kicker">
+            <div class="case-index">03 — ENCOURA, EDUCATOR TOOLS</div>
+            <div class="status-pill shipped">Shipped</div>
+          </div>
           <h2 class="case-title" id="title-educators">Encourage for Educators — designing for the counselor's workflow</h2>
           </div>
         </div>
@@ -871,7 +851,6 @@
         use daily to support hundreds of students at once. This is the closest analog to designing for teachers —
         someone managing many learners' progress at different paces, simultaneously.
         </p>
-        <div class="status-pill shipped">Shipped</div>
       </div>
 
       <div class="slideshow red" id="ss-educators" role="region" aria-roledescription="carousel" aria-label="Encourage for Educators screenshots">
@@ -943,7 +922,7 @@
         <a class="dl-btn" href="resume.pdf" download="Rahul-Shah-Resume.pdf"><span aria-hidden="true">↓</span> Download PDF</a>
       </div>
       <div class="resume-preview">
-        <button type="button" class="zoom-btn" aria-label="Enlarge résumé image"><img class="resume-embed" src="resume.png" alt="Rahul Shah's r&eacute;sum&eacute; — one page: education, then Chiron, Encoura, Rochester Regional Health and Prudential Financial, followed by a skills list. Download the PDF for the accessible text version."></button>
+        <button type="button" class="zoom-btn" aria-label="Enlarge résumé image"><img class="resume-embed" src="resume.png" alt="Rahul Shah's r&eacute;sum&eacute; — one page: experience at Chiron, Encoura, Rochester Regional Health and Prudential Financial, then education and a skills list. Download the PDF for the accessible text version."></button>
       </div>
     </div>
   </section>

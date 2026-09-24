@@ -157,6 +157,6 @@ holds the audit record and the open items. Keep these conventions when editing t
 ## GitHub Pages
 
 This site is served via GitHub Pages from the `main` branch root. The portfolio is live at:
-`https://rahul-shah-design.github.io`
+`https://rahulshah.design` (custom domain via `CNAME`; `rahul-shah-design.github.io` redirects there)
 
 When working on a new project, develop on a `claude/...` branch and merge to `main` to deploy.
