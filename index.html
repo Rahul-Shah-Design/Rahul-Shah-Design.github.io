@@ -1103,13 +1103,30 @@
     });
     anim.setSpeed(1.5);
     const per = SCRIBBLE_EXT_DATA.op / SCRIBBLE_EXT_COUNT;
-    let shown = 0;
-    anim.addEventListener('DOMLoaded', ()=>{
+    let shown = 0, loaded = false, seen = false;
+    // the first stroke waits until the strip is both loaded and half on screen,
+    // so it draws in front of the reader rather than on page load
+    function drawFirst(){
+      if (!loaded || !seen || shown) return;
       anim.setDirection(1);
       if (reduceMotion.matches) anim.goToAndStop(per, true);
       else anim.playSegments([0, per], true);
       shown = 1;
-    });
+    }
+    anim.addEventListener('DOMLoaded', ()=>{ loaded = true; drawFirst(); });
+    if ('IntersectionObserver' in window){
+      const io = new IntersectionObserver(entries=>{
+        // a beat's pause lets the section's screenshot decode first; drawing
+        // straight away stalled on it and the stroke skipped ahead
+        if (entries.some(e=>e.isIntersecting)){
+          io.disconnect();
+          setTimeout(()=>{ seen = true; drawFirst(); }, 200);
+        }
+      }, { threshold:0.5 });
+      io.observe(strip);
+    } else {
+      seen = true;
+    }
     return function sync(target){
       if(target === shown) return;
       if (reduceMotion.matches){
