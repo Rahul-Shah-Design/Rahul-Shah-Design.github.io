@@ -294,6 +294,8 @@
   /* the tilt is held in a variable so states that add to the transform (the
      link hover below) can re-apply it instead of flattening the note */
   .status-pill.shipped{ background:var(--sticky-green); --tilt:1.5deg; transform:rotate(var(--tilt)); }
+  /* "Shipped" alone made a scrap of a note; hold it to the GitHub note's width */
+  .status-pill.shipped{ min-width:146px; text-align:center; }
   .status-pill.progress{ background:var(--sticky-pink); --tilt:-1.5deg; transform:rotate(var(--tilt)); }
   /* one note is a way out to the code; the others are plain labels */
   a.status-pill{
@@ -738,10 +740,8 @@
         <li class="tag">M.S. Learning Design &amp; Technology</li>
       </ul>
       <p class="hero-sub" data-flatten>
-        I design end-to-end for K-12 products — journey maps to shipped UI to the copy in an error message —
-        with a masters grounded in <span class="hl-mark">mastery learning theory</span> and an accessibility practice that treats <span class="hl-mark">WCAG</span>
-        as an input, not an afterthought. Explore three projects below: a thesis prototype, plus shipped work
-        reaching 150,000+ students and the educators who guide them.
+        I design end-to-end for K-12 products with a masters grounded in <span class="hl-mark">mastery learning theory</span>
+        and an accessibility practice that treats <span class="hl-mark">WCAG</span> as an input, not an afterthought.
       </p>
     </div>
   </section>
@@ -754,14 +754,12 @@
         <div class="case-head">
           <div>
           <div class="case-index">01 — PERSONAL PROJECT</div>
-          <h2 class="case-title" id="title-chiron">Chiron — building a personalized, Socratic tutor out of an LLM</h2>
+          <h2 class="case-title" id="title-chiron" data-flatten>Chiron — building a <span class="hl-mark">personalized</span>, Socratic tutor out of an LLM</h2>
           </div>
         </div>
         <p class="case-desc">
-        A Claude skill that turns a conversation into a short course — modules, simulations it writes
-        on the spot, and knowledge checks that reach back to earlier ones. I think the future of
-        learning is personal: courses that start from what one learner already knows and cares
-        about, instead of a fixed path written for everyone.
+        A Claude skill that turns a conversation into a short course: modules, simulations it writes
+        on the spot, and knowledge checks that reach back to earlier ones.
         </p>
         <a class="status-pill progress" href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">&rarr;</span><span class="sr-only"> (opens in new tab)</span></a>
       </div>
@@ -802,13 +800,13 @@
         <div class="case-head">
           <div>
           <div class="case-index">02 — ENCOURA, STUDENT APP</div>
-          <h2 class="case-title" id="title-students">Encourage — redesigning onboarding under a 100% content increase</h2>
+          <h2 class="case-title" id="title-students" data-flatten>Encourage — asking students for <span class="hl-mark">2x</span> the data without dropping completion</h2>
           </div>
         </div>
         <p class="case-desc">
-        Encourage — Encoura&rsquo;s student app — serves 150,000+ high school students on school-issued devices and unreliable wifi.
+        Encourage serves 150,000+ high school students on school-issued devices and unreliable wifi.
         When the onboarding survey had to double in length, I used chunking and micro-interactions to keep it
-        from feeling like a slog — then built the company's first in-app A/B testing infrastructure to validate it.
+        from feeling like a slog.
         </p>
         <div class="status-pill progress">Shipping Back to School 2026</div>
       </div>
@@ -850,13 +848,12 @@
         <div class="case-head">
           <div>
           <div class="case-index">03 — ENCOURA, EDUCATOR TOOLS</div>
-          <h2 class="case-title" id="title-educators">Encourage for Educators — designing for the counselor's workflow</h2>
+          <h2 class="case-title" id="title-educators" data-flatten>Encourage for Educators — designing for the <span class="hl-mark">counselor's</span> workflow</h2>
           </div>
         </div>
         <p class="case-desc">
         The counselor-facing side of Encourage: rosters, student status tracking, and the tools guidance staff
-        use daily to support hundreds of students at once. It's designing for someone managing many learners'
-        progress at different paces, simultaneously.
+        use daily to support hundreds of students at once.
         </p>
         <div class="status-pill shipped">Shipped</div>
       </div>
@@ -930,7 +927,7 @@
         <a class="dl-btn" href="assets/resume.pdf" download="Rahul-Shah-Resume.pdf"><span aria-hidden="true">↓</span> Download PDF</a>
       </div>
       <div class="resume-preview">
-        <button type="button" class="zoom-btn" aria-label="Enlarge résumé image"><img class="resume-embed" src="assets/resume.png" alt="Rahul Shah's r&eacute;sum&eacute; — one page: education, then Chiron, Encoura, Rochester Regional Health and Prudential Financial, followed by a skills list. Download the PDF for the accessible text version."></button>
+        <button type="button" class="zoom-btn" aria-label="Enlarge résumé image"><img class="resume-embed" src="assets/resume.png" alt="Rahul Shah's r&eacute;sum&eacute; — one page: experience at Chiron, Encoura, Rochester Regional Health and Prudential Financial, then education and a skills list. Download the PDF for the accessible text version."></button>
       </div>
     </div>
   </section>
