@@ -491,9 +491,9 @@
      slide change. The hidden start state is added by JS, so the text is never
      lost if the script doesn't run. */
   .bubble.bubble-wait{ opacity:0; }
-  .bubble.bubble-in{ animation:bubble-in .32s cubic-bezier(.22,.8,.36,1) both; }
+  .bubble.bubble-in{ animation:bubble-in .6s cubic-bezier(.22,.8,.36,1) both; }
   @keyframes bubble-in{
-    from{ opacity:0; transform:translateY(8px); }
+    from{ opacity:0; transform:translateY(12px); }
     to{ opacity:1; transform:none; }
   }
   @media (prefers-reduced-motion: reduce){
