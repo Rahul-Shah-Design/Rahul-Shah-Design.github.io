@@ -35,7 +35,7 @@ a Playwright keyboard/screen-reader-semantics test, and a manual review.
 2. **Résumé PDF metadata.** Both PDFs are tagged and have real text, but the document title is
    the Google Docs filename (`Rahul_Resume.docx` / `MCP_Resume.docx`). In Google Docs set
    File → Details / the document name to "Rahul Shah — Résumé" and re-export, then drop the
-   PDF into both `assets/` and `modern-classroom-project/`. Also confirm in Acrobat's
+   PDF into `assets/` and every employer folder (`modern-classroom-project/`, `wayfinder/`). Also confirm in Acrobat's
    accessibility checker that the reading order and heading tags survived export.
 3. **Flash check on the GIFs (2.3.1).** Neither GIF looks like it flashes more than three
    times a second, but only a tool like PEAT or a frame-by-frame look can confirm it. If you

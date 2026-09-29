@@ -16,6 +16,7 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 ├── CLAUDE.md                   ← This file
 ├── tools/build-artifact.py     ← Builds a CSP-safe Artifact preview of any page
 ├── modern-classroom-project/   ← Employer-tailored variant of the root page
+├── wayfinder/                  ← Employer-tailored variant for Wayfinder
 └── ClaudeProjects/
     ├── index.html              ← Unlinked card grid of the vibe-coded projects
     ├── BudgetTracker/
@@ -71,13 +72,14 @@ Some pages are tailored portfolios built for a specific job application, not gen
 | Page | Folder | Built for |
 |---|---|---|
 | Modern Classrooms Project pitch | `modern-classroom-project/` | Application to Modern Classrooms Project |
+| Wayfinder pitch | `wayfinder/` | Application to Wayfinder (Senior Product Designer) |
 
-The root `index.html` and `modern-classroom-project/index.html` share a design: the root page is the
+The root `index.html` and each employer page (`modern-classroom-project/`, `wayfinder/`) share a design: the root page is the
 general-audience version, the employer page is that same page with a "Prepared for" logo lockup and
 copy angled at one role. They are **separate files with separate asset copies** — the root page reads
 from `assets/`, the employer page from its own folder — so retargeting copy for one employer can never
 silently rewrite the page everyone else sees. The cost is that a swapped image (a new résumé, a new
-screenshot) has to be dropped in both places; check the other folder whenever you replace an asset.
+screenshot) has to be dropped in every copy; check the other folders whenever you replace an asset.
 
 ## Previewing a Page as a Claude Artifact
 
