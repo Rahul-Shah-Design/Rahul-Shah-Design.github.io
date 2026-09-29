@@ -15,6 +15,7 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 ├── assets/                     ← Images, résumé and Lottie bundle for the root page
 ├── CLAUDE.md                   ← This file
 ├── tools/build-artifact.py     ← Builds a CSP-safe Artifact preview of any page
+├── tools/build-resume.py       ← Renders a folder's resume.docx into resume.pdf + resume.png
 ├── modern-classroom-project/   ← Employer-tailored variant of the root page
 ├── wayfinder/                  ← Employer-tailored variant for Wayfinder
 └── ClaudeProjects/
@@ -80,6 +81,33 @@ copy angled at one role. They are **separate files with separate asset copies** 
 from `assets/`, the employer page from its own folder — so retargeting copy for one employer can never
 silently rewrite the page everyone else sees. The cost is that a swapped image (a new résumé, a new
 screenshot) has to be dropped in every copy; check the other folders whenever you replace an asset.
+
+## Résumés
+
+Each page folder has its own résumé, so one employer's version can be tailored without touching
+the others. **The `.docx` is the source; edit it, never the PDF.**
+
+| File | What it is |
+|---|---|
+| `resume.docx` | Source, exported from Rahul's Google Doc. Edit this. |
+| `resume.pdf` | The download link. Generated. |
+| `resume.png` | The image shown on the page (1836×2376). Generated. |
+
+`assets/resume.docx` is the general master. `wayfinder/resume.docx` is tailored for Wayfinder.
+`modern-classroom-project/` still only has the PDF/PNG (identical to the root's); give it a
+`.docx` copy before tailoring it.
+
+Edit `word/document.xml` inside the `.docx` (unzip, edit, re-zip; no pretty-printing), then:
+
+```
+apt-get install -y --no-install-recommends libreoffice-writer poppler-utils   # not preinstalled
+python3 tools/build-resume.py wayfinder
+```
+
+The script writes a tagged PDF and the PNG, and refuses to write a résumé that isn't one page.
+Fit it by tightening paragraph spacing (`w:spacing` before/after) or copy, not by shrinking type.
+The container has no Arial, so LibreOffice renders in the metric-identical Liberation Sans; for
+exact Google Docs output, upload the `.docx` to Google Docs and export the PDF from there.
 
 ## Previewing a Page as a Claude Artifact
 
