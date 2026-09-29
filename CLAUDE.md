@@ -74,6 +74,7 @@ Some pages are tailored portfolios built for a specific job application, not gen
 |---|---|---|
 | Modern Classrooms Project pitch | `modern-classroom-project/` | Application to Modern Classrooms Project |
 | Wayfinder pitch | `wayfinder/` | Application to Wayfinder (Senior Product Designer) |
+| Wayfinder pitch, rebranded (candidate) | `wayfinder2/` | Same pitch restyled in Wayfinder's own brand (Forest/Sun Pop, Poppins + Lora + Londrina Solid, topo textures); no doodles. Compare with `wayfinder/`, keep one |
 
 The root `index.html` and each employer page (`modern-classroom-project/`, `wayfinder/`) share a design: the root page is the
 general-audience version, the employer page is that same page with a "Prepared for" logo lockup and
