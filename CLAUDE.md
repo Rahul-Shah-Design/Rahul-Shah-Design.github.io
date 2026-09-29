@@ -17,7 +17,8 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 ├── tools/build-artifact.py     ← Builds a CSP-safe Artifact preview of any page
 ├── tools/build-resume.py       ← Renders a folder's resume.docx into resume.pdf + resume.png
 ├── modern-classroom-project/   ← Employer-tailored variant of the root page
-├── wayfinder/                  ← Employer-tailored variant for Wayfinder
+├── wayfinder/                  ← Wayfinder pitch, restyled in Wayfinder's own brand
+├── wayfinder-classic/          ← The earlier Wayfinder pitch in the portfolio's own style
 └── ClaudeProjects/
     ├── index.html              ← Unlinked card grid of the vibe-coded projects
     ├── BudgetTracker/
@@ -73,12 +74,16 @@ Some pages are tailored portfolios built for a specific job application, not gen
 | Page | Folder | Built for |
 |---|---|---|
 | Modern Classrooms Project pitch | `modern-classroom-project/` | Application to Modern Classrooms Project |
-| Wayfinder pitch | `wayfinder/` | Application to Wayfinder (Senior Product Designer) |
-| Wayfinder pitch, rebranded (candidate) | `wayfinder2/` | Same pitch restyled in Wayfinder's own brand (Forest/Sun Pop, Poppins + Lora + Londrina Solid, topo textures); no doodles. Compare with `wayfinder/`, keep one |
+| Wayfinder pitch | `wayfinder/` | Application to Wayfinder (Senior Product Designer). Restyled in Wayfinder's own brand: Forest/Sun Pop, Poppins + Lora + Londrina Solid, topo textures, no doodles or drawing toolbar |
+| Wayfinder pitch, classic | `wayfinder-classic/` | The earlier version in the portfolio's own graph-paper style, kept for reference |
 
-The root `index.html` and each employer page (`modern-classroom-project/`, `wayfinder/`) share a design: the root page is the
+`wayfinder2/` is only a redirect to `/wayfinder`: the branded page lived there while it was compared
+with the original, and those links were shared.
+
+The root `index.html` and the employer pages (`modern-classroom-project/`, `wayfinder-classic/`) share a design: the root page is the
 general-audience version, the employer page is that same page with a "Prepared for" logo lockup and
-copy angled at one role. They are **separate files with separate asset copies** — the root page reads
+copy angled at one role. `wayfinder/` is the exception: same content and scripts, but restyled
+wholesale in the employer's own brand. They are **separate files with separate asset copies** — the root page reads
 from `assets/`, the employer page from its own folder — so retargeting copy for one employer can never
 silently rewrite the page everyone else sees. The cost is that a swapped image (a new résumé, a new
 screenshot) has to be dropped in every copy; check the other folders whenever you replace an asset.
@@ -94,7 +99,8 @@ the others. **The `.docx` is the source; edit it, never the PDF.**
 | `resume.pdf` | The download link. Generated. |
 | `resume.png` | The image shown on the page (1836×2376). Generated. |
 
-`assets/resume.docx` is the general master. `wayfinder/resume.docx` is tailored for Wayfinder.
+`assets/resume.docx` is the general master. `wayfinder/resume.docx` is tailored for Wayfinder
+(`wayfinder-classic/` holds the earlier copy of it).
 `modern-classroom-project/` still only has the PDF/PNG (identical to the root's); give it a
 `.docx` copy before tailoring it.
 
