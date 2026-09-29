@@ -600,7 +600,7 @@
   }
   .resume-head{
     display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:26px; flex-wrap:wrap; gap:14px;
+    flex-wrap:wrap; gap:14px;
   }
   .resume-head h2{ font-size:26px; font-weight:500; }
   .dl-btn{
@@ -610,15 +610,6 @@
     display:flex; align-items:center; gap:8px; letter-spacing:0.03em;
   }
   .dl-btn:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
-  .resume-preview{
-    background:var(--paper); border:1px solid var(--line);
-    border-radius:var(--radius); padding:0; overflow:hidden;
-    box-shadow:0 1px 2px rgba(29,33,38,0.03);
-    max-width:800px; margin:0 auto;
-  }
-  .resume-embed{
-    display:block; width:100%; height:auto;
-  }
 
   @media (prefers-reduced-motion: reduce){
     html{ scroll-behavior:auto; }
@@ -958,9 +949,6 @@
       <div class="resume-head">
         <h2 id="title-resume">Résumé</h2>
         <a class="dl-btn" href="resume.pdf" download="Rahul-Shah-Resume.pdf"><span aria-hidden="true">↓</span> Download PDF</a>
-      </div>
-      <div class="resume-preview">
-        <button type="button" class="zoom-btn" aria-label="Enlarge résumé image"><img class="resume-embed" src="resume.png" alt="Rahul Shah's r&eacute;sum&eacute; — one page: experience at Chiron, Encoura, Rochester Regional Health and Prudential Financial, then education and a skills list. Download the PDF for the accessible text version."></button>
       </div>
     </div>
   </section>
