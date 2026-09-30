@@ -45,6 +45,10 @@ SCAFFOLD = [
     r'<link rel="preconnect"[^>]*>\s*',
 ]
 
+# Analytics has no business in a preview: the CSP would block it anyway, and a
+# design preview should never count as a visit.
+ANALYTICS = r"<!-- GoatCounter:[^>]*-->\s*<script data-goatcounter=[^>]*></script>\s*"
+
 ASSET_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".pdf", ".ico"}
 
 # Google serves a different subset per script; the page is English-only.
@@ -184,7 +188,7 @@ def main() -> int:
     out = Path(args.out) if args.out else REPO / "build" / f"{page.name}.artifact.html"
     out.parent.mkdir(parents=True, exist_ok=True)
 
-    html = source.read_text()
+    html = re.sub(ANALYTICS, "", source.read_text())
     html, families = inline_fonts(html)
     html = inline_scripts(html, page)
     html, assets = inline_assets(html, page)

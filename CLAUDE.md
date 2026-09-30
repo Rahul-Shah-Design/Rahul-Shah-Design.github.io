@@ -150,6 +150,14 @@ Consequences for page code:
 - `build/` and `.artifact-cache/` are gitignored. Fonts are cached on first run so
   later builds need no network; the build is byte-for-byte reproducible.
 
+## Analytics
+
+The root page and the employer pages load **GoatCounter** (cookieless, so no consent banner)
+from one tag just before `</body>`, reporting to `https://rahulshah.goatcounter.com`. Each path
+is counted separately, so a visit to `/wayfinder` shows up as its own row. Give any new page
+the same tag, comment line included: `tools/build-artifact.py` matches that comment to strip
+the tag from Artifact previews, which would otherwise fail verification on the external script.
+
 ## Accessibility Conventions (root page and employer pages)
 
 The portfolio pages were audited against WCAG 2.1 AA in September 2026; `ACCESSIBILITY.md`
