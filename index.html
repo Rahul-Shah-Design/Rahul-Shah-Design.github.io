@@ -445,7 +445,10 @@
   .gif-toggle[hidden]{ display:none; }
 
   .nav-arrow{
-    position:absolute; top:50%; transform:translateY(-50%);
+    /* translate, not transform: the individual properties apply translate
+       before scale, so the hover scale grows from the centre. With transform
+       the -50% was applied after scaling and the arrow crept upward. */
+    position:absolute; top:50%; translate:0 -50%;
     width:42px; height:42px; border-radius:50%;
     background:var(--hl-yellow); border:1.5px solid var(--ink); color:var(--ink);
     display:flex; align-items:center; justify-content:center;
