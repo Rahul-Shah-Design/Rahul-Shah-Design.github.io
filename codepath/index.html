@@ -460,18 +460,24 @@
   .nav-arrow{
     position:absolute; top:50%; transform:translateY(-50%);
     width:42px; height:42px; border-radius:50%;
-    background:var(--paper); border:1px solid var(--line);
+    background:var(--ink); border:1px solid var(--ink); color:#fff;
     display:flex; align-items:center; justify-content:center;
-    cursor:pointer; transition:background .15s, border-color .15s;
+    cursor:pointer; transition:background .15s, border-color .15s, color .15s;
     user-select:none; z-index:5;
   }
-  .nav-arrow:hover{ background:var(--pen-tint); border-color:var(--pen); }
+  /* filled ink with a white chevron: the old white-on-white circle had a
+     1.2:1 edge against the card and was easy to miss */
+  .nav-arrow:hover{ background:var(--pen-deep); border-color:var(--pen-deep); }
   .nav-arrow:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
   /* aria-disabled rather than disabled so the button keeps focus at either
      end of the strip instead of dropping a keyboard user back to the top */
-  .slideshow .nav-arrow[aria-disabled="true"]{ opacity:.38; cursor:default; }
-  .slideshow .nav-arrow[aria-disabled="true"]:hover{ background:var(--paper); border-color:var(--line); }
-  .slideshow.red .nav-arrow:hover{ background:var(--red-tint); border-color:var(--red); }
+  /* at either end the arrow drops back to an outline, so "can't go further"
+     reads as a change of state rather than a washed-out version of the same */
+  .slideshow .nav-arrow[aria-disabled="true"],
+  .slideshow .nav-arrow[aria-disabled="true"]:hover{
+    background:var(--paper); border-color:var(--line); color:var(--ink-faint); cursor:default;
+  }
+  .slideshow.red .nav-arrow:not([aria-disabled="true"]):hover{ background:var(--red); border-color:var(--red); }
   .nav-arrow.left{ left:-18px; }
   .nav-arrow.right{ right:-18px; }
   /* Deliberately static: the arrows are absolutely positioned and skip over a
@@ -480,7 +486,8 @@
      mobile rule below, where the card is gone and centring on the stage leaves
      them floating up by the avatar. */
   .device-wrap{ position:static; width:100%; display:flex; justify-content:center; }
-  .nav-arrow svg{ width:16px; height:16px; }
+  .nav-arrow svg{ width:16px; height:16px; stroke-width:2.4; }
+  .nav-arrow svg path{ stroke:currentColor; }
 
   /* ---------- FLOATING HEAD / SPEECH ---------- */
   .talker{

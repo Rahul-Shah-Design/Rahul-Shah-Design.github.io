@@ -233,18 +233,24 @@
   .nav-arrow{
     position:absolute; top:50%; transform:translateY(-50%);
     width:44px; height:44px; border-radius:50%;
-    background:var(--paper); border:1px solid var(--mint);
+    background:var(--forest); border:1px solid var(--forest);
     display:flex; align-items:center; justify-content:center;
     cursor:pointer; transition:background .15s, border-color .15s;
-    user-select:none; z-index:5; color:var(--forest);
+    user-select:none; z-index:5; color:#fff;
   }
-  .nav-arrow svg{ width:18px; height:18px; }
+  .nav-arrow svg{ width:18px; height:18px; stroke-width:2.4; }
   .nav-arrow svg path{ stroke:currentColor; }
-  .nav-arrow:hover{ background:var(--sage); border-color:var(--forest); }
+  /* filled forest with a white chevron: the old white circle on a white card
+     had almost no edge and was easy to miss */
+  .nav-arrow:hover{ background:var(--forest-dark); border-color:var(--forest-dark); }
   /* aria-disabled rather than disabled so the button keeps focus at either
      end of the strip instead of dropping a keyboard user back to the top */
-  .slideshow .nav-arrow[aria-disabled="true"]{ opacity:.38; cursor:default; }
-  .slideshow .nav-arrow[aria-disabled="true"]:hover{ background:var(--paper); border-color:var(--mint); }
+  /* at either end the arrow drops back to an outline, so "can't go further"
+     reads as a change of state rather than a washed-out version of the same */
+  .slideshow .nav-arrow[aria-disabled="true"],
+  .slideshow .nav-arrow[aria-disabled="true"]:hover{
+    background:var(--paper); border-color:var(--mint); color:var(--body); cursor:default;
+  }
   .nav-arrow.left{ left:-22px; }
   .nav-arrow.right{ right:-22px; }
   /* static on purpose: the arrows resolve against .stage above mobile, and
