@@ -77,7 +77,7 @@ Some pages are tailored portfolios built for a specific job application, not gen
 | Modern Classrooms Project pitch | `modern-classroom-project/` | Application to Modern Classrooms Project |
 | Wayfinder pitch | `wayfinder/` | Application to Wayfinder (Senior Product Designer). Restyled in Wayfinder's own brand: Forest/Sun Pop, Poppins + Lora + Londrina Solid, topo textures, no doodles or drawing toolbar |
 | Wayfinder pitch, classic | `wayfinder-classic/` | The earlier version in the portfolio's own graph-paper style, kept for reference |
-| CodePath pitch | `codepath/` | Application to CodePath (first Senior Product Designer). Portfolio style; cases reordered onboarding → Chiron → staff tools → design system, plus a "roadmap, receipts" section mapping the posting's four projects to the work |
+| CodePath pitch | `codepath/` | Application to CodePath (first Senior Product Designer). Portfolio style; cases reordered onboarding → Chiron → staff tools → design system |
 
 `wayfinder2/` is only a redirect to `/wayfinder`: the branded page lived there while it was compared
 with the original, and those links were shared.

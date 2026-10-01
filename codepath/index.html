@@ -278,35 +278,7 @@
   }
   .cp-logo{ height:22px; width:auto; display:block; }
 
-  /* ---------- FIT MAP: their project list -> the work below ---------- */
-  .fit-section{ padding:12px 0 36px; }
-  .fit-head{ max-width:640px; margin-bottom:26px; }
-  .fit-head .case-index{ display:block; margin-bottom:10px; }
-  .fit-head h2{ font-size:26px; font-weight:500; }
-  .fit-grid{
-    margin:0; padding:0; list-style:none;
-    display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:18px;
-  }
-  .fit-card{
-    background:var(--paper); border:1px solid var(--line);
-    border-radius:var(--radius); padding:22px 24px 20px;
-    display:flex; flex-direction:column; gap:10px;
-  }
-  .fit-k{
-    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px;
-    letter-spacing:0.05em; text-transform:uppercase; color:var(--ink-faint);
-  }
-  .fit-card h3{ font-size:19px; font-weight:500; line-height:1.3; }
-  .fit-card p{ font-size:15px; line-height:1.6; color:var(--ink-soft); }
-  .fit-card a{
-    margin-top:auto; padding-top:4px; font-size:14px; font-weight:600;
-    color:var(--pen); text-decoration:none; width:fit-content;
-  }
-  .fit-card a:hover, .fit-card a:focus-visible{ text-decoration:underline; }
   .ds-note{ margin-top:14px; font-size:16px; line-height:1.65; color:var(--ink-soft); }
-  @media (max-width:720px){
-    .fit-grid{ grid-template-columns:1fr; }
-  }
 
   /* ---------- SECTION SCAFFOLD ---------- */
   section.case{ padding:52px 0 10px; }
@@ -805,42 +777,6 @@
     </div>
   </section>
 
-
-  <!-- FIT MAP -->
-  <section class="fit-section" aria-labelledby="title-fit">
-    <div class="wrap">
-      <div class="fit-head">
-        <span class="case-index">Your roadmap, my receipts</span>
-        <h2 id="title-fit">The four projects in your posting, and where I've already done that work</h2>
-      </div>
-      <ul class="fit-grid">
-        <li class="fit-card">
-          <span class="fit-k">Accounts, onboarding, navigation</span>
-          <h3>I've rebuilt a student onboarding and account flow, from classroom research to A/B test</h3>
-          <p>Account creation moved up, verification moved back, and Encoura's first in-app A/B test to prove it. Completion held near 84% with twice the questions.</p>
-          <a href="#students">See the onboarding redesign <span aria-hidden="true">&darr;</span></a>
-        </li>
-        <li class="fit-card">
-          <span class="fit-k">AI tutoring, coaching, grading</span>
-          <h3>I've built a Socratic tutor on Claude, and designed where the model leads</h3>
-          <p>Chiron calibrates to the learner, writes simulations on the spot, and gates progress on knowledge checks it grades.</p>
-          <a href="#chiron">See Chiron <span aria-hidden="true">&darr;</span></a>
-        </li>
-        <li class="fit-card">
-          <span class="fit-k">Learner Hub and staff tools</span>
-          <h3>I've designed career-readiness tools for students and the staff who guide them</h3>
-          <p>Encourage is college and career guidance. Its educator side tracks where hundreds of students are stuck, in real time.</p>
-          <a href="#educators">See the counselor tools <span aria-hidden="true">&darr;</span></a>
-        </li>
-        <li class="fit-card">
-          <span class="fit-k">CodePath's first design system</span>
-          <h3>I've owned a design system and rebuilt how a team governs it</h3>
-          <p>I re-architected its governance so engineers and designers build from shared components without case-by-case review.</p>
-          <a href="#craft">See the system work <span aria-hidden="true">&darr;</span></a>
-        </li>
-      </ul>
-    </div>
-  </section>
 
   <!-- CASE 1: ENCOURAGE STUDENTS -->
   <section class="case" id="students" aria-labelledby="title-students">
