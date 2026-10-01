@@ -102,7 +102,7 @@ the others. **The `.docx` is the source; edit it, never the PDF.**
 | `resume.png` | The image shown on the page (1836×2376). Generated. |
 
 `assets/resume.docx` is the general master. `wayfinder/resume.docx` is tailored for Wayfinder
-(`wayfinder-classic/` holds the earlier copy of it). `codepath/resume.docx` is still a copy of the master.
+(`wayfinder-classic/` holds the earlier copy of it). `codepath/resume.docx` is tailored for CodePath (built from the Wayfinder copy: design system first, flows and IA in the summary).
 `modern-classroom-project/` still only has the PDF/PNG (identical to the root's); give it a
 `.docx` copy before tailoring it.
 
