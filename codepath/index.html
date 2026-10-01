@@ -460,14 +460,15 @@
   .nav-arrow{
     position:absolute; top:50%; transform:translateY(-50%);
     width:42px; height:42px; border-radius:50%;
-    background:var(--ink); border:1px solid var(--ink); color:#fff;
+    background:var(--hl-yellow); border:1.5px solid var(--ink); color:var(--ink);
     display:flex; align-items:center; justify-content:center;
-    cursor:pointer; transition:background .15s, border-color .15s, color .15s;
+    cursor:pointer; transition:background .15s, border-color .15s, color .15s, scale .15s;
     user-select:none; z-index:5;
   }
-  /* filled ink with a white chevron: the old white-on-white circle had a
-     1.2:1 edge against the card and was easy to miss */
-  .nav-arrow:hover{ background:var(--pen-deep); border-color:var(--pen-deep); }
+  /* highlighter yellow with an ink ring, so the edge holds against the white
+     card (the ring is 15.7:1) and the arrows don't echo the ink speech bubble.
+     Hover inverts outright: ink fill, yellow chevron, a touch larger. */
+  .nav-arrow:hover{ background:var(--ink); color:var(--hl-yellow); scale:1.1; }
   .nav-arrow:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
   /* aria-disabled rather than disabled so the button keeps focus at either
      end of the strip instead of dropping a keyboard user back to the top */
@@ -475,9 +476,8 @@
      reads as a change of state rather than a washed-out version of the same */
   .slideshow .nav-arrow[aria-disabled="true"],
   .slideshow .nav-arrow[aria-disabled="true"]:hover{
-    background:var(--paper); border-color:var(--line); color:var(--ink-faint); cursor:default;
+    background:var(--paper); border-color:var(--line); color:var(--ink-faint); cursor:default; scale:1;
   }
-  .slideshow.red .nav-arrow:not([aria-disabled="true"]):hover{ background:var(--red); border-color:var(--red); }
   .nav-arrow.left{ left:-18px; }
   .nav-arrow.right{ right:-18px; }
   /* Deliberately static: the arrows are absolutely positioned and skip over a

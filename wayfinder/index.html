@@ -233,23 +233,23 @@
   .nav-arrow{
     position:absolute; top:50%; transform:translateY(-50%);
     width:44px; height:44px; border-radius:50%;
-    background:var(--forest); border:1px solid var(--forest);
+    background:var(--sun); border:1.5px solid var(--forest-dark);
     display:flex; align-items:center; justify-content:center;
-    cursor:pointer; transition:background .15s, border-color .15s;
-    user-select:none; z-index:5; color:#fff;
+    cursor:pointer; transition:background .15s, border-color .15s, color .15s, scale .15s;
+    user-select:none; z-index:5; color:var(--forest-dark);
   }
   .nav-arrow svg{ width:18px; height:18px; stroke-width:2.4; }
   .nav-arrow svg path{ stroke:currentColor; }
-  /* filled forest with a white chevron: the old white circle on a white card
-     had almost no edge and was easy to miss */
-  .nav-arrow:hover{ background:var(--forest-dark); border-color:var(--forest-dark); }
+  /* Sun Pop with a dark forest ring, so the edge holds against the white card.
+     Hover inverts outright: forest fill, sun chevron, a touch larger. */
+  .nav-arrow:hover{ background:var(--forest-dark); color:var(--sun); scale:1.1; }
   /* aria-disabled rather than disabled so the button keeps focus at either
      end of the strip instead of dropping a keyboard user back to the top */
   /* at either end the arrow drops back to an outline, so "can't go further"
      reads as a change of state rather than a washed-out version of the same */
   .slideshow .nav-arrow[aria-disabled="true"],
   .slideshow .nav-arrow[aria-disabled="true"]:hover{
-    background:var(--paper); border-color:var(--mint); color:var(--body); cursor:default;
+    background:var(--paper); border-color:var(--mint); color:var(--body); cursor:default; scale:1;
   }
   .nav-arrow.left{ left:-22px; }
   .nav-arrow.right{ right:-22px; }
