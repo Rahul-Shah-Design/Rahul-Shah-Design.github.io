@@ -289,8 +289,11 @@
     font-family:'Rock Salt', cursive; font-size:14px;
     color:var(--ink-faint); letter-spacing:0.01em;
   }
+  /* titles run the full row; "pretty" instead of the global "balance", which
+     would halve any title that wraps. pretty only avoids a one-word last line */
   .case-title{
     font-size:32px; font-weight:500; margin-top:6px; letter-spacing:-0.01em;
+    text-wrap:pretty;
   }
   .status-pill{
     position:relative;
@@ -835,7 +838,7 @@
   <section class="case" id="chiron" aria-labelledby="title-chiron">
     <div class="wrap">
       <img class="doodle d-m3" src="doodle-star.png" alt="">
-      <div class="case-grid long-note">
+      <div class="case-grid">
         <div class="case-head">
           <div>
           <div class="case-index">02 — PERSONAL PROJECT, BUILT ON CLAUDE</div>
