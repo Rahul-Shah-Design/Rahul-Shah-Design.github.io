@@ -328,7 +328,7 @@
   a.status-pill:focus-visible{ outline:2px solid var(--pen); outline-offset:3px; }
   .case-grid{
     display:grid;
-    grid-template-columns:minmax(0, 580px) auto;
+    grid-template-columns:minmax(0, 620px) auto;
     grid-template-areas:
       "head head"
       "desc note";
@@ -349,9 +349,10 @@
   }
   .case-grid.long-note > .status-pill{ justify-self:end; align-self:end; }
 
+  /* pretty keeps a lone word ("on.") off the last line */
   .case-desc{
-    max-width:580px; color:var(--ink-soft); font-size:15px;
-    line-height:1.6; margin:0;
+    max-width:620px; color:var(--ink-soft); font-size:15px;
+    line-height:1.6; margin:0; text-wrap:pretty;
   }
 
   /* ---------- SLIDESHOW MODULE ---------- */

@@ -325,7 +325,7 @@
   a.status-pill:focus-visible{ outline:2px solid var(--pen); outline-offset:3px; }
   .case-grid{
     display:grid;
-    grid-template-columns:minmax(0, 580px) auto;
+    grid-template-columns:minmax(0, 620px) auto;
     grid-template-areas:
       "head head"
       "desc note";
@@ -346,9 +346,10 @@
   }
   .case-grid.long-note > .status-pill{ justify-self:end; align-self:end; }
 
+  /* pretty keeps a lone word ("on.") off the last line */
   .case-desc{
-    max-width:580px; color:var(--ink-soft); font-size:15px;
-    line-height:1.6; margin:0;
+    max-width:620px; color:var(--ink-soft); font-size:15px;
+    line-height:1.6; margin:0; text-wrap:pretty;
   }
 
   /* ---------- SLIDESHOW MODULE ---------- */
@@ -774,7 +775,7 @@
       <h1 data-flatten>You need a designer who ships pixels <em>and</em> understands mastery learning.<br>Hi, I'm <span class="hl-mark">Rahul</span>.</h1>
       <ul class="hero-tags" aria-label="Highlights">
         <li class="tag">K-12 UX, 5 years</li>
-        <li class="tag">Shipping to WCAG 2.1 AA</li>
+        <li class="tag">WCAG 2.1 AA</li>
         <li class="tag">M.S. Learning Design &amp; Technology</li>
       </ul>
       <p class="hero-sub" data-flatten>
