@@ -82,3 +82,9 @@ button.
   the SVG path text by hand.
 - Country name aliases for "type it" mode go in the `ALT` table, not into the canonical `n` field.
 - Regions (`REGIONS`) must match the `r` field baked into each country record in `MD`.
+- The region chips are multi-select. `cfg.scope` / `G.scope` / `MapV.scope` are arrays of region
+  keys, and an empty array means the whole world; always test membership with `inScope(scope, c)`.
+  "Whole world" is exclusive: picking it clears the others, and clearing every region falls back to it.
+- The Pacific-centred projection (`pd`/`pb`/`pc`) only exists for Oceania, East & Southeast Asia
+  and a few neighbours, so `MapV.build` uses it only when every selected country has a `pc`.
+  Oceania mixed with any other region falls back to the regular projection.
