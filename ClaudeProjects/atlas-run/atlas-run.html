@@ -123,6 +123,8 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 .err{padding:14px;border-radius:12px;background:var(--paper);border-left:4px solid var(--red)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (min-width:700px){.map{height:min(58vh,560px)}}
+/* find it has a short panel, so the map takes over the space the other modes' answers need */
+@media (max-width:699px){.map.mode-find{height:clamp(220px,calc(38vh + 110px),530px)}}
 </style>
 </head>
 <body>
@@ -269,6 +271,7 @@ const MapV = {
   },
   fit(b, instant){
     if(!this.svg) return;
+    this.size(); // the map's height changes with the question mode in mixed rounds
     const w=b[1][0]-b[0][0], h=b[1][1]-b[0][1], cx=(b[0][0]+b[1][0])/2, cy=(b[0][1]+b[1][1])/2;
     const k = Math.min(this.cw/w, this.ch/h)*0.92;
     const t = d3.zoomIdentity.translate(this.cw/2-k*cx, this.ch/2-k*cy).scale(k);

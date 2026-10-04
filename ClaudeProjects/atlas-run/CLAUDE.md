@@ -45,6 +45,9 @@ and, on a miss, to reframe around the correct answer plus whatever the player ta
 highlighted country and the "type it" text box both stay visible above the iOS keyboard. A map that
 grew to fill the screen was tried and made this worse: the country is framed at the map's centre,
 which scrolled off the top when the keyboard opened, and Next ended up below the fold.
+"Find it" questions get 110px more (`.map.mode-find`, phones only), the height of their short
+panel, since nothing is typed. In mixed rounds the map height changes between questions, so
+`MapV.fit()` re-reads the map's size before framing.
 
 **Answer checking:**
 - `pick`/`find` compare object identity against the country record.
