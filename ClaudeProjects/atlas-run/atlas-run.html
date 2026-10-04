@@ -50,6 +50,7 @@ p{margin:0 0 12px;max-width:62ch}
 /* Setup */
 fieldset{border:0;margin:0;padding:0;min-width:0}
 legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
+.hint{margin:-4px 0 10px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{position:relative}
 .chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
@@ -130,7 +131,7 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 <section id="setup" aria-labelledby="t1">
   <h1 id="t1">Atlas Run</h1>
   <p class="muted">Learn where every country is. Misses come back later in the round until you get them.</p>
-  <fieldset><legend>Where</legend><div class="chips" id="scopes"></div></fieldset>
+  <fieldset><legend>Where</legend><p class="small muted hint">Pick one or more.</p><div class="chips" id="scopes"></div></fieldset>
   <fieldset><legend>Game</legend><div class="games" id="modes"></div></fieldset>
   <fieldset><legend>Round length</legend><div class="chips" id="lens"></div></fieldset>
   <button class="primary start" id="startBtn">Start</button>
@@ -195,12 +196,21 @@ const esc = s => String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&g
 const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; };
 
 /* ---------- Setup ---------- */
-const cfg = {scope:"world", mode:"pick", len:"10"};
+// scope is a list of region keys; an empty list means the whole world
+const cfg = {scope:[], mode:"pick", len:"10"};
+const inScope = (scope, c) => !scope.length || scope.includes(c.r);
 function radios(el, name, items, val, tpl){
   el.innerHTML = items.map(it=>tpl(it, `name="${name}" value="${it[0]}" ${it[0]===val?"checked":""}`)).join("");
   el.addEventListener("change", e=>{ cfg[name]=e.target.value; });
 }
-radios($("scopes"),"scope",REGIONS,cfg.scope,(it,a)=>`<label class="chip"><input type="radio" ${a}><span>${it[1]}</span></label>`);
+$("scopes").innerHTML = REGIONS.map(([k,l])=>`<label class="chip"><input type="checkbox" name="scope" value="${k}" ${k==="world"?"checked":""}><span>${l}</span></label>`).join("");
+$("scopes").addEventListener("change", e=>{
+  const boxes = [...$("scopes").querySelectorAll("input")], world = boxes[0];
+  if(e.target===world) boxes.forEach(b=>b.checked = b===world);
+  else world.checked = false;
+  cfg.scope = boxes.filter(b=>b.checked && b!==world).map(b=>b.value);
+  if(!cfg.scope.length) world.checked = true;
+});
 radios($("modes"),"mode",MODES,cfg.mode,(it,a)=>`<label class="game"><input type="radio" ${a}><span class="box"><b>${it[1]}</b><small>${it[2]}</small></span></label>`);
 radios($("lens"),"len",LENS,cfg.len,(it,a)=>`<label class="chip"><input type="radio" ${a}><span>${it[1]}</span></label>`);
 
@@ -226,10 +236,11 @@ const MapV = {
     new ResizeObserver(()=>{ if(!$("play").hidden){ this.size(); } }).observe($("map"));
   },
   geo(c){ return this.pac ? {d:c.pd,b:c.pb,c:c.pc} : {d:c.d,b:c.b,c:c.c}; },
-  inScope(c){ return this.scope==="world" || c.r===this.scope; },
+  inScope(c){ return inScope(this.scope, c); },
   build(scope){
     if(!this.svg) return;
-    this.scope = scope; this.pac = scope==="oceania";
+    // the Pacific-centred projection only has shapes for Oceania and East & Southeast Asia
+    this.scope = scope; this.pac = scope.length>0 && C.every(c=>!inScope(scope,c) || c.pc);
     const P = this.pac;
     let h = `<path class="sea" d="${P?MD.sphere2:MD.sphere}"/><path class="bg" d="${P?MD.bg.pd:MD.bg.d}"/>`;
     for(const c of C){ const g=this.geo(c); if(g.d) h += `<path class="c${this.inScope(c)?"":" out"}" id="p${c.i}" data-i="${c.i}" d="${g.d}"/>`; }
@@ -244,9 +255,9 @@ const MapV = {
     this.svg.attr("width",this.cw).attr("height",this.ch);
   },
   scopeBox(){
-    if(this.scope==="world") return [[0,0],[MD.W,MD.H]];
+    if(!this.scope.length) return [[0,0],[MD.W,MD.H]];
     let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
-    for(const c of C){ if(c.r!==this.scope || c.n==="Russia") continue; const b=this.geo(c).b; if(!b) continue;
+    for(const c of C){ if(!this.inScope(c) || c.n==="Russia") continue; const b=this.geo(c).b; if(!b) continue;
       x0=Math.min(x0,b[0][0]); y0=Math.min(y0,b[0][1]); x1=Math.max(x1,b[1][0]); y1=Math.max(y1,b[1][1]); }
     return [[x0,y0],[x1,y1]];
   },
@@ -310,7 +321,7 @@ function judge(input, target){
 /* ---------- Game ---------- */
 const G = {
   start(scope, mode, len, only){
-    const pool = only ? only.slice() : C.filter(c=>scope==="world"||c.r===scope);
+    const pool = only ? only.slice() : C.filter(c=>inScope(scope,c));
     let list = shuffle(pool.slice()); if(len!=="all" && !only) list = list.slice(0, +len);
     this.scope=scope; this.mode=mode; this.len=len;
     this.queue = list.map(c=>({c,tries:0})); this.total = list.length;
@@ -356,7 +367,7 @@ const G = {
     MapV.fit(box);
   },
   distractors(c){
-    const pool = C.filter(o=>o!==c && (this.scope==="world"||o.r===this.scope) && MapV.geo(o).c);
+    const pool = C.filter(o=>o!==c && inScope(this.scope,o) && MapV.geo(o).c);
     const cc = MapV.geo(c).c;
     pool.sort((a,b)=>{ const A=MapV.geo(a).c,B=MapV.geo(b).c; return Math.hypot(A[0]-cc[0],A[1]-cc[1])-Math.hypot(B[0]-cc[0],B[1]-cc[1]); });
     return shuffle(pool.slice(0,6)).slice(0,3);
