@@ -45,6 +45,13 @@ and, on a miss, to reframe around the correct answer plus whatever the player ta
 highlighted country and the "type it" text box both stay visible above the iOS keyboard. A map that
 grew to fill the screen was tried and made this worse: the country is framed at the map's centre,
 which scrolled off the top when the keyboard opened, and Next ended up below the fold.
+**"Find it" on phones (`#play.find`):** the layout flips so the map and buttons are in thumb reach:
+question card on top, then the map, then an `.actions` row holding "I don't know" and Next, which
+`G.next()` moves there from the card (and back for other modes or desktop). The play screen fills
+the viewport and the map takes what's left, capped at 4:5; spare height goes above the map. The
+card's `.status` box reserves room for a three-line feedback message and the hint is hidden on
+answer, so nothing moves when you answer. In mixed rounds the map's size changes between
+questions, so `MapV.fit()` re-reads it before framing.
 
 **Answer checking:**
 - `pick`/`find` compare object identity against the country record.
