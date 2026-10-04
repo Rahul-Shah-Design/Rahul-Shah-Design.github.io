@@ -123,8 +123,18 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 .err{padding:14px;border-radius:12px;background:var(--paper);border-left:4px solid var(--red)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (min-width:700px){.map{height:min(58vh,560px)}}
-/* find it has a short panel, so the map takes over the space the other modes' answers need */
-@media (max-width:699px){.map.mode-find{height:clamp(220px,calc(38vh + 110px),530px)}}
+.actions:empty{display:none}
+/* Find it on phones: question on top, map and buttons at the bottom in thumb reach. The map fills
+   what's left, up to 4:5. The status box and button row are sized for their answered state so
+   nothing moves when you answer. */
+@media (max-width:699px){
+  #play.find{min-height:calc(100vh - env(safe-area-inset-top,0px) - 12px);min-height:calc(100dvh - env(safe-area-inset-top,0px) - 12px)}
+  #play.find .panel{order:1}
+  #play.find .status{min-height:84px}
+  #play.find .map{order:2;flex:1 1 0;height:auto;min-height:220px;max-height:calc((min(100vw,640px) - 32px)*1.25);margin-top:auto}
+  #play.find .actions{order:3;display:flex;justify-content:flex-end;align-items:center;min-height:51px}
+  #play.find .actions .next{margin:0}
+}
 </style>
 </head>
 <body>
@@ -148,15 +158,18 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
   <div class="map" id="map">
     <div class="zoomctl"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="zfit" aria-label="Reset view">⤢</button></div>
   </div>
-  <div class="panel">
-    <div class="qline">
+  <div class="panel" id="panel">
+    <div class="qline" id="qline">
       <p class="prompt" id="prompt" tabindex="-1"></p>
       <button class="ghost skip" id="skipBtn">I don't know</button>
     </div>
-    <div id="answer"></div>
-    <p class="feedback" id="fb" aria-live="polite"></p>
+    <div class="status">
+      <div id="answer"></div>
+      <p class="feedback" id="fb" aria-live="polite"></p>
+    </div>
     <button class="primary next" id="nextBtn" hidden>Next</button>
   </div>
+  <div class="actions" id="actions"></div>
 </section>
 
 <section id="results" hidden aria-labelledby="t3">
@@ -193,6 +206,7 @@ const MODES = [
   ["mixed","Mixed","All three, shuffled."]];
 const LENS = [["10","10"],["20","20"],["all","All"]];
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const phone = matchMedia("(max-width:699px)");
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; };
@@ -338,6 +352,11 @@ const G = {
     const m = this.mode==="mixed" ? ["pick","find","type"][Math.random()*3|0] : this.mode;
     this.qm = m;
     $("map").className = "map mode-"+m;
+    const thumb = m==="find" && phone.matches;
+    $("play").classList.toggle("find", thumb);
+    if(thumb) $("actions").append($("skipBtn"), $("nextBtn"));
+    else { $("qline").append($("skipBtn")); $("panel").append($("nextBtn")); }
+    $("answer").hidden = false;
     MapV.reset(); MapV.onTap = null;
     $("fb").textContent = ""; $("fb").className = "feedback";
     $("nextBtn").hidden = true; $("skipBtn").hidden = false;
@@ -379,6 +398,7 @@ const G = {
     if(this.answered) return; this.answered = true;
     const c = this.q.c; MapV.onTap = null;
     $("skipBtn").hidden = true;
+    if(this.qm==="find") $("answer").hidden = true; // feedback takes the hint's place
     $("answer").querySelectorAll("button,input").forEach(el=>el.disabled=true);
     if(ok){
       if(this.q.tries===0 && !this.missed.has(c)) this.firstTry++;
