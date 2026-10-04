@@ -124,8 +124,8 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (min-width:700px){.map{height:min(58vh,560px)}}
 .actions:empty{display:none}
-/* Type it: feedback replaces the prompt in the top line, which keeps room for three lines of it */
-#play.type .qline{min-height:63px}
+/* Type it: feedback replaces the prompt in the top line, which keeps room for two lines of it */
+#play.type .qline{min-height:42px;margin-bottom:8px}
 .qline .feedback{flex:1;margin:0;font-size:15px;line-height:1.4}
 .qline .feedback:empty{display:none}
 .typebox .tnext{width:auto;padding:12px 18px;font-size:17px}
@@ -134,7 +134,7 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 @media (max-width:699px){
   #play.type{padding-bottom:8px}
   #play.type .panel{padding:12px}
-  #play.type .map{height:clamp(160px,calc(100vh - env(safe-area-inset-top,0px) - 560px),360px);height:clamp(160px,calc(100dvh - env(safe-area-inset-top,0px) - 560px),360px)}
+  #play.type .map{height:clamp(160px,calc(100vh - env(safe-area-inset-top,0px) - 575px),360px);height:clamp(160px,calc(100dvh - env(safe-area-inset-top,0px) - 575px),360px)}
 }
 /* Find it on phones: question on top, map and buttons at the bottom in thumb reach. The map fills
    what's left, up to 4:5. The status box and button row are sized for their answered state so
@@ -451,7 +451,7 @@ const G = {
         msg = `This is ${c.n}.`;
       }
       $("fb").className = "feedback bad";
-      $("fb").textContent = msg + (this.q.tries<=2 ? " It'll come back soon." : "");
+      $("fb").textContent = msg + (this.q.tries<=2 && this.qm!=="type" ? " It'll come back soon." : ""); // type it has two lines for this
       if(this.qm!=="type"){ $("nextBtn").hidden = false; $("nextBtn").focus({preventScroll:true}); }
     }
     $("count").textContent = `${this.done}/${this.total}`;
