@@ -53,7 +53,7 @@ map are intercepted while `#ti` has focus (`keepTyping`: cancel the touchend/mou
 then click the button ourselves). The input is focused synchronously in `G.next()` so the Start or
 Next tap itself opens the keyboard. On phones the map is sized so map + card fit in the window
 above the keyboard and iOS's form toolbar (which a web page cannot hide): `100dvh − safe-area −
-560px`, tuned on a 402×874 iPhone where it gives ~252px.
+600px`, tuned on a 402×874 iPhone where it gives ~212px and leaves the card ~10pt clear of the toolbar (iOS does not scroll the page when the keyboard opens, so it all has to fit as laid out).
 
 **"Find it" on phones (`#play.find`):** the layout flips so the map and buttons are in thumb reach:
 question card on top, then the map, then an `.actions` row holding "I don't know" and Next, which
