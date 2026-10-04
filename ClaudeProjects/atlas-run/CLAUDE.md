@@ -45,6 +45,16 @@ and, on a miss, to reframe around the correct answer plus whatever the player ta
 highlighted country and the "type it" text box both stay visible above the iOS keyboard. A map that
 grew to fill the screen was tried and made this worse: the country is framed at the map's centre,
 which scrolled off the top when the keyboard opened, and Next ended up below the fold.
+**"Type it" keeps the keyboard up for the whole round (`#play.type`):** one `#ti` input is reused
+across questions and never disabled or replaced (either would close the iOS keyboard). After an
+answer, the Check button turns into Next and Return advances; feedback replaces the prompt in
+the top line, which reserves three lines so the card never changes height. Taps on buttons and the
+map are intercepted while `#ti` has focus (`keepTyping`: cancel the touchend/mousedown default,
+then click the button ourselves). The input is focused synchronously in `G.next()` so the Start or
+Next tap itself opens the keyboard. On phones the map is sized so map + card fit in the window
+above the keyboard and iOS's form toolbar (which a web page cannot hide): `100dvh − safe-area −
+560px`, tuned on a 402×874 iPhone where it gives ~252px.
+
 **"Find it" on phones (`#play.find`):** the layout flips so the map and buttons are in thumb reach:
 question card on top, then the map, then an `.actions` row holding "I don't know" and Next, which
 `G.next()` moves there from the card (and back for other modes or desktop). The play screen fills
