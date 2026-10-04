@@ -81,6 +81,10 @@ button.
   centroids per country). Adding/renaming a country means regenerating that block, not patching
   the SVG path text by hand.
 - Country name aliases for "type it" mode go in the `ALT` table, not into the canonical `n` field.
+- The `s` flag (0/1, last key of each country record) draws a dot and a larger tap target. A
+  country gets one when its shape is under ~9px across (square root of its area) in its own
+  region's view on a phone-sized map (about 360×325px). Re-check that rule after moving a country
+  to another region, since a region's zoom changes what reads as small.
 - Regions (`REGIONS`) must match the `r` field baked into each country record in `MD`.
 - The region chips are multi-select. `cfg.scope` / `G.scope` / `MapV.scope` are arrays of region
   keys, and an empty array means the whole world; always test membership with `inScope(scope, c)`.
