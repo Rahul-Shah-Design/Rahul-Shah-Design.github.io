@@ -124,6 +124,18 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (min-width:700px){.map{height:min(58vh,560px)}}
 .actions:empty{display:none}
+/* Type it: feedback replaces the prompt in the top line, which keeps room for three lines of it */
+#play.type .qline{min-height:63px}
+.qline .feedback{flex:1;margin:0;font-size:15px;line-height:1.4}
+.qline .feedback:empty{display:none}
+.typebox .tnext{width:auto;padding:12px 18px;font-size:17px}
+/* On phones, sized so the map and card fit exactly above the keyboard and its toolbar on a
+   402×874 iPhone; the window above the keyboard scales roughly with screen height elsewhere */
+@media (max-width:699px){
+  #play.type{padding-bottom:8px}
+  #play.type .panel{padding:12px}
+  #play.type .map{height:clamp(160px,calc(100vh - env(safe-area-inset-top,0px) - 560px),360px);height:clamp(160px,calc(100dvh - env(safe-area-inset-top,0px) - 560px),360px)}
+}
 /* Find it on phones: question on top, map and buttons at the bottom in thumb reach. The map fills
    what's left, up to 4:5. The status box and button row are sized for their answered state so
    nothing moves when you answer. */
@@ -354,9 +366,12 @@ const G = {
     $("map").className = "map mode-"+m;
     const thumb = m==="find" && phone.matches;
     $("play").classList.toggle("find", thumb);
+    $("play").classList.toggle("type", m==="type");
     if(thumb) $("actions").append($("skipBtn"), $("nextBtn"));
     else { $("qline").append($("skipBtn")); $("panel").append($("nextBtn")); }
-    $("answer").hidden = false;
+    // type it: feedback replaces the prompt line, so the card never changes height under the keyboard
+    if(m==="type") $("qline").insertBefore($("fb"), $("skipBtn")); else $("answer").after($("fb"));
+    $("answer").hidden = false; $("prompt").hidden = false;
     MapV.reset(); MapV.onTap = null;
     $("fb").textContent = ""; $("fb").className = "feedback";
     $("nextBtn").hidden = true; $("skipBtn").hidden = false;
@@ -380,10 +395,15 @@ const G = {
         });
       } else {
         $("prompt").textContent = "Name this country";
-        $("answer").innerHTML = `<form class="typebox" id="tf" autocomplete="off"><input id="ti" aria-label="Country name" placeholder="Type a name" autocapitalize="words" spellcheck="false"><button class="ghost">Check</button></form>`;
-        $("tf").onsubmit = e=>{ e.preventDefault(); if(this.answered) return;
-          const v=$("ti").value; if(!v.trim()) return; const r=judge(v,c); this.answer(r.ok, r.other, null, r, v); };
-        setTimeout(()=>$("ti") && $("ti").focus({preventScroll:true}), 50);
+        // one input for the whole round: replacing or disabling it would close the phone keyboard
+        if(!$("ti")) $("answer").innerHTML = `<form class="typebox" id="tf" autocomplete="off"><input id="ti" type="text" aria-label="Country name" placeholder="Type a name" autocapitalize="words" autocorrect="off" autocomplete="off" spellcheck="false" enterkeyhint="go"><button class="ghost" id="tcheck">Check</button></form>`;
+        const ti = $("ti"); ti.value = "";
+        $("tcheck").textContent = "Check"; $("tcheck").className = "ghost";
+        $("tf").onsubmit = e=>{ e.preventDefault();
+          if(this.answered) return this.next();
+          const v=ti.value; if(!v.trim()) return; const r=judge(v,c); this.answer(r.ok, r.other, null, r, v); };
+        // synchronous, so a tap on Start or Next can open the keyboard (iOS only allows that inside a tap)
+        if(document.activeElement!==ti) ti.focus({preventScroll:true});
       }
     }
     MapV.fit(box);
@@ -399,7 +419,8 @@ const G = {
     const c = this.q.c; MapV.onTap = null;
     $("skipBtn").hidden = true;
     if(this.qm==="find") $("answer").hidden = true; // feedback takes the hint's place
-    $("answer").querySelectorAll("button,input").forEach(el=>el.disabled=true);
+    if(this.qm==="type"){ $("prompt").hidden = true; $("tcheck").textContent = "Next"; $("tcheck").className = "primary tnext"; }
+    else $("answer").querySelectorAll("button,input").forEach(el=>el.disabled=true);
     if(ok){
       if(this.q.tries===0 && !this.missed.has(c)) this.firstTry++;
       this.done++;
@@ -407,7 +428,7 @@ const G = {
       if(btn) btn.classList.add("right");
       $("fb").className = "feedback good";
       $("fb").textContent = typed && !typed.exact ? `Yes, ${c.n}. Watch the spelling.` : `Yes, ${c.n}.`;
-      $("nextBtn").hidden = false;
+      $("nextBtn").hidden = this.qm==="type";
       this.t = setTimeout(()=>this.next(), typed && !typed.exact ? 1800 : 1000);
     } else {
       this.missed.add(c); this.q.tries++;
@@ -431,7 +452,7 @@ const G = {
       }
       $("fb").className = "feedback bad";
       $("fb").textContent = msg + (this.q.tries<=2 ? " It'll come back soon." : "");
-      $("nextBtn").hidden = false; $("nextBtn").focus({preventScroll:true});
+      if(this.qm!=="type"){ $("nextBtn").hidden = false; $("nextBtn").focus({preventScroll:true}); }
     }
     $("count").textContent = `${this.done}/${this.total}`;
     $("bar").style.width = (this.done/this.total*100)+"%";
@@ -455,6 +476,22 @@ $("quitBtn").onclick = ()=>{ clearTimeout(G.t); show("setup"); };
 $("replayMiss").onclick = ()=>G.start(G.scope, G.mode, "all", G.lastMiss);
 $("again").onclick = ()=>G.start(cfg.scope, cfg.mode, cfg.len);
 $("newGame").onclick = ()=>show("setup");
+// While typing, taps on buttons and the map must not take focus from the input, or the phone
+// keyboard closes. Cancel the default (which is what moves focus) and run the button's click ourselves.
+let touchAt = null;
+$("play").addEventListener("touchstart", e=>{ const t=e.touches[0]; touchAt = [t.clientX, t.clientY]; }, {capture:true, passive:true});
+const keepTyping = e=>{
+  if(document.activeElement!==$("ti")) return;
+  const btn = e.target.closest("button");
+  if(!btn && !e.target.closest("#map")) return;
+  if(e.type==="touchend"){
+    const t = e.changedTouches[0];
+    if(touchAt && Math.hypot(t.clientX-touchAt[0], t.clientY-touchAt[1]) > 10) return; // a drag, not a tap
+    e.preventDefault(); if(btn) btn.click();
+  } else e.preventDefault();
+};
+$("play").addEventListener("touchend", keepTyping, {capture:true, passive:false});
+$("play").addEventListener("mousedown", keepTyping, true);
 document.addEventListener("keydown", e=>{ if(e.key==="Enter" && !$("nextBtn").hidden && document.activeElement.id!=="ti"){ e.preventDefault(); G.next(); } });
 MapV.init();
 })();
