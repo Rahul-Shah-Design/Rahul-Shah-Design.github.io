@@ -122,7 +122,12 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 .stack{display:grid;gap:8px;margin-top:24px}
 .err{padding:14px;border-radius:12px;background:var(--paper);border-left:4px solid var(--red)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-@media (min-width:700px){.map{height:min(58vh,560px)}}
+/* Desktop: the game is 25% larger than the 640px column the setup and results screens keep */
+@media (min-width:700px){
+  .app{max-width:792px}
+  #setup,#results{max-width:608px;margin:0 auto}
+  .map{height:min(70vh,700px)}
+}
 .actions:empty{display:none}
 /* Type it: feedback replaces the prompt in the top line, which keeps room for two lines of it */
 #play.type .qline{min-height:42px;margin-bottom:8px}
