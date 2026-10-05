@@ -43,7 +43,10 @@ and, on a miss, to reframe around the correct answer plus whatever the player ta
 
 **Desktop size:** from 700px wide the game column is 792px (map 760px wide, `min(70vh,700px)` tall),
 25% larger than the 608px column the setup and results screens keep. The map zooms to fit the
-selected region, so a bigger map is what makes countries bigger.
+selected region, so a bigger map is what makes countries bigger. Pick it on desktop works like
+type it (`#play.inline`): feedback replaces the prompt line and Next takes the skip button's spot,
+so its 202px card never grows; its map is `min(70vh, 100vh − 300px, 700px)` so the four options
+stay on screen. On phones pick it keeps feedback and Next below the options (the line is too narrow).
 
 **Phone map height:** below 700px wide the map is `clamp(220px,38vh,420px)`, kept short so the
 highlighted country and the "type it" text box both stay visible above the iOS keyboard. A map that

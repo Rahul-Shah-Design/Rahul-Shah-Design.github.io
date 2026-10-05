@@ -127,10 +127,13 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
   .app{max-width:792px}
   #setup,#results{max-width:608px;margin:0 auto}
   .map{height:min(70vh,700px)}
+  /* pick it's card is taller than the others (four options), so its map leaves room for it */
+  .map.mode-pick{height:max(320px,min(70vh,calc(100vh - 300px),700px))}
 }
 .actions:empty{display:none}
 /* Type it: feedback replaces the prompt in the top line, which keeps room for two lines of it */
-#play.type .qline{min-height:42px;margin-bottom:8px}
+#play.inline .qline{min-height:42px;margin-bottom:8px}
+#play.inline .qline .next{margin:0 0 0 auto;padding:8px 18px;font-size:16px}
 .qline .feedback{flex:1;margin:0;font-size:15px;line-height:1.4}
 .qline .feedback:empty{display:none}
 .typebox .tnext{width:auto;padding:12px 18px;font-size:17px}
@@ -371,11 +374,15 @@ const G = {
     $("map").className = "map mode-"+m;
     const thumb = m==="find" && phone.matches;
     $("play").classList.toggle("find", thumb);
+    // type it, and pick it on desktop: feedback replaces the prompt line (and pick's Next takes the
+    // skip button's spot), so the card never changes height when you answer
+    const pickInline = m==="pick" && !phone.matches, inline = m==="type" || pickInline;
     $("play").classList.toggle("type", m==="type");
+    $("play").classList.toggle("inline", inline);
     if(thumb) $("actions").append($("skipBtn"), $("nextBtn"));
+    else if(pickInline) $("qline").append($("skipBtn"), $("nextBtn"));
     else { $("qline").append($("skipBtn")); $("panel").append($("nextBtn")); }
-    // type it: feedback replaces the prompt line, so the card never changes height under the keyboard
-    if(m==="type") $("qline").insertBefore($("fb"), $("skipBtn")); else $("answer").after($("fb"));
+    if(inline) $("qline").insertBefore($("fb"), $("skipBtn")); else $("answer").after($("fb"));
     $("answer").hidden = false; $("prompt").hidden = false;
     MapV.reset(); MapV.onTap = null;
     $("fb").textContent = ""; $("fb").className = "feedback";
@@ -424,7 +431,8 @@ const G = {
     const c = this.q.c; MapV.onTap = null;
     $("skipBtn").hidden = true;
     if(this.qm==="find") $("answer").hidden = true; // feedback takes the hint's place
-    if(this.qm==="type"){ $("prompt").hidden = true; $("tcheck").textContent = "Next"; $("tcheck").className = "primary tnext"; }
+    if($("play").classList.contains("inline")) $("prompt").hidden = true;
+    if(this.qm==="type"){ $("tcheck").textContent = "Next"; $("tcheck").className = "primary tnext"; }
     else $("answer").querySelectorAll("button,input").forEach(el=>el.disabled=true);
     if(ok){
       if(this.q.tries===0 && !this.missed.has(c)) this.firstTry++;
