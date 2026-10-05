@@ -127,6 +127,8 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
   .app{max-width:792px}
   #setup,#results{max-width:608px;margin:0 auto}
   .map{height:min(70vh,700px)}
+  /* pick it's card grows to ~370px once answered (four options, feedback, Next), so its map leaves room for that */
+  .map.mode-pick{height:clamp(320px,calc(100vh - 380px),700px)}
 }
 .actions:empty{display:none}
 /* Type it: feedback replaces the prompt in the top line, which keeps room for two lines of it */

@@ -43,7 +43,9 @@ and, on a miss, to reframe around the correct answer plus whatever the player ta
 
 **Desktop size:** from 700px wide the game column is 792px (map 760px wide, `min(70vh,700px)` tall),
 25% larger than the 608px column the setup and results screens keep. The map zooms to fit the
-selected region, so a bigger map is what makes countries bigger.
+selected region, so a bigger map is what makes countries bigger. Pick it is the exception:
+its card grows to ~370px once answered, so its map is `clamp(320px, 100vh − 380px, 700px)` to
+keep the feedback and Next on screen.
 
 **Phone map height:** below 700px wide the map is `clamp(220px,38vh,420px)`, kept short so the
 highlighted country and the "type it" text box both stay visible above the iOS keyboard. A map that
