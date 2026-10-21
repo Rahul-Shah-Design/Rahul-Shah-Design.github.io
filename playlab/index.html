@@ -332,12 +332,25 @@
   .craft-photo.contain img{ object-fit:contain; object-position:center; }
   .craft-card figcaption{ background:var(--yellow); padding:12px 16px; font-size:15px; font-weight:500; }
 
+  /* ---------- HOW I MADE THIS ---------- */
+  .made-section{ padding:96px 0; background:var(--cream); }
+  .made-head{ display:flex; flex-direction:column; gap:14px; margin-bottom:36px; max-width:720px; }
+  .made-head h2{ font-size:50px; line-height:1.08; letter-spacing:-0.7px; }
+  .made-head p{ font-size:21px; line-height:1.52; }
+  .made-shot{ margin:0; }
+  .made-shot .zoom-btn{
+    height:auto; border-radius:8px; overflow:hidden;
+    border:1px solid var(--hairline); box-shadow:var(--shadow-3);
+  }
+  .made-shot img{ width:100%; height:auto; }
+  .made-shot figcaption{ margin-top:14px; font-size:14px; color:var(--text2); }
+
   /* ---------- RESUME ---------- */
   /* ruled notebook paper, rules running across: playlab.ai turns them
      vertical in a short hero; this band is tall, so they run like a page */
   .resume-section{
     padding:96px 0;
-    background-color:var(--cream);
+    background-color:var(--mist);
     background-image:linear-gradient(var(--cyan) 1px, transparent 1px);
     background-size:100% 32px;
   }
@@ -357,7 +370,7 @@
   .resume-embed{ display:block; width:100%; height:auto; }
 
   /* ---------- FOOTER ---------- */
-  .site-footer{ background:var(--mist); padding:96px 0 48px; }
+  .site-footer{ background:var(--cream); padding:96px 0 48px; }
   .footer-kicker{ font-size:50px; font-weight:500; line-height:1.08; letter-spacing:-0.7px; margin-bottom:36px; }
   .footer-links{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px; }
   .action{
@@ -395,8 +408,8 @@
     .hero h1{ font-size:38px; letter-spacing:-1px; }
     .hero-sub{ font-size:18px; }
     .collage{ max-width:280px; }
-    .case-title, .ds-head h2, .resume-head h2, .footer-kicker{ font-size:32px; letter-spacing:-0.4px; }
-    .case-desc, .ds-note{ font-size:18px; }
+    .case-title, .ds-head h2, .made-head h2, .resume-head h2, .footer-kicker{ font-size:32px; letter-spacing:-0.4px; }
+    .case-desc, .ds-note, .made-head p{ font-size:18px; }
     .footer-links{ grid-template-columns:1fr; }
     .mark{ font-size:18px; }
     .topbar-inner{ height:60px; }
@@ -415,7 +428,7 @@
     .nav-arrow.left{ left:-6px; }
     .nav-arrow.right{ right:-6px; }
     .grid-panel{ padding:20px; }
-    section.case, .ds-section, .resume-section{ padding:64px 0; }
+    section.case, .ds-section, .made-section, .resume-section{ padding:64px 0; }
     .site-footer{ padding:64px 0 40px; }
   }
 </style>
@@ -620,6 +633,21 @@
           </figure>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- HOW I MADE THIS -->
+  <section class="made-section" aria-labelledby="title-made">
+    <div class="wrap">
+      <div class="made-head">
+        <span class="caps">05 · Behind this page</span>
+        <h2 id="title-made">How I made this page</h2>
+        <p>I built this page with Claude Code. We pulled Playlab's colors and type straight from the CSS variables on playlab.ai, laid them out as a moodboard on a Claude design canvas, and tried my portfolio on in their style there before building it into the real site, checking contrast along the way.</p>
+      </div>
+      <figure class="made-shot">
+        <button type="button" class="zoom-btn" aria-label="Enlarge screenshot of the working session"><img src="how-i-made-this.webp" alt="A Claude Code session beside a design canvas titled Playlab brand study, for a portfolio reskin. The chat on the left describes pulling Playlab's colors and fonts from their site's CSS; the canvas on the right shows color swatches, type specimens, button and card components, and paper patterns and sticker shapes." width="2000" height="1193" loading="lazy"></button>
+        <figcaption>Claude Code on the left, the moodboard canvas on the right.</figcaption>
+      </figure>
     </div>
   </section>
 
