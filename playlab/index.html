@@ -305,13 +305,13 @@
      floating beside it. The avatar art carries its own yellow disc, so it
      needs no backing of its own. */
   .talker{
-    display:flex; align-items:flex-start; gap:14px;
+    display:flex; align-items:center; gap:14px;
     width:100%; max-width:860px; margin:0 auto 24px;
-    background:var(--mist); border-radius:8px; padding:14px 20px 16px 14px;
+    background:var(--mist); border-radius:8px; padding:14px 20px 14px 14px;
   }
   .avatar{ width:48px; height:48px; flex-shrink:0; display:block; }
   .bubble{
-    color:var(--ink); padding-top:10px;
+    color:var(--ink);
     font-size:17px; line-height:1.55; min-height:20px;
   }
   /* the bubble slides up the first time it scrolls into view and again on every
@@ -437,9 +437,9 @@
     .mark{ font-size:18px; }
     .topbar-inner{ height:60px; }
     /* stack the avatar over the bubble so the text gets the full width */
-    .talker{ gap:10px; margin-bottom:20px; padding:12px 14px 14px 10px; }
+    .talker{ gap:10px; margin-bottom:20px; padding:12px 14px 12px 10px; }
     .talker .avatar{ width:38px; height:38px; }
-    .bubble{ font-size:16px; padding-top:7px; }
+    .bubble{ font-size:16px; }
     /* drop the card on phones: content sits on the band and reclaims the
        width the card padding was eating */
     .wrap, .topbar-inner{ padding:0 16px; }
