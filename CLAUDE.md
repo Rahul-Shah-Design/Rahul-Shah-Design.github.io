@@ -20,7 +20,8 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 ├── wayfinder/                  ← Wayfinder pitch, restyled in Wayfinder's own brand
 ├── wayfinder-classic/          ← The earlier Wayfinder pitch in the portfolio's own style
 ├── codepath/                   ← CodePath pitch (Senior Product Designer)
-├── playlab/                    ← Playlab pitch (Senior Product Designer)
+├── playlab/                    ← Playlab pitch, restyled in Playlab's own brand
+├── playlab-classic/            ← The earlier Playlab pitch in the portfolio's own style
 └── ClaudeProjects/
     ├── index.html              ← Unlinked card grid of the vibe-coded projects
     ├── BudgetTracker/
@@ -79,14 +80,15 @@ Some pages are tailored portfolios built for a specific job application, not gen
 | Wayfinder pitch | `wayfinder/` | Application to Wayfinder (Senior Product Designer). Restyled in Wayfinder's own brand: Forest/Sun Pop, Poppins + Lora + Londrina Solid, topo textures, no doodles or drawing toolbar |
 | Wayfinder pitch, classic | `wayfinder-classic/` | The earlier version in the portfolio's own graph-paper style, kept for reference |
 | CodePath pitch | `codepath/` | Application to CodePath (first Senior Product Designer). Portfolio style; cases reordered onboarding → Chiron → staff tools → design system |
-| Playlab pitch | `playlab/` | Application to Playlab (Senior Product Designer). Portfolio style, copy angled at building with AI and educators as makers; cases ordered Chiron → educator tools → onboarding → other disciplines. Logo is Playlab's own SVG wordmark |
+| Playlab pitch | `playlab/` | Application to Playlab (Senior Product Designer). Restyled in Playlab's own brand: cream/mist bands, cyan hero with a cut-paper collage, Inter Tight standing in for Neue Haas Grotesk, Ink buttons at a 4px radius, pink graph-paper panel, ruled-paper résumé band, no doodles or drawing toolbar. Copy angled at building with AI and educators as makers; cases ordered Chiron → educator tools → onboarding → other disciplines |
+| Playlab pitch, classic | `playlab-classic/` | The earlier version in the portfolio's own graph-paper style, kept for reference |
 
 `wayfinder2/` is only a redirect to `/wayfinder`: the branded page lived there while it was compared
 with the original, and those links were shared.
 
-The root `index.html` and the employer pages (`modern-classroom-project/`, `wayfinder-classic/`, `codepath/`, `playlab/`) share a design: the root page is the
+The root `index.html` and the employer pages (`modern-classroom-project/`, `wayfinder-classic/`, `codepath/`, `playlab-classic/`) share a design: the root page is the
 general-audience version, the employer page is that same page with a "Prepared for" logo lockup and
-copy angled at one role. `wayfinder/` is the exception: same content and scripts, but restyled
+copy angled at one role. `wayfinder/` and `playlab/` are the exceptions: same content and scripts, but restyled
 wholesale in the employer's own brand. They are **separate files with separate asset copies** — the root page reads
 from `assets/`, the employer page from its own folder — so retargeting copy for one employer can never
 silently rewrite the page everyone else sees. The cost is that a swapped image (a new résumé, a new
@@ -105,7 +107,7 @@ the others. **The `.docx` is the source; edit it, never the PDF.**
 
 `assets/resume.docx` is the general master. `wayfinder/resume.docx` is tailored for Wayfinder
 (`wayfinder-classic/` holds the earlier copy of it). `codepath/resume.docx` is tailored for CodePath (built from the Wayfinder copy: design system first, flows and IA in the summary).
-`playlab/resume.docx` is tailored for Playlab (built from the CodePath copy: AI prototyping leads the Encoura bullets, AI first in Skills).
+`playlab/resume.docx` is tailored for Playlab (built from the CodePath copy: AI prototyping leads the Encoura bullets, AI first in Skills); `playlab-classic/` holds a copy of it.
 `modern-classroom-project/` still only has the PDF/PNG (identical to the root's); give it a
 `.docx` copy before tailoring it.
 
