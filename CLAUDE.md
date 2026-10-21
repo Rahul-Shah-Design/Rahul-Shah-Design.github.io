@@ -105,7 +105,7 @@ the others. **The `.docx` is the source; edit it, never the PDF.**
 
 `assets/resume.docx` is the general master. `wayfinder/resume.docx` is tailored for Wayfinder
 (`wayfinder-classic/` holds the earlier copy of it). `codepath/resume.docx` is tailored for CodePath (built from the Wayfinder copy: design system first, flows and IA in the summary).
-`playlab/resume.docx` is still a copy of the general master, not yet tailored.
+`playlab/resume.docx` is tailored for Playlab (built from the CodePath copy: AI prototyping leads the Encoura bullets, AI first in Skills).
 `modern-classroom-project/` still only has the PDF/PNG (identical to the root's); give it a
 `.docx` copy before tailoring it.
 
