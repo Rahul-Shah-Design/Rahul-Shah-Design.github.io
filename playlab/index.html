@@ -195,15 +195,15 @@
   /* pointer play. The hero script writes --mx/--my (-1..1, the pointer's
      offset from the collage) and nothing moves without a pointer, so there is
      no autoplay to pause. Each layer drifts toward the pointer by its depth,
-     front layers more, using the individual translate/rotate properties so the
-     resting transforms above are untouched. */
+     front layers more, while the photo card holds still as the anchor.
+     Uses the individual translate/rotate properties so the resting
+     transforms above are untouched. */
   @media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
     .collage{ --mx:0; --my:0; }
     .collage > *{ transition:translate .6s cubic-bezier(.22,1,.36,1), rotate .6s cubic-bezier(.22,1,.36,1); }
     .sheet-1{ translate:calc(var(--mx) * 3px) calc(var(--my) * 3px); rotate:calc(var(--mx) * 0.6deg); }
     .sheet-2{ translate:calc(var(--mx) * 5px) calc(var(--my) * 5px); rotate:calc(var(--mx) * -0.8deg); }
     .sheet-3{ translate:calc(var(--mx) * 7px) calc(var(--my) * 7px); rotate:calc(var(--mx) * 0.5deg); }
-    .team-card{ translate:calc(var(--mx) * 11px) calc(var(--my) * 11px); rotate:calc(var(--mx) * 1deg); }
     .burst{ translate:calc(var(--mx) * 8px) calc(var(--my) * 8px); rotate:calc(var(--mx) * 24deg); }
     .spark{ translate:calc(var(--mx) * 14px) calc(var(--my) * 14px); rotate:calc(var(--mx) * -36deg); }
     /* the starbursts also spin while the collage is hovered, and hold their
