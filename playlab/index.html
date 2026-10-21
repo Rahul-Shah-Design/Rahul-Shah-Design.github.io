@@ -45,7 +45,12 @@
   .hl{
     background:var(--hl); padding:0 .12em;
     -webkit-box-decoration-break:clone; box-decoration-break:clone;
+    /* the swipe is taller than the tight heading line-height, so painted in
+       order it would cover the descenders of the line above. Drop it behind
+       the text; isolation keeps it from sinking behind the band as well. */
+    position:relative; z-index:-1;
   }
+  [data-flatten]{ isolation:isolate; }
   .wrap{ max-width:var(--wrap); margin:0 auto; padding:0 28px; position:relative; }
   .caps{
     font-size:14px; font-weight:500; line-height:1.35;
