@@ -300,16 +300,18 @@
      against this wrapper only in the mobile rule below */
   .device-wrap{ position:static; width:100%; display:flex; justify-content:center; }
 
-  /* ---------- FLOATING HEAD / SPEECH ---------- */
-  .talker{ display:flex; align-items:flex-start; gap:14px; width:100%; max-width:860px; margin:0 auto 24px; }
-  /* the yellow square is Playlab's team-portrait label, carried over */
-  .avatar{
-    width:52px; height:52px; border-radius:4px; background:var(--yellow);
-    flex-shrink:0; object-fit:cover; display:block;
+  /* ---------- SPEECH CARD ---------- */
+  /* the head sits inside the mist card, like a chat message, rather than
+     floating beside it. The avatar art carries its own yellow disc, so it
+     needs no backing of its own. */
+  .talker{
+    display:flex; align-items:flex-start; gap:14px;
+    width:100%; max-width:860px; margin:0 auto 24px;
+    background:var(--mist); border-radius:8px; padding:14px 20px 16px 14px;
   }
+  .avatar{ width:48px; height:48px; flex-shrink:0; display:block; }
   .bubble{
-    background:var(--mist); color:var(--ink);
-    padding:16px 20px; border-radius:8px;
+    color:var(--ink); padding-top:10px;
     font-size:17px; line-height:1.55; min-height:20px;
   }
   /* the bubble slides up the first time it scrolls into view and again on every
@@ -435,9 +437,9 @@
     .mark{ font-size:18px; }
     .topbar-inner{ height:60px; }
     /* stack the avatar over the bubble so the text gets the full width */
-    .talker{ flex-direction:column; gap:10px; margin-bottom:20px; }
-    .talker .avatar{ width:44px; height:44px; }
-    .bubble{ font-size:16px; padding:14px 16px; }
+    .talker{ gap:10px; margin-bottom:20px; padding:12px 14px 14px 10px; }
+    .talker .avatar{ width:38px; height:38px; }
+    .bubble{ font-size:16px; padding-top:7px; }
     /* drop the card on phones: content sits on the band and reclaims the
        width the card padding was eating */
     .wrap, .topbar-inner{ padding:0 16px; }
