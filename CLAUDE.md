@@ -96,7 +96,13 @@ the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
   longer page, so its frame (`fade: true` in the data) fades out at the bottom.
 - The scribble track chains copies of its 6-stroke Lottie when a slideshow has more than 6
   slides; `buildExtendedScribble` handles it.
-- The employer pages still carry the older Chiron screenshot slideshow.
+- Every employer page carries the same replay, with its own copies of the `chiron-replay-*.webp`
+  images in its folder. The portfolio-style pages (`modern-classroom-project/`, `wayfinder-classic/`,
+  `codepath/`, `playlab-classic/`) use the root page's block as is. `playlab/` and `wayfinder/` use
+  it too, followed by a short brand bridge (`CHIRON REPLAY: PLAYLAB BRAND` / `WAYFINDER BRAND`)
+  that maps the root tokens and fonts onto the brand, swaps the scribble for the brand's progress
+  segments, and trims the window's padding so the slides still fit. A copy or layout change to
+  the replay has to be made in all seven pages.
 
 ## Employer-Specific Portfolio Pages
 
