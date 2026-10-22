@@ -757,11 +757,10 @@
   .rp-loop-svg .numt{ font:500 13px var(--rp-mono); fill:var(--ink); }
   .rp-loop-svg .ttl{ font:600 21px 'Fraunces', Georgia, serif; fill:var(--ink); }
   .rp-loop-svg .sub{ font:400 13.5px 'Inter', sans-serif; fill:var(--ink-soft); }
-  .rp-loop-svg .hand{ font:500 16px var(--rp-hand); fill:var(--ink-faint); }
-  .rp-loop-svg .hand.green{ fill:var(--rp-green); }
+  .rp-loop-svg .hand{ font:500 16px var(--rp-hand); fill:var(--ink-soft); }
   .rp-loop-svg .center{ font:600 19px 'Fraunces', Georgia, serif; fill:var(--ink); }
   .rp-loop-svg .center2{ font:500 13px var(--rp-mono); fill:var(--ink-faint); letter-spacing:0.06em; }
-  .rp-loop-svg .bgarc{ fill:none; stroke:var(--rp-green); stroke-width:2; stroke-dasharray:2 6; stroke-linecap:round; }
+  .rp-loop-svg .bgarc{ fill:none; stroke:var(--ink-faint); stroke-width:2; stroke-dasharray:2 6; stroke-linecap:round; }
   .rp-loop-list{ display:none; list-style:none; margin:0; padding:0; flex-direction:column; gap:8px; }
   .rp-loop-list li{ display:flex; gap:12px; align-items:flex-start; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:14px; line-height:1.45; color:var(--ink-soft); background:var(--paper); }
   .rp-loop-list li.start{ background:var(--rp-yellow-soft); border-style:dashed; }
@@ -1785,11 +1784,11 @@
       <circle class="ring" cx="${cx}" cy="${cy}" r="${r}"/>`;
     svg += arcs.map(a => arc(a, 'arc')).join('');
     svg += arc([b1 + 6, b2 - 6], 'bgarc', r + 30, false);
-    svg += note(s.notes.build, 268, 38, 'green') + note(s.notes.cards, 830, 210) + note(s.notes.next, 268, 436);
+    svg += note(s.notes.build, 268, 38) + note(s.notes.cards, 830, 210) + note(s.notes.next, 268, 436);
     svg += `<path class="entry" d="M${118 + W / 2 - 8} ${cy} L${f(cx - r - W / 2 - 10)} ${cy}" marker-end="url(#rp-ah2)"/>` + node(118, cy, 0, s.start, 'start');
     svg += s.nodes.map((nd, k) => { const [x, y] = P(nd.angle); return node(x, y, k + 1, nd); }).join('');
-    svg += `<text class="center" x="${cx + 40}" y="${cy - 2}" text-anchor="middle">${esc(s.center[0])}</text><text class="center" x="${cx + 40}" y="${cy + 22}" text-anchor="middle">${esc(s.center[1])}</text>`;
-    svg += `<text class="center2" x="${cx + 40}" y="${cy + 46}" text-anchor="middle">${esc(s.centerSmall[0].toUpperCase())}</text><text class="center2" x="${cx + 40}" y="${cy + 63}" text-anchor="middle">${esc(s.centerSmall[1].toUpperCase())}</text></svg>`;
+    svg += `<text class="center" x="${cx}" y="${cy - 25}" text-anchor="middle">${esc(s.center[0])}</text><text class="center" x="${cx}" y="${cy - 1}" text-anchor="middle">${esc(s.center[1])}</text>`;
+    svg += `<text class="center2" x="${cx}" y="${cy + 23}" text-anchor="middle">${esc(s.centerSmall[0].toUpperCase())}</text><text class="center2" x="${cx}" y="${cy + 40}" text-anchor="middle">${esc(s.centerSmall[1].toUpperCase())}</text></svg>`;
     const li = (n, it, cls) => `<li class="${cls || ''}"><span class="rp-n">${n}</span><span><b>${esc(it.title)}</b>${esc(it.sub.join(' '))}</span></li>`;
     return svg + `<ol class="rp-loop-list">${li(0, s.start, 'start')}${s.nodes.map((nd, k) => li(k + 1, nd)).join('')}<li class="back">${esc(s.back)}</li></ol>`;
   }
