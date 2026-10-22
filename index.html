@@ -1088,7 +1088,7 @@
       <div class="slideshow replay" id="ss-chiron" role="region" aria-roledescription="carousel" aria-label="Chiron session, condensed">
         <div class="stage">
           <div class="frame-caption">
-            <div class="k" id="cap-k-chiron" aria-live="polite" aria-atomic="true">Slide 1 of 9</div>
+            <div class="k" id="cap-k-chiron" aria-live="polite" aria-atomic="true">Slide 1 of 7</div>
             <div class="scribble-strip" id="strip-chiron" aria-hidden="true"></div>
           </div>
           <div class="talker">
@@ -1118,7 +1118,7 @@
         <div class="case-head">
           <div>
           <div class="case-index">02 — ENCOURA, STUDENT APP</div>
-          <h2 class="case-title" id="title-students" data-flatten>Encourage — asking students for <span class="hl-mark">2x</span> the data without dropping completion</h2>
+          <h2 class="case-title" id="title-students" data-flatten>Encourage — asking students for <span class="hl-mark">2x</span> the data and holding completion near 84%</h2>
           </div>
         </div>
         <p class="case-desc">
@@ -1262,16 +1262,8 @@
     chiron: {
       slides: [
         {
-          name: "In session",
-          narration: "Chiron is an AI tutor I built as a Claude Skill. On the left, a teacher asks how ChatGPT works. On the right, the interactive lesson Chiron built for her while they talked.",
-          type: "shot",
-          src: "assets/chiron-replay-session.webp", width: 2000, height: 1125,
-          alt: "A Chiron session in Claude: the teacher's chat on the left, and on the right the Module 1 lesson Chiron built, titled One word at a time, opening on her own words.",
-          caption: "Click to enlarge",
-        },
-        {
           name: "The loop",
-          narration: "Every course runs this loop. Chiron questions you until you're stuck, builds a lesson around that exact spot, then has you write your own flashcards.",
+          narration: "Chiron is an AI tutor I built as a Claude Skill. Ask it to teach you anything: it questions you until you're stuck, builds a lesson there, then has you write flashcards.",
           type: "loop",
           label: "Chiron's core loop: Ask, then a repeating loop of Answer, Module and Flashcards, one lap per module.",
           start: { title: "Ask", sub: ["Name anything you", "want to learn"] },
@@ -1392,7 +1384,7 @@
         },
         {
           name: "Flashcards",
-          narration: "Back in the chat, Chiron asks the learner to write flashcards, and wrong answers from the checks become cards too. It grades each one with feedback but never writes the answer. Switch to Revised to see a second try.",
+          narration: "Back in the chat, the learner writes flashcards, including ones from wrong answers. Chiron grades each but never writes the answer. Switch to Revised to see a second try.",
           type: "cards",
           card: {
             kind: "Misconception card",
@@ -1415,7 +1407,7 @@
         },
         {
           name: "Under the hood",
-          narration: "Each move maps to learning science research. The hardest design problem is restraint: helping enough without doing the learner's thinking. I test every prompt change with an eval suite and an LLM judge.",
+          narration: "Each move maps to learning science research. The hardest design problem is restraint: helping enough without doing the learner's thinking.",
           type: "hood",
           now: {
             label: "Under the hood today", title: "What Chiron does",
@@ -1477,7 +1469,7 @@
       n: 4,
       bubbles: [
         "A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.",
-        "Counselors don't hold one giant roster in their head — they think in class periods, graduation years, and caseloads. Groups mirror how they already organize their day.",
+        "Counselors don't hold one giant roster in their head. They think in class periods, graduation years, and caseloads. Groups mirror how they already organize their day.",
         "I worked with developers to map each stage of student onboarding. The statuses follow those stages, so educators can see in real time what a student needs to get unstuck.",
         "Filter, search, and read connection status inline. Students already in the group stay checked and dimmed, so what you're actually adding is never ambiguous."
       ],
@@ -1489,7 +1481,7 @@
       ],
       alts: [
         "The empty state for a brand-new group, showing the shape of the table to come and a single primary action.",
-        "The groups list, organized the way counselors think about their caseload — by class period and graduation year.",
+        "The groups list, organized the way counselors think about their caseload: by class period and graduation year.",
         "A group roster with per-student onboarding status shown inline.",
         "The add-students panel: filter and search, with students already in the group checked and dimmed.",
       ],

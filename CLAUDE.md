@@ -67,9 +67,10 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 
 ## Chiron Session Replay (root page)
 
-The Chiron card on the root `index.html` is an 8-slide replay of one tutoring session rather
-than a screenshot slideshow. Slide 1 is a real screenshot of the session (chat beside the module
-it built, `chiron-replay-session.webp`), enlargeable through the page lightbox. **All of its copy lives in the `replays` object in the page
+The Chiron card on the root `index.html` is a 7-slide replay of one tutoring session rather
+than a screenshot slideshow. It opens on the loop diagram, whose narration introduces Chiron. (A
+first slide showing a full screenshot of the session was dropped as too busy; its `shot` slide
+type, `rpShot` and `chiron-replay-session.webp` are kept so it can come back.) **All of its copy lives in the `replays` object in the page
 script**: slide names, narration, chat messages, the token machine's table, card rounds. Edit
 it there; the `rp*` render functions below it only handle layout. Each slide's `narration` is
 Rahul's speech bubble, plain text, shown with the same talker and bubble as the other cases. In
@@ -78,10 +79,10 @@ the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
 - Styles are the `CHIRON REPLAY` block, scoped to `.replay` with `rp-` class names, built on
   the site tokens. Its window is fixed at 540px tall and every slide must fit it without
   scrolling at 1440 and 1024 wide; recheck both after copy changes.
-- Slide 3 folds the opening questions and the build into one: the chat on the left, a tall
+- Slide 2 folds the opening questions and the build into one: the chat on the left, a tall
   crop of the Module 1 page on the right (`chiron-replay-module.webp`, `tall: true`), faded out
   at the bottom.
-- Slide 4 is the next-token machine as Chiron built it in Module 1: the module's own markup,
+- Slide 3 is the next-token machine as Chiron built it in Module 1: the module's own markup,
   wording, dark theme and fonts (Atkinson Hyperlegible, Bricolage Grotesque), scoped under
   `.rp-mod` inside a dark Module 1 frame. Its logic is the module's, with the token table's
   grammar fixed so every path reads as a sentence (no "a leaf disks", "float leaf in" or
