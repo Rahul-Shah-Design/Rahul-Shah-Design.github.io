@@ -560,16 +560,15 @@
     display:flex; flex-direction:column;
   }
   .rp-slide{ margin:auto 0; width:100%; display:flex; flex-direction:column; gap:10px; }
-
-  /* below 1240px the side arrows would crowd the window, so a row under the
-     card takes over */
-  .rp-navrow{ display:none; width:100%; justify-content:space-between; align-items:center; gap:12px; margin-top:18px; }
-  .rp-navrow .nav-arrow{ position:static; translate:none; flex:none; }
-  .rp-hint{ font-family:var(--rp-mono); font-size:11px; letter-spacing:0.04em; color:var(--ink-faint); text-align:center; }
-  @media (max-width:1240px){
-    .replay .device-wrap > .nav-arrow{ display:none; }
-    .rp-navrow{ display:flex; }
+  /* on phones the shared arrows sit on the window's edge, which here is text
+     rather than an image: push them into the page gutter and pad the slide so
+     they clear it */
+  @media (max-width:720px){
+    .replay .device-wrap > .nav-arrow.left{ left:-14px; }
+    .replay .device-wrap > .nav-arrow.right{ right:-14px; }
+    .rp-view{ padding-inline:28px; }
   }
+
 
   /* shared bits */
   .rp-mono-label{ font-family:var(--rp-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); }
@@ -1071,15 +1070,6 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
-          <div class="rp-navrow">
-            <button class="nav-arrow left" data-dir="-1" data-target="chiron" aria-label="Previous slide">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <span class="rp-hint" aria-hidden="true">Tap the arrows or use ← →</span>
-            <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -1366,7 +1356,7 @@
               result: { kind: "right", text: "That covers it" } },
           ],
           nudge: "**Nudge:** What happens to the words it chooses later if the very first word is different?",
-          hand: "no answer key, no red X",
+          hand: "No answer key, no red X",
           note: "Graded live inside the module against a rubric Chiron wrote when it planned the course. The nudge points at exactly the half she left out.",
         },
         {
