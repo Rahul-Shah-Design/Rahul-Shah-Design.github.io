@@ -577,6 +577,8 @@
   .rp-chip.right{ color:var(--rp-green); background:var(--rp-green-tint); }
   .rp-chip.wrong{ color:var(--rp-red); background:var(--red-tint); }
   .rp-chip.flag{ color:var(--rp-amber); background:var(--rp-amber-tint); white-space:normal; }
+  /* solid orange so the one thing Chiron caught on the check slide stands out (5.2:1) */
+  .rp-chip.misconception{ color:#fff; background:#B54E08; font-weight:600; font-size:12.5px; padding:3px 11px; }
   .rp-chip.blue{ color:var(--pen); background:var(--pen-tint); }
   .rp-hand{ font-family:var(--rp-hand); font-weight:600; color:var(--pen); font-size:15px; line-height:1.5; }
   .rp-said{ background:var(--rp-yellow-soft); box-shadow:inset 0 -2px 0 var(--hl-yellow); padding:0 2px; }
@@ -1366,7 +1368,7 @@
             title: "Module 1 · Knowledge check", note: "her answer",
             alt: "Module check: she chose 'It notices the mistake a few lines later and goes back to fix it', marked Not this one",
           },
-          results: [ { kind: "wrong", text: "Not this one" }, { kind: "flag", text: "Misconception noticed" } ],
+          results: [ { kind: "misconception", text: "Misconception noticed" } ],
           lines: [
             "**What she believes:** the model reasons about what it writes and catches its own mistakes.",
             "**What Chiron does with it:** verifies the grade, then puts a case in the next module where that belief predicts wrong. It also becomes a flashcard.",
