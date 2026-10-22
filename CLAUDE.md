@@ -67,7 +67,7 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 
 ## Chiron Session Replay (root page)
 
-The Chiron card on the root `index.html` is a 9-slide replay of one tutoring session rather
+The Chiron card on the root `index.html` is an 8-slide replay of one tutoring session rather
 than a screenshot slideshow. Slide 1 is a real screenshot of the session (chat beside the module
 it built, `chiron-replay-session.webp`), enlargeable through the page lightbox. **All of its copy lives in the `replays` object in the page
 script**: slide names, narration, chat messages, the token machine's table, card rounds. Edit
@@ -78,7 +78,10 @@ the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
 - Styles are the `CHIRON REPLAY` block, scoped to `.replay` with `rp-` class names, built on
   the site tokens. Its window is fixed at 540px tall and every slide must fit it without
   scrolling at 1440 and 1024 wide; recheck both after copy changes.
-- Slide 5 is the next-token machine as Chiron built it in Module 1: the module's own markup,
+- Slide 3 folds the opening questions and the build into one: the chat on the left, a tall
+  crop of the Module 1 page on the right (`chiron-replay-module.webp`, `tall: true`), faded out
+  at the bottom.
+- Slide 4 is the next-token machine as Chiron built it in Module 1: the module's own markup,
   wording, dark theme and fonts (Atkinson Hyperlegible, Bricolage Grotesque), scoped under
   `.rp-mod` inside a dark Module 1 frame. Its logic is the module's, with the token table's
   grammar fixed so every path reads as a sentence (no "a leaf disks", "float leaf in" or
@@ -91,9 +94,9 @@ the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
 - Each slide plays in: `RP_ENTER` in the script lists which pieces enter and when. Chat slides
   run on a conversation's rhythm (teacher fast, Chiron after a longer beat: thinking, then
   reply). The first slide waits until the card is on screen; reduced motion shows it all at once.
-- Images are `assets/chiron-replay-*.webp`. The knowledge check and the Module 1 opening were
-  recaptured at 2x from the module's own HTML in its dark scheme. The opening is a crop of a
-  longer page, so its frame (`fade: true` in the data) fades out at the bottom.
+- Images are `assets/chiron-replay-*.webp`. The knowledge check and the Module 1 page were
+  captured at 2x from the module's own HTML in its dark scheme (the module crop at 440px wide so
+  its text stays legible in the half-width column).
 - The scribble track chains copies of its 6-stroke Lottie when a slideshow has more than 6
   slides; `buildExtendedScribble` handles it.
 - Every employer page carries the same replay, with its own copies of the `chiron-replay-*.webp`
