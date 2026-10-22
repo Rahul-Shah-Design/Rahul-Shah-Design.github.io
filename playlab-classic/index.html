@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" href="avatar-rahul.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Rock+Salt&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Rock+Salt&family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg: #FCFBF7;
@@ -374,6 +374,9 @@
     width:calc(100% * 6 / var(--n));
     aspect-ratio:2055.205/72.732;
   }
+  /* more slides than strokes: copies of the artwork run end to end */
+  .scribble-extended.chained{ display:flex; }
+  .scribble-extended.chained .scribble-extended-inner{ flex:none; }
 
   .stage{
     position:relative;
@@ -526,6 +529,282 @@
   @media (prefers-reduced-motion: reduce){
     .bubble.bubble-wait{ opacity:1; }
     .bubble.bubble-in{ animation:none; }
+  }
+
+  /* ---------- CHIRON REPLAY ---------- */
+  /* The Chiron card runs a 9-slide replay of one tutoring session instead of
+     screenshots. It reuses the slideshow parts above (caption, scribble track,
+     talker, arrows) and adds a fixed-height window the slides render into. The
+     copy lives in the `replays` data in the script, not here. Colors are the
+     site tokens; the few tints below have no site equivalent, and the deeper
+     green and red keep chip text over 4.5:1 on their tints. */
+  .replay{
+    --rp-yellow-soft:#FBF3B8;
+    --rp-green:#2C6B4D;  --rp-green-tint:#E3F1E8;
+    --rp-amber:#8A5A00;  --rp-amber-tint:#FDF0CF; --rp-amber-paper:#FFFBF0;
+    --rp-red:#A3283B;
+    --rp-quiet:#FBFBF8;
+    --rp-tray:#F3F1EA;
+    /* the module's own dark ground, so screenshot frames read as one piece */
+    --rp-module:#12191D; --rp-module-line:#2A3442;
+    --rp-mono:'JetBrains Mono', ui-monospace, monospace;
+    /* side notes in the replay: the body face, set apart by colour and weight */
+    --rp-hand:'Inter', -apple-system, sans-serif;
+  }
+  .replay .frame-caption{ max-width:none; }
+  .replay .device-wrap{ flex-direction:column; }
+  /* the window is its own surface: a plain warm tint a step darker than the
+     page, no grid, so it reads as a panel on the card rather than a hole
+     through to the page, and the white cards inside it still stand out */
+  .replay-window{
+    container-type:inline-size;
+    width:100%;
+    background:var(--rp-tray);
+    /* the page's faintest text is 4.3:1 on the tray; one step darker clears 4.5 */
+    --ink-faint:#5F6A83;
+    border:1px solid var(--line); border-radius:12px; overflow:hidden;
+  }
+  /* fixed height so the card never jumps between slides; the slide centres
+     itself with auto margins, which (unlike justify-content) never pushes
+     the top of a too-tall slide out of reach */
+  .rp-view{
+    height:540px; overflow-y:auto;
+    padding:16px clamp(16px, 4cqi, 36px);
+    display:flex; flex-direction:column;
+  }
+  .rp-slide{ margin:auto 0; width:100%; display:flex; flex-direction:column; gap:10px; }
+  /* on phones the shared arrows sit on the window's edge, which here is text
+     rather than an image: push them into the page gutter and pad the slide so
+     they clear it */
+  @media (max-width:720px){
+    .replay .device-wrap > .nav-arrow.left{ left:-14px; }
+    .replay .device-wrap > .nav-arrow.right{ right:-14px; }
+    .rp-view{ padding-inline:28px; }
+  }
+
+
+  /* shared bits */
+  .rp-mono-label{ font-family:var(--rp-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); }
+  .rp-chips{ display:flex; gap:6px; flex-wrap:wrap; }
+  .rp-chip{ font-family:var(--rp-mono); font-size:11.5px; border-radius:999px; padding:2px 9px; white-space:nowrap; }
+  .rp-chip.right{ color:var(--rp-green); background:var(--rp-green-tint); }
+  .rp-chip.wrong{ color:var(--rp-red); background:var(--red-tint); }
+  .rp-chip.flag{ color:var(--rp-amber); background:var(--rp-amber-tint); white-space:normal; }
+  /* solid orange so the one thing Chiron caught on the check slide stands out (5.2:1) */
+  .rp-chip.misconception{ color:#fff; background:#B54E08; font-weight:600; font-size:12.5px; padding:3px 11px; }
+  .rp-chip.blue{ color:var(--pen); background:var(--pen-tint); }
+  .rp-hand{ font-family:var(--rp-hand); font-weight:600; color:var(--pen); font-size:15px; line-height:1.5; }
+  .rp-said{ background:var(--rp-yellow-soft); box-shadow:inset 0 -2px 0 var(--hl-yellow); padding:0 2px; }
+
+  /* chat */
+  .rp-msg{ display:flex; flex-direction:column; gap:4px; max-width:74%; }
+  .rp-msg.teacher{ align-self:flex-end; }
+  .rp-msg.teacher .rp-mono-label{ text-align:right; }
+  .rp-msg.chiron{ align-self:flex-start; }
+  .rp-body{ border-radius:12px; padding:9px 14px; font-size:15px; line-height:1.5; }
+  .rp-msg.teacher .rp-body{ background:var(--sketch-tint); border:1px solid #D2E1F4; }
+  .rp-msg.chiron .rp-body{ border:1px solid var(--line); background:var(--paper); }
+  /* annotations written for the portfolio, not Chiron's output, so they stay
+     plain italic notes rather than anything styled like a model trace */
+  .rp-think{ font-size:13px; line-height:1.45; color:var(--ink-faint); font-style:italic; border-left:2px solid var(--line); padding:1px 0 1px 10px; max-width:60ch; }
+  .rp-think-k{ font-style:normal; font-family:var(--rp-mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--pen); margin-right:8px; }
+  .rp-build{
+    display:inline-flex; align-items:center; gap:8px; align-self:flex-start;
+    font-family:var(--rp-mono); font-size:11.5px; color:var(--rp-green);
+    background:var(--rp-green-tint); border-radius:6px; padding:5px 9px;
+  }
+  .rp-dot{ width:7px; height:7px; border-radius:50%; background:var(--mastery); flex:none; }
+  @media (prefers-reduced-motion:no-preference){ .rp-dot{ animation:rp-pulse 1.4s ease-in-out infinite; } }
+  @keyframes rp-pulse{ 50%{ opacity:.25; } }
+
+  /* entrances. The render code tags a slide's pieces .rp-in with a --delay;
+     they wait hidden until the window gets .rp-play, then rise in like the
+     narration bubble. Chat messages arrive one at a time on a conversation's
+     rhythm. Layout is reserved the whole time, so nothing shifts. Reduced
+     motion skips all of it and shows the slide at once. */
+  @media (prefers-reduced-motion:no-preference){
+    .rp-in{ opacity:0; }
+    .rp-view.rp-play .rp-in{ animation:rp-rise .5s cubic-bezier(.22,.8,.36,1) var(--delay, 0ms) both; }
+    .rp-view.rp-play .rp-msg.rp-in{ animation-name:rp-chat; animation-duration:.42s; }
+    .rp-msg.teacher{ transform-origin:100% 100%; }
+    .rp-msg.chiron{ transform-origin:0 100%; }
+    .rp-loop-svg .rp-in{ transform-box:fill-box; }
+  }
+  @keyframes rp-rise{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+  @keyframes rp-chat{ from{ opacity:0; transform:translateY(12px) scale(.96); } to{ opacity:1; transform:none; } }
+
+  /* screenshot frames */
+  .rp-artifact{ margin:0; border:1px solid var(--rp-module-line); border-radius:10px; overflow:hidden; background:var(--rp-module); }
+  /* the two labels wrap as whole phrases on a narrow screen, never mid-phrase */
+  .rp-artifact-bar{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:2px 10px;
+    font-family:var(--rp-mono); font-size:11px; color:#C9CDE0;
+    padding:6px 10px; border-bottom:1px solid var(--rp-module-line);
+  }
+  .rp-artifact-bar span{ white-space:nowrap; }
+  .rp-artifact img{ width:100%; height:auto; }
+  .rp-artifact.wide{ width:100%; max-width:790px; align-self:center; }
+  /* slide 1: the real session, chat beside the module it built */
+  .rp-shot{
+    height:auto; max-width:820px; align-self:center; border-radius:10px; overflow:hidden;
+    border:1px solid var(--rp-module-line); box-shadow:0 10px 30px rgba(24,35,56,0.18);
+  }
+  .rp-shot img{ display:block; width:100%; height:auto; }
+  .rp-shot-cap{ text-align:center; margin-top:4px; }
+  /* a crop of a longer page: the bottom fades into the paper so the module
+     reads as carrying on past the frame. Narrower than .wide so the intro
+     and a ghost of the next paragraph fit the 540px window */
+  .rp-artifact.fade{
+    max-width:700px; border-bottom:0; border-radius:10px 10px 0 0;
+    -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 56px), transparent);
+            mask-image:linear-gradient(to bottom, #000 calc(100% - 56px), transparent);
+  }
+
+  /* two-column slides */
+  .rp-split{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.25fr); gap:20px; align-items:center; }
+  .rp-split.wide-left{ grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); }
+  .rp-side{ display:flex; flex-direction:column; gap:12px; }
+  .rp-side p{ font-size:15px; line-height:1.55; color:var(--ink-soft); }
+  .rp-side p b{ color:var(--ink); }
+  .rp-side .rp-hand{ color:var(--pen); font-size:18px; line-height:1.4; }
+  .rp-attempt{ border:1px solid var(--line); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:6px; font-size:14.5px; line-height:1.5; background:var(--paper); }
+  .rp-attempt .rp-chip{ align-self:flex-start; }
+  .rp-nudge{ border-left:3px solid var(--rp-amber); padding:4px 0 4px 12px; font-size:14.5px; line-height:1.5; }
+
+  /* next-token machine: shown as Chiron built it in Module 1, with the
+     module's own dark theme, type and controls. Scoped to .rp-mod so none of
+     it leaks into the page. */
+  .rp-mod-frame{ width:100%; max-width:790px; align-self:center; }
+  .rp-mod{
+    --m-surface:#1A2329; --m-ink:#E6ECEF; --m-muted:#9FB0B9; --m-line:#2D3A41;
+    --m-accent:#4FBFB6; --m-accent-ink:#0C1A1C; --m-chip:#26323A;
+    color-scheme:dark;
+    background:var(--rp-module); color:var(--m-ink); padding:12px;
+    font-family:'Atkinson Hyperlegible', Verdana, system-ui, sans-serif;
+    font-size:17px; line-height:1.6;
+  }
+  .rp-mod-panel{
+    background:var(--m-surface); border:1px solid var(--m-line); border-radius:10px;
+    padding:16px 18px; display:flex; flex-direction:column; gap:10px;
+  }
+  .rp-mod h3{ font-family:'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif; font-size:19px; font-weight:700; line-height:1.15; color:var(--m-ink); }
+  .rp-mod-cap{ font-size:14px; line-height:1.5; color:var(--m-muted); }
+  .rp-mod code, .rp-mod-out{ font-family:'JetBrains Mono', ui-monospace, monospace; font-size:.88em; }
+  .rp-mod code{ font-weight:400; }
+  .rp-mod-out{ font-weight:600; color:var(--m-accent); }
+  .rp-mod-eyebrow{ font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--m-muted); font-weight:700; margin-bottom:6px; }
+  .rp-mod-chips{ display:flex; flex-wrap:wrap; gap:8px; min-height:38px; }
+  .rp-mod-chip{
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:14px; font-weight:400;
+    background:var(--m-chip); color:var(--m-ink); border:1px solid var(--m-line);
+    border-radius:999px; padding:6px 12px; display:inline-flex; gap:8px; align-items:baseline;
+  }
+  .rp-mod-chip .pct{ color:var(--m-muted); font-size:12px; }
+  .rp-mod-chip.top{ background:var(--m-accent); color:var(--m-accent-ink); border-color:var(--m-accent); }
+  .rp-mod-chip.top .pct{ color:var(--m-accent-ink); opacity:.85; }
+  .rp-mod-slider{ display:flex; flex-direction:column; gap:4px; }
+  .rp-mod-slider input{ width:100%; margin:0; }
+  .rp-mod-btns{ display:flex; gap:10px; flex-wrap:wrap; }
+  .rp-mod-btn{
+    font:inherit; font-weight:700; min-height:44px; padding:0 16px; border:0; border-radius:8px;
+    background:var(--m-accent); color:var(--m-accent-ink); cursor:pointer;
+  }
+  .rp-mod-btn.quiet{ background:var(--m-chip); color:var(--m-ink); }
+  /* aria-disabled rather than the module's disabled, so focus stays put mid-run */
+  .rp-mod-btn[aria-disabled="true"]{ opacity:.55; cursor:default; }
+  /* a ring pulses out of Write the rest until a visitor first presses it, so
+     it reads as something they can use, not a picture of a button */
+  @media (prefers-reduced-motion:no-preference){
+    .rp-mod-btn.rp-pulse{ animation:rp-ring 1.8s ease-out 1s infinite; }
+  }
+  @keyframes rp-ring{
+    0%{ box-shadow:0 0 0 0 rgba(79,191,182,0.7); }
+    70%,100%{ box-shadow:0 0 0 12px rgba(79,191,182,0); }
+  }
+  .rp-mod button:focus-visible, .rp-mod input:focus-visible{ outline:3px solid var(--m-accent); outline-offset:2px; }
+  .rp-mod-hist{ margin:0; padding-left:22px; font-size:15px; min-height:24px; }
+
+  /* flashcards */
+  .rp-fcslide{ display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:28px; align-items:center; }
+  .rp-inline{ border:1px solid var(--line); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; background:var(--paper); }
+  .rp-ctx{ font-size:14px; color:var(--ink-soft); }
+  .rp-ctx b{ color:var(--ink); font-weight:600; }
+  .rp-card{ border:1.5px solid var(--rp-amber); border-radius:12px; background:var(--rp-amber-paper); padding:14px; display:flex; flex-direction:column; gap:9px; }
+  .rp-card-top{ display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .rp-card-kind{ font-family:var(--rp-mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--rp-amber); }
+  .rp-badge{ font-family:var(--rp-mono); font-size:11px; border-radius:999px; padding:1px 8px; white-space:nowrap; }
+  .rp-badge.done{ color:var(--rp-green); background:var(--rp-green-tint); }
+  .rp-badge.close{ color:var(--rp-amber); background:var(--rp-amber-tint); }
+  .rp-card-term{ font-family:'Fraunces', Georgia, serif; font-weight:600; font-size:19px; line-height:1.25; }
+  .rp-card-back{ font-size:14.5px; line-height:1.5; background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:9px 11px; }
+  .rp-card-fb{ font-size:13.5px; line-height:1.5; border-left:3px solid var(--rp-amber); padding-left:10px; }
+  .rp-card-fb b{ color:var(--rp-amber); }
+  .rp-card-fb.done b{ color:var(--rp-green); }
+  .rp-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .rp-seg{ display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--bg); }
+  .rp-seg button{ border:0; background:none; border-radius:999px; padding:0 14px; min-height:36px; font:500 13.5px 'Inter', sans-serif; cursor:pointer; color:var(--ink-soft); }
+  .rp-seg button[aria-pressed="true"]{ background:var(--ink); color:#fff; }
+  .rp-seg button:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
+  .rp-steps{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px; counter-reset:rp-step; }
+  .rp-steps li{ display:grid; grid-template-columns:30px minmax(0,1fr); gap:12px; align-items:start; counter-increment:rp-step; }
+  .rp-steps li::before{
+    content:counter(rp-step); width:28px; height:28px; border-radius:50%;
+    background:var(--hl-yellow); border:1.4px solid var(--ink);
+    display:grid; place-items:center; font:500 12px var(--rp-mono);
+  }
+  .rp-steps b{ display:block; font-family:'Fraunces', Georgia, serif; font-size:18px; font-weight:600; line-height:1.25; margin-bottom:2px; }
+  .rp-steps span{ font-size:14px; line-height:1.5; color:var(--ink-soft); }
+
+  /* now vs next */
+  .rp-hood{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:stretch; }
+  .rp-col{ border:1px solid var(--line); border-radius:12px; padding:16px 18px; display:flex; flex-direction:column; gap:10px; min-width:0; background:var(--paper); }
+  .rp-col.next{ border-style:dashed; background:var(--rp-quiet); }
+  .rp-col .rp-mono-label{ letter-spacing:0.12em; }
+  .rp-col.now .rp-mono-label{ color:var(--rp-green); }
+  .rp-col h3{ font-size:20px; font-weight:600; }
+  .rp-col ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
+  .rp-col li{ display:grid; grid-template-columns:20px minmax(0,1fr); gap:8px; font-size:14.5px; line-height:1.4; }
+  .rp-ic{ width:18px; height:18px; border-radius:50%; margin-top:1px; display:grid; place-items:center; font-size:11px; font-weight:700; }
+  .rp-col.now .rp-ic{ background:var(--rp-green-tint); color:var(--rp-green); }
+  .rp-col.next .rp-ic{ border:1.5px dashed var(--ink-faint); }
+  .rp-col small{ display:block; font-family:var(--rp-mono); font-size:11px; color:var(--ink-faint); letter-spacing:0.02em; margin-top:2px; }
+
+  /* the core loop: SVG built from data, swapped for a list when narrow */
+  .rp-loop-svg{ width:100%; height:auto; max-height:440px; display:block; flex:none; }
+  .rp-loop-svg .ring{ fill:none; stroke:var(--line); stroke-width:2; stroke-dasharray:3 7; }
+  .rp-loop-svg .arc{ fill:none; stroke:var(--pen); stroke-width:3.5; stroke-linecap:round; }
+  .rp-loop-svg .entry{ fill:none; stroke:var(--ink); stroke-width:2.5; stroke-linecap:round; }
+  .rp-loop-svg .node rect{ fill:var(--paper); stroke:var(--ink); stroke-width:1.6; }
+  .rp-loop-svg .node.start rect{ fill:var(--rp-yellow-soft); stroke-dasharray:5 4; }
+  .rp-loop-svg .num{ fill:var(--hl-yellow); stroke:var(--ink); stroke-width:1.4; }
+  .rp-loop-svg .numt{ font:500 13px var(--rp-mono); fill:var(--ink); }
+  .rp-loop-svg .ttl{ font:600 21px 'Fraunces', Georgia, serif; fill:var(--ink); }
+  .rp-loop-svg .sub{ font:400 13.5px 'Inter', sans-serif; fill:var(--ink-soft); }
+  .rp-loop-svg .hand{ font:500 16px var(--rp-hand); fill:var(--ink-soft); }
+  .rp-loop-svg .center{ font:600 19px 'Fraunces', Georgia, serif; fill:var(--ink); }
+  .rp-loop-svg .center2{ font:500 13px var(--rp-mono); fill:var(--ink-faint); letter-spacing:0.06em; }
+  .rp-loop-svg .bgarc{ fill:none; stroke:var(--ink-faint); stroke-width:2; stroke-dasharray:2 6; stroke-linecap:round; }
+  .rp-loop-list{ display:none; list-style:none; margin:0; padding:0; flex-direction:column; gap:8px; }
+  .rp-loop-list li{ display:flex; gap:12px; align-items:flex-start; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:14px; line-height:1.45; color:var(--ink-soft); background:var(--paper); }
+  .rp-loop-list li.start{ background:var(--rp-yellow-soft); border-style:dashed; }
+  .rp-loop-list .rp-n{ flex:none; width:26px; height:26px; border-radius:50%; background:var(--hl-yellow); border:1.4px solid var(--ink); display:grid; place-items:center; font:500 12px var(--rp-mono); color:var(--ink); }
+  .rp-loop-list b{ font-family:'Fraunces', Georgia, serif; font-size:18px; font-weight:600; display:block; color:var(--ink); }
+  .rp-loop-list li.back{ border:0; background:none; padding:0 0 0 38px; font-family:var(--rp-hand); font-weight:600; font-size:14px; color:var(--pen); }
+
+  @container (max-width:760px){
+    .rp-view{ height:auto; min-height:420px; }
+    .rp-split, .rp-split.wide-left, .rp-hood, .rp-fcslide{ grid-template-columns:1fr; }
+    .rp-msg{ max-width:92%; }
+  }
+  @container (max-width:640px){
+    .rp-loop-svg{ display:none; }
+    .rp-loop-list{ display:flex; }
+  }
+  @container (max-width:460px){
+    .rp-msg{ max-width:100%; }
+    /* three nested paddings squeeze the module panel on a phone */
+    .rp-mod{ padding:8px; }
+    .rp-mod-panel{ padding:14px; }
   }
 
   /* ---------- WHAT I'M KNOWN FOR — POLAROIDS ---------- */
@@ -808,30 +1087,29 @@
         <a class="status-pill progress" href="https://github.com/Rahul-Shah-Design/Chiron" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">&rarr;</span><span class="sr-only"> (opens in new tab)</span></a>
       </div>
 
-      <div class="slideshow" id="ss-chiron" role="region" aria-roledescription="carousel" aria-label="Chiron screenshots">
-                <div class="stage">
+      <!-- Session replay. Slides render into #view-chiron from the `replays`
+           data in the script below; edit the copy there, not here. -->
+      <div class="slideshow replay" id="ss-chiron" role="region" aria-roledescription="carousel" aria-label="Chiron session, condensed">
+        <div class="stage">
           <div class="frame-caption">
-            <div class="k" id="cap-k-chiron" aria-live="polite" aria-atomic="true">Slide 1 of 4</div>
+            <div class="k" id="cap-k-chiron" aria-live="polite" aria-atomic="true">Slide 1 of 9</div>
             <div class="scribble-strip" id="strip-chiron" aria-hidden="true"></div>
           </div>
           <div class="talker">
             <span class="sr-only">Rahul says:</span>
             <img class="avatar" src="avatar-rahul.png" alt="">
-            <div class="bubble" id="bubble-chiron" aria-live="polite" aria-atomic="true">Chiron turns a conversation into a micro-course. It chunks the content, gates each module with a knowledge check, pulls in your interests from memory, and teaches through Socratic discussion.</div>
+            <div class="bubble" id="bubble-chiron" aria-live="polite" aria-atomic="true"></div>
           </div>
-        
           <div class="device-wrap">
             <button class="nav-arrow left" data-dir="-1" data-target="chiron" aria-label="Previous slide">
               <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
-            <div class="device filled">
-              <button type="button" class="zoom-btn" id="zoom-chiron" aria-label="Enlarge image"><img id="img-chiron" src="" alt=""></button>
-            </div>
+            <div class="replay-window"><div class="rp-view" id="view-chiron"></div></div>
             <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
               <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
-</div>
+        </div>
       </div>
     </div>
   </section>
@@ -981,28 +1259,208 @@
   // linear, so the pen leaves at full speed and settles like a hand stroke
   const SCRIBBLE_EXT_DATA = {"nm":"Main Scene","h":72.732,"w":2055.205,"meta":{"g":"@lottiefiles/creator@1.104.0"},"layers":[{"ty":4,"nm":"Shape Layer 6","sr":1,"st":0,"op":183,"ip":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[164,23.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[1879.752,34.179]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"shapes":[{"ty":"gr","nm":"Group 4","it":[{"ty":"sh","nm":"Path 4","d":1,"ks":{"a":0,"k":{"c":false,"i":[[0,0],[-0.007,4.583],[-0.042,5.039],[-0.272,2.692],[-0.412,-1.033],[-0.887,-4.114],[-0.981,-4.827],[-0.46,-1.696],[-1.447,5.443],[-1.508,5.599],[-0.115,-0.333],[-0.414,-3.386],[-0.486,-3.514],[-0.704,-1.671],[-1.188,3.257],[-1.191,3.402],[-0.174,0.352],[-0.701,-3.747],[-0.642,-4.15],[-0.297,-1.778],[-0.547,-0.349],[-0.667,0.566],[-0.493,4.408],[-0.339,3.86],[-0.312,0.538],[-0.343,0.106],[-0.415,-0.345],[-0.833,-2.741],[-0.982,-3.743],[-0.277,-0.573],[-0.684,-1.373],[-0.211,0.036],[-2.198,4.435],[-0.186,3.133],[-0.211,0.787],[-0.242,-0.032],[-0.573,-3.175],[-0.459,-3.938],[-0.712,-0.668],[-2.045,7.376],[-0.612,2.882],[-0.568,0.873],[-0.192,-0.307],[-1.542,-6.82],[-0.778,-2.673],[-0.169,-0.188],[-0.224,0.154],[-1.359,4.92],[-1.341,4.957],[-0.188,0.089],[-0.676,-3.943],[-0.743,-5.618],[-0.423,-0.112],[-1.655,2.734],[-0.731,4.167],[-0.465,3.686],[-0.288,-0.052],[-0.981,-4.574],[-0.475,-1.859],[-0.129,-3.014],[-0.057,-2.28],[-1.032,2.599],[-1.372,3.736],[-0.396,0.854],[-0.398,0.506],[-0.532,-3.266],[-0.424,-3.707],[-0.43,-3.603],[-3.399,4.553],[-3.499,4.47],[-0.92,1.434],[0.574,-1.254],[1.41,-4.136],[0.915,-3.314],[-0.135,-2.096],[-0.692,0.501],[-1.9,2.061],[-2.743,3.584],[-1.754,2.365],[-0.38,0.015],[0.45,-2.76],[0.656,-3.997],[-1.7,0.747],[-4.817,4.492],[-3.093,2.411],[-0.11,-0.197],[1.734,-7.372],[0.251,-2.862],[-0.238,-0.549],[-3.358,3.79],[-3.407,3.952],[-1.385,2.74],[0.016,-6.163],[-0.526,-2.575],[-0.62,-0.646],[-1.321,2.811],[-2.425,4.678],[-1.213,2.106],[-0.086,-0.076],[-0.289,-3.894],[-0.418,-4.811],[-1.262,4.969],[-1.164,6.015],[-0.412,-3.434],[-1.012,-5.332],[-1.148,-2.997],[-0.597,-1.05],[-0.32,0.56],[-0.867,4.186],[-0.827,3.457],[-1.247,-3.874],[-1.281,-4.159],[-0.26,-0.263],[-1.336,5.464],[-1.428,5.341],[-0.982,-3.798],[-1.015,-4.145],[-0.965,-1.413],[-1.509,4.574],[-1.488,4.634],[-0.341,-2.919],[-0.564,-3.784],[-0.598,-1.406],[-0.402,-0.109],[-1.653,3.273],[-2.097,4.827],[-0.596,1.83],[-0.198,0.117],[-0.792,-4.843],[-0.726,-5.271],[-0.236,-0.543],[-0.539,-0.732]],"o":[[0,0.022],[0.007,-4.583],[0.055,-6.59],[0.084,-0.836],[0.412,1.033],[0.887,4.114],[0.981,4.827],[0.46,1.696],[1.447,-5.443],[1.508,-5.599],[0.115,0.333],[0.414,3.386],[0.694,5.016],[0.062,0.146],[1.188,-3.257],[2.159,-6.168],[0.063,-0.127],[0.701,3.747],[1.023,6.614],[0.182,1.086],[1.02,0.652],[2.193,-1.86],[0.347,-3.101],[0.501,-5.693],[0.151,-0.261],[0.807,-0.25],[0.466,0.387],[0.713,2.345],[1.772,6.755],[0.559,1.156],[0.117,0.235],[0.553,-0.094],[2.092,-4.222],[0.352,-5.928],[0.087,-0.326],[1.229,0.165],[0.513,2.843],[1.073,9.215],[0.343,0.322],[1.149,-4.146],[0.729,-3.428],[0.218,-0.336],[0.485,0.776],[0.899,3.974],[0.778,2.673],[0.169,0.188],[0.224,-0.154],[1.358,-4.92],[1.342,-4.957],[0.188,-0.089],[0.676,3.943],[1.16,8.779],[0.491,0.13],[2.062,-3.405],[0.584,-3.33],[0.635,-5.026],[0.961,0.174],[0.507,2.367],[0.475,1.859],[0.128,3.014],[0.056,2.28],[1.031,-2.599],[2.249,-6.124],[0.75,-1.616],[0.152,-0.194],[0.531,3.266],[0.691,6.047],[0.179,1.501],[2.66,-3.564],[3.499,-4.47],[0.921,-1.434],[-0.574,1.254],[-1.41,4.136],[-1.027,3.718],[0.045,0.697],[0.692,-0.501],[1.9,-2.06],[2.744,-3.584],[3.177,-4.284],[0.182,-0.007],[-0.45,2.76],[-0.656,3.997],[1.699,-0.747],[4.817,-4.491],[3.092,-2.411],[0.345,0.617],[-0.861,3.665],[-0.637,7.277],[0.097,0.225],[3.358,-3.79],[3.566,-4.137],[0.335,-0.662],[-0.011,3.933],[0.266,1.302],[0.118,0.123],[1.322,-2.811],[2.424,-4.678],[1.213,-2.106],[0.086,0.076],[0.289,3.894],[0.419,4.812],[1.261,-4.97],[1.164,-6.015],[0.412,3.434],[1.011,5.332],[1.148,2.997],[0.596,1.051],[0.32,-0.56],[0.867,-4.186],[0.827,-3.457],[1.248,3.874],[1.28,4.159],[0.261,0.263],[1.335,-5.464],[1.427,-5.341],[0.982,3.798],[1.228,5.017],[0.373,0.546],[1.508,-4.574],[1.489,-4.634],[0.342,2.919],[0.849,5.704],[0.819,1.925],[0.197,0.054],[1.652,-3.273],[2.097,-4.827],[0.596,-1.83],[0.199,-0.117],[0.793,4.843],[0.898,7.041],[0.136,0.289],[0,0]],"v":[[3,42.997],[3.007,38.459],[3.07,19.649],[3.67,7.872],[4.462,8.368],[6.362,15.288],[9.383,30.629],[11.596,40.21],[13.627,36.703],[19.347,14.526],[21.137,9.534],[21.725,13.635],[23.392,26.911],[26.264,36.949],[27.749,33.365],[32.344,20.494],[35.647,9.456],[36.653,13.342],[39.208,28.535],[40.565,39.662],[41.661,41.881],[44.509,41.319],[47.874,32.986],[48.416,20.226],[50.384,11.946],[51.09,11.401],[53.04,11.759],[54.726,15.545],[57.419,26.023],[60.542,36.723],[62.624,41.46],[63.123,41.839],[67.5,34.114],[70.225,23.116],[72.264,12.543],[72.858,12.172],[75.011,17.321],[76.686,29.502],[78.628,41.068],[82.379,30.461],[85.027,18.31],[86.881,12.893],[87.591,12.967],[90.152,24.115],[93.313,35.674],[94.375,38.794],[94.989,38.938],[96.794,33.442],[101.981,14.16],[103.629,8.889],[104.745,12.796],[107.255,30.188],[109.352,42.487],[112.506,38.214],[116.338,27.642],[117.926,14.737],[119.319,8.198],[121.251,16.778],[123.022,23.391],[123.832,29.504],[124.063,39.547],[125.217,38.894],[129.616,27.705],[132.878,17.859],[134.781,14.356],[135.77,17.762],[137.539,31.026],[138.538,42.176],[144.185,33.295],[155.508,19.738],[161.761,10.734],[162.059,10.879],[158.977,18.441],[154.965,31.924],[153.999,39.581],[155.095,39.671],[158.793,36.203],[166.097,27.371],[173.341,17.538],[177.877,12.836],[177.624,16.102],[175.565,27.984],[176.279,33.949],[186.535,24.419],[200.226,12.954],[203.656,10.617],[201.016,22.921],[199.544,33.083],[199.705,42.05],[203.5,38.359],[216.704,23.105],[222.756,14.156],[223.322,24.183],[222.737,35.817],[224.793,38.216],[226.436,35.122],[232.66,22.284],[238.594,11.656],[239.952,9.374],[240.438,13.755],[241.608,29.824],[243.649,31.702],[248.226,8.681],[249.912,6.473],[252.046,21.722],[255.497,34.034],[258.205,39.973],[259.32,40.616],[260.943,34.591],[263.923,19.892],[266.325,20.665],[271.011,36.079],[272.891,41.214],[274.66,35.805],[279.917,14.285],[282.613,13.098],[286.28,28.271],[289.456,36.426],[291.567,32.514],[297.367,14.018],[299.285,12.603],[300.782,24.833],[303.233,34.392],[305.147,37.69],[307.19,34.136],[314.048,19.736],[317.731,9.915],[318.696,7.566],[319.907,12.47],[322.783,32.087],[324.154,40.421],[325,41.756]]}}},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":6},"c":{"a":0,"k":[0.145,0.357,0.729]}},{"ty":"tr","a":{"a":0,"k":[164,23.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[164,23.5]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}}]},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":1,"o":{"a":0,"k":100},"w":{"a":0,"k":4},"c":{"a":0,"k":[0.118,0.118,0.118]}},{"ty":"tm","nm":"Trim Path","e":{"a":1,"k":[{"o":{"x":0.33,"y":1},"i":{"x":0.68,"y":1},"s":[0],"t":150},{"s":[100],"t":180}]},"o":{"a":0,"k":0},"s":{"a":0,"k":0},"m":1}],"ind":1},{"ty":4,"nm":"Shape Layer 5","sr":1,"st":0,"op":183,"ip":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[166,22.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[1531.065,38.001]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"shapes":[{"ty":"gr","nm":"Group 1","it":[{"ty":"sh","nm":"Path 1","d":1,"ks":{"a":0,"k":{"c":false,"i":[[0,0],[-2.098,6.01],[-1.726,4.331],[-0.186,0.938],[-0.522,-3.347],[-0.301,-2.302],[-0.487,-0.394],[-2.823,11.768],[-0.401,0.629],[-1.7,-7.832],[-0.943,-1.25],[-2.722,11.277],[-0.527,0.651],[-0.132,-8.709],[-1.032,-2.707],[-0.533,-0.577],[-1.851,12.323],[-0.162,1.264],[-1.217,-4.273],[-1.428,-5.072],[-0.521,-0.625],[-0.698,4.137],[-0.568,2.185],[-0.029,-0.118],[-1.388,-7.128],[-1.084,-1.838],[-0.198,0.012],[-1.334,4.66],[-0.624,1.837],[-0.179,-0.029],[-0.329,-2.017],[-0.26,-0.851],[-0.683,0.742],[-1.292,3.591],[-0.217,2.248],[-0.773,-2.053],[-0.45,-1.169],[-1.64,4.075],[-1.698,4.754],[-0.203,1.098],[-0.284,-9.046],[-1.617,-3.903],[-0.349,-0.266],[-1.691,8.965],[-0.37,1.337],[-3.014,-8.234],[-1.169,-2.645],[-0.506,-0.409],[-2.938,10.123],[-0.233,0.886],[-3.312,-10.986],[-0.646,-1.662],[-0.261,-0.017],[-1.046,8.039],[-0.296,2.229],[-1.188,-4.346],[-1.259,-5.116],[-0.22,0.061],[-0.838,4.836],[-1.002,5.475],[-0.405,0.68],[-2.36,-10.623],[-1.034,-1.583],[-0.281,-0.001],[-1.232,4.439],[-1.315,5.26],[-0.272,0.644],[-2.785,-12.006],[-0.463,-1.855],[-3.688,10.694],[-0.604,1.347],[-1.303,-4.683],[-1.226,-4.138],[-1.25,5.024],[-1.392,4.859],[-0.536,-0.723],[-1.637,-5.88],[-0.269,-2.605],[-0.772,5.104],[-0.814,5.165],[-0.242,-0.012],[-1.549,-4.277],[-1.544,-4.427],[-0.805,-1.465],[-1.769,11.699],[-0.301,2.242],[-0.165,-1.159],[-1.492,-8.68],[-0.135,-0.824],[-1.495,7.812],[-1.057,2.534],[-1.19,-4.908],[-1.101,-4.979],[-0.361,-0.351],[-1.115,11.063],[-0.458,0.335],[-2.444,-7.288],[-1.568,-5.465],[-0.304,-0.372],[-1.013,4.574],[-1.018,4.896],[-0.875,2.351],[-0.628,0.272],[-2.512,-4.959],[-0.799,-2.792],[-0.968,-3.198],[-1.697,9.746],[-0.099,1.119],[0.066,0.858]],"o":[[0,-0.546],[1.649,-4.725],[1.906,-4.783],[0.847,-4.267],[0.483,3.096],[0.141,1.08],[0.623,0.504],[1.237,-5.156],[0.343,-0.537],[1.932,8.9],[0.413,0.547],[1.274,-5.28],[0.412,-0.509],[0.101,6.639],[0.572,1.5],[0.427,0.463],[0.762,-5.07],[0.162,-1.264],[1.217,4.273],[1.428,5.072],[2.93,3.514],[0.543,-3.217],[0.136,-0.523],[0.196,0.787],[2.421,12.432],[0.22,0.373],[0.511,-0.031],[4.602,-16.071],[0.165,-0.485],[5.819,0.956],[0.498,3.051],[0.132,0.43],[2.193,-2.382],[3.04,-8.448],[0.563,-5.815],[0.81,2.15],[0.141,0.365],[1.64,-4.075],[2.236,-6.26],[0.182,-0.986],[0.31,9.874],[0.885,2.138],[0.649,0.495],[1.974,-10.473],[0.186,-0.668],[1.593,4.35],[0.371,0.839],[0.484,0.391],[1.672,-5.761],[0.232,-0.881],[1.552,5.151],[0.158,0.407],[0.636,0.04],[0.514,-3.951],[0.295,-2.229],[1.187,4.346],[1.259,5.116],[0.221,-0.061],[0.838,-4.836],[1.003,-5.475],[0.414,-0.695],[1.934,8.708],[0.255,0.391],[0.28,0.001],[1.233,-4.439],[1.314,-5.26],[0.172,-0.409],[1.604,6.916],[0.292,1.171],[1.631,-4.731],[0.604,-1.347],[1.303,4.683],[1.226,4.138],[1.25,-5.024],[1.392,-4.859],[1.367,1.846],[1.777,6.382],[0.076,0.744],[0.772,-5.104],[0.814,-5.165],[0.241,0.012],[1.549,4.277],[2.097,6.011],[0.392,0.713],[0.985,-6.514],[0.125,-0.927],[0.566,3.977],[0.625,3.631],[0.083,0.506],[1.936,-10.117],[0.129,-0.31],[1.19,4.908],[1.204,5.449],[0.5,0.488],[1.014,-10.067],[0.608,-0.445],[1.881,5.609],[1.848,6.445],[0.105,0.129],[1.013,-4.574],[1.52,-7.31],[0.479,-1.288],[0.662,-0.287],[3.481,6.873],[1.06,3.704],[0.217,0.716],[0.623,-6.438],[0.04,-0.63],[0,0]],"v":[[3,38.834],[5.445,29.941],[12.064,12.946],[14.502,6.329],[16.882,26.47],[17.569,33.854],[18.814,36.137],[24.504,16.053],[26.504,8.782],[29.691,22.038],[34.871,34.368],[39.982,15.05],[42.645,7.47],[43.282,22.678],[45.563,34.395],[47.395,37.668],[51.279,17.469],[52.084,8.377],[53.776,11.677],[58.532,29.268],[61.162,36.611],[66.926,17.769],[68.926,8.757],[69.097,7.895],[71.102,19.968],[76.817,36.361],[77.461,37.068],[79.606,30.447],[85.926,10.382],[86.456,9.387],[90.702,29.295],[92.495,36.423],[93.433,36.54],[98.591,26.693],[101.284,10.203],[107.183,28.773],[109.335,34.862],[111.601,30.611],[117.853,14.077],[120.651,4.464],[121.308,17.214],[125.522,34.965],[127.478,38.423],[130.593,23.007],[133.939,9.193],[139.602,23.709],[143.584,34.206],[144.839,36.241],[150.535,19.136],[152.999,10.17],[158.871,26.963],[161.901,35.388],[162.551,36.172],[165.026,23.356],[166.236,13.474],[167.876,14.945],[172.536,33.765],[174.254,39.41],[175.508,33.783],[178.821,14.554],[180.715,6.639],[185.461,23.925],[190.243,36.216],[191.03,36.998],[192.844,32.16],[197.545,13.996],[199.54,6.295],[204.47,26.036],[207.637,37.995],[214.146,22.874],[217.055,13.279],[219.356,17.494],[224.085,34.776],[226.748,33.449],[231.698,13.972],[234.033,10.002],[238.399,21.959],[240.832,36.429],[241.978,31.568],[244.888,11.589],[246.209,6.109],[248.21,10.759],[254.185,27.644],[258.174,37.626],[262.182,18.682],[263.41,6.56],[263.732,6.287],[266.951,26.912],[267.624,33.516],[270.502,21.22],[275.071,5.303],[276.937,10.739],[281.22,29.849],[283.151,36.517],[285.31,18.538],[288.478,3.042],[292.496,12.957],[298.603,33.734],[301.158,41.986],[302.47,36.871],[306.374,18.77],[309.227,5.894],[311.183,3.487],[315.832,10.946],[321.713,26.686],[324.291,36.929],[328.147,21.032],[328.963,10.566],[328.957,8.322]]}}},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":6},"c":{"a":0,"k":[0.145,0.357,0.729]}},{"ty":"tr","a":{"a":0,"k":[166,22.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[166,22.5]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}}]},{"ty":"tm","nm":"Trim Path","e":{"a":1,"k":[{"o":{"x":0.33,"y":1},"i":{"x":0.68,"y":1},"s":[0],"t":121},{"s":[100],"t":151}]},"o":{"a":0,"k":0},"s":{"a":0,"k":0},"m":1},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":1,"o":{"a":0,"k":100},"w":{"a":0,"k":4},"c":{"a":0,"k":[0.118,0.118,0.118]}}],"ind":2},{"ty":4,"nm":"Shape Layer 2","sr":1,"st":0,"op":183,"ip":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[166,22.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[1194.087,35.791]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"shapes":[{"ty":"gr","nm":"Group 1","it":[{"ty":"sh","nm":"Path 1","d":1,"ks":{"a":0,"k":{"c":false,"i":[[0,0],[-2.098,6.01],[-1.726,4.331],[-0.186,0.938],[-0.522,-3.347],[-0.301,-2.302],[-0.487,-0.394],[-2.823,11.768],[-0.401,0.629],[-1.7,-7.832],[-0.943,-1.25],[-2.722,11.277],[-0.527,0.651],[-0.132,-8.709],[-1.032,-2.707],[-0.533,-0.577],[-1.851,12.323],[-0.162,1.264],[-1.217,-4.273],[-1.428,-5.072],[-0.521,-0.625],[-0.698,4.137],[-0.568,2.185],[-0.029,-0.118],[-1.388,-7.128],[-1.084,-1.838],[-0.198,0.012],[-1.334,4.66],[-0.624,1.837],[-0.179,-0.029],[-0.329,-2.017],[-0.26,-0.851],[-0.683,0.742],[-1.292,3.591],[-0.217,2.248],[-0.773,-2.053],[-0.45,-1.169],[-1.64,4.075],[-1.698,4.754],[-0.203,1.098],[-0.284,-9.046],[-1.617,-3.903],[-0.349,-0.266],[-1.691,8.965],[-0.37,1.337],[-3.014,-8.234],[-1.169,-2.645],[-0.506,-0.409],[-2.938,10.123],[-0.233,0.886],[-3.312,-10.986],[-0.646,-1.662],[-0.261,-0.017],[-1.046,8.039],[-0.296,2.229],[-1.188,-4.346],[-1.259,-5.116],[-0.22,0.061],[-0.838,4.836],[-1.002,5.475],[-0.405,0.68],[-2.36,-10.623],[-1.034,-1.583],[-0.281,-0.001],[-1.232,4.439],[-1.315,5.26],[-0.272,0.644],[-2.785,-12.006],[-0.463,-1.855],[-3.688,10.694],[-0.604,1.347],[-1.303,-4.683],[-1.226,-4.138],[-1.25,5.024],[-1.392,4.859],[-0.536,-0.723],[-1.637,-5.88],[-0.269,-2.605],[-0.772,5.104],[-0.814,5.165],[-0.242,-0.012],[-1.549,-4.277],[-1.544,-4.427],[-0.805,-1.465],[-1.769,11.699],[-0.301,2.242],[-0.165,-1.159],[-1.492,-8.68],[-0.135,-0.824],[-1.495,7.812],[-1.057,2.534],[-1.19,-4.908],[-1.101,-4.979],[-0.361,-0.351],[-1.115,11.063],[-0.458,0.335],[-2.444,-7.288],[-1.568,-5.465],[-0.304,-0.372],[-1.013,4.574],[-1.018,4.896],[-0.875,2.351],[-0.628,0.272],[-2.512,-4.959],[-0.799,-2.792],[-0.968,-3.198],[-1.697,9.746],[-0.099,1.119],[0.066,0.858]],"o":[[0,-0.546],[1.649,-4.725],[1.906,-4.783],[0.847,-4.267],[0.483,3.096],[0.141,1.08],[0.623,0.504],[1.237,-5.156],[0.343,-0.537],[1.932,8.9],[0.413,0.547],[1.274,-5.28],[0.412,-0.509],[0.101,6.639],[0.572,1.5],[0.427,0.463],[0.762,-5.07],[0.162,-1.264],[1.217,4.273],[1.428,5.072],[2.93,3.514],[0.543,-3.217],[0.136,-0.523],[0.196,0.787],[2.421,12.432],[0.22,0.373],[0.511,-0.031],[4.602,-16.071],[0.165,-0.485],[5.819,0.956],[0.498,3.051],[0.132,0.43],[2.193,-2.382],[3.04,-8.448],[0.563,-5.815],[0.81,2.15],[0.141,0.365],[1.64,-4.075],[2.236,-6.26],[0.182,-0.986],[0.31,9.874],[0.885,2.138],[0.649,0.495],[1.974,-10.473],[0.186,-0.668],[1.593,4.35],[0.371,0.839],[0.484,0.391],[1.672,-5.761],[0.232,-0.881],[1.552,5.151],[0.158,0.407],[0.636,0.04],[0.514,-3.951],[0.295,-2.229],[1.187,4.346],[1.259,5.116],[0.221,-0.061],[0.838,-4.836],[1.003,-5.475],[0.414,-0.695],[1.934,8.708],[0.255,0.391],[0.28,0.001],[1.233,-4.439],[1.314,-5.26],[0.172,-0.409],[1.604,6.916],[0.292,1.171],[1.631,-4.731],[0.604,-1.347],[1.303,4.683],[1.226,4.138],[1.25,-5.024],[1.392,-4.859],[1.367,1.846],[1.777,6.382],[0.076,0.744],[0.772,-5.104],[0.814,-5.165],[0.241,0.012],[1.549,4.277],[2.097,6.011],[0.392,0.713],[0.985,-6.514],[0.125,-0.927],[0.566,3.977],[0.625,3.631],[0.083,0.506],[1.936,-10.117],[0.129,-0.31],[1.19,4.908],[1.204,5.449],[0.5,0.488],[1.014,-10.067],[0.608,-0.445],[1.881,5.609],[1.848,6.445],[0.105,0.129],[1.013,-4.574],[1.52,-7.31],[0.479,-1.288],[0.662,-0.287],[3.481,6.873],[1.06,3.704],[0.217,0.716],[0.623,-6.438],[0.04,-0.63],[0,0]],"v":[[3,38.834],[5.445,29.941],[12.064,12.946],[14.502,6.329],[16.882,26.47],[17.569,33.854],[18.814,36.137],[24.504,16.053],[26.504,8.782],[29.691,22.038],[34.871,34.368],[39.982,15.05],[42.645,7.47],[43.282,22.678],[45.563,34.395],[47.395,37.668],[51.279,17.469],[52.084,8.377],[53.776,11.677],[58.532,29.268],[61.162,36.611],[66.926,17.769],[68.926,8.757],[69.097,7.895],[71.102,19.968],[76.817,36.361],[77.461,37.068],[79.606,30.447],[85.926,10.382],[86.456,9.387],[90.702,29.295],[92.495,36.423],[93.433,36.54],[98.591,26.693],[101.284,10.203],[107.183,28.773],[109.335,34.862],[111.601,30.611],[117.853,14.077],[120.651,4.464],[121.308,17.214],[125.522,34.965],[127.478,38.423],[130.593,23.007],[133.939,9.193],[139.602,23.709],[143.584,34.206],[144.839,36.241],[150.535,19.136],[152.999,10.17],[158.871,26.963],[161.901,35.388],[162.551,36.172],[165.026,23.356],[166.236,13.474],[167.876,14.945],[172.536,33.765],[174.254,39.41],[175.508,33.783],[178.821,14.554],[180.715,6.639],[185.461,23.925],[190.243,36.216],[191.03,36.998],[192.844,32.16],[197.545,13.996],[199.54,6.295],[204.47,26.036],[207.637,37.995],[214.146,22.874],[217.055,13.279],[219.356,17.494],[224.085,34.776],[226.748,33.449],[231.698,13.972],[234.033,10.002],[238.399,21.959],[240.832,36.429],[241.978,31.568],[244.888,11.589],[246.209,6.109],[248.21,10.759],[254.185,27.644],[258.174,37.626],[262.182,18.682],[263.41,6.56],[263.732,6.287],[266.951,26.912],[267.624,33.516],[270.502,21.22],[275.071,5.303],[276.937,10.739],[281.22,29.849],[283.151,36.517],[285.31,18.538],[288.478,3.042],[292.496,12.957],[298.603,33.734],[301.158,41.986],[302.47,36.871],[306.374,18.77],[309.227,5.894],[311.183,3.487],[315.832,10.946],[321.713,26.686],[324.291,36.929],[328.147,21.032],[328.963,10.566],[328.957,8.322]]}}},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":6},"c":{"a":0,"k":[0.145,0.357,0.729]}},{"ty":"tr","a":{"a":0,"k":[166,22.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[166,22.5]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}}]},{"ty":"tm","nm":"Trim Path","e":{"a":1,"k":[{"o":{"x":0.33,"y":1},"i":{"x":0.68,"y":1},"s":[0],"t":91},{"s":[100],"t":121}]},"o":{"a":0,"k":0},"s":{"a":0,"k":0},"m":1},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":1,"o":{"a":0,"k":100},"w":{"a":0,"k":4},"c":{"a":0,"k":[0.118,0.118,0.118]}}],"ind":3},{"ty":4,"nm":"Shape Layer 4","sr":1,"st":0,"op":183,"ip":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[164,23.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[855.42,34.135]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"shapes":[{"ty":"gr","nm":"Group 4","it":[{"ty":"sh","nm":"Path 4","d":1,"ks":{"a":0,"k":{"c":false,"i":[[0,0],[-0.007,4.583],[-0.042,5.039],[-0.272,2.692],[-0.412,-1.033],[-0.887,-4.114],[-0.981,-4.827],[-0.46,-1.696],[-1.447,5.443],[-1.508,5.599],[-0.115,-0.333],[-0.414,-3.386],[-0.486,-3.514],[-0.704,-1.671],[-1.188,3.257],[-1.191,3.402],[-0.174,0.352],[-0.701,-3.747],[-0.642,-4.15],[-0.297,-1.778],[-0.547,-0.349],[-0.667,0.566],[-0.493,4.408],[-0.339,3.86],[-0.312,0.538],[-0.343,0.106],[-0.415,-0.345],[-0.833,-2.741],[-0.982,-3.743],[-0.277,-0.573],[-0.684,-1.373],[-0.211,0.036],[-2.198,4.435],[-0.186,3.133],[-0.211,0.787],[-0.242,-0.032],[-0.573,-3.175],[-0.459,-3.938],[-0.712,-0.668],[-2.045,7.376],[-0.612,2.882],[-0.568,0.873],[-0.192,-0.307],[-1.542,-6.82],[-0.778,-2.673],[-0.169,-0.188],[-0.224,0.154],[-1.359,4.92],[-1.341,4.957],[-0.188,0.089],[-0.676,-3.943],[-0.743,-5.618],[-0.423,-0.112],[-1.655,2.734],[-0.731,4.167],[-0.465,3.686],[-0.288,-0.052],[-0.981,-4.574],[-0.475,-1.859],[-0.129,-3.014],[-0.057,-2.28],[-1.032,2.599],[-1.372,3.736],[-0.396,0.854],[-0.398,0.506],[-0.532,-3.266],[-0.424,-3.707],[-0.43,-3.603],[-3.399,4.553],[-3.499,4.47],[-0.92,1.434],[0.574,-1.254],[1.41,-4.136],[0.915,-3.314],[-0.135,-2.096],[-0.692,0.501],[-1.9,2.061],[-2.743,3.584],[-1.754,2.365],[-0.38,0.015],[0.45,-2.76],[0.656,-3.997],[-1.7,0.747],[-4.817,4.492],[-3.093,2.411],[-0.11,-0.197],[1.734,-7.372],[0.251,-2.862],[-0.238,-0.549],[-3.358,3.79],[-3.407,3.952],[-1.385,2.74],[0.016,-6.163],[-0.526,-2.575],[-0.62,-0.646],[-1.321,2.811],[-2.425,4.678],[-1.213,2.106],[-0.086,-0.076],[-0.289,-3.894],[-0.418,-4.811],[-1.262,4.969],[-1.164,6.015],[-0.412,-3.434],[-1.012,-5.332],[-1.148,-2.997],[-0.597,-1.05],[-0.32,0.56],[-0.867,4.186],[-0.827,3.457],[-1.247,-3.874],[-1.281,-4.159],[-0.26,-0.263],[-1.336,5.464],[-1.428,5.341],[-0.982,-3.798],[-1.015,-4.145],[-0.965,-1.413],[-1.509,4.574],[-1.488,4.634],[-0.341,-2.919],[-0.564,-3.784],[-0.598,-1.406],[-0.402,-0.109],[-1.653,3.273],[-2.097,4.827],[-0.596,1.83],[-0.198,0.117],[-0.792,-4.843],[-0.726,-5.271],[-0.236,-0.543],[-0.539,-0.732]],"o":[[0,0.022],[0.007,-4.583],[0.055,-6.59],[0.084,-0.836],[0.412,1.033],[0.887,4.114],[0.981,4.827],[0.46,1.696],[1.447,-5.443],[1.508,-5.599],[0.115,0.333],[0.414,3.386],[0.694,5.016],[0.062,0.146],[1.188,-3.257],[2.159,-6.168],[0.063,-0.127],[0.701,3.747],[1.023,6.614],[0.182,1.086],[1.02,0.652],[2.193,-1.86],[0.347,-3.101],[0.501,-5.693],[0.151,-0.261],[0.807,-0.25],[0.466,0.387],[0.713,2.345],[1.772,6.755],[0.559,1.156],[0.117,0.235],[0.553,-0.094],[2.092,-4.222],[0.352,-5.928],[0.087,-0.326],[1.229,0.165],[0.513,2.843],[1.073,9.215],[0.343,0.322],[1.149,-4.146],[0.729,-3.428],[0.218,-0.336],[0.485,0.776],[0.899,3.974],[0.778,2.673],[0.169,0.188],[0.224,-0.154],[1.358,-4.92],[1.342,-4.957],[0.188,-0.089],[0.676,3.943],[1.16,8.779],[0.491,0.13],[2.062,-3.405],[0.584,-3.33],[0.635,-5.026],[0.961,0.174],[0.507,2.367],[0.475,1.859],[0.128,3.014],[0.056,2.28],[1.031,-2.599],[2.249,-6.124],[0.75,-1.616],[0.152,-0.194],[0.531,3.266],[0.691,6.047],[0.179,1.501],[2.66,-3.564],[3.499,-4.47],[0.921,-1.434],[-0.574,1.254],[-1.41,4.136],[-1.027,3.718],[0.045,0.697],[0.692,-0.501],[1.9,-2.06],[2.744,-3.584],[3.177,-4.284],[0.182,-0.007],[-0.45,2.76],[-0.656,3.997],[1.699,-0.747],[4.817,-4.491],[3.092,-2.411],[0.345,0.617],[-0.861,3.665],[-0.637,7.277],[0.097,0.225],[3.358,-3.79],[3.566,-4.137],[0.335,-0.662],[-0.011,3.933],[0.266,1.302],[0.118,0.123],[1.322,-2.811],[2.424,-4.678],[1.213,-2.106],[0.086,0.076],[0.289,3.894],[0.419,4.812],[1.261,-4.97],[1.164,-6.015],[0.412,3.434],[1.011,5.332],[1.148,2.997],[0.596,1.051],[0.32,-0.56],[0.867,-4.186],[0.827,-3.457],[1.248,3.874],[1.28,4.159],[0.261,0.263],[1.335,-5.464],[1.427,-5.341],[0.982,3.798],[1.228,5.017],[0.373,0.546],[1.508,-4.574],[1.489,-4.634],[0.342,2.919],[0.849,5.704],[0.819,1.925],[0.197,0.054],[1.652,-3.273],[2.097,-4.827],[0.596,-1.83],[0.199,-0.117],[0.793,4.843],[0.898,7.041],[0.136,0.289],[0,0]],"v":[[3,42.997],[3.007,38.459],[3.07,19.649],[3.67,7.872],[4.462,8.368],[6.362,15.288],[9.383,30.629],[11.596,40.21],[13.627,36.703],[19.347,14.526],[21.137,9.534],[21.725,13.635],[23.392,26.911],[26.264,36.949],[27.749,33.365],[32.344,20.494],[35.647,9.456],[36.653,13.342],[39.208,28.535],[40.565,39.662],[41.661,41.881],[44.509,41.319],[47.874,32.986],[48.416,20.226],[50.384,11.946],[51.09,11.401],[53.04,11.759],[54.726,15.545],[57.419,26.023],[60.542,36.723],[62.624,41.46],[63.123,41.839],[67.5,34.114],[70.225,23.116],[72.264,12.543],[72.858,12.172],[75.011,17.321],[76.686,29.502],[78.628,41.068],[82.379,30.461],[85.027,18.31],[86.881,12.893],[87.591,12.967],[90.152,24.115],[93.313,35.674],[94.375,38.794],[94.989,38.938],[96.794,33.442],[101.981,14.16],[103.629,8.889],[104.745,12.796],[107.255,30.188],[109.352,42.487],[112.506,38.214],[116.338,27.642],[117.926,14.737],[119.319,8.198],[121.251,16.778],[123.022,23.391],[123.832,29.504],[124.063,39.547],[125.217,38.894],[129.616,27.705],[132.878,17.859],[134.781,14.356],[135.77,17.762],[137.539,31.026],[138.538,42.176],[144.185,33.295],[155.508,19.738],[161.761,10.734],[162.059,10.879],[158.977,18.441],[154.965,31.924],[153.999,39.581],[155.095,39.671],[158.793,36.203],[166.097,27.371],[173.341,17.538],[177.877,12.836],[177.624,16.102],[175.565,27.984],[176.279,33.949],[186.535,24.419],[200.226,12.954],[203.656,10.617],[201.016,22.921],[199.544,33.083],[199.705,42.05],[203.5,38.359],[216.704,23.105],[222.756,14.156],[223.322,24.183],[222.737,35.817],[224.793,38.216],[226.436,35.122],[232.66,22.284],[238.594,11.656],[239.952,9.374],[240.438,13.755],[241.608,29.824],[243.649,31.702],[248.226,8.681],[249.912,6.473],[252.046,21.722],[255.497,34.034],[258.205,39.973],[259.32,40.616],[260.943,34.591],[263.923,19.892],[266.325,20.665],[271.011,36.079],[272.891,41.214],[274.66,35.805],[279.917,14.285],[282.613,13.098],[286.28,28.271],[289.456,36.426],[291.567,32.514],[297.367,14.018],[299.285,12.603],[300.782,24.833],[303.233,34.392],[305.147,37.69],[307.19,34.136],[314.048,19.736],[317.731,9.915],[318.696,7.566],[319.907,12.47],[322.783,32.087],[324.154,40.421],[325,41.756]]}}},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":6},"c":{"a":0,"k":[0.145,0.357,0.729]}},{"ty":"tr","a":{"a":0,"k":[164,23.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[164,23.5]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}}]},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":1,"o":{"a":0,"k":100},"w":{"a":0,"k":4},"c":{"a":0,"k":[0.118,0.118,0.118]}},{"ty":"tm","nm":"Trim Path","e":{"a":1,"k":[{"o":{"x":0.33,"y":1},"i":{"x":0.68,"y":1},"s":[0],"t":61},{"s":[100],"t":91}]},"o":{"a":0,"k":0},"s":{"a":0,"k":0},"m":1}],"ind":4},{"ty":4,"nm":"Shape Layer 3","sr":1,"st":0,"op":183,"ip":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[166,24]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[514.981,36.366]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"shapes":[{"ty":"gr","nm":"Group 3","it":[{"ty":"sh","nm":"Path 3","d":1,"ks":{"a":0,"k":{"c":false,"i":[[0,0],[-0.75,-5.255],[-0.301,-3.225],[-0.307,-0.418],[-1.32,4.212],[-1.371,5.164],[-0.383,0.595],[-0.302,0.127],[-0.247,-0.152],[-0.116,-0.349],[0.067,-4.063],[0.066,-4.19],[-0.34,-0.691],[-0.946,-0.71],[-0.646,4.454],[-0.673,4.655],[-0.335,0.602],[-0.274,-0.072],[-0.943,-3.216],[-0.081,-6.596],[-0.679,-1.855],[-0.323,-0.191],[-0.302,0.129],[-1.765,6.073],[-0.57,4.191],[-0.447,1.496],[-0.653,0.377],[-0.293,-0.147],[-0.258,-5.091],[-0.269,-5.33],[-0.447,-0.628],[-0.326,-0.134],[-0.282,0.19],[-1.267,6.6],[-0.83,5.35],[-0.467,0.443],[-0.304,-0.199],[-1.009,-7.042],[-0.478,-4.65],[-0.945,-1.037],[-0.29,0.126],[-1.049,4.777],[-0.689,3.963],[-1.177,2.098],[-0.31,-0.179],[-0.913,-6.818],[-0.285,-1.649],[-0.685,-0.596],[-0.263,0.385],[-1.304,5.837],[-0.525,3.414],[-0.41,0.293],[-1.657,-9.746],[-0.697,-1.317],[-1.415,-0.328],[-0.33,5.951],[-0.457,4.038],[-0.465,0.665],[-0.292,-0.19],[-1.837,-4.82],[-1.842,-4.906],[-0.248,-0.059],[-0.821,6.274],[-0.822,6.143],[-1.259,-4.798],[-1.378,-5.318],[-1.354,-2.73],[-0.574,3.913],[-0.511,4.001],[0.681,3.771],[-0.095,0.032],[-3.133,-10.177],[-0.305,-1.218],[-0.739,3.782],[-0.819,5.295],[-0.522,1.674],[-0.374,0.008],[-0.979,-2.207],[0.009,-5.055],[-0.89,-1.504],[-0.618,-0.695],[-1.912,0.068],[-0.449,0.501],[0.283,6.41],[-0.015,5.342],[-0.162,0.379],[-0.283,0.086],[-0.468,-0.612],[-1.374,-3.913],[-1.185,-3.697],[-0.638,-1.413],[-0.098,0.143],[-0.648,5.278],[-0.858,2.129],[-0.952,-1.384],[-1.794,-5.375],[-0.154,-1.222],[-0.316,0.791],[-1.206,3.295],[-1.259,3.695],[-0.671,1.427],[-0.958,-4.12],[-0.839,-4.872],[-0.127,-0.698],[-1.132,4.768],[-1.12,5.296],[-0.386,0.715],[-0.264,-0.079],[-0.488,-13.249],[-0.754,-1.522],[-0.625,-0.034],[-0.485,7.693],[-0.705,1.184],[-1.451,-0.162],[-0.257,-0.445],[-0.683,-6.263],[-0.538,-1.896],[-0.08,-0.379],[-0.47,-0.195],[-0.516,0.148],[-0.859,3.569],[-0.207,5.765],[-0.767,1.119],[-0.995,-4.932],[-0.423,-1.572],[-0.922,-1.589],[-1.243,5.518],[-1.322,5.413],[-0.222,-0.502],[-0.705,-4.608],[-0.904,-5.257],[-0.386,-0.244],[-1.019,5.355],[-1.066,6.406],[-0.231,0.94],[-0.849,-5.132],[-0.851,-5.598],[-0.467,-0.978],[-1.882,10.632],[-1.035,3.134],[-0.992,-5.881],[-0.881,-5.626],[-0.031,0.718],[-2.357,9.53],[-1.185,2.813],[-0.507,-3.979],[-0.615,-4.684],[-0.773,-0.777],[-2.021,7.076],[-0.19,2.618],[0,0.683]],"o":[[0,0.655],[0.756,5.294],[0.649,6.955],[0.142,0.193],[1.32,-4.212],[1.868,-7.037],[0.194,-0.302],[0.302,-0.127],[0.247,0.152],[0.116,0.349],[-0.067,4.063],[-0.072,4.587],[0.742,1.506],[0.166,0.125],[0.646,-4.454],[0.762,-5.272],[0.168,-0.302],[0.64,0.167],[0.912,3.109],[0.067,5.507],[0.143,0.39],[0.323,0.191],[1.321,-0.564],[1.04,-3.579],[1.04,-7.648],[0.309,-1.032],[0.312,-0.18],[1.266,0.637],[0.229,4.52],[0.368,7.297],[0.231,0.324],[0.326,0.134],[0.615,-0.414],[1.037,-5.402],[0.948,-6.106],[0.232,-0.221],[1.312,0.857],[0.751,5.237],[0.599,5.833],[0.221,0.243],[1.299,-0.564],[0.882,-4.017],[0.938,-5.394],[0.169,-0.302],[1.313,0.757],[0.578,4.318],[0.787,4.558],[0.303,0.264],[0.653,-0.954],[0.808,-3.619],[1.321,-8.588],[0.527,-0.377],[0.89,5.235],[2.586,4.886],[0.638,0.148],[0.39,-7.028],[0.214,-1.89],[0.209,-0.299],[0.293,0.19],[1.837,4.82],[1.842,4.906],[0.247,0.059],[0.821,-6.274],[0.823,-6.143],[1.258,4.798],[2.216,8.555],[0.196,0.395],[0.574,-3.913],[0.668,-5.229],[-0.152,-0.837],[0.426,-0.142],[3.571,11.601],[0.139,0.557],[0.739,-3.781],[1.177,-7.606],[0.208,-0.667],[2.466,-0.053],[0.672,1.517],[-0.021,11.098],[0.479,0.81],[0.518,0.581],[1.066,-0.038],[0.458,-0.51],[-0.241,-5.434],[0.006,-1.96],[0.162,-0.379],[0.283,-0.086],[0.467,0.612],[1.374,3.913],[1.84,5.737],[0.173,0.383],[1.319,-1.933],[0.776,-6.315],[0.304,-0.757],[2.691,3.914],[2.842,8.518],[0.073,0.583],[0.316,-0.791],[1.205,-3.295],[2.188,-6.427],[0.214,-0.455],[0.958,4.12],[0.839,4.872],[0.126,0.698],[1.132,-4.768],[1.35,-6.381],[0.179,-0.332],[1.254,0.377],[0.468,12.716],[0.673,1.358],[0.73,0.039],[0.609,-9.682],[0.394,-0.661],[0.613,0.068],[0.541,0.936],[1.265,11.601],[0.111,0.392],[0.081,0.379],[0.469,0.195],[0.822,-0.236],[0.841,-3.493],[0.277,-7.716],[0.335,-0.489],[1.816,8.996],[0.959,3.57],[0.145,0.251],[1.244,-5.518],[1.322,-5.413],[0.222,0.502],[0.704,4.608],[1.225,7.122],[0.17,0.107],[1.019,-5.355],[1.066,-6.406],[0.231,-0.94],[0.848,5.132],[1.269,8.34],[0.364,0.761],[1.03,-5.814],[1.035,-3.134],[0.992,5.881],[0.882,5.626],[0.075,-1.762],[1.296,-5.241],[1.185,-2.813],[0.508,3.979],[1.109,8.44],[0.419,0.421],[2.007,-9.639],[0.033,-0.627],[0,0]],"v":[[3,8.436],[4.008,17.143],[4.768,29.676],[5.767,41.992],[7.635,37.592],[12.622,20.047],[15.303,10.086],[16.095,9.451],[16.968,9.459],[17.492,10.28],[17.608,15.06],[17.272,31.061],[17.858,37.092],[20.823,40.425],[21.773,35.438],[24.26,17.881],[25.687,11.062],[26.436,10.659],[28.732,16.264],[29.78,31.731],[31.473,42.972],[32.324,43.801],[33.282,43.935],[37.303,33.666],[39.678,21.105],[41.337,7.441],[42.997,5.511],[43.94,5.5],[45.583,13.02],[46.065,31.346],[47.867,41.559],[48.765,42.249],[49.699,42.196],[52.085,33.465],[55.203,13.009],[57.141,5.42],[58.079,5.516],[60.791,16.48],[62.731,35.071],[65.195,43.487],[66.088,43.525],[68.869,36.085],[71.587,20.735],[74.705,8.88],[75.675,9.041],[78.91,20.877],[79.724,30.259],[84.352,41.394],[85.299,41.142],[87.896,31.295],[89.633,19.127],[93.966,6.674],[97.341,23.236],[99.873,31.707],[107.888,40.145],[108.852,30.694],[112.045,13.531],[113.125,10.173],[114.002,10.1],[116.386,15.519],[123.476,34.464],[125.736,39.741],[127.124,33.32],[130.08,8.565],[132.453,7.645],[137.306,26.92],[142.243,40.715],[143.405,36.613],[145.377,21.323],[145.515,10.589],[145.402,9.31],[150.739,25.874],[155.911,39.716],[156.887,36.928],[159.821,19.839],[161.868,7.093],[162.779,6.232],[168.029,12.344],[168.646,22.027],[169.794,36.028],[171.526,38.289],[175.482,38.905],[177.557,37.826],[177.616,26.936],[176.324,10.367],[176.659,7.595],[177.299,6.82],[178.415,7.495],[180.816,13.091],[185.547,27.422],[189.314,37.374],[189.748,38.042],[191.893,22.171],[195.038,9.06],[196.723,9.835],[203.659,24.809],[205.757,38.601],[206.172,38.908],[208.29,32.71],[212.552,21.306],[216.173,9.345],[217.757,13.493],[221.161,30.327],[222.149,37.563],[223.639,33.174],[227.918,13.903],[229.889,5.217],[230.689,4.881],[232.511,22.407],[235.765,38.778],[238.339,40.576],[239.95,27.634],[241.704,11.58],[245.079,11.464],[246.257,12.394],[248.016,23.08],[249.407,38.672],[249.564,39.838],[250.27,40.776],[252.033,40.839],[254.364,34.713],[255.427,20.512],[257.534,9.833],[259.588,16.938],[262.27,34.07],[264.956,41.008],[266.647,35.345],[271.474,13.678],[273.332,9],[274.379,14.873],[277.271,33.17],[279.746,42.678],[281.119,36.842],[285.068,14.807],[286.575,5.236],[287.901,9.843],[291.044,30.411],[293.665,41.31],[296.659,26.955],[300.624,11.524],[302.948,14.729],[306.499,37.527],[307.446,42.055],[310.766,25.333],[315.478,11.468],[317.427,13.059],[319.3,29.243],[322.549,39.619],[326.507,28.443],[328.967,13.752],[329,11.778]]}}},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":6},"c":{"a":0,"k":[0.145,0.357,0.729]}},{"ty":"tr","a":{"a":0,"k":[166,24]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[166,24]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}}]},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":1,"o":{"a":0,"k":100},"w":{"a":0,"k":4},"c":{"a":0,"k":[0.118,0.118,0.118]}},{"ty":"tm","nm":"Trim Path","e":{"a":1,"k":[{"o":{"x":0.33,"y":1},"i":{"x":0.68,"y":1},"s":[0],"t":30},{"s":[100],"t":60}]},"o":{"a":0,"k":0},"s":{"a":0,"k":0},"m":1}],"ind":5},{"ty":4,"nm":"Shape Layer 1","sr":1,"st":0,"op":183,"ip":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[166,22.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[171.124,36.353]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"shapes":[{"ty":"gr","nm":"Group 1","it":[{"ty":"sh","nm":"Path 1","d":1,"ks":{"a":0,"k":{"c":false,"i":[[0,0],[-2.098,6.01],[-1.726,4.331],[-0.186,0.938],[-0.522,-3.347],[-0.301,-2.302],[-0.487,-0.394],[-2.823,11.768],[-0.401,0.629],[-1.7,-7.832],[-0.943,-1.25],[-2.722,11.277],[-0.527,0.651],[-0.132,-8.709],[-1.032,-2.707],[-0.533,-0.577],[-1.851,12.323],[-0.162,1.264],[-1.217,-4.273],[-1.428,-5.072],[-0.521,-0.625],[-0.698,4.137],[-0.568,2.185],[-0.029,-0.118],[-1.388,-7.128],[-1.084,-1.838],[-0.198,0.012],[-1.334,4.66],[-0.624,1.837],[-0.179,-0.029],[-0.329,-2.017],[-0.26,-0.851],[-0.683,0.742],[-1.292,3.591],[-0.217,2.248],[-0.773,-2.053],[-0.45,-1.169],[-1.64,4.075],[-1.698,4.754],[-0.203,1.098],[-0.284,-9.046],[-1.617,-3.903],[-0.349,-0.266],[-1.691,8.965],[-0.37,1.337],[-3.014,-8.234],[-1.169,-2.645],[-0.506,-0.409],[-2.938,10.123],[-0.233,0.886],[-3.312,-10.986],[-0.646,-1.662],[-0.261,-0.017],[-1.046,8.039],[-0.296,2.229],[-1.188,-4.346],[-1.259,-5.116],[-0.22,0.061],[-0.838,4.836],[-1.002,5.475],[-0.405,0.68],[-2.36,-10.623],[-1.034,-1.583],[-0.281,-0.001],[-1.232,4.439],[-1.315,5.26],[-0.272,0.644],[-2.785,-12.006],[-0.463,-1.855],[-3.688,10.694],[-0.604,1.347],[-1.303,-4.683],[-1.226,-4.138],[-1.25,5.024],[-1.392,4.859],[-0.536,-0.723],[-1.637,-5.88],[-0.269,-2.605],[-0.772,5.104],[-0.814,5.165],[-0.242,-0.012],[-1.549,-4.277],[-1.544,-4.427],[-0.805,-1.465],[-1.769,11.699],[-0.301,2.242],[-0.165,-1.159],[-1.492,-8.68],[-0.135,-0.824],[-1.495,7.812],[-1.057,2.534],[-1.19,-4.908],[-1.101,-4.979],[-0.361,-0.351],[-1.115,11.063],[-0.458,0.335],[-2.444,-7.288],[-1.568,-5.465],[-0.304,-0.372],[-1.013,4.574],[-1.018,4.896],[-0.875,2.351],[-0.628,0.272],[-2.512,-4.959],[-0.799,-2.792],[-0.968,-3.198],[-1.697,9.746],[-0.099,1.119],[0.066,0.858]],"o":[[0,-0.546],[1.649,-4.725],[1.906,-4.783],[0.847,-4.267],[0.483,3.096],[0.141,1.08],[0.623,0.504],[1.237,-5.156],[0.343,-0.537],[1.932,8.9],[0.413,0.547],[1.274,-5.28],[0.412,-0.509],[0.101,6.639],[0.572,1.5],[0.427,0.463],[0.762,-5.07],[0.162,-1.264],[1.217,4.273],[1.428,5.072],[2.93,3.514],[0.543,-3.217],[0.136,-0.523],[0.196,0.787],[2.421,12.432],[0.22,0.373],[0.511,-0.031],[4.602,-16.071],[0.165,-0.485],[5.819,0.956],[0.498,3.051],[0.132,0.43],[2.193,-2.382],[3.04,-8.448],[0.563,-5.815],[0.81,2.15],[0.141,0.365],[1.64,-4.075],[2.236,-6.26],[0.182,-0.986],[0.31,9.874],[0.885,2.138],[0.649,0.495],[1.974,-10.473],[0.186,-0.668],[1.593,4.35],[0.371,0.839],[0.484,0.391],[1.672,-5.761],[0.232,-0.881],[1.552,5.151],[0.158,0.407],[0.636,0.04],[0.514,-3.951],[0.295,-2.229],[1.187,4.346],[1.259,5.116],[0.221,-0.061],[0.838,-4.836],[1.003,-5.475],[0.414,-0.695],[1.934,8.708],[0.255,0.391],[0.28,0.001],[1.233,-4.439],[1.314,-5.26],[0.172,-0.409],[1.604,6.916],[0.292,1.171],[1.631,-4.731],[0.604,-1.347],[1.303,4.683],[1.226,4.138],[1.25,-5.024],[1.392,-4.859],[1.367,1.846],[1.777,6.382],[0.076,0.744],[0.772,-5.104],[0.814,-5.165],[0.241,0.012],[1.549,4.277],[2.097,6.011],[0.392,0.713],[0.985,-6.514],[0.125,-0.927],[0.566,3.977],[0.625,3.631],[0.083,0.506],[1.936,-10.117],[0.129,-0.31],[1.19,4.908],[1.204,5.449],[0.5,0.488],[1.014,-10.067],[0.608,-0.445],[1.881,5.609],[1.848,6.445],[0.105,0.129],[1.013,-4.574],[1.52,-7.31],[0.479,-1.288],[0.662,-0.287],[3.481,6.873],[1.06,3.704],[0.217,0.716],[0.623,-6.438],[0.04,-0.63],[0,0]],"v":[[3,38.834],[5.445,29.941],[12.064,12.946],[14.502,6.329],[16.882,26.47],[17.569,33.854],[18.814,36.137],[24.504,16.053],[26.504,8.782],[29.691,22.038],[34.871,34.368],[39.982,15.05],[42.645,7.47],[43.282,22.678],[45.563,34.395],[47.395,37.668],[51.279,17.469],[52.084,8.377],[53.776,11.677],[58.532,29.268],[61.162,36.611],[66.926,17.769],[68.926,8.757],[69.097,7.895],[71.102,19.968],[76.817,36.361],[77.461,37.068],[79.606,30.447],[85.926,10.382],[86.456,9.387],[90.702,29.295],[92.495,36.423],[93.433,36.54],[98.591,26.693],[101.284,10.203],[107.183,28.773],[109.335,34.862],[111.601,30.611],[117.853,14.077],[120.651,4.464],[121.308,17.214],[125.522,34.965],[127.478,38.423],[130.593,23.007],[133.939,9.193],[139.602,23.709],[143.584,34.206],[144.839,36.241],[150.535,19.136],[152.999,10.17],[158.871,26.963],[161.901,35.388],[162.551,36.172],[165.026,23.356],[166.236,13.474],[167.876,14.945],[172.536,33.765],[174.254,39.41],[175.508,33.783],[178.821,14.554],[180.715,6.639],[185.461,23.925],[190.243,36.216],[191.03,36.998],[192.844,32.16],[197.545,13.996],[199.54,6.295],[204.47,26.036],[207.637,37.995],[214.146,22.874],[217.055,13.279],[219.356,17.494],[224.085,34.776],[226.748,33.449],[231.698,13.972],[234.033,10.002],[238.399,21.959],[240.832,36.429],[241.978,31.568],[244.888,11.589],[246.209,6.109],[248.21,10.759],[254.185,27.644],[258.174,37.626],[262.182,18.682],[263.41,6.56],[263.732,6.287],[266.951,26.912],[267.624,33.516],[270.502,21.22],[275.071,5.303],[276.937,10.739],[281.22,29.849],[283.151,36.517],[285.31,18.538],[288.478,3.042],[292.496,12.957],[298.603,33.734],[301.158,41.986],[302.47,36.871],[306.374,18.77],[309.227,5.894],[311.183,3.487],[315.832,10.946],[321.713,26.686],[324.291,36.929],[328.147,21.032],[328.963,10.566],[328.957,8.322]]}}},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":6},"c":{"a":0,"k":[0.145,0.357,0.729]}},{"ty":"tr","a":{"a":0,"k":[166,22.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[166,22.5]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}}]},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":1,"o":{"a":0,"k":100},"w":{"a":0,"k":4},"c":{"a":0,"k":[0.118,0.118,0.118]}},{"ty":"tm","nm":"Trim Path","e":{"a":1,"k":[{"o":{"x":0.33,"y":1},"i":{"x":0.68,"y":1},"s":[0],"t":0},{"s":[100],"t":30}]},"o":{"a":0,"k":0},"s":{"a":0,"k":0},"m":1}],"ind":6}],"v":"5.7.0","fr":30,"op":180,"ip":0,"assets":[]};
 
-  const slideshows = {
+  // ---------- Chiron session replay: the copy ----------
+  // Everything the replay says lives here. Edit freely; the layout code below
+  // reads it. `narration` is Rahul's speech bubble for the slide, plain text.
+  // In the slide copy, **text** is bold and ==text== gets the soft highlighter.
+  const replays = {
     chiron: {
-      n: 4,
-      bubbles: [
-        "Chiron turns a conversation into a micro-course. It chunks the content, gates each module with a knowledge check, pulls in your interests from memory, and teaches through Socratic discussion.",
-        "Every course opens with a hook and asks the learner to guess first. That guess tells Chiron how much they already know, so it can set the jargon, the complexity, and how fast the difficulty ramps.",
-        "LLMs can write code on the fly, so Chiron builds interactive simulations to show how concepts relate. Learners stay more engaged playing with a simulation than reading another paragraph.",
-        "Reviews pull questions from earlier modules, which is what separates this from a glorified blog post. Chiron grades each answer and adjusts, keeping learners in a productive struggle.",
-      ],
-      images: [
-        "chiron-1.webp",
-        "chiron-2.webp",
-        "chiron-3.webp",
-        "chiron-4.webp",
-      ],
-      alts: [
-        "A course on eigenvectors generated out of a conversation: the chat lists the six plates it built and flags that the sample data is synthetic, beside the rendered plate separating 120 students into three labelled clusters.",
-        "The opening of a photography course — a scenario about shooting the aurora on a phone beside a tripod-mounted DSLR, an invitation to guess badly, the learner’s guess, and Chiron replying that two of the three are right.",
-        "A videography course module rendered as an interactive page: an explanation of what raising ISO actually changes, followed by a gate the reader has to clear before continuing.",
-        "A module review that pulls a question from module 2, showing the learner’s answer marked against the correct one, then reaches further back to a module 1 question with its answer still hidden.",
+      slides: [
+        {
+          name: "In session",
+          narration: "Chiron is an AI tutor I built as a Claude Skill. On the left, a teacher asks how ChatGPT works. On the right, the interactive lesson Chiron built for her while they talked.",
+          type: "shot",
+          src: "chiron-replay-session.webp", width: 2000, height: 1125,
+          alt: "A Chiron session in Claude: the teacher's chat on the left, and on the right the Module 1 lesson Chiron built, titled One word at a time, opening on her own words.",
+          caption: "Click to enlarge",
+        },
+        {
+          name: "The loop",
+          narration: "Every course runs this loop. Chiron questions you until you're stuck, builds a lesson around that exact spot, then has you write your own flashcards.",
+          type: "loop",
+          label: "Chiron's core loop: Ask, then a repeating loop of Answer, Module and Flashcards, one lap per module.",
+          start: { title: "Ask", sub: ["Name anything you", "want to learn"] },
+          // angle in degrees around the loop; 180 is the left of the circle
+          nodes: [
+            { angle: 180, title: "Answer",     sub: ["Socratic questions find", "what you can't yet explain"] },
+            { angle: 300, title: "Module",     sub: ["A lesson built around", "that gap, with checks"] },
+            { angle: 60,  title: "Flashcards", sub: ["Write each card yourself,", "revise until it's right"] },
+          ],
+          center: ["One lap", "per module"],
+          centerSmall: ["until the", "course is done"],
+          notes: {
+            build: ["Builds the module while", "you keep talking"],
+            cards: ["Wrong answers", "become cards"],
+            next:  ["Next module adapts to", "what your answers showed"],
+          },
+          back: "↺ Back to 1 for the next module",
+        },
+        {
+          name: "Diagnose",
+          narration: "Every course opens with a few key questions. Each is built so the common wrong models give visibly different answers, which calibrates Chiron and the learner model and sets a baseline to measure growth against.",
+          type: "chat",
+          // `think` notes are annotations written for the portfolio, not Chiron's literal output
+          messages: [
+            { who: "teacher", text: "**/teachme** I use ChatGPT to help plan lessons for my 7th graders, but I don’t really know how it works." },
+            { who: "chiron", think: "Don’t explain yet. Find out how she thinks it works, starting from a failure she’s probably seen.",
+              text: "A lesson plan cites “Martinez & Cole (2019).” The study doesn’t exist. **Where did it come from?**" },
+            { who: "teacher", text: "I think ==it searches a big database== and mashed real studies together." },
+            { who: "chiron", think: "She believes it looks things up. A lookup would repeat itself, so give her a fact that breaks that.",
+              text: "A lookup gives the same thing every time. **So why does asking twice give different answers?**" },
+            { who: "teacher", text: "Maybe ==it memorized everything and rewords it== so it doesn’t sound robotic?" },
+          ],
+        },
+        {
+          name: "Build",
+          narration: "Her doubt that autocomplete could write a unit plan is the gap, so Chiron stops asking. Module 1 has been drafting since her first message. Now it gets fitted to her, opening on her own words.",
+          type: "chat",
+          messages: [
+            { who: "teacher", text: "“Fancy autocomplete” seems ==way too simple to write a whole unit plan.==" },
+            { who: "chiron", think: "She thinks it rewords stored facts, and she just named what she can’t explain. That’s the gap. Stop asking and build.",
+              text: "**Hold onto that doubt.** Module 1 starts from it.",
+              status: "Building Module 1 around “too simple”" },
+          ],
+          artifact: {
+            src: "chiron-replay-opening.webp", width: 1440, height: 550, wide: true, fade: true,
+            title: "Module 1 · One word at a time", note: "opens on her own words, highlighted",
+            alt: "Module 1 opening, quoting the teacher's doubt back to her with it highlighted",
+          },
+        },
+        {
+          name: "Simulate",
+          narration: "Chiron builds a simulation only when there's a real control to turn. This one is live: press Write the rest a few times, then predict what randomness at 0 will do and try it.",
+          type: "machine",
+          // the panel as Chiron built it in Module 1, with its own wording;
+          // only the run history is shortened so it fits the window
+          frame: { title: "Module 1 · The next-token machine", note: "built during the session, live here" },
+          title: "The next-token machine",
+          caption: "Schematic: a tiny hand-built version with a few dozen tokens and made-up scores. A real model scores about 100,000 tokens using everything it has read, but the loop is the same.",
+          prompt: "A simple way for students to see photosynthesis is to",
+          scoresLabel: "Next-token scores",
+          stepLabel: "Step {n}: scores for the next token (picked one is filled in)",
+          waiting: "press Write",
+          slider: "Randomness:",
+          sliderWords: { zero: "(always the favorite)", normal: "(normal)", high: "(long shots get more chances)" },
+          button: "Write the rest",
+          clear: "Clear history",
+          runsLabel: "Runs so far",
+          keepRuns: 2,
+          stepMs: 550,
+          // Chiron's Module 1 token table with its grammar fixed. The original
+          // could write "a leaf disks" and "count bubbles form", so leaf goes
+          // to in or under, float only to spinach disks, and the 5% "count"
+          // opening is folded into "watch". Every path now reads as a sentence.
+          table: {
+            START:     [[" place", .45], [" put", .25], [" watch", .20], [" float", .10]],
+            " place":  [[" a", .75], [" two", .25]],
+            " put":    [[" a", .8], [" two", .2]],
+            " watch":  [[" a", .6], [" bubbles", .4]],
+            " float":  [[" spinach", 1]],
+            " a":      [[" plant", .5], [" leaf", .3], [" sprig", .2]],
+            " two":    [[" plants", 1]],
+            " plant":  [[" in", .55], [" under", .45]],
+            " sprig":  [[" in", .55], [" under", .45]],
+            " plants": [[" in", .5], [" under", .5]],
+            " leaf":   [[" in", .55], [" under", .45]],
+            " spinach":[[" disks", 1]],
+            " disks":  [[" in", 1]],
+            " bubbles":[[" form", .6], [" rise", .4]],
+            " form":   [[" on", .5], [" from", .5]],
+            " rise":   [[" from", 1]],
+            " on":     [[" the", 1]],
+            " from":   [[" the", 1]],
+            " the":    [[" leaves", .65], [" plant", .35]],
+            " in":     [[" bright", .5], [" sunlight", .35], [" water", .15]],
+            " under":  [[" bright", .4], [" sunlight", .4], [" lamplight", .2]],
+            " bright": [[" light", .6], [" sunlight", .4]],
+          },
+          stop: [" light", " sunlight", " water", " lamplight", " leaves"],
+        },
+        {
+          name: "Check",
+          narration: "Each wrong option in a check stands for a specific wrong model. Her pick shows she thinks the model can go back and fix its own mistakes.",
+          type: "check",
+          artifact: {
+            src: "chiron-replay-check.webp", width: 1360, height: 712,
+            title: "Module 1 · Knowledge check", note: "her answer",
+            alt: "Module check: she chose 'It notices the mistake a few lines later and goes back to fix it', marked Not this one",
+          },
+          results: [ { kind: "misconception", text: "Misconception noticed" } ],
+          lines: [
+            "**What she believes:** the model reasons about what it writes and catches its own mistakes.",
+            "**What Chiron does with it:** verifies the grade, then puts a case in the next module where that belief predicts wrong. It also becomes a flashcard.",
+          ],
+        },
+        {
+          name: "Grade",
+          narration: "Short written answers are graded live inside the module, against a rubric from the course plan. Her first try was half right, so the nudge asks about the missing half.",
+          type: "grade",
+          tries: [
+            { label: "Explain it to a colleague · try 1",
+              answer: "“There’s some randomness built in, so it comes out worded differently each time.”",
+              result: { kind: "flag", text: "Part of the way there" } },
+            { label: "Try 2",
+              answer: "“…if the first picks come out different, **everything after builds on that different start.**”",
+              result: { kind: "right", text: "That covers it" } },
+          ],
+          nudge: "**Nudge:** What happens to the words it chooses later if the very first word is different?",
+          hand: "Claude grades it inside the page",
+          note: "When she submits, the module sends her answer to Claude and the feedback appears right in the lesson, in seconds. She never leaves the page or copies anything back into chat. Claude grades the idea against the rubric, and wording doesn't count.",
+        },
+        {
+          name: "Flashcards",
+          narration: "Back in the chat, Chiron asks the learner to write flashcards, and wrong answers from the checks become cards too. It grades each one with feedback but never writes the answer. Switch to Revised to see a second try.",
+          type: "cards",
+          prompt: "**Chiron** · Write the back of each card in your own words.",
+          card: {
+            kind: "Misconception card",
+            term: "Why is “it goes back to fix its mistakes” wrong?",
+            rounds: [
+              { label: "First try", badge: "close", badgeText: "Close",
+                answer: "Because it doesn’t really go back, it just keeps going forward.",
+                feedback: "**Close.** You said what it doesn’t do. Now say what happens to the wrong line once it’s written." },
+              { label: "Revised", badge: "done", badgeText: "Done",
+                answer: "It never rereads. A wrong line becomes part of the text every later pick reads, so the rest can build on the mistake.",
+                feedback: "**Done.** You named what happens to the mistake, which is the part that matters." },
+            ],
+          },
+          steps: [
+            { title: "Cards appear right in the chat", text: "An inline widget, no new tab or app." },
+            { title: "She writes every answer herself", text: "Generating it beats rereading a definition." },
+            { title: "Chiron grades each card and sends notes back", text: "Done, Close or Revise, with one pointed question." },
+            { title: "Revise until all pass, then it’s her deck", text: "A spaced-repetition deck that runs in any browser." },
+          ],
+        },
+        {
+          name: "Under the hood",
+          narration: "Each move maps to learning science research. The hardest design problem is restraint: helping enough without doing the learner's thinking. I test every prompt change with an eval suite and an LLM judge.",
+          type: "hood",
+          now: {
+            label: "Under the hood today", title: "What Chiron does",
+            items: [
+              ["Uses Socratic questioning to find the gap, then stops and teaches", "Socratic method · impasse-driven learning"],
+              ["Confronts a wrong model with a case it gets wrong", "conceptual change"],
+              ["Builds simulations you predict, then test", "predict, observe, explain"],
+              ["Tags every wrong option with the belief behind it", "diagnostic distractors"],
+              ["Reads free-text answers and nudges toward the gap", "elaborated feedback"],
+              ["Makes you write the flashcards yourself", "generation and retrieval practice"],
+            ],
+          },
+          next: {
+            label: "Not built yet", title: "What I'm adding next",
+            items: [
+              ["Remembers you between sessions with a learner model that carries over", "knowledge tracing"],
+              ["Brings old misconceptions back on a spaced review schedule", "spacing and retrieval practice"],
+              ["Picks the lightest format that does the job: a question, a worked example, a widget or a full module", "KLI · revised Bloom's · expertise reversal"],
+              ["A standalone app on the Anthropic API, with adaptivity built in", "adaptive instruction"],
+            ],
+          },
+        },
       ],
     },
+  };
+
+  const slideshows = {
     students: {
       n: 6,
       bubbles: [
@@ -1118,19 +1576,45 @@
     const strip = document.getElementById('strip-' + key);
     const holder = document.createElement('div');
     holder.className = 'scribble-extended';
-    const inner = document.createElement('div');
-    inner.className = 'scribble-extended-inner';
-    holder.appendChild(inner);
     strip.appendChild(holder);
-    const anim = lottie.loadAnimation({
-      container: inner,
-      renderer: 'svg',
-      loop: false,
-      autoplay: false,
-      animationData: JSON.parse(JSON.stringify(SCRIBBLE_EXT_DATA))
+    // the artwork holds SCRIBBLE_EXT_COUNT strokes; a longer slideshow chains
+    // copies end to end, each still sized so one stroke is one slide
+    const n = parseInt(strip.style.getPropertyValue('--n'), 10) || SCRIBBLE_EXT_COUNT;
+    const anims = Array.from({ length: Math.ceil(n / SCRIBBLE_EXT_COUNT) }, ()=>{
+      const inner = document.createElement('div');
+      inner.className = 'scribble-extended-inner';
+      holder.appendChild(inner);
+      const a = lottie.loadAnimation({
+        container: inner,
+        renderer: 'svg',
+        loop: false,
+        autoplay: false,
+        animationData: JSON.parse(JSON.stringify(SCRIBBLE_EXT_DATA))
+      });
+      a.setSpeed(1.5);
+      return a;
     });
-    anim.setSpeed(1.5);
+    if (anims.length > 1) holder.classList.add('chained');
     const per = SCRIBBLE_EXT_DATA.op / SCRIBBLE_EXT_COUNT;
+    // one copy's frame for overall stroke t; the first copy stays full once
+    // the strip has moved past it
+    const local = (k, t)=> Math.max(0, Math.min(SCRIBBLE_EXT_COUNT, t - k * SCRIBBLE_EXT_COUNT));
+    // goToAndStop counts from the start of the last segment played, so each
+    // copy drops its segment before jumping, or a finished copy would blank
+    const settle = (a, frame)=>{ a.resetSegments(true); a.goToAndStop(frame, true); };
+    const anim = {
+      setDirection(d){ anims.forEach(a=>a.setDirection(d)); },
+      resetSegments(f){ anims.forEach(a=>a.resetSegments(f)); },
+      goToAndStop(frame){ const t = frame / per; anims.forEach((a, k)=> settle(a, local(k, t) * per)); },
+      playSegments([from, to]){
+        const f = from / per, t = to / per;
+        anims.forEach((a, k)=>{
+          const lf = local(k, f), lt = local(k, t);
+          if (lt > lf) a.playSegments([lf * per, lt * per], true);
+          else if (anims.length > 1) settle(a, lt * per);
+        });
+      },
+    };
     let shown = 0, loaded = false, seen = false;
     // the first stroke waits until the strip is both loaded and half on screen,
     // so it draws in front of the reader rather than on page load
@@ -1141,7 +1625,8 @@
       else anim.playSegments([0, per], true);
       shown = 1;
     }
-    anim.addEventListener('DOMLoaded', ()=>{ loaded = true; drawFirst(); });
+    let pending = anims.length;
+    anims.forEach(a=> a.addEventListener('DOMLoaded', ()=>{ if (--pending === 0){ loaded = true; drawFirst(); } }));
     if ('IntersectionObserver' in window){
       const io = new IntersectionObserver(entries=>{
         // a beat's pause lets the section's screenshot decode first; drawing
@@ -1263,6 +1748,338 @@
 
   Object.keys(slideshows).forEach(buildSlideshow);
 
+  // ---------- Chiron session replay: layout ----------
+  // Renders the `replays` data into the slide card. Copy belongs in the data;
+  // this only decides how each type of slide is laid out.
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  // **bold** and ==highlight==. Styled text gets the data-flatten treatment:
+  // the styled copy is hidden from assistive tech and a plain twin is read
+  // instead, so VoiceOver doesn't read the block twice
+  function rich(s, hlClass){
+    const plain = esc(s.replace(/\*\*|==/g, ''));
+    const styled = esc(s)
+      .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+      .replace(/==(.+?)==/g, `<span class="${hlClass || 'rp-said'}">$1</span>`);
+    return styled === plain ? plain
+      : `<span aria-hidden="true">${styled}</span><span class="sr-only">${plain}</span>`;
+  }
+
+  function rpArtifact(a){
+    return `<figure class="rp-artifact${a.wide ? ' wide' : ''}${a.fade ? ' fade' : ''}">
+      <figcaption class="rp-artifact-bar"><span>${esc(a.title)}</span><span>${esc(a.note)}</span></figcaption>
+      <img src="${a.src}" alt="${esc(a.alt)}" width="${a.width}" height="${a.height}">
+    </figure>`;
+  }
+
+  function rpMessage(m){
+    return `<div class="rp-msg ${m.who}">
+      <span class="rp-mono-label">${m.who === 'teacher' ? 'User' : 'Chiron'}</span>
+      ${m.think ? `<p class="rp-think"><span class="rp-think-k">Thinking</span>${rich(m.think)}</p>` : ''}
+      <p class="rp-body">${rich(m.text)}</p>
+      ${m.status ? `<p class="rp-build"><span class="rp-dot" aria-hidden="true"></span>${esc(m.status)}</p>` : ''}
+    </div>`;
+  }
+  const rpChat = s => s.messages.map(rpMessage).join('') + (s.artifact ? rpArtifact(s.artifact) : '');
+
+  // the loop: nodes sit on a circle at their data angles, and each arc runs
+  // from where it clears one node's box to where it reaches the next
+  function rpLoop(s){
+    const cx = 620, cy = 232, r = 188, W = 196, H = 86;
+    const f = v => v.toFixed(1);
+    const P = (a, rad = r) => [cx + rad * Math.cos(a * Math.PI / 180), cy + rad * Math.sin(a * Math.PI / 180)];
+    const inBox = (a, at, pad) => { const [x, y] = P(a), [bx, by] = P(at);
+      return Math.abs(x - bx) < W / 2 + pad && Math.abs(y - by) < H / 2 + pad; };
+    const arcs = s.nodes.map((nd, k) => {
+      const to = s.nodes[(k + 1) % s.nodes.length];
+      let a1 = nd.angle, a2 = to.angle; if (a2 <= a1) a2 += 360;
+      while (inBox(a1, nd.angle, 10)) a1++;
+      while (inBox(a2, to.angle, 14)) a2--;
+      return [a1, a2];
+    });
+    const arc = ([a1, a2], cls, rad = r, arrow = true) => { const [x1, y1] = P(a1, rad), [x2, y2] = P(a2, rad);
+      return `<path class="${cls}" d="M${f(x1)} ${f(y1)} A${rad} ${rad} 0 0 1 ${f(x2)} ${f(y2)}"${arrow ? ' marker-end="url(#rp-ah)"' : ''}/>`; };
+    const node = (x, y, n, it, cls) => `<g class="node ${cls || ''}"><rect x="${f(x - W / 2)}" y="${f(y - H / 2)}" width="${W}" height="${H}" rx="14"/>
+      <circle class="num" cx="${f(x - W / 2 + 22)}" cy="${f(y - H / 2 + 24)}" r="12"/><text class="numt" x="${f(x - W / 2 + 22)}" y="${f(y - H / 2 + 28.5)}" text-anchor="middle">${n}</text>
+      <text class="ttl" x="${f(x - W / 2 + 42)}" y="${f(y - H / 2 + 31)}">${esc(it.title)}</text>
+      <text class="sub" x="${f(x - W / 2 + 16)}" y="${f(y + 12)}">${esc(it.sub[0])}</text><text class="sub" x="${f(x - W / 2 + 16)}" y="${f(y + 30)}">${esc(it.sub[1])}</text></g>`;
+    const note = (lines, x, y, cls) => lines.map((l, k) => `<text class="hand ${cls || ''}" x="${x}" y="${y + k * 22}">${esc(l)}</text>`).join('');
+    const [b1, b2] = arcs[0];
+    let svg = `<svg class="rp-loop-svg" viewBox="0 0 1000 482" role="img" aria-label="${esc(s.label)}">
+      <defs><marker id="rp-ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#1D4ED8"/></marker>
+      <marker id="rp-ah2" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#182338"/></marker></defs>
+      <circle class="ring" cx="${cx}" cy="${cy}" r="${r}"/>`;
+    svg += arcs.map(a => arc(a, 'arc')).join('');
+    svg += arc([b1 + 6, b2 - 6], 'bgarc', r + 30, false);
+    svg += note(s.notes.build, 268, 38) + note(s.notes.cards, 830, 210) + note(s.notes.next, 268, 436);
+    svg += `<path class="entry" d="M${118 + W / 2 - 8} ${cy} L${f(cx - r - W / 2 - 10)} ${cy}" marker-end="url(#rp-ah2)"/>` + node(118, cy, 0, s.start, 'start');
+    svg += s.nodes.map((nd, k) => { const [x, y] = P(nd.angle); return node(x, y, k + 1, nd); }).join('');
+    svg += `<text class="center" x="${cx}" y="${cy - 25}" text-anchor="middle">${esc(s.center[0])}</text><text class="center" x="${cx}" y="${cy - 1}" text-anchor="middle">${esc(s.center[1])}</text>`;
+    svg += `<text class="center2" x="${cx}" y="${cy + 23}" text-anchor="middle">${esc(s.centerSmall[0].toUpperCase())}</text><text class="center2" x="${cx}" y="${cy + 40}" text-anchor="middle">${esc(s.centerSmall[1].toUpperCase())}</text></svg>`;
+    const li = (n, it, cls) => `<li class="${cls || ''}"><span class="rp-n">${n}</span><span><b>${esc(it.title)}</b>${esc(it.sub.join(' '))}</span></li>`;
+    return svg + `<ol class="rp-loop-list">${li(0, s.start, 'start')}${s.nodes.map((nd, k) => li(k + 1, nd)).join('')}<li class="back">${esc(s.back)}</li></ol>`;
+  }
+
+  let rpTried = false;   // the visitor has pressed Write the rest at least once
+  function rpMachine(s){
+    return `<figure class="rp-artifact rp-mod-frame">
+      <figcaption class="rp-artifact-bar"><span>${esc(s.frame.title)}</span><span>${esc(s.frame.note)}</span></figcaption>
+      <div class="rp-mod"><div class="rp-mod-panel">
+        <h3>${esc(s.title)}</h3>
+        <p class="rp-mod-cap">${esc(s.caption)}</p>
+        <p><code>${esc(s.prompt)}</code><span class="rp-mod-out" data-rp="out"></span></p>
+        <div>
+          <p class="rp-mod-eyebrow" data-rp="step">${esc(s.scoresLabel)}</p>
+          <div class="rp-mod-chips" data-rp="scores"><span class="rp-mod-chip">${esc(s.waiting)}</span></div>
+        </div>
+        <label for="rp-temp" class="rp-mod-slider">
+          <span><b>${esc(s.slider)}</b> <span data-rp="tval">1.0</span> <span class="rp-mod-cap" data-rp="tword">${esc(s.sliderWords.normal)}</span></span>
+          <input id="rp-temp" type="range" min="0" max="2" step="0.1" value="1">
+        </label>
+        <div class="rp-mod-btns">
+          <button type="button" class="rp-mod-btn${rpTried ? '' : ' rp-pulse'}" data-rp="go" aria-disabled="false">${esc(s.button)}</button>
+          <button type="button" class="rp-mod-btn quiet" data-rp="clear">${esc(s.clear)}</button>
+        </div>
+        <div><p class="rp-mod-eyebrow">${esc(s.runsLabel)}</p><ol class="rp-mod-hist" data-rp="runs"></ol></div>
+      </div></div>
+    </figure>`;
+  }
+  // scores reshaped by randomness: 0 always takes the favorite, 1 keeps the
+  // table's odds, 2 flattens them so long shots win more often
+  function rpReweight(list, T){
+    if (T < 0.05){ const m = Math.max(...list.map(x => x[1])); return list.map(([t, p]) => [t, p === m ? 1 : 0]); }
+    const w = list.map(([t, p]) => [t, Math.pow(p, 1 / T)]), sum = w.reduce((a, b) => a + b[1], 0);
+    return w.map(([t, v]) => [t, v / sum]);
+  }
+  function rpDraw(list){
+    let r = Math.random(), acc = 0;
+    for (const [t, p] of list){ acc += p; if (r <= acc) return t; }
+    return list[list.length - 1][0];
+  }
+  // the module's own loop and labels; runs are numbered from the first, and
+  // the list shows the latest few so the panel keeps its height
+  function rpInitMachine(view, s){
+    const q = k => view.querySelector(`[data-rp="${k}"]`);
+    const temp = view.querySelector('#rp-temp'), go = q('go'), stop = new Set(s.stop);
+    const waiting = `<span class="rp-mod-chip">${esc(s.waiting)}</span>`;
+    let runs = [], busy = false;
+    const showT = () => {
+      const v = +temp.value;
+      q('tval').textContent = v.toFixed(1);
+      q('tword').textContent = v < 0.05 ? s.sliderWords.zero : v <= 1 ? s.sliderWords.normal : s.sliderWords.high;
+      temp.setAttribute('aria-valuetext', `${v.toFixed(1)} ${q('tword').textContent}`);
+    };
+    const showRuns = () => {
+      q('runs').innerHTML = runs.slice(-s.keepRuns).map((r, k, shown) =>
+        `<li value="${runs.length - shown.length + k + 1}">…to${esc(r.text)}. (randomness ${r.T.toFixed(1)})</li>`).join('');
+    };
+    temp.addEventListener('input', showT); showT();
+    q('clear').addEventListener('click', () => {
+      if (busy) return;
+      runs = []; showRuns();
+      q('out').textContent = ''; q('scores').innerHTML = waiting; q('step').textContent = s.scoresLabel;
+    });
+    go.addEventListener('click', async () => {
+      rpTried = true; go.classList.remove('rp-pulse');
+      if (busy) return;
+      // aria-disabled, not disabled, so focus stays on the button mid-run
+      busy = true; go.setAttribute('aria-disabled', 'true');
+      const T = +temp.value; let prev = 'START', text = '';
+      q('out').textContent = '';
+      for (let n = 0; n < 10; n++){
+        const list = rpReweight(s.table[prev], T).sort((a, b) => b[1] - a[1]), pick = rpDraw(list);
+        q('scores').innerHTML = list.map(([t, p]) => `<span class="rp-mod-chip${t === pick ? ' top' : ''}">${esc(t.trim())}<span class="pct">${Math.round(p * 100)}%</span></span>`).join('');
+        q('step').textContent = s.stepLabel.replace('{n}', n + 1);
+        text += pick; q('out').textContent = text;
+        if (!reduceMotion.matches) await new Promise(res => setTimeout(res, s.stepMs));
+        if (!go.isConnected) return;      // left the slide mid-run
+        if (stop.has(pick) || !s.table[pick]) break;
+        prev = pick;
+      }
+      q('out').textContent = text + '.';
+      runs.push({ text, T }); showRuns();
+      // one announcement per run rather than a live region chattering every step
+      announce(`Run ${runs.length}: ${s.prompt}${text}.`);
+      busy = false; go.setAttribute('aria-disabled', 'false');
+    });
+  }
+
+  function rpShot(s){
+    return `<button type="button" class="zoom-btn rp-shot" aria-label="Enlarge image: ${esc(s.alt)}"><img src="${s.src}" alt="${esc(s.alt)}" width="${s.width}" height="${s.height}"></button>
+      <p class="rp-mono-label rp-shot-cap" aria-hidden="true">${esc(s.caption)}</p>`;
+  }
+  function rpInitShot(view){
+    const btn = view.querySelector('.rp-shot'), img = btn.querySelector('img');
+    btn.addEventListener('click', () => window.openLightbox && window.openLightbox(img.currentSrc || img.src, img.alt));
+  }
+
+  function rpCheck(s){
+    return `<div class="rp-split wide-left">${rpArtifact(s.artifact)}
+      <div class="rp-side"><p class="rp-chips">${s.results.map(r => `<span class="rp-chip ${r.kind}">${esc(r.text)}</span>`).join('')}</p>
+      ${s.lines.map(l => `<p>${rich(l)}</p>`).join('')}</div></div>`;
+  }
+
+  function rpGrade(s){
+    const attempt = t => `<div class="rp-attempt"><span class="rp-mono-label">${esc(t.label)}</span><p>${rich(t.answer)}</p><span class="rp-chip ${t.result.kind}">${esc(t.result.text)}</span></div>`;
+    return `<div class="rp-split">
+      <div class="rp-side">${attempt(s.tries[0])}<p class="rp-nudge">${rich(s.nudge)}</p>${attempt(s.tries[1])}</div>
+      <div class="rp-side"><p class="rp-hand">${esc(s.hand)}</p><p>${esc(s.note)}</p></div></div>`;
+  }
+
+  function rpCard(c, k){
+    const r = c.rounds[k];
+    return `<div class="rp-card"><div class="rp-card-top"><span class="rp-card-kind">${esc(c.kind)}</span><span class="rp-badge ${r.badge}">${esc(r.badgeText)}</span></div>
+      <p class="rp-card-term">${esc(c.term)}</p><p class="rp-card-back">${esc(r.answer)}</p>
+      <p class="rp-card-fb ${r.badge}">${rich(r.feedback)}</p></div>`;
+  }
+  function rpCards(s){
+    const c = s.card;
+    return `<div class="rp-fcslide">
+      <div class="rp-inline">
+        <p class="rp-ctx">${rich(s.prompt)}</p>
+        <div data-rp="card" aria-live="polite">${rpCard(c, 0)}</div>
+        <div class="rp-row"><div class="rp-seg">${c.rounds.map((r, k) => `<button type="button" data-round="${k}" aria-pressed="${k === 0}">${esc(r.label)}</button>`).join('')}</div></div>
+      </div>
+      <ol class="rp-steps">${s.steps.map(st => `<li><span><b>${esc(st.title)}</b>${esc(st.text)}</span></li>`).join('')}</ol>
+    </div>`;
+  }
+  function rpInitCards(view, s){
+    const btns = [...view.querySelectorAll('.rp-seg button')];
+    btns.forEach(b => b.addEventListener('click', () => {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      const k = +b.dataset.round;
+      btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      view.querySelector('[data-rp="card"]').innerHTML = rpCard(s.card, k);
+    }));
+  }
+
+  function rpHood(s){
+    const col = (c, cls, ic) => `<div class="rp-col ${cls}"><p class="rp-mono-label">${esc(c.label)}</p><h3>${esc(c.title)}</h3>
+      <ul>${c.items.map(([t, term]) => `<li><span class="rp-ic" aria-hidden="true">${ic}</span><span>${esc(t)}<small>${esc(term)}</small></span></li>`).join('')}</ul></div>`;
+    return `<div class="rp-hood">${col(s.now, 'now', '✓')}${col(s.next, 'next', '')}</div>`;
+  }
+
+  const RP_RENDER = { shot: rpShot, loop: rpLoop, chat: rpChat, machine: rpMachine, check: rpCheck, grade: rpGrade, cards: rpCards, hood: rpHood };
+
+  // the order a slide's pieces come in, as [elements, delay in ms] beats.
+  // Chat runs on a conversation's rhythm: the teacher replies quickly, and
+  // Chiron takes a longer beat, as if typing.
+  const RP_ENTER = {
+    chat: v => {
+      const beats = []; let t = 120, first = true;
+      v.querySelectorAll('.rp-msg, .rp-artifact').forEach(el => {
+        if (!first) t += el.classList.contains('chiron') ? 900 : el.classList.contains('teacher') ? 650 : 700;
+        first = false; beats.push([[el], t]);
+        // a Chiron turn shows its thinking first, then the reply, then what it's building
+        if (el.querySelector('.rp-think')) { t += 500; beats.push([[el.querySelector('.rp-body')], t]); }
+        if (el.querySelector('.rp-build')) { t += 400; beats.push([[el.querySelector('.rp-build')], t]); }
+      });
+      return beats;
+    },
+    loop: v => [
+      ...[...v.querySelectorAll('.rp-loop-svg .node')].map((el, k) => [[el], 100 + k * 150]),
+      [[...v.querySelectorAll('.rp-loop-svg .ring, .rp-loop-svg .arc, .rp-loop-svg .bgarc, .rp-loop-svg .entry, .rp-loop-svg .center, .rp-loop-svg .center2')], 450],
+      [[...v.querySelectorAll('.rp-loop-svg .hand')], 950],
+      ...[...v.querySelectorAll('.rp-loop-list li')].map((el, k) => [[el], 100 + k * 120]),
+    ],
+    machine: v => [[[v.querySelector('.rp-artifact')], 100]],
+    shot: v => [[[v.querySelector('.rp-shot')], 100], [[v.querySelector('.rp-shot-cap')], 500]],
+    check: v => [v.querySelector('.rp-artifact'), ...v.querySelectorAll('.rp-side > *')].map((el, k) => [[el], 100 + k * 160]),
+    grade: v => [...v.querySelectorAll('.rp-side > *')].map((el, k) => [[el], 100 + k * 220]),
+    cards: v => [v.querySelector('.rp-inline'), ...v.querySelectorAll('.rp-steps li')].map((el, k) => [[el], 100 + k * 160]),
+    hood: v => [...v.querySelectorAll('.rp-col')].flatMap((col, c) =>
+      [[[col], 100 + c * 200], ...[...col.querySelectorAll('li')].map((li, k) => [[li], 260 + c * 200 + k * 90])]),
+  };
+  function rpStage(view, type){
+    (RP_ENTER[type] ? RP_ENTER[type](view) : []).forEach(([els, t]) => els.forEach(el => {
+      if (!el) return;
+      el.classList.add('rp-in');
+      el.style.setProperty('--delay', t + 'ms');
+    }));
+  }
+  const RP_INIT = { shot: rpInitShot, machine: rpInitMachine, cards: rpInitCards };
+
+  function buildReplay(key){
+    const cfg = replays[key], n = cfg.slides.length;
+    let idx = 0;
+    document.getElementById('strip-' + key).style.setProperty('--n', n);
+    const region = document.getElementById('ss-' + key);
+    const cap    = document.getElementById('cap-k-' + key);
+    const bubble = document.getElementById('bubble-' + key);
+    const view   = document.getElementById('view-' + key);
+    const arrows = [...document.querySelectorAll(`[data-target="${key}"]`)];
+    const syncExtended = buildExtendedScribble(key);
+
+    // same slide-up as the screenshot slideshows
+    function popBubble(){
+      bubble.classList.remove('bubble-wait', 'bubble-in');
+      void bubble.offsetWidth;
+      bubble.classList.add('bubble-in');
+    }
+    if ('IntersectionObserver' in window){
+      bubble.classList.add('bubble-wait');
+      const io = new IntersectionObserver(entries=>{
+        if (entries.some(e=>e.isIntersecting)){ io.disconnect(); popBubble(); }
+      }, { threshold:0.5 });
+      io.observe(bubble);
+    }
+
+    // entrances play once the card is on screen; before that the first slide
+    // waits, so its chat isn't over by the time anyone scrolls to it
+    let seen = !('IntersectionObserver' in window);
+    function play(){
+      if (!seen) return;
+      view.classList.remove('rp-play');
+      void view.offsetWidth;
+      view.classList.add('rp-play');
+    }
+    if (!seen){
+      const io = new IntersectionObserver(entries=>{
+        if (entries.some(e=>e.isIntersecting)){ io.disconnect(); seen = true; play(); }
+      }, { threshold:0.35 });
+      io.observe(view);
+    }
+
+    function render(){
+      const s = cfg.slides[idx];
+      // the caption and the narration are the live regions; the slide body is
+      // not, so a slide change announces two short lines, not a whole transcript
+      const label = `Slide ${idx + 1} of ${n} · ${s.name}`;
+      if (cap.textContent !== label) cap.textContent = label;
+      if (bubble.textContent !== s.narration) bubble.textContent = s.narration;
+      view.innerHTML = `<div class="rp-slide">${RP_RENDER[s.type](s)}</div>`;
+      view.scrollTop = 0;
+      rpStage(view, s.type);
+      play();
+      if (RP_INIT[s.type]) RP_INIT[s.type](view, s);
+      arrows.forEach(btn=>{
+        const dir = parseInt(btn.dataset.dir, 10);
+        btn.setAttribute('aria-disabled', (dir < 0 ? idx === 0 : idx === n - 1) ? 'true' : 'false');
+      });
+    }
+
+    function go(dir){
+      const next = Math.max(0, Math.min(n - 1, idx + dir));
+      if (next === idx) return;
+      idx = next;
+      syncExtended(idx + 1);
+      render();
+      popBubble();
+    }
+
+    arrows.forEach(btn => btn.addEventListener('click', () => go(parseInt(btn.dataset.dir, 10))));
+    // left / right anywhere in the card, except where the keys already mean
+    // something: the randomness slider
+    region.addEventListener('keydown', e=>{
+      if (e.target.closest('input, textarea, select')) return;
+      if (e.key === 'ArrowLeft'){ e.preventDefault(); go(-1); }
+      else if (e.key === 'ArrowRight'){ e.preventDefault(); go(1); }
+    });
+
+    render();
+  }
+
+  Object.keys(replays).forEach(buildReplay);
+
   // ---------- click an image to enlarge; pinch/scroll to zoom ----------
   (function(){
     const lb = document.createElement('div');
@@ -1301,6 +2118,7 @@
       zoomBtn.textContent = on ? 'Zoom out' : 'Zoom in';
     }
 
+    window.openLightbox = openLightbox;
     function openLightbox(src, alt){
       lastFocus = document.activeElement;
       big.src = src;
@@ -1346,7 +2164,8 @@
       }
     });
 
-    document.querySelectorAll('.zoom-btn').forEach(btn => {
+    // the replay re-renders its slides, so it binds its own button (rpInitShot)
+    document.querySelectorAll('.zoom-btn:not(.rp-shot)').forEach(btn => {
       const img = btn.querySelector('img');
       btn.addEventListener('click', () => openLightbox(img.currentSrc || img.src, img.alt));
     });
