@@ -1254,8 +1254,8 @@
           start: { title: "Ask", sub: ["Name anything you", "want to learn"] },
           // angle in degrees around the loop; 180 is the left of the circle
           nodes: [
-            { angle: 180, title: "Answer",     sub: ["Socratic questions until", "you hit the wall"] },
-            { angle: 300, title: "Module",     sub: ["A lesson built around", "that wall, with checks"] },
+            { angle: 180, title: "Answer",     sub: ["Socratic questions find", "what you can't yet explain"] },
+            { angle: 300, title: "Module",     sub: ["A lesson built around", "that gap, with checks"] },
             { angle: 60,  title: "Flashcards", sub: ["Write each card yourself,", "revise until it's right"] },
           ],
           center: ["One lap", "per module"],
@@ -1284,11 +1284,11 @@
         },
         {
           name: "Build",
-          narration: "Her doubt that autocomplete could write a unit plan is the wall, so Chiron stops asking. Module 1 has been drafting since her first message. Now it gets fitted to her, opening on her own words.",
+          narration: "Her doubt that autocomplete could write a unit plan is the gap, so Chiron stops asking. Module 1 has been drafting since her first message. Now it gets fitted to her, opening on her own words.",
           type: "chat",
           messages: [
             { who: "teacher", text: "“Fancy autocomplete” seems ==way too simple to write a whole unit plan.==" },
-            { who: "chiron", think: "She thinks it rewords stored facts, and she just named what she can’t explain. That’s the wall. Stop asking and build.",
+            { who: "chiron", think: "She thinks it rewords stored facts, and she just named what she can’t explain. That’s the gap. Stop asking and build.",
               text: "**Hold onto that doubt.** Module 1 starts from it.",
               status: "Building Module 1 around “too simple”" },
           ],
@@ -1410,7 +1410,7 @@
           now: {
             label: "Under the hood today", title: "What Chiron does",
             items: [
-              ["Questions you to the wall, then stops asking", "impasse-driven learning"],
+              ["Uses Socratic questioning to find the gap, then stops and teaches", "Socratic method · impasse-driven learning"],
               ["Confronts a wrong model with a case it gets wrong", "conceptual change"],
               ["Builds simulations you predict, then test", "predict, observe, explain"],
               ["Tags every wrong option with the belief behind it", "diagnostic distractors"],
@@ -1423,6 +1423,7 @@
             items: [
               ["Remembers you between sessions with a learner model that carries over", "knowledge tracing"],
               ["Brings old misconceptions back on a spaced review schedule", "spacing and retrieval practice"],
+              ["Picks the lightest format that does the job: a question, a worked example, a widget or a full module", "KLI · revised Bloom's · expertise reversal"],
               ["A standalone app on the Anthropic API, with adaptivity built in", "adaptive instruction"],
             ],
           },
