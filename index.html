@@ -631,6 +631,16 @@
   .rp-artifact-bar span{ white-space:nowrap; }
   .rp-artifact img{ width:100%; height:auto; }
   .rp-artifact.wide{ width:100%; max-width:790px; align-self:center; }
+  /* the folded diagnose-and-build slide: chat column beside the module */
+  .rp-chatsplit{ grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); align-items:center; }
+  /* a tall crop of the module, cut to the window and faded out at the bottom */
+  .rp-artifact.fade.tall{
+    max-width:none; max-height:500px;
+    -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 110px), transparent);
+            mask-image:linear-gradient(to bottom, #000 calc(100% - 110px), transparent);
+  }
+  .rp-chatcol{ display:flex; flex-direction:column; gap:8px; }
+  .rp-chatcol .rp-msg{ max-width:92%; }
   /* slide 1: the real session, chat beside the module it built */
   .rp-shot{
     height:auto; max-width:820px; align-self:center; border-radius:10px; overflow:hidden;
@@ -780,6 +790,7 @@
   .rp-loop-list li.back{ border:0; background:none; padding:0 0 0 38px; font-family:var(--rp-hand); font-weight:600; font-size:14px; color:var(--pen); }
 
   @container (max-width:760px){
+    .rp-artifact.fade.tall{ max-height:360px; }
     .rp-view{ height:auto; min-height:420px; }
     .rp-split, .rp-split.wide-left, .rp-hood, .rp-fcslide{ grid-template-columns:1fr; }
     .rp-msg{ max-width:92%; }
@@ -1280,32 +1291,20 @@
           back: "↺ Back to 1 for the next module",
         },
         {
-          name: "Diagnose",
-          narration: "Every course opens with a few key questions. Each is built so the common wrong models give visibly different answers, which calibrates Chiron and the learner model and sets a baseline to measure growth against.",
+          name: "Diagnose and build",
+          split: true,
+          narration: "Every course opens with a few key questions that calibrate the learner model. Once the gap shows, Chiron stops asking and fits the module it has been drafting since the first message.",
           type: "chat",
-          // `think` notes are annotations written for the portfolio, not Chiron's literal output
           messages: [
             { who: "teacher", text: "**/teachme** I use ChatGPT to help plan lessons for my 7th graders, but I don’t really know how it works." },
-            { who: "chiron", think: "Don’t explain yet. Find out how she thinks it works, starting from a failure she’s probably seen.",
-              text: "A lesson plan cites “Martinez & Cole (2019).” The study doesn’t exist. **Where did it come from?**" },
-            { who: "teacher", text: "I think ==it searches a big database== and mashed real studies together." },
-            { who: "chiron", think: "She believes it looks things up. A lookup would repeat itself, so give her a fact that breaks that.",
-              text: "A lookup gives the same thing every time. **So why does asking twice give different answers?**" },
-            { who: "teacher", text: "Maybe ==it memorized everything and rewords it== so it doesn’t sound robotic?" },
-          ],
-        },
-        {
-          name: "Build",
-          narration: "Her doubt that autocomplete could write a unit plan is the gap, so Chiron stops asking. Module 1 has been drafting since her first message. Now it gets fitted to her, opening on her own words.",
-          type: "chat",
-          messages: [
-            { who: "teacher", text: "“Fancy autocomplete” seems ==way too simple to write a whole unit plan.==" },
-            { who: "chiron", think: "She thinks it rewords stored facts, and she just named what she can’t explain. That’s the gap. Stop asking and build.",
+            { who: "chiron", text: "A lesson plan cites “Martinez & Cole (2019).” The study doesn’t exist. **Where did it come from?**" },
+            { who: "teacher", text: "Maybe ==it memorized everything and rewords it?== Autocomplete seems ==too simple to write a unit plan.==" },
+            { who: "chiron", think: "She just named what she can’t explain. That’s the gap. Stop asking and build.",
               text: "**Hold onto that doubt.** Module 1 starts from it.",
               status: "Building Module 1 around “too simple”" },
           ],
           artifact: {
-            src: "assets/chiron-replay-opening.webp", width: 1440, height: 550, wide: true, fade: true,
+            src: "assets/chiron-replay-module.webp", width: 880, height: 1280, fade: true, tall: true,
             title: "Module 1 · One word at a time", note: "opens on her own words, highlighted",
             alt: "Module 1 opening, quoting the teacher's doubt back to her with it highlighted",
           },
@@ -1748,7 +1747,7 @@
   }
 
   function rpArtifact(a){
-    return `<figure class="rp-artifact${a.wide ? ' wide' : ''}${a.fade ? ' fade' : ''}">
+    return `<figure class="rp-artifact${a.wide ? ' wide' : ''}${a.fade ? ' fade' : ''}${a.tall ? ' tall' : ''}">
       <figcaption class="rp-artifact-bar"><span>${esc(a.title)}</span><span>${esc(a.note)}</span></figcaption>
       <img src="${a.src}" alt="${esc(a.alt)}" width="${a.width}" height="${a.height}">
     </figure>`;
@@ -1762,7 +1761,10 @@
       ${m.status ? `<p class="rp-build"><span class="rp-dot" aria-hidden="true"></span>${esc(m.status)}</p>` : ''}
     </div>`;
   }
-  const rpChat = s => s.messages.map(rpMessage).join('') + (s.artifact ? rpArtifact(s.artifact) : '');
+  const rpChat = s => s.split
+    // chat on the left, the module it builds on the right
+    ? `<div class="rp-split rp-chatsplit"><div class="rp-chatcol">${s.messages.map(rpMessage).join('')}</div>${rpArtifact(s.artifact)}</div>`
+    : s.messages.map(rpMessage).join('') + (s.artifact ? rpArtifact(s.artifact) : '');
 
   // the loop: nodes sit on a circle at their data angles, and each arc runs
   // from where it clears one node's box to where it reaches the next
