@@ -77,9 +77,12 @@ the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
 - Styles are the `CHIRON REPLAY` block, scoped to `.replay` with `rp-` class names, built on
   the site tokens. Its window is fixed at 540px tall and every slide must fit it without
   scrolling at 1440 and 1024 wide; recheck both after copy changes.
-- The token machine on slide 4 is live code, ported from Chiron's Module 1. Its table carries
-  one deliberate change from the original: the leaf and float routes, which could write
-  "a leaf disks" or "float leaf in", commented in the data.
+- Slide 4 is the next-token machine as Chiron built it in Module 1: the module's own markup,
+  wording, dark theme and fonts (Atkinson Hyperlegible, Bricolage Grotesque), scoped under
+  `.rp-mod` inside a dark Module 1 frame. Its logic is the module's, with the token table's
+  grammar fixed so every path reads as a sentence (no "a leaf disks", "float leaf in" or
+  "count bubbles form"; see the comment in the data). The run list shows the latest 2 runs so
+  the panel fits the window.
 - Images are `assets/chiron-replay-*.webp`. The knowledge check was recaptured at 2x from the
   module's own HTML in its dark scheme.
 - The scribble track chains copies of its 6-stroke Lottie when a slideshow has more than 6

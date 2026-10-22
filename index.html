@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" href="assets/avatar-rahul.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Rock+Salt&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Rock+Salt&family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg: #FCFBF7;
@@ -597,11 +597,13 @@
 
   /* screenshot frames */
   .rp-artifact{ margin:0; border:1px solid var(--rp-module-line); border-radius:10px; overflow:hidden; background:var(--rp-module); }
+  /* the two labels wrap as whole phrases on a narrow screen, never mid-phrase */
   .rp-artifact-bar{
-    display:flex; justify-content:space-between; gap:10px;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:2px 10px;
     font-family:var(--rp-mono); font-size:11px; color:#C9CDE0;
     padding:6px 10px; border-bottom:1px solid var(--rp-module-line);
   }
+  .rp-artifact-bar span{ white-space:nowrap; }
   .rp-artifact img{ width:100%; height:auto; }
   .rp-artifact.wide{ width:100%; max-width:790px; align-self:center; }
 
@@ -616,40 +618,49 @@
   .rp-attempt .rp-chip{ align-self:flex-start; }
   .rp-nudge{ border-left:3px solid var(--rp-amber); padding:4px 0 4px 12px; font-size:14.5px; line-height:1.5; }
 
-  /* next-token machine */
-  .rp-machine{ display:flex; flex-direction:column; gap:14px; max-width:760px; width:100%; margin:0 auto; }
-  .rp-machine-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; }
-  .rp-prompt{
-    font-family:var(--rp-mono); font-size:15px; line-height:1.6;
-    background:var(--bg); border:1px solid var(--line); border-radius:10px;
-    padding:12px 14px; min-height:76px;
+  /* next-token machine: shown as Chiron built it in Module 1, with the
+     module's own dark theme, type and controls. Scoped to .rp-mod so none of
+     it leaks into the page. */
+  .rp-mod-frame{ width:100%; max-width:790px; align-self:center; }
+  .rp-mod{
+    --m-surface:#1A2329; --m-ink:#E6ECEF; --m-muted:#9FB0B9; --m-line:#2D3A41;
+    --m-accent:#4FBFB6; --m-accent-ink:#0C1A1C; --m-chip:#26323A;
+    color-scheme:dark;
+    background:var(--rp-module); color:var(--m-ink); padding:12px;
+    font-family:'Atkinson Hyperlegible', Verdana, system-ui, sans-serif;
+    font-size:17px; line-height:1.6;
   }
-  .rp-out{ color:var(--pen); }
-  .rp-scores{ display:flex; gap:8px; flex-wrap:wrap; min-height:34px; align-items:center; }
-  .rp-tok{
-    font-family:var(--rp-mono); font-size:13.5px; background:var(--sketch-tint);
-    border:1px solid var(--line); border-radius:999px; padding:5px 12px;
-    display:inline-flex; gap:8px; align-items:baseline;
+  .rp-mod-panel{
+    background:var(--m-surface); border:1px solid var(--m-line); border-radius:10px;
+    padding:16px 18px; display:flex; flex-direction:column; gap:10px;
   }
-  .rp-tok.placeholder{ font-family:'Inter', sans-serif; font-size:13.5px; color:var(--ink-soft); }
-  .rp-pct{ font-size:11.5px; color:var(--ink-faint); }
-  .rp-tok.pick{ background:var(--pen); border-color:var(--pen); color:#fff; }
-  .rp-tok.pick .rp-pct{ color:var(--pen-tint); }
-  .rp-ctrl{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
-  .rp-ctrl label{ display:flex; align-items:center; gap:10px; font-size:14px; flex:1; min-width:220px; }
-  .rp-ctrl input{ flex:1; accent-color:var(--pen); min-height:24px; }
-  .rp-ctrl input:focus-visible{ outline:2px solid var(--pen); outline-offset:3px; }
-  /* the page's yellow-and-ink control, as on the slide arrows */
-  .rp-go{
-    font:600 14px 'Inter', sans-serif; min-height:44px; padding:0 20px; border-radius:999px;
-    background:var(--hl-yellow); color:var(--ink); border:1.5px solid var(--ink); cursor:pointer;
-    transition:background .15s, color .15s;
+  .rp-mod h3{ font-family:'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif; font-size:19px; font-weight:700; line-height:1.15; color:var(--m-ink); }
+  .rp-mod-cap{ font-size:14px; line-height:1.5; color:var(--m-muted); }
+  .rp-mod code, .rp-mod-out{ font-family:'JetBrains Mono', ui-monospace, monospace; font-size:.88em; }
+  .rp-mod code{ font-weight:400; }
+  .rp-mod-out{ font-weight:600; color:var(--m-accent); }
+  .rp-mod-eyebrow{ font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--m-muted); font-weight:700; margin-bottom:6px; }
+  .rp-mod-chips{ display:flex; flex-wrap:wrap; gap:8px; min-height:38px; }
+  .rp-mod-chip{
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:14px; font-weight:400;
+    background:var(--m-chip); color:var(--m-ink); border:1px solid var(--m-line);
+    border-radius:999px; padding:6px 12px; display:inline-flex; gap:8px; align-items:baseline;
   }
-  .rp-go:hover{ background:var(--ink); color:var(--hl-yellow); }
-  .rp-go:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
-  .rp-go[aria-disabled="true"], .rp-go[aria-disabled="true"]:hover{ background:var(--paper); color:var(--ink-faint); border-color:var(--line); cursor:default; }
-  .rp-runs{ margin:0; padding-left:22px; font-size:14px; color:var(--ink-soft); display:flex; flex-direction:column; gap:2px; min-height:24px; }
-  .rp-runs b{ color:var(--ink); font-weight:500; }
+  .rp-mod-chip .pct{ color:var(--m-muted); font-size:12px; }
+  .rp-mod-chip.top{ background:var(--m-accent); color:var(--m-accent-ink); border-color:var(--m-accent); }
+  .rp-mod-chip.top .pct{ color:var(--m-accent-ink); opacity:.85; }
+  .rp-mod-slider{ display:flex; flex-direction:column; gap:4px; }
+  .rp-mod-slider input{ width:100%; margin:0; }
+  .rp-mod-btns{ display:flex; gap:10px; flex-wrap:wrap; }
+  .rp-mod-btn{
+    font:inherit; font-weight:700; min-height:44px; padding:0 16px; border:0; border-radius:8px;
+    background:var(--m-accent); color:var(--m-accent-ink); cursor:pointer;
+  }
+  .rp-mod-btn.quiet{ background:var(--m-chip); color:var(--m-ink); }
+  /* aria-disabled rather than the module's disabled, so focus stays put mid-run */
+  .rp-mod-btn[aria-disabled="true"]{ opacity:.55; cursor:default; }
+  .rp-mod button:focus-visible, .rp-mod input:focus-visible{ outline:3px solid var(--m-accent); outline-offset:2px; }
+  .rp-mod-hist{ margin:0; padding-left:22px; font-size:15px; min-height:24px; }
 
   /* flashcards */
   .rp-fcslide{ display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:28px; align-items:center; }
@@ -734,7 +745,9 @@
   }
   @container (max-width:460px){
     .rp-msg{ max-width:100%; }
-    .rp-ctrl label{ min-width:0; flex-basis:100%; }
+    /* three nested paddings squeeze the module panel on a phone */
+    .rp-mod{ padding:8px; }
+    .rp-mod-panel{ padding:14px; }
   }
 
   /* ---------- WHAT I'M KNOWN FOR — POLAROIDS ---------- */
@@ -1257,23 +1270,32 @@
           name: "Simulate",
           narration: "Chiron coded this next-token machine mid-session so she could watch the idea work. It runs here too: press Write the rest a few times, then drag randomness to 0 and try again.",
           type: "machine",
-          chips: ["Coded by Chiron mid-session", "Live: press Write"],
+          // the panel as Chiron built it in Module 1, with its own wording;
+          // only the run history is shortened so it fits the window
+          frame: { title: "Module 1 · The next-token machine", note: "coded mid-session, live here" },
+          title: "The next-token machine",
+          caption: "Schematic: a tiny hand-built version with a few dozen tokens and made-up scores. A real model scores about 100,000 tokens using everything it has read, but the loop is the same.",
           prompt: "A simple way for students to see photosynthesis is to",
-          placeholder: "Each step scores the next word, then picks one",
-          slider: "Randomness",
+          scoresLabel: "Next-token scores",
+          stepLabel: "Step {n}: scores for the next token (picked one is filled in)",
+          waiting: "press Write",
+          slider: "Randomness:",
+          sliderWords: { zero: "(always the favorite)", normal: "(normal)", high: "(long shots get more chances)" },
           button: "Write the rest",
-          keepRuns: 4,
-          stepMs: 480,
-          // Chiron's Module 1 token table, with one fix: its leaf path could
-          // write "a leaf disks" or "float leaf in", so leaf now goes to in or
-          // under, and float only leads to spinach disks
+          clear: "Clear history",
+          runsLabel: "Runs so far",
+          keepRuns: 2,
+          stepMs: 550,
+          // Chiron's Module 1 token table with its grammar fixed. The original
+          // could write "a leaf disks" and "count bubbles form", so leaf goes
+          // to in or under, float only to spinach disks, and the 5% "count"
+          // opening is folded into "watch". Every path now reads as a sentence.
           table: {
-            START:     [[" place", .45], [" put", .25], [" watch", .15], [" float", .10], [" count", .05]],
+            START:     [[" place", .45], [" put", .25], [" watch", .20], [" float", .10]],
             " place":  [[" a", .75], [" two", .25]],
             " put":    [[" a", .8], [" two", .2]],
             " watch":  [[" a", .6], [" bubbles", .4]],
             " float":  [[" spinach", 1]],
-            " count":  [[" bubbles", 1]],
             " a":      [[" plant", .5], [" leaf", .3], [" sprig", .2]],
             " two":    [[" plants", 1]],
             " plant":  [[" in", .55], [" under", .45]],
@@ -1740,16 +1762,27 @@
   }
 
   function rpMachine(s){
-    return `<div class="rp-machine">
-      <div class="rp-machine-head"><span class="rp-chip blue">${esc(s.chips[0])}</span><span class="rp-chip right">${esc(s.chips[1])}</span></div>
-      <p class="rp-prompt"><span>${esc(s.prompt)}</span><span class="rp-out" data-rp="out"></span></p>
-      <div class="rp-scores" data-rp="scores"><span class="rp-tok placeholder">${esc(s.placeholder)}</span></div>
-      <div class="rp-ctrl">
-        <label for="rp-temp"><span>${esc(s.slider)} <b data-rp="tval">1.0</b></span><input id="rp-temp" type="range" min="0" max="2" step="0.1" value="1"></label>
-        <button type="button" class="rp-go" data-rp="go" aria-disabled="false">${esc(s.button)}</button>
-      </div>
-      <ol class="rp-runs" data-rp="runs" aria-label="Runs so far"></ol>
-    </div>`;
+    return `<figure class="rp-artifact rp-mod-frame">
+      <figcaption class="rp-artifact-bar"><span>${esc(s.frame.title)}</span><span>${esc(s.frame.note)}</span></figcaption>
+      <div class="rp-mod"><div class="rp-mod-panel">
+        <h3>${esc(s.title)}</h3>
+        <p class="rp-mod-cap">${esc(s.caption)}</p>
+        <p><code>${esc(s.prompt)}</code><span class="rp-mod-out" data-rp="out"></span></p>
+        <div>
+          <p class="rp-mod-eyebrow" data-rp="step">${esc(s.scoresLabel)}</p>
+          <div class="rp-mod-chips" data-rp="scores"><span class="rp-mod-chip">${esc(s.waiting)}</span></div>
+        </div>
+        <label for="rp-temp" class="rp-mod-slider">
+          <span><b>${esc(s.slider)}</b> <span data-rp="tval">1.0</span> <span class="rp-mod-cap" data-rp="tword">${esc(s.sliderWords.normal)}</span></span>
+          <input id="rp-temp" type="range" min="0" max="2" step="0.1" value="1">
+        </label>
+        <div class="rp-mod-btns">
+          <button type="button" class="rp-mod-btn" data-rp="go" aria-disabled="false">${esc(s.button)}</button>
+          <button type="button" class="rp-mod-btn quiet" data-rp="clear">${esc(s.clear)}</button>
+        </div>
+        <div><p class="rp-mod-eyebrow">${esc(s.runsLabel)}</p><ol class="rp-mod-hist" data-rp="runs"></ol></div>
+      </div></div>
+    </figure>`;
   }
   // scores reshaped by randomness: 0 always takes the favorite, 1 keeps the
   // table's odds, 2 flattens them so long shots win more often
@@ -1763,20 +1796,39 @@
     for (const [t, p] of list){ acc += p; if (r <= acc) return t; }
     return list[list.length - 1][0];
   }
+  // the module's own loop and labels; runs are numbered from the first, and
+  // the list shows the latest few so the panel keeps its height
   function rpInitMachine(view, s){
     const q = k => view.querySelector(`[data-rp="${k}"]`);
-    const temp = view.querySelector('#rp-temp'), go = q('go'), stop = new Set(s.stop), runs = [];
-    let busy = false;
-    const showT = () => { const v = (+temp.value).toFixed(1); q('tval').textContent = v; temp.setAttribute('aria-valuetext', v); };
+    const temp = view.querySelector('#rp-temp'), go = q('go'), stop = new Set(s.stop);
+    const waiting = `<span class="rp-mod-chip">${esc(s.waiting)}</span>`;
+    let runs = [], busy = false;
+    const showT = () => {
+      const v = +temp.value;
+      q('tval').textContent = v.toFixed(1);
+      q('tword').textContent = v < 0.05 ? s.sliderWords.zero : v <= 1 ? s.sliderWords.normal : s.sliderWords.high;
+      temp.setAttribute('aria-valuetext', `${v.toFixed(1)} ${q('tword').textContent}`);
+    };
+    const showRuns = () => {
+      q('runs').innerHTML = runs.slice(-s.keepRuns).map((r, k, shown) =>
+        `<li value="${runs.length - shown.length + k + 1}">…to${esc(r.text)}. (randomness ${r.T.toFixed(1)})</li>`).join('');
+    };
     temp.addEventListener('input', showT); showT();
+    q('clear').addEventListener('click', () => {
+      if (busy) return;
+      runs = []; showRuns();
+      q('out').textContent = ''; q('scores').innerHTML = waiting; q('step').textContent = s.scoresLabel;
+    });
     go.addEventListener('click', async () => {
       if (busy) return;
       // aria-disabled, not disabled, so focus stays on the button mid-run
       busy = true; go.setAttribute('aria-disabled', 'true');
       const T = +temp.value; let prev = 'START', text = '';
+      q('out').textContent = '';
       for (let n = 0; n < 10; n++){
         const list = rpReweight(s.table[prev], T).sort((a, b) => b[1] - a[1]), pick = rpDraw(list);
-        q('scores').innerHTML = list.map(([t, p]) => `<span class="rp-tok${t === pick ? ' pick' : ''}">${esc(t.trim())}<span class="rp-pct">${Math.round(p * 100)}%</span></span>`).join('');
+        q('scores').innerHTML = list.map(([t, p]) => `<span class="rp-mod-chip${t === pick ? ' top' : ''}">${esc(t.trim())}<span class="pct">${Math.round(p * 100)}%</span></span>`).join('');
+        q('step').textContent = s.stepLabel.replace('{n}', n + 1);
         text += pick; q('out').textContent = text;
         if (!reduceMotion.matches) await new Promise(res => setTimeout(res, s.stepMs));
         if (!go.isConnected) return;      // left the slide mid-run
@@ -1784,8 +1836,7 @@
         prev = pick;
       }
       q('out').textContent = text + '.';
-      runs.unshift({ text, T });
-      q('runs').innerHTML = runs.slice(0, s.keepRuns).map((r, k) => `<li value="${runs.length - k}"><b>…to${esc(r.text)}.</b> (randomness ${r.T.toFixed(1)})</li>`).join('');
+      runs.push({ text, T }); showRuns();
       // one announcement per run rather than a live region chattering every step
       announce(`Run ${runs.length}: ${s.prompt}${text}.`);
       busy = false; go.setAttribute('aria-disabled', 'false');
