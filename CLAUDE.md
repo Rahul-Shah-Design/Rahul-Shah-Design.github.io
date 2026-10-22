@@ -83,6 +83,11 @@ the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
   grammar fixed so every path reads as a sentence (no "a leaf disks", "float leaf in" or
   "count bubbles form"; see the comment in the data). The run list shows the latest 2 runs so
   the panel fits the window.
+- The window is a cut-out of the page's graph paper; cards inside it are solid white. Side notes
+  (`.rp-hand`, the loop diagram's notes) use Inter in pen blue, not Rock Salt, for legibility.
+- Each slide plays in: `RP_ENTER` in the script lists which pieces enter and when. Chat slides
+  run on a conversation's rhythm (teacher fast, Chiron after a longer beat: thinking, then
+  reply). The first slide waits until the card is on screen; reduced motion shows it all at once.
 - Images are `assets/chiron-replay-*.webp`. The knowledge check was recaptured at 2x from the
   module's own HTML in its dark scheme.
 - The scribble track chains copies of its 6-stroke Lottie when a slideshow has more than 6

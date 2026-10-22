@@ -534,13 +534,21 @@
     /* the module's own dark ground, so screenshot frames read as one piece */
     --rp-module:#12191D; --rp-module-line:#2A3442;
     --rp-mono:'JetBrains Mono', ui-monospace, monospace;
-    --rp-hand:'Rock Salt', cursive;
+    /* side notes in the replay: the body face, set apart by colour and weight */
+    --rp-hand:'Inter', -apple-system, sans-serif;
   }
   .replay .frame-caption{ max-width:none; }
   .replay .device-wrap{ flex-direction:column; }
+  /* the window is a cut-out of the page's graph paper, so the white cards
+     inside it read as cards instead of white on white */
   .replay-window{
     container-type:inline-size;
-    width:100%; background:var(--paper);
+    width:100%;
+    background-color:var(--bg);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:28px 28px;
     border:1px solid var(--line); border-radius:12px; overflow:hidden;
   }
   /* fixed height so the card never jumps between slides; the slide centres
@@ -571,7 +579,7 @@
   .rp-chip.wrong{ color:var(--rp-red); background:var(--red-tint); }
   .rp-chip.flag{ color:var(--rp-amber); background:var(--rp-amber-tint); white-space:normal; }
   .rp-chip.blue{ color:var(--pen); background:var(--pen-tint); }
-  .rp-hand{ font-family:var(--rp-hand); color:var(--pen); font-size:15px; line-height:1.6; }
+  .rp-hand{ font-family:var(--rp-hand); font-weight:600; color:var(--pen); font-size:15px; line-height:1.5; }
   .rp-said{ background:var(--rp-yellow-soft); box-shadow:inset 0 -2px 0 var(--hl-yellow); padding:0 2px; }
 
   /* chat */
@@ -581,7 +589,7 @@
   .rp-msg.chiron{ align-self:flex-start; }
   .rp-body{ border-radius:12px; padding:9px 14px; font-size:15px; line-height:1.5; }
   .rp-msg.teacher .rp-body{ background:var(--sketch-tint); }
-  .rp-msg.chiron .rp-body{ border:1px solid var(--line); }
+  .rp-msg.chiron .rp-body{ border:1px solid var(--line); background:var(--paper); }
   /* annotations written for the portfolio, not Chiron's output, so they stay
      plain italic notes rather than anything styled like a model trace */
   .rp-think{ font-size:13px; line-height:1.45; color:var(--ink-faint); font-style:italic; border-left:2px solid var(--line); padding:1px 0 1px 10px; max-width:60ch; }
@@ -594,6 +602,22 @@
   .rp-dot{ width:7px; height:7px; border-radius:50%; background:var(--mastery); flex:none; }
   @media (prefers-reduced-motion:no-preference){ .rp-dot{ animation:rp-pulse 1.4s ease-in-out infinite; } }
   @keyframes rp-pulse{ 50%{ opacity:.25; } }
+
+  /* entrances. The render code tags a slide's pieces .rp-in with a --delay;
+     they wait hidden until the window gets .rp-play, then rise in like the
+     narration bubble. Chat messages arrive one at a time on a conversation's
+     rhythm. Layout is reserved the whole time, so nothing shifts. Reduced
+     motion skips all of it and shows the slide at once. */
+  @media (prefers-reduced-motion:no-preference){
+    .rp-in{ opacity:0; }
+    .rp-view.rp-play .rp-in{ animation:rp-rise .5s cubic-bezier(.22,.8,.36,1) var(--delay, 0ms) both; }
+    .rp-view.rp-play .rp-msg.rp-in{ animation-name:rp-chat; animation-duration:.42s; }
+    .rp-msg.teacher{ transform-origin:100% 100%; }
+    .rp-msg.chiron{ transform-origin:0 100%; }
+    .rp-loop-svg .rp-in{ transform-box:fill-box; }
+  }
+  @keyframes rp-rise{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+  @keyframes rp-chat{ from{ opacity:0; transform:translateY(12px) scale(.96); } to{ opacity:1; transform:none; } }
 
   /* screenshot frames */
   .rp-artifact{ margin:0; border:1px solid var(--rp-module-line); border-radius:10px; overflow:hidden; background:var(--rp-module); }
@@ -613,8 +637,8 @@
   .rp-side{ display:flex; flex-direction:column; gap:12px; }
   .rp-side p{ font-size:15px; line-height:1.55; color:var(--ink-soft); }
   .rp-side p b{ color:var(--ink); }
-  .rp-side .rp-hand{ color:var(--pen); font-size:17px; line-height:1.5; }
-  .rp-attempt{ border:1px solid var(--line); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:6px; font-size:14.5px; line-height:1.5; background:var(--rp-quiet); }
+  .rp-side .rp-hand{ color:var(--pen); font-size:18px; line-height:1.4; }
+  .rp-attempt{ border:1px solid var(--line); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:6px; font-size:14.5px; line-height:1.5; background:var(--paper); }
   .rp-attempt .rp-chip{ align-self:flex-start; }
   .rp-nudge{ border-left:3px solid var(--rp-amber); padding:4px 0 4px 12px; font-size:14.5px; line-height:1.5; }
 
@@ -664,7 +688,7 @@
 
   /* flashcards */
   .rp-fcslide{ display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:28px; align-items:center; }
-  .rp-inline{ border:1px solid var(--line); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; background:var(--rp-quiet); }
+  .rp-inline{ border:1px solid var(--line); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; background:var(--paper); }
   .rp-ctx{ font-size:14px; color:var(--ink-soft); }
   .rp-ctx b{ color:var(--ink); font-weight:600; }
   .rp-card{ border:1.5px solid var(--rp-amber); border-radius:12px; background:var(--rp-amber-paper); padding:14px; display:flex; flex-direction:column; gap:9px; }
@@ -678,7 +702,7 @@
   .rp-card-fb{ font-size:13.5px; line-height:1.5; border-left:3px solid var(--rp-amber); padding-left:10px; }
   .rp-card-fb b{ color:var(--rp-amber); }
   .rp-card-fb.done b{ color:var(--rp-green); }
-  .rp-card .rp-hand{ color:var(--rp-amber); font-size:12px; }
+  .rp-card .rp-hand{ color:var(--rp-amber); font-size:13px; font-weight:500; }
   .rp-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
   .rp-seg{ display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--bg); }
   .rp-seg button{ border:0; background:none; border-radius:999px; padding:0 14px; min-height:36px; font:500 13.5px 'Inter', sans-serif; cursor:pointer; color:var(--ink-soft); }
@@ -697,7 +721,7 @@
 
   /* now vs next */
   .rp-hood{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:stretch; }
-  .rp-col{ border:1px solid var(--line); border-radius:12px; padding:16px 18px; display:flex; flex-direction:column; gap:10px; min-width:0; }
+  .rp-col{ border:1px solid var(--line); border-radius:12px; padding:16px 18px; display:flex; flex-direction:column; gap:10px; min-width:0; background:var(--paper); }
   .rp-col.next{ border-style:dashed; background:var(--rp-quiet); }
   .rp-col .rp-mono-label{ letter-spacing:0.12em; }
   .rp-col.now .rp-mono-label{ color:var(--rp-green); }
@@ -720,19 +744,17 @@
   .rp-loop-svg .numt{ font:500 13px var(--rp-mono); fill:var(--ink); }
   .rp-loop-svg .ttl{ font:600 21px 'Fraunces', Georgia, serif; fill:var(--ink); }
   .rp-loop-svg .sub{ font:400 13.5px 'Inter', sans-serif; fill:var(--ink-soft); }
-  .rp-loop-svg .hand{ font:400 14px var(--rp-hand); fill:var(--ink-faint); }
+  .rp-loop-svg .hand{ font:500 16px var(--rp-hand); fill:var(--ink-faint); }
   .rp-loop-svg .hand.green{ fill:var(--rp-green); }
   .rp-loop-svg .center{ font:600 19px 'Fraunces', Georgia, serif; fill:var(--ink); }
   .rp-loop-svg .center2{ font:500 13px var(--rp-mono); fill:var(--ink-faint); letter-spacing:0.06em; }
   .rp-loop-svg .bgarc{ fill:none; stroke:var(--rp-green); stroke-width:2; stroke-dasharray:2 6; stroke-linecap:round; }
   .rp-loop-list{ display:none; list-style:none; margin:0; padding:0; flex-direction:column; gap:8px; }
-  .rp-loop-list li{ display:flex; gap:12px; align-items:flex-start; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:14px; line-height:1.45; color:var(--ink-soft); }
+  .rp-loop-list li{ display:flex; gap:12px; align-items:flex-start; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:14px; line-height:1.45; color:var(--ink-soft); background:var(--paper); }
   .rp-loop-list li.start{ background:var(--rp-yellow-soft); border-style:dashed; }
   .rp-loop-list .rp-n{ flex:none; width:26px; height:26px; border-radius:50%; background:var(--hl-yellow); border:1.4px solid var(--ink); display:grid; place-items:center; font:500 12px var(--rp-mono); color:var(--ink); }
   .rp-loop-list b{ font-family:'Fraunces', Georgia, serif; font-size:18px; font-weight:600; display:block; color:var(--ink); }
-  .rp-loop-list li.back{ border:0; padding:0 0 0 38px; font-family:var(--rp-hand); font-size:13px; color:var(--pen); }
-  /* Rock Salt's 1 reads as a bar, so numbers in a hand note borrow the mono face */
-  .rp-digit{ font-family:var(--rp-mono); font-size:14px; }
+  .rp-loop-list li.back{ border:0; background:none; padding:0 0 0 38px; font-family:var(--rp-hand); font-weight:600; font-size:14px; color:var(--pen); }
 
   @container (max-width:760px){
     .rp-view{ height:auto; min-height:420px; }
@@ -1744,7 +1766,7 @@
       <circle class="num" cx="${f(x - W / 2 + 22)}" cy="${f(y - H / 2 + 24)}" r="12"/><text class="numt" x="${f(x - W / 2 + 22)}" y="${f(y - H / 2 + 28.5)}" text-anchor="middle">${n}</text>
       <text class="ttl" x="${f(x - W / 2 + 42)}" y="${f(y - H / 2 + 31)}">${esc(it.title)}</text>
       <text class="sub" x="${f(x - W / 2 + 16)}" y="${f(y + 12)}">${esc(it.sub[0])}</text><text class="sub" x="${f(x - W / 2 + 16)}" y="${f(y + 30)}">${esc(it.sub[1])}</text></g>`;
-    const note = (lines, x, y, cls) => lines.map((l, k) => `<text class="hand ${cls || ''}" x="${x}" y="${y + k * 27}">${esc(l)}</text>`).join('');
+    const note = (lines, x, y, cls) => lines.map((l, k) => `<text class="hand ${cls || ''}" x="${x}" y="${y + k * 22}">${esc(l)}</text>`).join('');
     const [b1, b2] = arcs[0];
     let svg = `<svg class="rp-loop-svg" viewBox="0 0 1000 482" role="img" aria-label="${esc(s.label)}">
       <defs><marker id="rp-ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#1D4ED8"/></marker>
@@ -1758,7 +1780,7 @@
     svg += `<text class="center" x="${cx + 40}" y="${cy - 2}" text-anchor="middle">${esc(s.center[0])}</text><text class="center" x="${cx + 40}" y="${cy + 22}" text-anchor="middle">${esc(s.center[1])}</text>`;
     svg += `<text class="center2" x="${cx + 40}" y="${cy + 46}" text-anchor="middle">${esc(s.centerSmall[0].toUpperCase())}</text><text class="center2" x="${cx + 40}" y="${cy + 63}" text-anchor="middle">${esc(s.centerSmall[1].toUpperCase())}</text></svg>`;
     const li = (n, it, cls) => `<li class="${cls || ''}"><span class="rp-n">${n}</span><span><b>${esc(it.title)}</b>${esc(it.sub.join(' '))}</span></li>`;
-    return svg + `<ol class="rp-loop-list">${li(0, s.start, 'start')}${s.nodes.map((nd, k) => li(k + 1, nd)).join('')}<li class="back">${esc(s.back).replace(/\d+/g, '<span class="rp-digit">$&</span>')}</li></ol>`;
+    return svg + `<ol class="rp-loop-list">${li(0, s.start, 'start')}${s.nodes.map((nd, k) => li(k + 1, nd)).join('')}<li class="back">${esc(s.back)}</li></ol>`;
   }
 
   function rpMachine(s){
@@ -1892,6 +1914,42 @@
   }
 
   const RP_RENDER = { loop: rpLoop, chat: rpChat, machine: rpMachine, check: rpCheck, grade: rpGrade, cards: rpCards, hood: rpHood };
+
+  // the order a slide's pieces come in, as [elements, delay in ms] beats.
+  // Chat runs on a conversation's rhythm: the teacher replies quickly, and
+  // Chiron takes a longer beat, as if typing.
+  const RP_ENTER = {
+    chat: v => {
+      const beats = []; let t = 120, first = true;
+      v.querySelectorAll('.rp-msg, .rp-artifact').forEach(el => {
+        if (!first) t += el.classList.contains('chiron') ? 900 : el.classList.contains('teacher') ? 650 : 700;
+        first = false; beats.push([[el], t]);
+        // a Chiron turn shows its thinking first, then the reply, then what it's building
+        if (el.querySelector('.rp-think')) { t += 500; beats.push([[el.querySelector('.rp-body')], t]); }
+        if (el.querySelector('.rp-build')) { t += 400; beats.push([[el.querySelector('.rp-build')], t]); }
+      });
+      return beats;
+    },
+    loop: v => [
+      ...[...v.querySelectorAll('.rp-loop-svg .node')].map((el, k) => [[el], 100 + k * 150]),
+      [[...v.querySelectorAll('.rp-loop-svg .ring, .rp-loop-svg .arc, .rp-loop-svg .bgarc, .rp-loop-svg .entry, .rp-loop-svg .center, .rp-loop-svg .center2')], 450],
+      [[...v.querySelectorAll('.rp-loop-svg .hand')], 950],
+      ...[...v.querySelectorAll('.rp-loop-list li')].map((el, k) => [[el], 100 + k * 120]),
+    ],
+    machine: v => [[[v.querySelector('.rp-artifact')], 100]],
+    check: v => [v.querySelector('.rp-artifact'), ...v.querySelectorAll('.rp-side > *')].map((el, k) => [[el], 100 + k * 160]),
+    grade: v => [...v.querySelectorAll('.rp-side > *')].map((el, k) => [[el], 100 + k * 220]),
+    cards: v => [v.querySelector('.rp-inline'), ...v.querySelectorAll('.rp-steps li')].map((el, k) => [[el], 100 + k * 160]),
+    hood: v => [...v.querySelectorAll('.rp-col')].flatMap((col, c) =>
+      [[[col], 100 + c * 200], ...[...col.querySelectorAll('li')].map((li, k) => [[li], 260 + c * 200 + k * 90])]),
+  };
+  function rpStage(view, type){
+    (RP_ENTER[type] ? RP_ENTER[type](view) : []).forEach(([els, t]) => els.forEach(el => {
+      if (!el) return;
+      el.classList.add('rp-in');
+      el.style.setProperty('--delay', t + 'ms');
+    }));
+  }
   const RP_INIT = { machine: rpInitMachine, cards: rpInitCards };
 
   function buildReplay(key){
@@ -1919,6 +1977,22 @@
       io.observe(bubble);
     }
 
+    // entrances play once the card is on screen; before that the first slide
+    // waits, so its chat isn't over by the time anyone scrolls to it
+    let seen = !('IntersectionObserver' in window);
+    function play(){
+      if (!seen) return;
+      view.classList.remove('rp-play');
+      void view.offsetWidth;
+      view.classList.add('rp-play');
+    }
+    if (!seen){
+      const io = new IntersectionObserver(entries=>{
+        if (entries.some(e=>e.isIntersecting)){ io.disconnect(); seen = true; play(); }
+      }, { threshold:0.35 });
+      io.observe(view);
+    }
+
     function render(){
       const s = cfg.slides[idx];
       // the caption and the narration are the live regions; the slide body is
@@ -1928,6 +2002,8 @@
       if (bubble.textContent !== s.narration) bubble.textContent = s.narration;
       view.innerHTML = `<div class="rp-slide">${RP_RENDER[s.type](s)}</div>`;
       view.scrollTop = 0;
+      rpStage(view, s.type);
+      play();
       if (RP_INIT[s.type]) RP_INIT[s.type](view, s);
       arrows.forEach(btn=>{
         const dir = parseInt(btn.dataset.dir, 10);
