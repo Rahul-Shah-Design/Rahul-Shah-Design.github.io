@@ -84,7 +84,9 @@ the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
   grammar fixed so every path reads as a sentence (no "a leaf disks", "float leaf in" or
   "count bubbles form"; see the comment in the data). The run list shows the latest 2 runs so
   the panel fits the window.
-- The window is a cut-out of the page's graph paper; cards inside it are solid white. Side notes
+- The window is its own warm tray (`--rp-tray`, no grid), so it reads as a panel on the card
+  rather than a hole to the page; cards inside it are solid white. `--ink-faint` is darkened
+  inside it to keep 4.5:1. Side notes
   (`.rp-hand`, the loop diagram's notes) use Inter in pen blue, not Rock Salt, for legibility.
 - Each slide plays in: `RP_ENTER` in the script lists which pieces enter and when. Chat slides
   run on a conversation's rhythm (teacher fast, Chiron after a longer beat: thinking, then
