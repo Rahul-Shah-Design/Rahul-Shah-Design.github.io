@@ -709,7 +709,6 @@
   .rp-card-fb{ font-size:13.5px; line-height:1.5; border-left:3px solid var(--rp-amber); padding-left:10px; }
   .rp-card-fb b{ color:var(--rp-amber); }
   .rp-card-fb.done b{ color:var(--rp-green); }
-  .rp-card .rp-hand{ color:var(--rp-amber); font-size:13px; font-weight:500; }
   .rp-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
   .rp-seg{ display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--bg); }
   .rp-seg button{ border:0; background:none; border-radius:999px; padding:0 14px; min-height:36px; font:500 13.5px 'Inter', sans-serif; cursor:pointer; color:var(--ink-soft); }
@@ -1375,7 +1374,6 @@
           card: {
             kind: "Misconception card",
             term: "Why is “it goes back to fix its mistakes” wrong?",
-            from: "Made from her wrong answer in the knowledge check",
             rounds: [
               { label: "First try", badge: "close", badgeText: "Close",
                 answer: "Because it doesn’t really go back, it just keeps going forward.",
@@ -1880,7 +1878,7 @@
     const r = c.rounds[k];
     return `<div class="rp-card"><div class="rp-card-top"><span class="rp-card-kind">${esc(c.kind)}</span><span class="rp-badge ${r.badge}">${esc(r.badgeText)}</span></div>
       <p class="rp-card-term">${esc(c.term)}</p><p class="rp-card-back">${esc(r.answer)}</p>
-      <p class="rp-card-fb ${r.badge}">${rich(r.feedback)}</p><p class="rp-hand">${esc(c.from)}</p></div>`;
+      <p class="rp-card-fb ${r.badge}">${rich(r.feedback)}</p></div>`;
   }
   function rpCards(s){
     const c = s.card;
