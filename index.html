@@ -631,6 +631,10 @@
   .rp-artifact-bar span{ white-space:nowrap; }
   .rp-artifact img{ width:100%; height:auto; }
   .rp-artifact.wide{ width:100%; max-width:790px; align-self:center; }
+  /* the folded diagnose-and-build slide: chat column beside the module */
+  .rp-chatsplit{ grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); align-items:center; }
+  .rp-chatcol{ display:flex; flex-direction:column; gap:8px; }
+  .rp-chatcol .rp-msg{ max-width:92%; }
   /* slide 1: the real session, chat beside the module it built */
   .rp-shot{
     height:auto; max-width:820px; align-self:center; border-radius:10px; overflow:hidden;
@@ -1310,6 +1314,27 @@
             alt: "Module 1 opening, quoting the teacher's doubt back to her with it highlighted",
           },
         },
+        // TRIAL: slides 3 and 4 folded into one, kept alongside them so the two
+        // pacings can be compared. Keep this and delete 3 and 4, or delete this.
+        {
+          name: "Diagnose and build",
+          split: true,
+          narration: "Every course opens with a few key questions that calibrate the learner model. Once the gap shows, Chiron stops asking and fits the module it has been drafting since the first message.",
+          type: "chat",
+          messages: [
+            { who: "teacher", text: "**/teachme** I use ChatGPT to help plan lessons for my 7th graders, but I don’t really know how it works." },
+            { who: "chiron", text: "A lesson plan cites “Martinez & Cole (2019).” The study doesn’t exist. **Where did it come from?**" },
+            { who: "teacher", text: "Maybe ==it memorized everything and rewords it?== Autocomplete seems ==too simple to write a unit plan.==" },
+            { who: "chiron", think: "She just named what she can’t explain. That’s the gap. Stop asking and build.",
+              text: "**Hold onto that doubt.** Module 1 starts from it.",
+              status: "Building Module 1 around “too simple”" },
+          ],
+          artifact: {
+            src: "assets/chiron-replay-opening.webp", width: 1440, height: 550, wide: true, fade: true,
+            title: "Module 1 · One word at a time", note: "opens on her own words, highlighted",
+            alt: "Module 1 opening, quoting the teacher's doubt back to her with it highlighted",
+          },
+        },
         {
           name: "Simulate",
           narration: "Chiron builds a simulation only when there's a real control to turn. This one is live: press Write the rest a few times, then predict what randomness at 0 will do and try it.",
@@ -1762,7 +1787,10 @@
       ${m.status ? `<p class="rp-build"><span class="rp-dot" aria-hidden="true"></span>${esc(m.status)}</p>` : ''}
     </div>`;
   }
-  const rpChat = s => s.messages.map(rpMessage).join('') + (s.artifact ? rpArtifact(s.artifact) : '');
+  const rpChat = s => s.split
+    // chat on the left, the module it builds on the right
+    ? `<div class="rp-split rp-chatsplit"><div class="rp-chatcol">${s.messages.map(rpMessage).join('')}</div>${rpArtifact(s.artifact)}</div>`
+    : s.messages.map(rpMessage).join('') + (s.artifact ? rpArtifact(s.artifact) : '');
 
   // the loop: nodes sit on a circle at their data angles, and each arc runs
   // from where it clears one node's box to where it reaches the next
