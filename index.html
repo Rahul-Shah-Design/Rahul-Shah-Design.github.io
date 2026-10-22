@@ -1330,17 +1330,17 @@
         },
         {
           name: "Check",
-          narration: "Every wrong option in a knowledge check is tagged with the belief behind it. Her answer here logged understands-thinks, and the same belief turned up again on a later question.",
+          narration: "Every wrong option in a knowledge check maps to a belief. Her pick tells Chiron she thinks the model can go back and fix its own mistakes, so that belief shapes what comes next.",
           type: "check",
           artifact: {
             src: "assets/chiron-replay-check.webp", width: 1360, height: 712,
             title: "Module 1 · Knowledge check", note: "her answer",
             alt: "Module check: she chose 'It notices the mistake a few lines later and goes back to fix it', marked Not this one",
           },
-          results: [ { kind: "wrong", text: "Not this one" }, { kind: "flag", text: "Logged misconception: understands-thinks" } ],
+          results: [ { kind: "wrong", text: "Not this one" }, { kind: "flag", text: "Misconception noticed" } ],
           lines: [
-            "**understands-thinks** is the belief that the model reasons about what it writes and can catch its own mistakes.",
-            "She misses a second check for the same reason, so Chiron has a pattern to work from.",
+            "**What she believes:** the model reasons about what it writes and catches its own mistakes.",
+            "**What Chiron does with it:** builds the next module to test that belief, and turns it into one of her flashcards.",
           ],
         },
         {
@@ -1367,7 +1367,7 @@
           card: {
             kind: "Misconception card",
             term: "Why is “it goes back to fix its mistakes” wrong?",
-            from: "made from her wrong answer on the last slide",
+            from: "Made from her wrong answer in the knowledge check",
             rounds: [
               { label: "First try", badge: "close", badgeText: "Close",
                 answer: "Because it doesn’t really go back, it just keeps going forward.",
