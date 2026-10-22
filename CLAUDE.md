@@ -65,6 +65,26 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 | User State Map | `ClaudeProjects/User State Map/` | Interactive US map of college destination flows by state |
 | Atlas Run | `ClaudeProjects/atlas-run/` | Geography quiz game — pick/find/type countries on an interactive D3 world map |
 
+## Chiron Session Replay (root page)
+
+The Chiron card on the root `index.html` is an 8-slide replay of one tutoring session rather
+than a screenshot slideshow. **All of its copy lives in the `replays` object in the page
+script**: slide names, narration, chat messages, the token machine's table, card rounds. Edit
+it there; the `rp*` render functions below it only handle layout. In those strings `**text**`
+is bold and `==text==` is highlighted. Each slide's `say` line is a longer narration kept for
+later and not shown.
+
+- Styles are the `CHIRON REPLAY` block, scoped to `.replay` with `rp-` class names, built on
+  the site tokens. Its window is fixed at 540px tall and every slide must fit it without
+  scrolling at 1440 and 1024 wide; recheck both after copy changes.
+- The token machine on slide 4 is live code, ported from Chiron's Module 1. Its table carries
+  one deliberate change from the original (the float/leaf route, commented in the data).
+- Images are `assets/chiron-replay-*.webp`. The knowledge check was recaptured at 2x from the
+  module's own HTML in its dark scheme.
+- The scribble track chains copies of its 6-stroke Lottie when a slideshow has more than 6
+  slides; `buildExtendedScribble` handles it.
+- The employer pages still carry the older Chiron screenshot slideshow.
+
 ## Employer-Specific Portfolio Pages
 
 Some pages are tailored portfolios built for a specific job application, not general vibe-coded projects. These live at the **repo root** (not under `ClaudeProjects/`) so the URL is short and memorable, e.g. `rahul-shah-design.github.io/modern-classroom-project`.
