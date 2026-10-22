@@ -1276,8 +1276,27 @@
     chiron: {
       slides: [
         {
+          name: "Diagnose and build",
+          split: true,
+          narration: "Chiron is an AI tutor I built as a Claude Skill. A few key questions find where you're stuck, then it fits a lesson to that gap, drafted while you talked.",
+          type: "chat",
+          messages: [
+            { who: "teacher", text: "**/teachme** I use ChatGPT to help plan lessons for my 7th graders, but I don’t really know how it works." },
+            { who: "chiron", text: "A lesson plan cites “Martinez & Cole (2019).” The study doesn’t exist. **Where did it come from?**" },
+            { who: "teacher", text: "Maybe ==it memorized everything and rewords it?== Autocomplete seems ==too simple to write a unit plan.==" },
+            { who: "chiron", think: "She just named what she can’t explain. That’s the gap. Stop asking and build.",
+              text: "**Hold onto that doubt.** Module 1 starts from it.",
+              status: "Building Module 1 around “too simple”" },
+          ],
+          artifact: {
+            src: "chiron-replay-module.webp", width: 880, height: 1280, fade: true, tall: true,
+            title: "Module 1 · One word at a time", note: "opens on her own words, highlighted",
+            alt: "Module 1 opening, quoting the teacher's doubt back to her with it highlighted",
+          },
+        },
+        {
           name: "The loop",
-          narration: "Chiron is an AI tutor I built as a Claude Skill. Ask it to teach you anything: it questions you until you're stuck, builds a lesson there, then has you write flashcards.",
+          narration: "Behind that exchange is the loop every course runs: questions until you're stuck, a lesson built there, then flashcards you write yourself.",
           type: "loop",
           label: "Chiron's core loop: Ask, then a repeating loop of Answer, Module and Flashcards, one lap per module.",
           start: { title: "Ask", sub: ["Name anything you", "want to learn"] },
@@ -1295,25 +1314,6 @@
             next:  ["Next module adapts to", "what your answers showed"],
           },
           back: "↺ Back to 1 for the next module",
-        },
-        {
-          name: "Diagnose and build",
-          split: true,
-          narration: "Every course opens with a few key questions that calibrate the learner model. Once the gap shows, Chiron stops asking and fits the module it has been drafting since the first message.",
-          type: "chat",
-          messages: [
-            { who: "teacher", text: "**/teachme** I use ChatGPT to help plan lessons for my 7th graders, but I don’t really know how it works." },
-            { who: "chiron", text: "A lesson plan cites “Martinez & Cole (2019).” The study doesn’t exist. **Where did it come from?**" },
-            { who: "teacher", text: "Maybe ==it memorized everything and rewords it?== Autocomplete seems ==too simple to write a unit plan.==" },
-            { who: "chiron", think: "She just named what she can’t explain. That’s the gap. Stop asking and build.",
-              text: "**Hold onto that doubt.** Module 1 starts from it.",
-              status: "Building Module 1 around “too simple”" },
-          ],
-          artifact: {
-            src: "chiron-replay-module.webp", width: 880, height: 1280, fade: true, tall: true,
-            title: "Module 1 · One word at a time", note: "opens on her own words, highlighted",
-            alt: "Module 1 opening, quoting the teacher's doubt back to her with it highlighted",
-          },
         },
         {
           name: "Simulate",
