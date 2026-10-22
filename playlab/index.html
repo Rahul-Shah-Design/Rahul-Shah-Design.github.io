@@ -650,7 +650,8 @@
 
   /* flashcards */
   .rp-fcslide{ display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:28px; align-items:center; }
-  .rp-inline{ border:1px solid var(--line); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; background:var(--paper); }
+  /* just the card and its toggle, no chat frame around them */
+  .rp-inline{ display:flex; flex-direction:column; gap:10px; }
   .rp-ctx{ font-size:14px; color:var(--ink-soft); }
   .rp-ctx b{ color:var(--ink); font-weight:600; }
   .rp-card{ border:1.5px solid var(--rp-amber); border-radius:12px; background:var(--rp-amber-paper); padding:14px; display:flex; flex-direction:column; gap:9px; }
@@ -1169,7 +1170,6 @@
           name: "Flashcards",
           narration: "Back in the chat, Chiron asks the learner to write flashcards, and wrong answers from the checks become cards too. It grades each one with feedback but never writes the answer. Switch to Revised to see a second try.",
           type: "cards",
-          prompt: "**Chiron** · Write the back of each card in your own words.",
           card: {
             kind: "Misconception card",
             term: "Why is “it goes back to fix its mistakes” wrong?",
@@ -1607,7 +1607,6 @@
     const c = s.card;
     return `<div class="rp-fcslide">
       <div class="rp-inline">
-        <p class="rp-ctx">${rich(s.prompt)}</p>
         <div data-rp="card" aria-live="polite">${rpCard(c, 0)}</div>
         <div class="rp-row"><div class="rp-seg">${c.rounds.map((r, k) => `<button type="button" data-round="${k}" aria-pressed="${k === 0}">${esc(r.label)}</button>`).join('')}</div></div>
       </div>
