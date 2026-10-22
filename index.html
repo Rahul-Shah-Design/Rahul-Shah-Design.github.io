@@ -1745,7 +1745,7 @@
 
   function rpMessage(m){
     return `<div class="rp-msg ${m.who}">
-      <span class="rp-mono-label">${m.who === 'teacher' ? 'Teacher' : 'Chiron'}</span>
+      <span class="rp-mono-label">${m.who === 'teacher' ? 'User' : 'Chiron'}</span>
       ${m.think ? `<p class="rp-think"><span class="rp-think-k">Thinking</span>${rich(m.think)}</p>` : ''}
       <p class="rp-body">${rich(m.text)}</p>
       ${m.status ? `<p class="rp-build"><span class="rp-dot" aria-hidden="true"></span>${esc(m.status)}</p>` : ''}
