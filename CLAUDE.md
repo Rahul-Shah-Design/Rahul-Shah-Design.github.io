@@ -65,6 +65,39 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 | User State Map | `ClaudeProjects/User State Map/` | Interactive US map of college destination flows by state |
 | Atlas Run | `ClaudeProjects/atlas-run/` | Geography quiz game — pick/find/type countries on an interactive D3 world map |
 
+## Chiron Session Replay (root page)
+
+The Chiron card on the root `index.html` is a 9-slide replay of one tutoring session rather
+than a screenshot slideshow. Slide 1 is a real screenshot of the session (chat beside the module
+it built, `chiron-replay-session.webp`), enlargeable through the page lightbox. **All of its copy lives in the `replays` object in the page
+script**: slide names, narration, chat messages, the token machine's table, card rounds. Edit
+it there; the `rp*` render functions below it only handle layout. Each slide's `narration` is
+Rahul's speech bubble, plain text, shown with the same talker and bubble as the other cases. In
+the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
+
+- Styles are the `CHIRON REPLAY` block, scoped to `.replay` with `rp-` class names, built on
+  the site tokens. Its window is fixed at 540px tall and every slide must fit it without
+  scrolling at 1440 and 1024 wide; recheck both after copy changes.
+- Slide 5 is the next-token machine as Chiron built it in Module 1: the module's own markup,
+  wording, dark theme and fonts (Atkinson Hyperlegible, Bricolage Grotesque), scoped under
+  `.rp-mod` inside a dark Module 1 frame. Its logic is the module's, with the token table's
+  grammar fixed so every path reads as a sentence (no "a leaf disks", "float leaf in" or
+  "count bubbles form"; see the comment in the data). The run list shows the latest 2 runs so
+  the panel fits the window.
+- The window is its own warm tray (`--rp-tray`, no grid), so it reads as a panel on the card
+  rather than a hole to the page; cards inside it are solid white. `--ink-faint` is darkened
+  inside it to keep 4.5:1. Side notes
+  (`.rp-hand`, the loop diagram's notes) use Inter in pen blue, not Rock Salt, for legibility.
+- Each slide plays in: `RP_ENTER` in the script lists which pieces enter and when. Chat slides
+  run on a conversation's rhythm (teacher fast, Chiron after a longer beat: thinking, then
+  reply). The first slide waits until the card is on screen; reduced motion shows it all at once.
+- Images are `assets/chiron-replay-*.webp`. The knowledge check and the Module 1 opening were
+  recaptured at 2x from the module's own HTML in its dark scheme. The opening is a crop of a
+  longer page, so its frame (`fade: true` in the data) fades out at the bottom.
+- The scribble track chains copies of its 6-stroke Lottie when a slideshow has more than 6
+  slides; `buildExtendedScribble` handles it.
+- The employer pages still carry the older Chiron screenshot slideshow.
+
 ## Employer-Specific Portfolio Pages
 
 Some pages are tailored portfolios built for a specific job application, not general vibe-coded projects. These live at the **repo root** (not under `ClaudeProjects/`) so the URL is short and memorable, e.g. `rahul-shah-design.github.io/modern-classroom-project`.
