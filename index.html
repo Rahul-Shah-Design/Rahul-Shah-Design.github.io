@@ -697,6 +697,15 @@
   .rp-mod-btn.quiet{ background:var(--m-chip); color:var(--m-ink); }
   /* aria-disabled rather than the module's disabled, so focus stays put mid-run */
   .rp-mod-btn[aria-disabled="true"]{ opacity:.55; cursor:default; }
+  /* a ring pulses out of Write the rest until a visitor first presses it, so
+     it reads as something they can use, not a picture of a button */
+  @media (prefers-reduced-motion:no-preference){
+    .rp-mod-btn.rp-pulse{ animation:rp-ring 1.8s ease-out 1s infinite; }
+  }
+  @keyframes rp-ring{
+    0%{ box-shadow:0 0 0 0 rgba(79,191,182,0.7); }
+    70%,100%{ box-shadow:0 0 0 12px rgba(79,191,182,0); }
+  }
   .rp-mod button:focus-visible, .rp-mod input:focus-visible{ outline:3px solid var(--m-accent); outline-offset:2px; }
   .rp-mod-hist{ margin:0; padding-left:22px; font-size:15px; min-height:24px; }
 
@@ -1791,6 +1800,7 @@
     return svg + `<ol class="rp-loop-list">${li(0, s.start, 'start')}${s.nodes.map((nd, k) => li(k + 1, nd)).join('')}<li class="back">${esc(s.back)}</li></ol>`;
   }
 
+  let rpTried = false;   // the visitor has pressed Write the rest at least once
   function rpMachine(s){
     return `<figure class="rp-artifact rp-mod-frame">
       <figcaption class="rp-artifact-bar"><span>${esc(s.frame.title)}</span><span>${esc(s.frame.note)}</span></figcaption>
@@ -1807,7 +1817,7 @@
           <input id="rp-temp" type="range" min="0" max="2" step="0.1" value="1">
         </label>
         <div class="rp-mod-btns">
-          <button type="button" class="rp-mod-btn" data-rp="go" aria-disabled="false">${esc(s.button)}</button>
+          <button type="button" class="rp-mod-btn${rpTried ? '' : ' rp-pulse'}" data-rp="go" aria-disabled="false">${esc(s.button)}</button>
           <button type="button" class="rp-mod-btn quiet" data-rp="clear">${esc(s.clear)}</button>
         </div>
         <div><p class="rp-mod-eyebrow">${esc(s.runsLabel)}</p><ol class="rp-mod-hist" data-rp="runs"></ol></div>
@@ -1850,6 +1860,7 @@
       q('out').textContent = ''; q('scores').innerHTML = waiting; q('step').textContent = s.scoresLabel;
     });
     go.addEventListener('click', async () => {
+      rpTried = true; go.classList.remove('rp-pulse');
       if (busy) return;
       // aria-disabled, not disabled, so focus stays on the button mid-run
       busy = true; go.setAttribute('aria-disabled', 'true');
