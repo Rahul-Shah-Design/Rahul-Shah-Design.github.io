@@ -629,6 +629,14 @@
   .rp-artifact-bar span{ white-space:nowrap; }
   .rp-artifact img{ width:100%; height:auto; }
   .rp-artifact.wide{ width:100%; max-width:790px; align-self:center; }
+  /* a crop of a longer page: the bottom fades into the paper so the module
+     reads as carrying on past the frame. Narrower than .wide so the intro
+     and a ghost of the next paragraph fit the 540px window */
+  .rp-artifact.fade{
+    max-width:700px; border-bottom:0; border-radius:10px 10px 0 0;
+    -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 56px), transparent);
+            mask-image:linear-gradient(to bottom, #000 calc(100% - 56px), transparent);
+  }
 
   /* two-column slides */
   .rp-split{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.25fr); gap:20px; align-items:center; }
@@ -1253,7 +1261,7 @@
           type: "chat",
           // `think` notes are annotations written for the portfolio, not Chiron's literal output
           messages: [
-            { who: "teacher", text: "**/teachme** how large language models like ChatGPT actually work. I teach 7th grade science." },
+            { who: "teacher", text: "**/teachme** I use ChatGPT to help plan lessons for my 7th graders, but I don’t really know how it works." },
             { who: "chiron", think: "Don’t explain yet. Find out how she thinks it works, starting from a failure she’s probably seen.",
               text: "A lesson plan cites “Martinez & Cole (2019).” The study doesn’t exist. **Where did it come from?**" },
             { who: "teacher", text: "I think ==it searches a big database== and mashed real studies together." },
@@ -1269,11 +1277,11 @@
           messages: [
             { who: "teacher", text: "“Fancy autocomplete” seems ==way too simple to write a whole unit plan.==" },
             { who: "chiron", think: "She thinks it rewords stored facts, and she just named what she can’t explain. That’s the wall. Stop asking and build.",
-              text: "**You just put your finger on the real question.** Module 1 starts right there.",
+              text: "**Hold onto that doubt.** Module 1 starts from it.",
               status: "Building Module 1 around “too simple”" },
           ],
           artifact: {
-            src: "assets/chiron-replay-opening.webp", width: 1440, height: 466, wide: true,
+            src: "assets/chiron-replay-opening.webp", width: 1440, height: 550, wide: true, fade: true,
             title: "Module 1 · One word at a time", note: "opens on her own words, highlighted",
             alt: "Module 1 opening, quoting the teacher's doubt back to her with it highlighted",
           },
@@ -1719,7 +1727,7 @@
   }
 
   function rpArtifact(a){
-    return `<figure class="rp-artifact${a.wide ? ' wide' : ''}">
+    return `<figure class="rp-artifact${a.wide ? ' wide' : ''}${a.fade ? ' fade' : ''}">
       <figcaption class="rp-artifact-bar"><span>${esc(a.title)}</span><span>${esc(a.note)}</span></figcaption>
       <img src="${a.src}" alt="${esc(a.alt)}" width="${a.width}" height="${a.height}">
     </figure>`;

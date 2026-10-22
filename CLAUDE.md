@@ -88,8 +88,9 @@ the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
 - Each slide plays in: `RP_ENTER` in the script lists which pieces enter and when. Chat slides
   run on a conversation's rhythm (teacher fast, Chiron after a longer beat: thinking, then
   reply). The first slide waits until the card is on screen; reduced motion shows it all at once.
-- Images are `assets/chiron-replay-*.webp`. The knowledge check was recaptured at 2x from the
-  module's own HTML in its dark scheme.
+- Images are `assets/chiron-replay-*.webp`. The knowledge check and the Module 1 opening were
+  recaptured at 2x from the module's own HTML in its dark scheme. The opening is a crop of a
+  longer page, so its frame (`fade: true` in the data) fades out at the bottom.
 - The scribble track chains copies of its 6-stroke Lottie when a slideshow has more than 6
   slides; `buildExtendedScribble` handles it.
 - The employer pages still carry the older Chiron screenshot slideshow.
