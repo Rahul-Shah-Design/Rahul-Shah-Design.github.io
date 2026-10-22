@@ -721,7 +721,6 @@
   .rp-seg button{ border:0; background:none; border-radius:999px; padding:0 14px; min-height:36px; font:500 13.5px 'Inter', sans-serif; cursor:pointer; color:var(--ink-soft); }
   .rp-seg button[aria-pressed="true"]{ background:var(--ink); color:#fff; }
   .rp-seg button:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
-  .rp-tally{ font-family:var(--rp-mono); font-size:12px; color:var(--ink-faint); }
   .rp-steps{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px; counter-reset:rp-step; }
   .rp-steps li{ display:grid; grid-template-columns:30px minmax(0,1fr); gap:12px; align-items:start; counter-increment:rp-step; }
   .rp-steps li::before{
@@ -1391,12 +1390,10 @@
             rounds: [
               { label: "First try", badge: "close", badgeText: "Close",
                 answer: "Because it doesn’t really go back, it just keeps going forward.",
-                feedback: "**Close.** You said what it doesn’t do. Now say what happens to the wrong line once it’s written.",
-                tally: "Round 1: 1 of 4 cards passed" },
+                feedback: "**Close.** You said what it doesn’t do. Now say what happens to the wrong line once it’s written." },
               { label: "Revised", badge: "done", badgeText: "Done",
                 answer: "It never rereads. A wrong line becomes part of the text every later pick reads, so the rest can build on the mistake.",
-                feedback: "**Done.** You named what happens to the mistake, which is the part that matters.",
-                tally: "Round 2: 4 of 4 cards passed" },
+                feedback: "**Done.** You named what happens to the mistake, which is the part that matters." },
             ],
           },
           steps: [
@@ -1909,8 +1906,7 @@
       <div class="rp-inline">
         <p class="rp-ctx">${rich(s.prompt)}</p>
         <div data-rp="card" aria-live="polite">${rpCard(c, 0)}</div>
-        <div class="rp-row"><div class="rp-seg">${c.rounds.map((r, k) => `<button type="button" data-round="${k}" aria-pressed="${k === 0}">${esc(r.label)}</button>`).join('')}</div>
-          <span class="rp-tally" data-rp="tally">${esc(c.rounds[0].tally)}</span></div>
+        <div class="rp-row"><div class="rp-seg">${c.rounds.map((r, k) => `<button type="button" data-round="${k}" aria-pressed="${k === 0}">${esc(r.label)}</button>`).join('')}</div></div>
       </div>
       <ol class="rp-steps">${s.steps.map(st => `<li><span><b>${esc(st.title)}</b>${esc(st.text)}</span></li>`).join('')}</ol>
     </div>`;
@@ -1922,7 +1918,6 @@
       const k = +b.dataset.round;
       btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
       view.querySelector('[data-rp="card"]').innerHTML = rpCard(s.card, k);
-      view.querySelector('[data-rp="tally"]').textContent = s.card.rounds[k].tally;
     }));
   }
 
