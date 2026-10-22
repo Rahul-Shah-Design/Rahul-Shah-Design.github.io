@@ -744,6 +744,9 @@
   .rp-col.now .rp-ic{ background:var(--rp-green-tint); color:var(--rp-green); }
   .rp-col.next .rp-ic{ border:1.5px dashed var(--ink-faint); }
   .rp-col small{ display:block; font-family:var(--rp-mono); font-size:11px; color:var(--ink-faint); letter-spacing:0.02em; margin-top:2px; }
+  /* TRIAL: research-term captions hidden to compare the cleaner list. The terms
+     are still in the data; delete this rule to bring them back */
+  .rp-col small{ display:none; }
 
   /* the core loop: SVG built from data, swapped for a list when narrow */
   .rp-loop-svg{ width:100%; height:auto; max-height:440px; display:block; flex:none; }
