@@ -553,20 +553,8 @@
   }
   .rp-slide{ margin:auto 0; width:100%; display:flex; flex-direction:column; gap:10px; }
 
-  /* narration moves under the window and becomes a headline */
-  .replay .talker{ margin:22px auto 0; max-width:840px; }
-  .bubble.rp-headline{
-    font-family:'Fraunces', Georgia, serif; font-weight:600;
-    font-size:clamp(18px, 2vw, 22px); line-height:1.3; padding:14px 22px;
-  }
-  /* solid highlighter: the page's multiply swipe would go dark on the ink bubble */
-  .rp-headline .rp-hl{
-    background:var(--hl-yellow); color:var(--ink); padding:0 .2em; border-radius:2px;
-    -webkit-box-decoration-break:clone; box-decoration-break:clone;
-  }
-
   /* below 1240px the side arrows would crowd the window, so a row under the
-     narration takes over */
+     card takes over */
   .rp-navrow{ display:none; width:100%; justify-content:space-between; align-items:center; gap:12px; margin-top:18px; }
   .rp-navrow .nav-arrow{ position:static; translate:none; flex:none; }
   .rp-hint{ font-family:var(--rp-mono); font-size:11px; letter-spacing:0.04em; color:var(--ink-faint); text-align:center; }
@@ -1034,6 +1022,11 @@
             <div class="k" id="cap-k-chiron" aria-live="polite" aria-atomic="true">Slide 1 of 8</div>
             <div class="scribble-strip" id="strip-chiron" aria-hidden="true"></div>
           </div>
+          <div class="talker">
+            <span class="sr-only">Rahul says:</span>
+            <img class="avatar" src="assets/avatar-rahul.png" alt="">
+            <div class="bubble" id="bubble-chiron" aria-live="polite" aria-atomic="true"></div>
+          </div>
           <div class="device-wrap">
             <button class="nav-arrow left" data-dir="-1" data-target="chiron" aria-label="Previous slide">
               <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
@@ -1042,11 +1035,6 @@
             <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
               <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             </button>
-          </div>
-          <div class="talker">
-            <span class="sr-only">Rahul says:</span>
-            <img class="avatar" src="assets/avatar-rahul.png" alt="">
-            <div class="bubble rp-headline" id="bubble-chiron" aria-live="polite" aria-atomic="true"></div>
           </div>
           <div class="rp-navrow">
             <button class="nav-arrow left" data-dir="-1" data-target="chiron" aria-label="Previous slide">
@@ -1208,16 +1196,14 @@
 
   // ---------- Chiron session replay: the copy ----------
   // Everything the replay says lives here. Edit freely; the layout code below
-  // reads it. In any string, **text** is bold and ==text== is highlighted
-  // (the narration's yellow swipe, or the soft marker in chat). `say` is a
-  // longer narration line kept for later; nothing shows it yet.
+  // reads it. `narration` is Rahul's speech bubble for the slide, plain text.
+  // In the slide copy, **text** is bold and ==text== gets the soft highlighter.
   const replays = {
     chiron: {
       slides: [
         {
           name: "The loop",
-          narration: "Ask it to teach you anything. It runs this loop.",
-          say: "One lap per module: find the gap, build the lesson, then check you can explain it in your own words.",
+          narration: "Ask Chiron to teach you anything and it runs this loop. It questions you until it finds the gap, builds a module around that gap, then has you write flashcards in your own words.",
           type: "loop",
           label: "Chiron's core loop: Ask, then a repeating loop of Answer, Course and Flashcards, one lap per module.",
           start: { title: "Ask", sub: ["Name anything you", "want to learn"] },
@@ -1238,8 +1224,7 @@
         },
         {
           name: "Diagnose",
-          narration: "It ==diagnoses== before it teaches",
-          say: "No lecture up front. Chiron asks until her real mental model is on the table, wrong parts included.",
+          narration: "Here a 7th grade science teacher asks how ChatGPT works. Chiron holds off on explaining and asks questions until her mental model is on the table: first a database, then memorized facts it rewords.",
           type: "chat",
           // `think` notes are annotations written for the portfolio, not Chiron's literal output
           messages: [
@@ -1254,8 +1239,7 @@
         },
         {
           name: "Build",
-          narration: "Your confusion becomes the ==lesson plan==",
-          say: "The moment she names what she can't explain, Chiron builds a module around it in the background and opens it with her own words.",
+          narration: "When she says autocomplete sounds too simple to write a unit plan, Chiron stops asking. That doubt becomes the lesson: Module 1 builds while they keep talking, and it opens on her own words.",
           type: "chat",
           messages: [
             { who: "teacher", text: "“Fancy autocomplete” seems ==way too simple to write a whole unit plan.==" },
@@ -1271,8 +1255,7 @@
         },
         {
           name: "Simulate",
-          narration: "It codes ==working simulations== on the spot",
-          say: "This isn't a mockup. Chiron wrote this interactive mid-session to make its point. Press Write a few times.",
+          narration: "Chiron coded this next-token machine mid-session so she could watch the idea work. It runs here too: press Write the rest a few times, then drag randomness to 0 and try again.",
           type: "machine",
           chips: ["Coded by Chiron mid-session", "Live: press Write"],
           prompt: "A simple way for students to see photosynthesis is to",
@@ -1281,15 +1264,15 @@
           button: "Write the rest",
           keepRuns: 4,
           stepMs: 480,
-          // Chiron's Module 1 token table, with one fix: its float/leaf path
-          // could write "a leaf disks", so float now goes to spinach or leaf
-          // and leaf goes to in or under
+          // Chiron's Module 1 token table, with one fix: its leaf path could
+          // write "a leaf disks" or "float leaf in", so leaf now goes to in or
+          // under, and float only leads to spinach disks
           table: {
             START:     [[" place", .45], [" put", .25], [" watch", .15], [" float", .10], [" count", .05]],
             " place":  [[" a", .75], [" two", .25]],
             " put":    [[" a", .8], [" two", .2]],
             " watch":  [[" a", .6], [" bubbles", .4]],
-            " float":  [[" spinach", .6], [" leaf", .4]],
+            " float":  [[" spinach", 1]],
             " count":  [[" bubbles", 1]],
             " a":      [[" plant", .5], [" leaf", .3], [" sprig", .2]],
             " two":    [[" plants", 1]],
@@ -1313,8 +1296,7 @@
         },
         {
           name: "Check",
-          narration: "Built-in ==misconception tracking==",
-          say: "Every wrong option maps to a known misconception. Chiron logs which one she picked and catches it when the same one shows up again.",
+          narration: "Every wrong option in a knowledge check is tagged with the belief behind it. Her answer here logged understands-thinks, and the same belief turned up again on a later question.",
           type: "check",
           artifact: {
             src: "assets/chiron-replay-check.webp", width: 1360, height: 712,
@@ -1324,13 +1306,12 @@
           results: [ { kind: "wrong", text: "Not this one" }, { kind: "flag", text: "Logged misconception: understands-thinks" } ],
           lines: [
             "**understands-thinks** is the belief that the model reasons about what it writes and can catch its own mistakes.",
-            "She misses a second check for the same reason. Chiron sees a pattern, not a score.",
+            "She misses a second check for the same reason, so Chiron has a pattern to work from.",
           ],
         },
         {
           name: "Grade",
-          narration: "A model grades the answer, ==not a key==",
-          say: "Half right gets a nudge toward the missing half, the way a good teacher would respond.",
+          narration: "Written answers are graded by a model against a rubric Chiron drafted while planning the course. Her first try was half right, so the nudge asked about the missing half.",
           type: "grade",
           tries: [
             { label: "Explain it to a colleague · try 1",
@@ -1346,8 +1327,7 @@
         },
         {
           name: "Flashcards",
-          narration: "Flashcards you write, ==graded in the chat==",
-          say: "Her deck is built from her own words and her own mistakes. Switch to Revised to see her second try.",
+          narration: "Back in the chat, she writes the back of every card and Chiron grades each one. This card came from her wrong answer two slides back. Switch to Revised to see her second try.",
           type: "cards",
           prompt: "**Chiron** · Write the back of each card in your own words.",
           card: {
@@ -1374,14 +1354,13 @@
         },
         {
           name: "Under the hood",
-          narration: "Built on learning science. ==Honest== about the gaps.",
-          say: "Every move maps to how people learn. Testing showed me what to build next.",
+          narration: "Each move Chiron makes comes from learning science research. Testing also showed me the gaps, like module gates that let a wrong answer through. That list is what I'm building next.",
           type: "hood",
           now: {
             label: "Under the hood today", title: "What Chiron does",
             items: [
               ["Asks until you hit a wall you can name", "impasse-driven learning"],
-              ["Answers your belief with evidence, not a correction", "conceptual change"],
+              ["Answers your belief with evidence that tests it", "conceptual change"],
               ["Codes a simulation you predict, then test", "predict, observe, explain"],
               ["Tags every wrong option with the belief behind it", "diagnostic distractors"],
               ["Reads free-text answers and nudges toward the gap", "elaborated feedback"],
@@ -1895,7 +1874,7 @@
       // not, so a slide change announces two short lines, not a whole transcript
       const label = `Slide ${idx + 1} of ${n} · ${s.name}`;
       if (cap.textContent !== label) cap.textContent = label;
-      bubble.innerHTML = rich(s.narration, 'rp-hl');
+      if (bubble.textContent !== s.narration) bubble.textContent = s.narration;
       view.innerHTML = `<div class="rp-slide">${RP_RENDER[s.type](s)}</div>`;
       view.scrollTop = 0;
       if (RP_INIT[s.type]) RP_INIT[s.type](view, s);

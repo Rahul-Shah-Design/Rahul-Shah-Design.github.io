@@ -70,15 +70,16 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 The Chiron card on the root `index.html` is an 8-slide replay of one tutoring session rather
 than a screenshot slideshow. **All of its copy lives in the `replays` object in the page
 script**: slide names, narration, chat messages, the token machine's table, card rounds. Edit
-it there; the `rp*` render functions below it only handle layout. In those strings `**text**`
-is bold and `==text==` is highlighted. Each slide's `say` line is a longer narration kept for
-later and not shown.
+it there; the `rp*` render functions below it only handle layout. Each slide's `narration` is
+Rahul's speech bubble, plain text, shown with the same talker and bubble as the other cases. In
+the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
 
 - Styles are the `CHIRON REPLAY` block, scoped to `.replay` with `rp-` class names, built on
   the site tokens. Its window is fixed at 540px tall and every slide must fit it without
   scrolling at 1440 and 1024 wide; recheck both after copy changes.
 - The token machine on slide 4 is live code, ported from Chiron's Module 1. Its table carries
-  one deliberate change from the original (the float/leaf route, commented in the data).
+  one deliberate change from the original: the leaf and float routes, which could write
+  "a leaf disks" or "float leaf in", commented in the data.
 - Images are `assets/chiron-replay-*.webp`. The knowledge check was recaptured at 2x from the
   module's own HTML in its dark scheme.
 - The scribble track chains copies of its 6-stroke Lottie when a slideshow has more than 6
