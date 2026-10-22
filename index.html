@@ -1228,14 +1228,14 @@
       slides: [
         {
           name: "The loop",
-          narration: "Ask Chiron to teach you anything and it runs this loop. It questions you until it finds the gap, builds a module around that gap, then has you write flashcards in your own words.",
+          narration: "Chiron is an AI tutor I built as a Claude Skill. Ask it to teach you anything: it questions you until you're stuck, builds a lesson around that exact spot, then has you write your own flashcards.",
           type: "loop",
-          label: "Chiron's core loop: Ask, then a repeating loop of Answer, Course and Flashcards, one lap per module.",
+          label: "Chiron's core loop: Ask, then a repeating loop of Answer, Module and Flashcards, one lap per module.",
           start: { title: "Ask", sub: ["Name anything you", "want to learn"] },
           // angle in degrees around the loop; 180 is the left of the circle
           nodes: [
             { angle: 180, title: "Answer",     sub: ["Socratic questions until", "you hit the wall"] },
-            { angle: 300, title: "Course",     sub: ["A module built around", "that wall, with checks"] },
+            { angle: 300, title: "Module",     sub: ["A lesson built around", "that wall, with checks"] },
             { angle: 60,  title: "Flashcards", sub: ["Write each card yourself,", "revise until it's right"] },
           ],
           center: ["One lap", "per module"],
@@ -1243,13 +1243,13 @@
           notes: {
             build: ["Builds the module while", "you keep talking"],
             cards: ["Wrong answers", "become cards"],
-            next:  ["Next module starts from", "your next question"],
+            next:  ["Next module adapts to", "what your answers showed"],
           },
           back: "↺ Back to 1 for the next module",
         },
         {
           name: "Diagnose",
-          narration: "Here a 7th grade science teacher asks how ChatGPT works. Chiron holds off on explaining and asks questions until her mental model is on the table: first a database, then memorized facts it rewords.",
+          narration: "A 7th grade science teacher asks how ChatGPT works. Chiron opens with a case designed to expose wrong models, and her answers surface two: a database lookup, then memorized facts it rewords.",
           type: "chat",
           // `think` notes are annotations written for the portfolio, not Chiron's literal output
           messages: [
@@ -1264,7 +1264,7 @@
         },
         {
           name: "Build",
-          narration: "When she says autocomplete sounds too simple to write a unit plan, Chiron stops asking. That doubt becomes the lesson: Module 1 builds while they keep talking, and it opens on her own words.",
+          narration: "Her doubt that autocomplete could write a unit plan is the wall, so Chiron stops asking. Module 1 has been drafting since her first message. Now it gets fitted to her, opening on her own words.",
           type: "chat",
           messages: [
             { who: "teacher", text: "“Fancy autocomplete” seems ==way too simple to write a whole unit plan.==" },
@@ -1280,11 +1280,11 @@
         },
         {
           name: "Simulate",
-          narration: "Chiron coded this next-token machine mid-session so she could watch the idea work. It runs here too: press Write the rest a few times, then drag randomness to 0 and try again.",
+          narration: "Chiron builds a simulation only when there's a real control to turn. This one is live: press Write the rest a few times, then predict what randomness at 0 will do and try it.",
           type: "machine",
           // the panel as Chiron built it in Module 1, with its own wording;
           // only the run history is shortened so it fits the window
-          frame: { title: "Module 1 · The next-token machine", note: "coded mid-session, live here" },
+          frame: { title: "Module 1 · The next-token machine", note: "built during the session, live here" },
           title: "The next-token machine",
           caption: "Schematic: a tiny hand-built version with a few dozen tokens and made-up scores. A real model scores about 100,000 tokens using everything it has read, but the loop is the same.",
           prompt: "A simple way for students to see photosynthesis is to",
@@ -1330,7 +1330,7 @@
         },
         {
           name: "Check",
-          narration: "Every wrong option in a knowledge check maps to a belief. Her pick tells Chiron she thinks the model can go back and fix its own mistakes, so that belief shapes what comes next.",
+          narration: "Each wrong option in a check stands for a specific wrong model. Her pick shows she thinks the model can go back and fix its own mistakes.",
           type: "check",
           artifact: {
             src: "assets/chiron-replay-check.webp", width: 1360, height: 712,
@@ -1340,12 +1340,12 @@
           results: [ { kind: "wrong", text: "Not this one" }, { kind: "flag", text: "Misconception noticed" } ],
           lines: [
             "**What she believes:** the model reasons about what it writes and catches its own mistakes.",
-            "**What Chiron does with it:** builds the next module to test that belief, and turns it into one of her flashcards.",
+            "**What Chiron does with it:** verifies the grade, then puts a case in the next module where that belief predicts wrong. It also becomes a flashcard.",
           ],
         },
         {
           name: "Grade",
-          narration: "Written answers are graded by a model against a rubric Chiron drafted while planning the course. Her first try was half right, so the nudge asked about the missing half.",
+          narration: "Short written answers are graded live inside the module, against a rubric from the course plan. Her first try was half right, so the nudge asks about the missing half.",
           type: "grade",
           tries: [
             { label: "Explain it to a colleague · try 1",
@@ -1356,12 +1356,12 @@
               result: { kind: "right", text: "That covers it" } },
           ],
           nudge: "**Nudge:** What happens to the words it chooses later if the very first word is different?",
-          hand: "No answer key, no red X",
-          note: "Graded live inside the module against a rubric Chiron wrote when it planned the course. The nudge points at exactly the half she left out.",
+          hand: "Graded on substance alone",
+          note: "Wording and polish don't count. Every grade is logged, and a shaky one gets checked against her actual answer before it steers anything.",
         },
         {
           name: "Flashcards",
-          narration: "Back in the chat, she writes the back of every card and Chiron grades each one. This card came from her wrong answer two slides back. Switch to Revised to see her second try.",
+          narration: "Back in the chat, she writes the back of every card and Chiron grades it, but never writes it for her. This one came from her wrong answer in the check. Switch to Revised to see her second try.",
           type: "cards",
           prompt: "**Chiron** · Write the back of each card in your own words.",
           card: {
@@ -1383,30 +1383,30 @@
             { title: "Cards appear right in the chat", text: "An inline widget, no new tab or app." },
             { title: "She writes every answer herself", text: "Generating it beats rereading a definition." },
             { title: "Chiron grades each card and sends notes back", text: "Done, Close or Revise, with one pointed question." },
-            { title: "Revise until all pass, then it’s her deck", text: "Saved as a file she can study from later." },
+            { title: "Revise until all pass, then it’s her deck", text: "A spaced-repetition deck that runs in any browser." },
           ],
         },
         {
           name: "Under the hood",
-          narration: "Each move Chiron makes comes from learning science research. Testing also showed me the gaps, like module gates that let a wrong answer through. That list is what I'm building next.",
+          narration: "Each move maps to learning science research. The hardest design problem is restraint: helping enough without doing the learner's thinking. I test every prompt change with an eval suite and an LLM judge.",
           type: "hood",
           now: {
             label: "Under the hood today", title: "What Chiron does",
             items: [
-              ["Asks until you hit a wall you can name", "impasse-driven learning"],
-              ["Answers your belief with evidence that tests it", "conceptual change"],
-              ["Codes a simulation you predict, then test", "predict, observe, explain"],
+              ["Questions you to the wall, then stops asking", "impasse-driven learning"],
+              ["Confronts a wrong model with a case it gets wrong", "conceptual change"],
+              ["Builds simulations you predict, then test", "predict, observe, explain"],
               ["Tags every wrong option with the belief behind it", "diagnostic distractors"],
               ["Reads free-text answers and nudges toward the gap", "elaborated feedback"],
               ["Makes you write the flashcards yourself", "generation and retrieval practice"],
             ],
           },
           next: {
-            label: "Found in testing", title: "What I'm adding next",
+            label: "Not built yet", title: "What I'm adding next",
             items: [
-              ["Gates that hold: no moving on after a wrong answer, retry until it's shown", "mastery learning"],
-              ["Says the pattern out loud: “you've missed this twice for the same reason”", "metacognitive feedback"],
               ["Remembers you between sessions with a learner model that carries over", "knowledge tracing"],
+              ["Brings old misconceptions back on a spaced review schedule", "spacing and retrieval practice"],
+              ["A standalone app on the Anthropic API, with adaptivity built in", "adaptive instruction"],
             ],
           },
         },
