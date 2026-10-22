@@ -68,7 +68,7 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 ## Chiron Session Replay (root page)
 
 The Chiron card on the root `index.html` is a 7-slide replay of one tutoring session rather
-than a screenshot slideshow. It opens on the loop diagram, whose narration introduces Chiron. (A
+than a screenshot slideshow. It opens on the diagnose-and-build chat, whose narration introduces Chiron, then the loop diagram. (A
 first slide showing a full screenshot of the session was dropped as too busy; its `shot` slide
 type, `rpShot` and `chiron-replay-session.webp` are kept so it can come back.) **All of its copy lives in the `replays` object in the page
 script**: slide names, narration, chat messages, the token machine's table, card rounds. Edit
@@ -79,7 +79,7 @@ the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
 - Styles are the `CHIRON REPLAY` block, scoped to `.replay` with `rp-` class names, built on
   the site tokens. Its window is fixed at 540px tall and every slide must fit it without
   scrolling at 1440 and 1024 wide; recheck both after copy changes.
-- Slide 2 folds the opening questions and the build into one: the chat on the left, a tall
+- Slide 1 folds the opening questions and the build into one: the chat on the left, a tall
   crop of the Module 1 page on the right (`chiron-replay-module.webp`, `tall: true`), faded out
   at the bottom.
 - Slide 3 is the next-token machine as Chiron built it in Module 1: the module's own markup,
