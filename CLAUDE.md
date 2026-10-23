@@ -151,8 +151,7 @@ the others. **The `.docx` is the source; edit it, never the PDF.**
 `assets/resume.docx` is the general master. `wayfinder/resume.docx` is tailored for Wayfinder
 (`wayfinder-classic/` holds the earlier copy of it). `codepath/resume.docx` is tailored for CodePath (built from the Wayfinder copy: design system first, flows and IA in the summary).
 `playlab/resume.docx` is tailored for Playlab (built from the CodePath copy: AI prototyping leads the Encoura bullets, AI first in Skills); `playlab-classic/` holds a copy of it.
-`modern-classroom-project/` still only has the PDF/PNG (identical to the root's); give it a
-`.docx` copy before tailoring it.
+`modern-classroom-project/resume.docx` is a copy of the root master, not yet tailored.
 
 Edit `word/document.xml` inside the `.docx` (unzip, edit, re-zip; no pretty-printing), then:
 
