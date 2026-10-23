@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahul Shah — for DreamBox</title>
+<link rel="icon" type="image/png" href="avatar-rahul.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* A DreamBox-inspired palette, taken from the colors on dreambox.com
+       (navy, blue, green, lime, sky, orange, sun). Their type is Proxima and
+       Mikado on Adobe Fonts; Fredoka and Nunito stand in as the rounded,
+       friendly faces. Green and orange fail as text on white, so they are
+       only ever decorative fills; every text pair is checked to 4.5:1. */
+    --ink:#0E2A40; --navy:#024170; --text2:#4A5D6E;
+    --blue:#046AB8; --blue-dark:#03568F;
+    --sky:#72CDF4; --sky-pale:#E6F1FB; --sky-mid:#CFE6F8;
+    --lime:#C3D941; --lime-pale:#F2F7D9;
+    --green:#42B921; --orange:#F47820; --sun:#FDD12E; --butter:#FEECAD;
+    --cream:#FFF8E7; --paper:#FFFFFF;
+    --hairline:#D5E3EE; --outline:#7891A6;
+    --flag:#9A4300;
+    --shadow-2:0 4px 16px rgba(2,65,112,.10);
+    --shadow-3:0 16px 48px rgba(2,65,112,.16);
+    --wrap:1040px;
+    --display:'Fredoka', 'Nunito', 'Trebuchet MS', sans-serif;
+    /* the highlighter swipe; a band can swap it for a color that sits better on its ground */
+    --hl:var(--butter);
+  }
+  *{ box-sizing:border-box; }
+  /* scroll-padding keeps a focused or anchored element from landing under
+     the sticky top bar */
+  html{ scroll-behavior:smooth; scroll-padding-top:84px; }
+  body{
+    margin:0; background:var(--cream); color:var(--ink);
+    font-family:'Nunito', 'Trebuchet MS', Arial, sans-serif;
+    font-size:17px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ margin:0; font-family:var(--display); font-weight:600; color:var(--navy); text-wrap:balance; }
+  p{ margin:0; }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; }
+  ::selection{ background:var(--sun); color:var(--ink); }
+  :focus-visible{ outline:3px solid var(--blue); outline-offset:3px; }
+
+  .hl{
+    background:var(--hl); padding:0 .14em; border-radius:.3em;
+    -webkit-box-decoration-break:clone; box-decoration-break:clone;
+    /* the swipe is taller than the tight heading line-height, so painted in
+       order it would cover the descenders of the line above. Drop it behind
+       the text; isolation keeps it from sinking behind the band as well. */
+    position:relative; z-index:-1;
+  }
+  [data-flatten]{ isolation:isolate; }
+  .wrap{ max-width:var(--wrap); margin:0 auto; padding:0 28px; position:relative; }
+  .caps{
+    font-size:14px; font-weight:800; line-height:1.35;
+    letter-spacing:0.6px; text-transform:uppercase; color:var(--text2);
+  }
+
+  /* ---------- ACCESSIBILITY UTILITIES ---------- */
+  /* visually hidden but still read by screen readers */
+  .sr-only{
+    position:absolute !important; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+  /* first tab stop on the page; parked off-screen until it has focus */
+  .skip-link{
+    position:absolute; left:16px; top:-100px; z-index:60;
+    background:var(--navy); color:#fff; padding:12px 18px; border-radius:999px;
+    font-size:15px; font-weight:700; text-decoration:none;
+  }
+  .skip-link:focus{ top:12px; }
+
+  /* ---------- TODO FLAGS ----------
+     Placeholders and open questions for Rahul, styled so they cannot slip
+     through to a shared link unnoticed. Search the source for "TODO". */
+  .todo{
+    border:3px dashed var(--flag); border-radius:16px; background:var(--butter);
+    color:var(--ink); padding:14px 18px; font-size:15px; line-height:1.5;
+  }
+  .todo b{ color:var(--flag); text-transform:uppercase; letter-spacing:.5px; font-weight:800; }
+  .todo ul{ margin:6px 0 0; padding-left:20px; }
+  .todo li + li{ margin-top:2px; }
+
+  /* ---------- BUTTONS + CHIPS ---------- */
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
+    min-height:46px; padding:0 22px; border-radius:999px; border:2px solid transparent;
+    font:inherit; font-size:16px; font-weight:800; line-height:24px;
+    text-decoration:none; cursor:pointer;
+    transition:background .14s ease, border-color .14s ease, transform .14s ease;
+  }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn-ink{ background:var(--blue); color:#fff; }
+  .btn-ink:hover{ background:var(--blue-dark); }
+  .btn-white{ background:var(--paper); color:var(--navy); border-color:var(--outline); }
+  .btn-white:hover{ border-color:var(--navy); }
+  .chip{
+    display:inline-block; padding:6px 14px; border-radius:999px;
+    font-size:14px; font-weight:800; line-height:1.4; white-space:nowrap; color:var(--navy);
+  }
+
+  /* ---------- IMAGE LIGHTBOX ---------- */
+  /* a real <button> around each enlargeable image: native keyboard and
+     screen-reader semantics instead of role=button on an <img> */
+  .zoom-btn{
+    display:block; width:100%; height:100%; padding:0; margin:0; border:0;
+    background:none; cursor:zoom-in; font:inherit; color:inherit;
+  }
+  /* the ring is inset because every container that holds one of these
+     clips overflow, which would swallow an outline drawn outside */
+  .zoom-btn:focus-visible{ outline:3px solid var(--blue); outline-offset:-3px; }
+  .lightbox{
+    position:fixed; inset:0; z-index:100;
+    background:rgba(4,25,42,0.94);
+    display:none; overflow:auto; padding:20px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .lightbox.open{ display:flex; }
+  .lightbox img{
+    margin:auto; display:block;
+    max-width:100%; max-height:calc(100vh - 40px);
+    width:auto; height:auto;
+    border-radius:12px; background:var(--paper); cursor:zoom-in;
+  }
+  .lightbox.zoomed img{ max-width:none; max-height:none; width:auto; cursor:zoom-out; }
+  .lightbox-close, .lightbox-zoom{
+    position:fixed; top:14px; z-index:101;
+    height:44px; border-radius:999px;
+    border:1px solid rgba(255,255,255,0.5);
+    background:var(--navy); color:#fff;
+    line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .lightbox-close{ right:16px; width:44px; font-size:24px; }
+  /* keyboard route to the zoom that tapping the image gives pointer users */
+  .lightbox-zoom{
+    right:70px; padding:0 18px;
+    font-family:inherit; font-size:15px; font-weight:700;
+  }
+  .lightbox-close:focus-visible, .lightbox-zoom:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+  .lightbox-hint{
+    position:fixed; left:50%; bottom:14px; transform:translateX(-50%);
+    font-size:13px; color:rgba(255,255,255,0.85); pointer-events:none; text-align:center;
+  }
+
+  /* ---------- TOP BAR ---------- */
+  .topbar{ position:sticky; top:0; z-index:40; background:var(--paper); border-bottom:2px solid var(--sky-mid); }
+  .topbar-inner{
+    max-width:1200px; margin:0 auto; padding:0 28px; height:68px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .mark{ display:flex; align-items:center; gap:10px; font-family:var(--display); font-size:22px; font-weight:600; color:var(--navy); white-space:nowrap; }
+  .mark-dot{ width:34px; height:34px; flex-shrink:0; }
+  .topnav{ display:flex; align-items:center; gap:4px; }
+  .topnav a{
+    display:inline-flex; align-items:center; min-height:44px; padding:0 14px;
+    font-size:15px; font-weight:800; color:var(--navy); text-decoration:none; border-radius:999px;
+  }
+  .topnav a:hover{ background:var(--sky-pale); }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:72px 0 88px; overflow:hidden;
+    background-color:var(--sky-pale);
+    /* a soft dot grid, like the paper under a worksheet */
+    background-image:radial-gradient(var(--sky-mid) 2px, transparent 2.5px);
+    background-size:28px 28px;
+  }
+  .hero .wrap{ max-width:1200px; }
+  .hero-grid{
+    display:grid; grid-template-columns:minmax(0, 1.3fr) minmax(0, 1fr);
+    gap:48px; align-items:center;
+  }
+  .hero-copy{ display:flex; flex-direction:column; gap:24px; }
+  .eyebrow{ align-self:flex-start; background:var(--paper); color:var(--navy); border:2px solid var(--sky-mid); }
+  .hero h1{ font-size:56px; line-height:1.08; letter-spacing:-0.5px; }
+  .hero h1 .hl{ --hl:var(--lime); }
+  .hero-sub{ max-width:620px; font-size:20px; line-height:1.55; }
+  .hero-tags{ list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px; }
+  .hero-tags li{ background:var(--paper); color:var(--navy); padding:6px 14px; border-radius:999px; font-size:15px; font-weight:800; box-shadow:var(--shadow-2); }
+
+  /* base-ten blocks around the portrait: a flat, a rod and loose units, the
+     pieces of a K-8 math kit. Sized in percentages of one box so it scales
+     down whole on a phone. Purely decorative. */
+  .blocks{ position:relative; width:100%; max-width:440px; aspect-ratio:1; justify-self:center; }
+  .blocks > *{ position:absolute; }
+  .flat{
+    left:8%; top:6%; width:80%; height:80%; border-radius:28px; transform:rotate(-4deg);
+    background-color:var(--sky);
+    background-image:
+      linear-gradient(rgba(2,65,112,.18) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(2,65,112,.18) 2px, transparent 2px);
+    background-size:10% 10%;
+  }
+  .rod{
+    left:-1%; top:22%; width:11%; height:72%; border-radius:12px; transform:rotate(6deg);
+    background-color:var(--lime);
+    background-image:linear-gradient(rgba(2,65,112,.28) 2px, transparent 2px);
+    background-size:100% 10%;
+    box-shadow:var(--shadow-2);
+  }
+  .unit{ width:11%; aspect-ratio:1; border-radius:10px; box-shadow:var(--shadow-2); }
+  .unit-1{ right:2%;  top:4%;  background:var(--orange); transform:rotate(12deg); }
+  .unit-2{ right:10%; top:15%; background:var(--sun); transform:rotate(-8deg); }
+  .unit-3{ right:0;   bottom:10%; background:var(--green); transform:rotate(18deg); }
+  .sun-dot{ left:4%; top:-2%; width:16%; aspect-ratio:1; border-radius:50%; background:var(--sun); }
+  .team-card{
+    left:20%; top:14%; width:58%; margin:0;
+    border-radius:20px; overflow:hidden; background:var(--paper);
+    box-shadow:var(--shadow-3); transform:rotate(2deg);
+    border:4px solid var(--paper);
+  }
+  .team-card img{ width:100%; height:auto; aspect-ratio:1; object-fit:cover; border-radius:16px 16px 0 0; }
+  .team-card figcaption{ background:var(--sun); padding:10px 14px 12px; display:flex; flex-direction:column; gap:1px; color:var(--navy); }
+  .team-name{ font-family:var(--display); font-size:18px; font-weight:600; line-height:1.25; }
+  .team-role{ font-size:14px; font-weight:700; line-height:1.35; }
+  /* the loose blocks bob while the pointer is over them; nothing moves on its own */
+  @media (hover:hover) and (prefers-reduced-motion:no-preference){
+    .blocks .unit, .blocks .rod, .blocks .sun-dot{ transition:translate .5s cubic-bezier(.34,1.56,.64,1); }
+    .blocks:hover .unit-1{ translate:4px -10px; }
+    .blocks:hover .unit-2{ translate:-6px -6px; }
+    .blocks:hover .unit-3{ translate:6px -8px; }
+    .blocks:hover .rod{ translate:-6px -4px; }
+    .blocks:hover .sun-dot{ translate:-4px 4px; }
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section.case{ padding:96px 0; }
+  .band-cream{ background:var(--cream); }
+  .band-sky{ background:var(--sky-pale); }
+  .band-white{ background:var(--paper); }
+  .case-head{ display:flex; flex-direction:column; gap:14px; margin-bottom:40px; }
+  .case-title{ font-size:46px; line-height:1.1; letter-spacing:-0.3px; text-wrap:pretty; }
+  .case-row{ display:flex; align-items:center; justify-content:space-between; gap:24px 48px; }
+  .case-desc{ max-width:660px; font-size:20px; line-height:1.55; text-wrap:pretty; }
+  .case-note{ max-width:660px; font-size:17px; color:var(--text2); }
+  #onboarding{ --well:var(--sky-pale); }
+
+  /* ---------- MOTION REEL ---------- */
+  .reel{ display:grid; grid-template-columns:minmax(0, 1.6fr) minmax(0, 1fr); gap:28px; align-items:start; }
+  .reel-stage{
+    position:relative; aspect-ratio:800/440; border-radius:24px; overflow:hidden;
+    background:var(--paper); box-shadow:var(--shadow-3); border:4px solid var(--paper);
+  }
+  .reel-clip{ position:absolute; inset:0; margin:0; opacity:0; transition:opacity .45s ease; display:flex; align-items:center; justify-content:center; }
+  .reel-clip.on{ opacity:1; }
+  .reel-clip img{ width:100%; height:100%; object-fit:cover; }
+  /* the nav-bar clip is a wide strip: contain it on its own navy */
+  .reel-clip.contain{ background:#003359; padding:0 6%; }
+  .reel-clip.contain img{ height:auto; object-fit:contain; }
+  .reel-side{ display:flex; flex-direction:column; gap:14px; }
+  .reel-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .reel-pick{
+    width:100%; text-align:left; display:flex; gap:12px; align-items:center;
+    font:inherit; font-size:16px; color:var(--ink); cursor:pointer;
+    background:var(--paper); border:2px solid var(--hairline); border-radius:16px; padding:10px 14px;
+  }
+  .reel-pick b{ display:block; font-family:var(--display); font-weight:600; font-size:18px; color:var(--navy); }
+  .reel-pick span span{ font-size:14px; color:var(--text2); }
+  .reel-pick[aria-pressed="true"]{ border-color:var(--blue); background:var(--sky-pale); }
+  .reel-num{ flex:none; width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:var(--sun); color:var(--navy); font-weight:800; font-size:14px; }
+  .reel-ctrl{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+  /* ---------- SLIDESHOW MODULE ---------- */
+  .slideshow{ position:relative; }
+  .stage{
+    position:relative; background:var(--paper);
+    border:2px solid var(--hairline); border-radius:28px;
+    padding:32px 38px 40px;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .frame-caption{ margin-bottom:24px; width:100%; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .frame-caption .k{
+    font-size:14px; font-weight:800; letter-spacing:0.5px;
+    text-transform:uppercase; color:var(--text2);
+  }
+  /* one segment per slide, built by the slideshow script */
+  .progress{ display:flex; gap:6px; width:280px; max-width:100%; }
+  .progress span{ flex:1; height:8px; border-radius:999px; background:var(--sky-mid); transition:background .22s ease; }
+  .progress span.on{ background:var(--blue); }
+
+  .well{ width:100%; max-width:860px; background:var(--well); border-radius:20px; padding:20px; }
+  .device{ width:100%; position:relative; }
+  .device.filled{
+    /* matches the 1465x834 screenshots */
+    aspect-ratio:1465/834;
+    background:var(--paper); border-radius:10px;
+    /* the onboarding GIF has ~11px black arcs baked into its corners; the
+       radius plus overflow:hidden and the bleed rule below clip them away */
+    overflow:hidden;
+    box-shadow:var(--shadow-2);
+  }
+  .device.filled img{ width:100%; height:100%; object-fit:cover; display:block; }
+  /* GIF only (see render()): it is 800x440, so it gets its own box */
+  .device.filled.bleed{ aspect-ratio:800/440; }
+  .device.filled.bleed img{ width:calc(100% + 8px); height:calc(100% + 8px); margin:-4px; }
+
+  /* pause / play for the animated GIFs (WCAG 2.2.2) */
+  .gif-toggle{
+    font-family:inherit; font-size:15px; font-weight:800;
+    background:var(--paper); color:var(--navy);
+    border:2px solid var(--outline); border-radius:999px;
+    padding:0 16px; min-height:44px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .gif-toggle:hover{ border-color:var(--navy); }
+  .gif-toggle[hidden]{ display:none; }
+  .device .gif-toggle{ position:absolute; right:10px; bottom:10px; z-index:2; min-height:36px; font-size:14px; }
+
+  .nav-arrow{
+    position:absolute; top:50%; translate:0 -50%;
+    width:48px; height:48px; border-radius:50%;
+    background:var(--navy); border:2px solid var(--navy); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:background .14s, border-color .14s, color .14s;
+    user-select:none; z-index:5;
+  }
+  .nav-arrow svg{ width:20px; height:20px; stroke-width:2.6; }
+  .nav-arrow svg path{ stroke:currentColor; }
+  .nav-arrow:hover{ background:var(--blue); border-color:var(--blue); }
+  /* aria-disabled rather than disabled so the button keeps focus at either
+     end of the strip instead of dropping a keyboard user back to the top */
+  .slideshow .nav-arrow[aria-disabled="true"],
+  .slideshow .nav-arrow[aria-disabled="true"]:hover{
+    background:var(--paper); border-color:var(--outline); color:var(--text2); cursor:default;
+  }
+  .nav-arrow.left{ left:-24px; }
+  .nav-arrow.right{ right:-24px; }
+  /* static on purpose: the arrows resolve against .stage above mobile, and
+     against this wrapper only in the mobile rule below */
+  .device-wrap{ position:static; width:100%; display:flex; justify-content:center; }
+
+  /* ---------- SPEECH CARD ---------- */
+  /* the head sits inside a rounded card, like a chat message */
+  .talker{
+    display:flex; align-items:center; gap:14px;
+    width:100%; max-width:860px; margin:0 auto 24px;
+    background:var(--sky-pale); border-radius:20px; padding:14px 20px 14px 14px;
+  }
+  .avatar{ width:52px; height:52px; flex-shrink:0; display:block; }
+  .bubble{
+    color:var(--ink);
+    font-size:17px; line-height:1.55; min-height:20px;
+  }
+  /* the bubble slides up the first time it scrolls into view and again on every
+     slide change. The hidden start state is added by JS, so the text is never
+     lost if the script doesn't run. */
+  .bubble.bubble-wait{ opacity:0; }
+  .bubble.bubble-in{ animation:bubble-in .6s cubic-bezier(.34,1.3,.64,1) both; }
+  @keyframes bubble-in{
+    from{ opacity:0; transform:translateY(12px); }
+    to{ opacity:1; transform:none; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .bubble.bubble-wait{ opacity:1; }
+    .bubble.bubble-in{ animation:none; }
+  }
+
+  /* ---------- LEARNING MODULES ---------- */
+  .mod-grid{ display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:28px; align-items:start; }
+  .card{ background:var(--paper); border-radius:24px; padding:28px; box-shadow:var(--shadow-2); }
+  .card h3{ font-size:24px; line-height:1.2; margin-bottom:12px; }
+  .card p + p{ margin-top:10px; }
+  .ticks{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+  .ticks li{ display:grid; grid-template-columns:26px minmax(0, 1fr); gap:10px; align-items:start; }
+  .ticks li::before{
+    content:""; width:22px; height:22px; margin-top:2px; border-radius:7px;
+    background:var(--lime);
+    box-shadow:inset 0 0 0 2px rgba(2,65,112,.25);
+  }
+  .shot-slots{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; margin-top:20px; }
+  .shot-slot{
+    aspect-ratio:9/16; border-radius:18px; border:3px dashed var(--flag); background:var(--butter);
+    display:flex; align-items:center; justify-content:center; text-align:center; padding:10px;
+    font-size:14px; font-weight:700; color:var(--ink);
+  }
+  .quote{
+    margin:0; border-radius:24px; padding:24px 28px; background:var(--navy); color:#fff;
+  }
+  .quote p{ font-family:var(--display); font-size:24px; line-height:1.3; font-weight:500; }
+  .quote .todo{ margin-top:14px; }
+
+  /* ---------- ACCESSIBILITY + REACT NATIVE ---------- */
+  .a11y{
+    display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:28px;
+    background:var(--paper); border-radius:28px; padding:36px; box-shadow:var(--shadow-2);
+    border-top:10px solid var(--lime);
+  }
+  .a11y h3{ font-size:24px; margin-bottom:12px; }
+  .echo{ margin-top:18px; padding:16px 18px; border-radius:18px; background:var(--lime-pale); font-size:16px; }
+
+  /* ---------- PROCESS STRIP ---------- */
+  .process{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:20px; counter-reset:step; }
+  .process li{
+    counter-increment:step; position:relative;
+    background:var(--paper); border-radius:24px; padding:26px 24px 24px; box-shadow:var(--shadow-2);
+  }
+  .process li::before{
+    content:counter(step); display:grid; place-items:center;
+    width:40px; height:40px; border-radius:12px; margin-bottom:14px;
+    font-family:var(--display); font-weight:600; font-size:20px; color:var(--navy);
+  }
+  .process li:nth-child(1)::before{ background:var(--sun); }
+  .process li:nth-child(2)::before{ background:var(--sky); }
+  .process li:nth-child(3)::before{ background:var(--lime); }
+  .process h3{ font-size:22px; margin-bottom:8px; }
+  .process p{ font-size:16px; }
+  .process .todo{ margin-top:12px; font-size:14px; padding:10px 12px; }
+
+  /* ---------- FOOTER ---------- */
+  .site-footer{ background:var(--navy); color:#fff; padding:96px 0 48px; }
+  .footer-kicker{ color:#fff; font-family:var(--display); font-size:46px; font-weight:600; line-height:1.1; margin-bottom:36px; }
+  .footer-links{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px; }
+  .action{
+    background:var(--paper); color:var(--ink); border-radius:20px;
+    padding:20px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .action-text{ display:flex; flex-direction:column; gap:4px; min-width:0; }
+  .action-title{ font-family:var(--display); font-size:20px; font-weight:600; color:var(--navy); }
+  .action-line{ font-size:15px; color:var(--text2); overflow-wrap:anywhere; }
+  .footer-base{
+    display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
+    margin-top:48px; padding-top:24px; border-top:1px solid rgba(255,255,255,.3);
+    font-size:14px; color:#fff;
+  }
+  .footer-base .mark{ font-size:17px; color:#fff; }
+  .footer-base .mark-dot{ width:26px; height:26px; }
+  .site-footer .todo{ margin-top:20px; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ transition-duration:0.01ms !important; }
+    .btn:hover{ transform:none; }
+  }
+
+  @media (max-width:960px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .blocks{ max-width:360px; }
+    .hero h1{ font-size:46px; }
+    .case-row{ flex-direction:column; align-items:flex-start; }
+    .reel, .mod-grid, .a11y{ grid-template-columns:1fr; }
+    .process{ grid-template-columns:1fr; }
+  }
+
+  @media (max-width:720px){
+    .topnav{ gap:0; }
+    .topnav a{ padding:0 8px; font-size:14px; }
+    .topnav .hide-sm{ display:none; }
+    .hero{ padding:44px 0 56px; }
+    .hero h1{ font-size:34px; letter-spacing:0; }
+    .hero-sub{ font-size:18px; }
+    .blocks{ max-width:280px; }
+    .case-title, .footer-kicker{ font-size:32px; }
+    .case-desc{ font-size:18px; }
+    .footer-links{ grid-template-columns:1fr; }
+    .action{ flex-wrap:wrap; }
+    .mark{ font-size:19px; }
+    .topbar-inner{ height:60px; }
+    /* stack the avatar over the bubble so the text gets the full width */
+    .talker{ gap:10px; margin-bottom:20px; padding:12px 14px 12px 10px; }
+    .talker .avatar{ width:40px; height:40px; }
+    .bubble{ font-size:16px; }
+    /* drop the card on phones: content sits on the band and reclaims the
+       width the card padding was eating */
+    .wrap, .topbar-inner{ padding:0 16px; }
+    .stage{ background:none; border:none; border-radius:0; padding:0; }
+    .well{ padding:10px; border-radius:16px; }
+    /* without the card, centre the arrows on the image rather than the stage */
+    .device-wrap{ position:relative; margin-top:4px; }
+    .nav-arrow{ width:42px; height:42px; box-shadow:var(--shadow-2); }
+    .nav-arrow.left{ left:-6px; }
+    .nav-arrow.right{ right:-6px; }
+    .card, .a11y{ padding:22px; }
+    .shot-slots{ gap:8px; }
+    .shot-slot{ font-size:12px; padding:6px; border-radius:12px; }
+    section.case{ padding:64px 0; }
+    .site-footer{ padding:64px 0 40px; }
+  }
+
+  /* ---------- CHIRON REPLAY ---------- */
+  /* The Chiron card runs a 9-slide replay of one tutoring session instead of
+     screenshots. It reuses the slideshow parts above (caption, scribble track,
+     talker, arrows) and adds a fixed-height window the slides render into. The
+     copy lives in the `replays` data in the script, not here. Colors are the
+     site tokens; the few tints below have no site equivalent, and the deeper
+     green and red keep chip text over 4.5:1 on their tints. */
+  .replay{
+    --rp-yellow-soft:#FBF3B8;
+    --rp-green:#2C6B4D;  --rp-green-tint:#E3F1E8;
+    --rp-amber:#8A5A00;  --rp-amber-tint:#FDF0CF; --rp-amber-paper:#FFFBF0;
+    --rp-red:#A3283B;
+    --rp-quiet:#FBFBF8;
+    --rp-tray:#F3F1EA;
+    /* the module's own dark ground, so screenshot frames read as one piece */
+    --rp-module:#12191D; --rp-module-line:#2A3442;
+    --rp-mono:'JetBrains Mono', ui-monospace, monospace;
+    /* side notes in the replay: the body face, set apart by colour and weight */
+    --rp-hand:'Inter', -apple-system, sans-serif;
+  }
+  .replay .frame-caption{ max-width:none; }
+  .replay .device-wrap{ flex-direction:column; }
+  /* the window is its own surface: a plain warm tint a step darker than the
+     page, no grid, so it reads as a panel on the card rather than a hole
+     through to the page, and the white cards inside it still stand out */
+  .replay-window{
+    container-type:inline-size;
+    width:100%;
+    background:var(--rp-tray);
+    /* the page's faintest text is 4.3:1 on the tray; one step darker clears 4.5 */
+    --ink-faint:#5F6A83;
+    border:1px solid var(--line); border-radius:12px; overflow:hidden;
+  }
+  /* fixed height so the card never jumps between slides; the slide centres
+     itself with auto margins, which (unlike justify-content) never pushes
+     the top of a too-tall slide out of reach */
+  .rp-view{
+    height:540px; overflow-y:auto;
+    padding:16px clamp(16px, 4cqi, 36px);
+    display:flex; flex-direction:column;
+  }
+  .rp-slide{ margin:auto 0; width:100%; display:flex; flex-direction:column; gap:10px; }
+  /* on phones the shared arrows sit on the window's edge, which here is text
+     rather than an image: push them into the page gutter and pad the slide so
+     they clear it */
+  @media (max-width:720px){
+    .replay .device-wrap > .nav-arrow.left{ left:-14px; }
+    .replay .device-wrap > .nav-arrow.right{ right:-14px; }
+    .rp-view{ padding-inline:28px; }
+  }
+
+
+  /* shared bits */
+  .rp-mono-label{ font-family:var(--rp-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); }
+  .rp-chips{ display:flex; gap:6px; flex-wrap:wrap; }
+  .rp-chip{ font-family:var(--rp-mono); font-size:11.5px; border-radius:999px; padding:2px 9px; white-space:nowrap; }
+  .rp-chip.right{ color:var(--rp-green); background:var(--rp-green-tint); }
+  .rp-chip.wrong{ color:var(--rp-red); background:var(--red-tint); }
+  .rp-chip.flag{ color:var(--rp-amber); background:var(--rp-amber-tint); white-space:normal; }
+  /* solid orange so the one thing Chiron caught on the check slide stands out (5.2:1) */
+  .rp-chip.misconception{ color:#fff; background:#B54E08; font-weight:600; font-size:12.5px; padding:3px 11px; }
+  .rp-chip.blue{ color:var(--pen); background:var(--pen-tint); }
+  .rp-hand{ font-family:var(--rp-hand); font-weight:600; color:var(--pen); font-size:15px; line-height:1.5; }
+  .rp-said{ background:var(--rp-yellow-soft); box-shadow:inset 0 -2px 0 var(--hl-yellow); padding:0 2px; }
+
+  /* chat */
+  .rp-msg{ display:flex; flex-direction:column; gap:4px; max-width:74%; }
+  .rp-msg.teacher{ align-self:flex-end; }
+  .rp-msg.teacher .rp-mono-label{ text-align:right; }
+  .rp-msg.chiron{ align-self:flex-start; }
+  .rp-body{ border-radius:12px; padding:9px 14px; font-size:15px; line-height:1.5; }
+  .rp-msg.teacher .rp-body{ background:var(--sketch-tint); border:1px solid #D2E1F4; }
+  .rp-msg.chiron .rp-body{ border:1px solid var(--line); background:var(--paper); }
+  /* annotations written for the portfolio, not Chiron's output, so they stay
+     plain italic notes rather than anything styled like a model trace */
+  .rp-think{ font-size:13px; line-height:1.45; color:var(--ink-faint); font-style:italic; border-left:2px solid var(--line); padding:1px 0 1px 10px; max-width:60ch; }
+  .rp-think-k{ font-style:normal; font-family:var(--rp-mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--pen); margin-right:8px; }
+  .rp-build{
+    display:inline-flex; align-items:center; gap:8px; align-self:flex-start;
+    font-family:var(--rp-mono); font-size:11.5px; color:var(--rp-green);
+    background:var(--rp-green-tint); border-radius:6px; padding:5px 9px;
+  }
+  .rp-dot{ width:7px; height:7px; border-radius:50%; background:var(--mastery); flex:none; }
+  @media (prefers-reduced-motion:no-preference){ .rp-dot{ animation:rp-pulse 1.4s ease-in-out infinite; } }
+  @keyframes rp-pulse{ 50%{ opacity:.25; } }
+
+  /* entrances. The render code tags a slide's pieces .rp-in with a --delay;
+     they wait hidden until the window gets .rp-play, then rise in like the
+     narration bubble. Chat messages arrive one at a time on a conversation's
+     rhythm. Layout is reserved the whole time, so nothing shifts. Reduced
+     motion skips all of it and shows the slide at once. */
+  @media (prefers-reduced-motion:no-preference){
+    .rp-in{ opacity:0; }
+    .rp-view.rp-play .rp-in{ animation:rp-rise .5s cubic-bezier(.22,.8,.36,1) var(--delay, 0ms) both; }
+    .rp-view.rp-play .rp-msg.rp-in{ animation-name:rp-chat; animation-duration:.42s; }
+    .rp-msg.teacher{ transform-origin:100% 100%; }
+    .rp-msg.chiron{ transform-origin:0 100%; }
+    .rp-loop-svg .rp-in{ transform-box:fill-box; }
+  }
+  @keyframes rp-rise{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+  @keyframes rp-chat{ from{ opacity:0; transform:translateY(12px) scale(.96); } to{ opacity:1; transform:none; } }
+
+  /* screenshot frames */
+  .rp-artifact{ margin:0; border:1px solid var(--rp-module-line); border-radius:10px; overflow:hidden; background:var(--rp-module); }
+  /* the two labels wrap as whole phrases on a narrow screen, never mid-phrase */
+  .rp-artifact-bar{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:2px 10px;
+    font-family:var(--rp-mono); font-size:11px; color:#C9CDE0;
+    padding:6px 10px; border-bottom:1px solid var(--rp-module-line);
+  }
+  .rp-artifact-bar span{ white-space:nowrap; }
+  .rp-artifact img{ width:100%; height:auto; }
+  .rp-artifact.wide{ width:100%; max-width:790px; align-self:center; }
+  /* the folded diagnose-and-build slide: chat column beside the module */
+  .rp-chatsplit{ grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); align-items:center; }
+  /* a tall crop of the module, cut to the window and faded out at the bottom */
+  .rp-artifact.fade.tall{
+    max-width:none; max-height:500px;
+    -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 110px), transparent);
+            mask-image:linear-gradient(to bottom, #000 calc(100% - 110px), transparent);
+  }
+  .rp-chatcol{ display:flex; flex-direction:column; gap:8px; }
+  .rp-chatcol .rp-msg{ max-width:92%; }
+  /* slide 1: the real session, chat beside the module it built */
+  .rp-shot{
+    height:auto; max-width:820px; align-self:center; border-radius:10px; overflow:hidden;
+    border:1px solid var(--rp-module-line); box-shadow:0 10px 30px rgba(24,35,56,0.18);
+  }
+  .rp-shot img{ display:block; width:100%; height:auto; }
+  .rp-shot-cap{ text-align:center; margin-top:4px; }
+  /* a crop of a longer page: the bottom fades into the paper so the module
+     reads as carrying on past the frame. Narrower than .wide so the intro
+     and a ghost of the next paragraph fit the 540px window */
+  .rp-artifact.fade{
+    max-width:700px; border-bottom:0; border-radius:10px 10px 0 0;
+    -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 56px), transparent);
+            mask-image:linear-gradient(to bottom, #000 calc(100% - 56px), transparent);
+  }
+
+  /* two-column slides */
+  .rp-split{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.25fr); gap:20px; align-items:center; }
+  .rp-split.wide-left{ grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); }
+  .rp-side{ display:flex; flex-direction:column; gap:12px; }
+  .rp-side p{ font-size:15px; line-height:1.55; color:var(--ink-soft); }
+  .rp-side p b{ color:var(--ink); }
+  .rp-side .rp-hand{ color:var(--pen); font-size:18px; line-height:1.4; }
+  .rp-attempt{ border:1px solid var(--line); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:6px; font-size:14.5px; line-height:1.5; background:var(--paper); }
+  .rp-attempt .rp-chip{ align-self:flex-start; }
+  .rp-nudge{ border-left:3px solid var(--rp-amber); padding:4px 0 4px 12px; font-size:14.5px; line-height:1.5; }
+
+  /* next-token machine: shown as Chiron built it in Module 1, with the
+     module's own dark theme, type and controls. Scoped to .rp-mod so none of
+     it leaks into the page. */
+  .rp-mod-frame{ width:100%; max-width:790px; align-self:center; }
+  .rp-mod{
+    --m-surface:#1A2329; --m-ink:#E6ECEF; --m-muted:#9FB0B9; --m-line:#2D3A41;
+    --m-accent:#4FBFB6; --m-accent-ink:#0C1A1C; --m-chip:#26323A;
+    color-scheme:dark;
+    background:var(--rp-module); color:var(--m-ink); padding:12px;
+    font-family:'Atkinson Hyperlegible', Verdana, system-ui, sans-serif;
+    font-size:17px; line-height:1.6;
+  }
+  .rp-mod-panel{
+    background:var(--m-surface); border:1px solid var(--m-line); border-radius:10px;
+    padding:16px 18px; display:flex; flex-direction:column; gap:10px;
+  }
+  .rp-mod h3{ font-family:'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif; font-size:19px; font-weight:700; line-height:1.15; color:var(--m-ink); }
+  .rp-mod-cap{ font-size:14px; line-height:1.5; color:var(--m-muted); }
+  .rp-mod code, .rp-mod-out{ font-family:'JetBrains Mono', ui-monospace, monospace; font-size:.88em; }
+  .rp-mod code{ font-weight:400; }
+  .rp-mod-out{ font-weight:600; color:var(--m-accent); }
+  .rp-mod-eyebrow{ font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--m-muted); font-weight:700; margin-bottom:6px; }
+  .rp-mod-chips{ display:flex; flex-wrap:wrap; gap:8px; min-height:38px; }
+  .rp-mod-chip{
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:14px; font-weight:400;
+    background:var(--m-chip); color:var(--m-ink); border:1px solid var(--m-line);
+    border-radius:999px; padding:6px 12px; display:inline-flex; gap:8px; align-items:baseline;
+  }
+  .rp-mod-chip .pct{ color:var(--m-muted); font-size:12px; }
+  .rp-mod-chip.top{ background:var(--m-accent); color:var(--m-accent-ink); border-color:var(--m-accent); }
+  .rp-mod-chip.top .pct{ color:var(--m-accent-ink); opacity:.85; }
+  .rp-mod-slider{ display:flex; flex-direction:column; gap:4px; }
+  .rp-mod-slider input{ width:100%; margin:0; }
+  .rp-mod-btns{ display:flex; gap:10px; flex-wrap:wrap; }
+  .rp-mod-btn{
+    font:inherit; font-weight:700; min-height:44px; padding:0 16px; border:0; border-radius:8px;
+    background:var(--m-accent); color:var(--m-accent-ink); cursor:pointer;
+  }
+  .rp-mod-btn.quiet{ background:var(--m-chip); color:var(--m-ink); }
+  /* aria-disabled rather than the module's disabled, so focus stays put mid-run */
+  .rp-mod-btn[aria-disabled="true"]{ opacity:.55; cursor:default; }
+  /* a ring pulses out of Write the rest until a visitor first presses it, so
+     it reads as something they can use, not a picture of a button */
+  @media (prefers-reduced-motion:no-preference){
+    .rp-mod-btn.rp-pulse{ animation:rp-ring 1.8s ease-out 1s infinite; }
+  }
+  @keyframes rp-ring{
+    0%{ box-shadow:0 0 0 0 rgba(79,191,182,0.7); }
+    70%,100%{ box-shadow:0 0 0 12px rgba(79,191,182,0); }
+  }
+  .rp-mod button:focus-visible, .rp-mod input:focus-visible{ outline:3px solid var(--m-accent); outline-offset:2px; }
+  .rp-mod-hist{ margin:0; padding-left:22px; font-size:15px; min-height:24px; }
+
+  /* flashcards */
+  .rp-fcslide{ display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:28px; align-items:center; }
+  /* just the card and its toggle, no chat frame around them */
+  .rp-inline{ display:flex; flex-direction:column; gap:10px; }
+  .rp-ctx{ font-size:14px; color:var(--ink-soft); }
+  .rp-ctx b{ color:var(--ink); font-weight:600; }
+  .rp-card{ border:1.5px solid var(--rp-amber); border-radius:12px; background:var(--rp-amber-paper); padding:14px; display:flex; flex-direction:column; gap:9px; }
+  .rp-card-top{ display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .rp-card-kind{ font-family:var(--rp-mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--rp-amber); }
+  .rp-badge{ font-family:var(--rp-mono); font-size:11px; border-radius:999px; padding:1px 8px; white-space:nowrap; }
+  .rp-badge.done{ color:var(--rp-green); background:var(--rp-green-tint); }
+  .rp-badge.close{ color:var(--rp-amber); background:var(--rp-amber-tint); }
+  .rp-card-term{ font-family:var(--rp-display); font-weight:600; font-size:19px; line-height:1.25; }
+  .rp-card-back{ font-size:14.5px; line-height:1.5; background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:9px 11px; }
+  .rp-card-fb{ font-size:13.5px; line-height:1.5; border-left:3px solid var(--rp-amber); padding-left:10px; }
+  .rp-card-fb b{ color:var(--rp-amber); }
+  .rp-card-fb.done b{ color:var(--rp-green); }
+  .rp-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .rp-seg{ display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--bg); }
+  .rp-seg button{ border:0; background:none; border-radius:999px; padding:0 14px; min-height:36px; font:500 13.5px var(--rp-body); cursor:pointer; color:var(--ink-soft); }
+  .rp-seg button[aria-pressed="true"]{ background:var(--ink); color:#fff; }
+  .rp-seg button:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
+  .rp-steps{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px; counter-reset:rp-step; }
+  .rp-steps li{ display:grid; grid-template-columns:30px minmax(0,1fr); gap:12px; align-items:start; counter-increment:rp-step; }
+  .rp-steps li::before{
+    content:counter(rp-step); width:28px; height:28px; border-radius:50%;
+    background:var(--hl-yellow); border:1.4px solid var(--ink);
+    display:grid; place-items:center; font:500 12px var(--rp-mono);
+  }
+  .rp-steps b{ display:block; font-family:var(--rp-display); font-size:18px; font-weight:600; line-height:1.25; margin-bottom:2px; }
+  .rp-steps span{ font-size:14px; line-height:1.5; color:var(--ink-soft); }
+
+  /* now vs next */
+  .rp-hood{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:stretch; }
+  .rp-col{ border:1px solid var(--line); border-radius:12px; padding:16px 18px; display:flex; flex-direction:column; gap:10px; min-width:0; background:var(--paper); }
+  .rp-col.next{ border-style:dashed; background:var(--rp-quiet); }
+  .rp-col .rp-mono-label{ letter-spacing:0.12em; }
+  .rp-col.now .rp-mono-label{ color:var(--rp-green); }
+  .rp-col h3{ font-size:20px; font-weight:600; }
+  .rp-col ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
+  .rp-col li{ display:grid; grid-template-columns:20px minmax(0,1fr); gap:8px; font-size:14.5px; line-height:1.4; }
+  .rp-ic{ width:18px; height:18px; border-radius:50%; margin-top:1px; display:grid; place-items:center; font-size:11px; font-weight:700; }
+  .rp-col.now .rp-ic{ background:var(--rp-green-tint); color:var(--rp-green); }
+  .rp-col.next .rp-ic{ border:1.5px dashed var(--ink-faint); }
+  .rp-col small{ display:block; font-family:var(--rp-mono); font-size:11px; color:var(--ink-faint); letter-spacing:0.02em; margin-top:2px; }
+
+  /* the core loop: SVG built from data, swapped for a list when narrow */
+  .rp-loop-svg{ width:100%; height:auto; max-height:440px; display:block; flex:none; }
+  .rp-loop-svg .ring{ fill:none; stroke:var(--line); stroke-width:2; stroke-dasharray:3 7; }
+  .rp-loop-svg .arc{ fill:none; stroke:var(--pen); stroke-width:3.5; stroke-linecap:round; }
+  .rp-loop-svg .entry{ fill:none; stroke:var(--ink); stroke-width:2.5; stroke-linecap:round; }
+  .rp-loop-svg .node rect{ fill:var(--paper); stroke:var(--ink); stroke-width:1.6; }
+  .rp-loop-svg .node.start rect{ fill:var(--rp-yellow-soft); stroke-dasharray:5 4; }
+  .rp-loop-svg .num{ fill:var(--hl-yellow); stroke:var(--ink); stroke-width:1.4; }
+  .rp-loop-svg .numt{ font:500 13px var(--rp-mono); fill:var(--ink); }
+  .rp-loop-svg .ttl{ font:600 21px var(--rp-display); fill:var(--ink); }
+  .rp-loop-svg .sub{ font:400 13.5px var(--rp-body); fill:var(--ink-soft); }
+  .rp-loop-svg .hand{ font:500 16px var(--rp-hand); fill:var(--ink-soft); }
+  .rp-loop-svg .center{ font:600 19px var(--rp-display); fill:var(--ink); }
+  .rp-loop-svg .center2{ font:500 13px var(--rp-mono); fill:var(--ink-faint); letter-spacing:0.06em; }
+  .rp-loop-svg .bgarc{ fill:none; stroke:var(--ink-faint); stroke-width:2; stroke-dasharray:2 6; stroke-linecap:round; }
+  .rp-loop-list{ display:none; list-style:none; margin:0; padding:0; flex-direction:column; gap:8px; }
+  .rp-loop-list li{ display:flex; gap:12px; align-items:flex-start; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:14px; line-height:1.45; color:var(--ink-soft); background:var(--paper); }
+  .rp-loop-list li.start{ background:var(--rp-yellow-soft); border-style:dashed; }
+  .rp-loop-list .rp-n{ flex:none; width:26px; height:26px; border-radius:50%; background:var(--hl-yellow); border:1.4px solid var(--ink); display:grid; place-items:center; font:500 12px var(--rp-mono); color:var(--ink); }
+  .rp-loop-list b{ font-family:var(--rp-display); font-size:18px; font-weight:600; display:block; color:var(--ink); }
+  .rp-loop-list li.back{ border:0; background:none; padding:0 0 0 38px; font-family:var(--rp-hand); font-weight:600; font-size:14px; color:var(--pen); }
+
+  @container (max-width:760px){
+    .rp-artifact.fade.tall{ max-height:360px; }
+    .rp-view{ height:auto; min-height:420px; }
+    .rp-split, .rp-split.wide-left, .rp-hood, .rp-fcslide{ grid-template-columns:1fr; }
+    .rp-msg{ max-width:92%; }
+  }
+  @container (max-width:640px){
+    .rp-loop-svg{ display:none; }
+    .rp-loop-list{ display:flex; }
+  }
+  @container (max-width:460px){
+    .rp-msg{ max-width:100%; }
+    /* three nested paddings squeeze the module panel on a phone */
+    .rp-mod{ padding:8px; }
+    .rp-mod-panel{ padding:14px; }
+  }
+
+
+
+  /* ---------- CHIRON REPLAY: DREAMBOX BRAND ----------
+     The replay block above is shared with the root page and written against
+     its tokens; this maps them onto the DreamBox-inspired palette and type.
+     The window takes the sky tray; pen blue is the brand blue (4.9:1 on it). */
+  .replay{
+    --line:var(--hairline); --ink-soft:var(--text2); --ink-faint:var(--text2);
+    --pen:var(--blue); --pen-tint:var(--sky-pale); --sketch-tint:#DCEBFA;
+    --rp-yellow-soft:var(--butter); --hl-yellow:var(--sun); --bg:var(--cream); --mastery:var(--green);
+    --red-tint:#FDE2DF; --rp-tray:var(--sky-pale);
+    --rp-display:'Fredoka', 'Nunito', sans-serif;
+    --rp-body:'Nunito', 'Trebuchet MS', sans-serif;
+    --rp-mono:'Nunito', 'Trebuchet MS', sans-serif;
+    --rp-hand:'Nunito', 'Trebuchet MS', sans-serif;
+  }
+  .replay .replay-window{ border:0; border-radius:20px; --ink-faint:var(--text2); }
+  /* Nunito sets a touch taller than the root page's face, so the chat
+     slides need a little less air to fit the 540px window */
+  .replay .rp-view{ padding-block:10px; }
+  .replay .rp-slide{ gap:8px; }
+  /* the loop's arrowheads are drawn in the root page's pen blue */
+  .replay .rp-loop-svg #rp-ah path{ fill:var(--pen); }
+  .replay .rp-msg.teacher .rp-body{ border-color:#B9D3EE; }
+  .replay .rp-mono-label, .replay .rp-think-k, .replay .rp-card-kind{ font-weight:800; }
+  .replay .rp-body{ border-radius:16px; }
+</style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <!-- one polite live region for short status messages (animation
+       pause/play). Screen readers read it; nobody sees it. -->
+  <div id="sr-status" class="sr-only" role="status"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="mark"><img class="mark-dot" src="avatar-rahul.png" alt=""> Rahul Shah</div>
+      <nav class="topnav" aria-label="Page">
+        <a href="#motion" class="hide-sm">Motion</a>
+        <a href="#onboarding">Work</a>
+        <a href="#access" class="hide-sm">Accessibility</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+  <!-- HERO -->
+  <section class="hero" aria-label="Introduction">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="chip eyebrow">Prepared for DreamBox</p>
+        <h1 data-flatten>Product designer building engaging, <span class="hl">student-facing</span> K–12 learning tools, backed by learning science.</h1>
+        <p class="hero-sub">Hi, I'm Rahul. For five years I've designed the student side of Encourage, a college and career planning app. On my own time I built Chiron, an adaptive tutor.</p>
+        <ul class="hero-tags" aria-label="Highlights">
+          <li>5 years in ed-tech UX</li>
+          <li>WCAG 2.1 AA</li>
+          <li>M.S. Learning Design &amp; Technology</li>
+        </ul>
+      </div>
+      <div class="blocks">
+        <div class="flat" aria-hidden="true"></div>
+        <div class="sun-dot" aria-hidden="true"></div>
+        <figure class="team-card">
+          <img src="rahul-team.webp" alt="Rahul, smiling, in front of flowering azaleas." width="720" height="720">
+          <figcaption><span class="team-name">Rahul Shah</span><span class="team-role">Product Designer</span></figcaption>
+        </figure>
+        <div class="rod" aria-hidden="true"></div>
+        <div class="unit unit-1" aria-hidden="true"></div>
+        <div class="unit unit-2" aria-hidden="true"></div>
+        <div class="unit unit-3" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOTION REEL. Real clips only; the clip list lives in `reel` in the
+       script. TODO: add the Lottie exports listed in the flag below. -->
+  <section class="case band-white" id="motion" aria-labelledby="title-motion">
+    <div class="wrap">
+      <div class="case-head">
+        <div class="caps">Motion</div>
+        <h2 class="case-title" id="title-motion" data-flatten>Small moments that <span class="hl">keep students moving</span></h2>
+        <p class="case-desc">Micro-interactions from Encourage, the app 150,000+ students use to plan life after high school. Each one marks progress, so the next step feels close.</p>
+      </div>
+      <div class="reel" id="reel" role="region" aria-label="Motion reel">
+        <div class="reel-stage">
+          <figure class="reel-clip on">
+            <img src="onboard-4.gif" data-poster="onboard-4-poster.webp" alt="Encourage onboarding: a student checks an answer and presses Next, and the section's progress bar fills with a short animation." width="800" height="440">
+          </figure>
+          <figure class="reel-clip contain" aria-hidden="true">
+            <img src="craft-micro.gif" data-poster="craft-micro-poster.webp" alt="A bottom navigation bar with four tabs, Home, Profile, Explore and Feedback, each icon filling in or spinning as it's selected." width="584" height="167">
+          </figure>
+        </div>
+        <div class="reel-side">
+          <ol class="reel-list">
+            <li><button type="button" class="reel-pick" data-clip="0" aria-pressed="true"><span class="reel-num" aria-hidden="true">1</span><span><b>Section complete</b><span>Plays when a student finishes a chunk of onboarding.</span></span></button></li>
+            <li><button type="button" class="reel-pick" data-clip="1" aria-pressed="false"><span class="reel-num" aria-hidden="true">2</span><span><b>App navigation</b><span>Each tab's icon fills in or spins as it's picked.</span></span></button></li>
+          </ol>
+          <div class="reel-ctrl"><button type="button" class="gif-toggle" id="reel-toggle">Pause animation</button></div>
+          <div class="todo"><b>TODO:</b> the reel loops the 2 real clips in the repo (about 12 seconds). There are no Lottie files here yet. Export these to fill it out:
+            <ul>
+              <li>Section-complete animation for each onboarding section, as Lottie JSON</li>
+              <li>The nav-bar icons as Lottie JSON (the GIF is a screen recording)</li>
+              <li>Any other Lottie Creator animations shipped in Encourage</li>
+              <li>A first-frame still of each, for reduced motion</li>
+              <li>Confirm the nav bar clip is from Encourage</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case band-cream" id="onboarding" aria-labelledby="title-onboarding">
+    <div class="wrap">
+      <div class="case-head">
+        <div class="caps">01 · Encoura · Student onboarding</div>
+        <h2 class="case-title" id="title-onboarding" data-flatten>Encourage onboarding: <span class="hl">twice the questions</span>, chunked so students keep going</h2>
+        <div class="case-row">
+          <p class="case-desc">The onboarding survey had to double in length. I watched students take it in real classrooms, then rebuilt it around where they stalled: questions chunked by topic, small animations that mark progress, and an A/B test to check it.</p>
+          <p class="chip" style="background:var(--butter)">Shipping Fall 2026</p>
+        </div>
+        <p class="case-note">DreamBox's March 2025 update made lessons easier to start, play and finish. Onboarding is the same problem at the front door: every extra step is a chance to lose a student.</p>
+        <!-- TODO(flag): completion number. Do not ship until Rahul picks one. -->
+        <div class="todo"><b>Flag, completion number:</b> the site and the résumé disagree, so this page states no number yet.
+          <ul>
+            <li>Site (A/B slide and chart): completion held near 84%, 83.69% vs 87.87%, a 4.2-point dip.</li>
+            <li>Résumé linked on this page: "maintaining completion rates." (The CodePath and Playlab résumés say "near 84%".)</li>
+            <li>The old first slide also said the redesign aimed to "raise completion." Which framing do you want?</li>
+          </ul>
+        </div>
+      </div>
+      <div class="slideshow" id="ss-onboarding" role="region" aria-roledescription="carousel" aria-label="Encourage onboarding screenshots">
+        <div class="stage">
+          <div class="frame-caption">
+            <div class="k" id="cap-k-onboarding" aria-live="polite" aria-atomic="true">Slide 1 of 6</div>
+            <div class="progress" id="strip-onboarding" aria-hidden="true"></div>
+          </div>
+          <div class="talker">
+            <span class="sr-only">Rahul says:</span>
+            <img class="avatar" src="avatar-rahul.png" alt="">
+            <div class="bubble" id="bubble-onboarding" aria-live="polite" aria-atomic="true">Onboarding is the first thing a student sees in Encourage. When the survey had to grow to twice the questions, my job was to keep students finishing it.</div>
+          </div>
+          <div class="device-wrap">
+            <button class="nav-arrow left" data-dir="-1" data-target="onboarding" aria-label="Previous slide">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="well">
+              <div class="device filled">
+                <button type="button" class="zoom-btn" id="zoom-onboarding" aria-label="Enlarge image"><img id="img-onboarding" src="" alt=""></button>
+                <button type="button" class="gif-toggle" id="gif-onboarding" hidden>Pause animation</button>
+              </div>
+            </div>
+            <button class="nav-arrow right" data-dir="1" data-target="onboarding" aria-label="Next slide">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case band-sky" id="modules" aria-labelledby="title-modules">
+    <div class="wrap">
+      <div class="case-head">
+        <div class="caps">02 · Encoura · Learning Modules</div>
+        <h2 class="case-title" id="title-modules" data-flatten>Learning Modules: short lessons for <span class="hl">planning what's next</span></h2>
+        <p class="case-desc">Short in-app lessons on careers, building a college list and planning for the future. Our content partners brought the subject matter, and I worked with them to shape it into guided steps a student can follow alone.</p>
+      </div>
+      <div class="mod-grid">
+        <div class="card">
+          <h3>Curriculum and design, together</h3>
+          <ul class="ticks">
+            <li>Content partners brought the subject expertise. I shaped the lesson flow and screens around it.</li>
+            <li>Three topics: exploring careers, building a college list, and planning the years ahead.</li>
+          </ul>
+          <!-- TODO: real screenshots; no Learning Modules images are in the repo -->
+          <div class="shot-slots">
+            <div class="shot-slot">TODO: screenshot of a careers lesson</div>
+            <div class="shot-slot">TODO: screenshot of a college list lesson</div>
+            <div class="shot-slot">TODO: screenshot of a planning lesson</div>
+          </div>
+        </div>
+        <div class="mod-side">
+          <figure class="quote">
+            <p>In feedback, students told us the guidance was a relief.</p>
+            <div class="todo"><b>TODO:</b>
+              <ul>
+                <li>Add 1 or 2 real student quotes and where they came from (survey, interview, in-app poll).</li>
+                <li>Confirm the partners, how many modules shipped, and which parts you owned.</li>
+                <li>Any numbers (completions, ratings) only if you have them.</li>
+              </ul>
+            </div>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case band-cream" id="chiron" aria-labelledby="title-chiron">
+    <div class="wrap">
+      <div class="case-head">
+        <div class="caps">03 · Independent project, built on Claude</div>
+        <h2 class="case-title" id="title-chiron" data-flatten>Chiron: an <span class="hl">adaptive</span> tutor that teaches to mastery</h2>
+        <div class="case-row">
+          <p class="case-desc">My own work on adaptive learning. Chiron asks questions until it finds what you can't yet explain, builds a lesson around that gap, and adapts the next one to your answers. You move on once you've shown you've got it.</p>
+          <a class="btn btn-white" href="https://github.com/Rahul-Shah-Design/Chiron" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">&rarr;</span><span class="sr-only"> (opens in new tab)</span></a>
+        </div>
+      </div>
+      <!-- Session replay. Slides render into #view-chiron from the `replays`
+           data in the script below; edit the copy there, not here. -->
+      <div class="slideshow replay" id="ss-chiron" role="region" aria-roledescription="carousel" aria-label="Chiron session, condensed">
+        <div class="stage">
+          <div class="frame-caption">
+            <div class="k" id="cap-k-chiron" aria-live="polite" aria-atomic="true">Slide 1 of 7</div>
+            <div class="progress" id="strip-chiron" aria-hidden="true"></div>
+          </div>
+          <div class="talker">
+            <span class="sr-only">Rahul says:</span>
+            <img class="avatar" src="avatar-rahul.png" alt="">
+            <div class="bubble" id="bubble-chiron" aria-live="polite" aria-atomic="true"></div>
+          </div>
+          <div class="device-wrap">
+            <button class="nav-arrow left" data-dir="-1" data-target="chiron" aria-label="Previous slide">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="replay-window"><div class="rp-view" id="view-chiron"></div></div>
+            <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case band-white" id="access" aria-labelledby="title-access">
+    <div class="wrap">
+      <div class="case-head">
+        <div class="caps">04 · Supporting work</div>
+        <h2 class="case-title" id="title-access">Accessibility and React Native</h2>
+      </div>
+      <div class="a11y">
+        <div>
+          <h3>Accessible from the first sketch</h3>
+          <ul class="ticks">
+            <li>Designed Encourage to WCAG 2.1 AA, with keyboard and screen-reader paths planned up front.</li>
+            <li>Working toward the IAAP CPACC certification.</li>
+            <li>Minored in American Sign Language at RIT.</li>
+            <li>This page meets AA contrast on every color pair, and all motion stops when your device asks for less.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Moving Encourage to React Native</h3>
+          <ul class="ticks">
+            <li>Led the migration of Encourage, used by 150,000+ students, to cross-platform React Native.</li>
+            <li>Reworked layouts to hold up on the school-issued devices students actually use.</li>
+          </ul>
+          <p class="echo">DreamBox's January 2025 K–5 release went past compliance: screen reader support, keyboard navigation inside manipulatives, bigger tap targets and replayable instructions. That's the work I want to be doing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case band-sky" id="process" aria-labelledby="title-process">
+    <div class="wrap">
+      <div class="case-head">
+        <div class="caps">How I work</div>
+        <h2 class="case-title" id="title-process">Critique, test, and ship inside the sprint</h2>
+      </div>
+      <ol class="process">
+        <li>
+          <h3>Critique</h3>
+          <p>I bring work to critique early and rough, with the one question I most need answered. Better to hear "this is confusing" in week one than in QA.</p>
+          <p class="todo"><b>TODO:</b> swap in a real Encoura critique example if you have one.</p>
+        </li>
+        <li>
+          <h3>Research, then validation</h3>
+          <p>Watch it in use, change it, then test the change. Onboarding went from classroom visits to a redesign to Encoura's first in-app A/B test.</p>
+        </li>
+        <li>
+          <h3>Inside the sprint</h3>
+          <p>I design alongside engineering. I own the Encourage Design System, so engineers build from shared components without a review on every screen.</p>
+          <p class="todo"><b>TODO:</b> add your sprint specifics (cadence, Jira, how you hand off).</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+  </main>
+
+  <footer class="site-footer" id="contact">
+    <div class="wrap">
+      <h2 class="footer-kicker">Let&rsquo;s talk.</h2>
+      <nav class="footer-links" aria-label="Contact">
+        <div class="action">
+          <div class="action-text"><span class="action-title">Email</span><span class="action-line">rahulshah.design@gmail.com</span></div>
+          <a class="btn btn-ink" href="mailto:rahulshah.design@gmail.com">Write to me</a>
+        </div>
+        <div class="action">
+          <div class="action-text"><span class="action-title">Résumé</span><span class="action-line">One page, as a PDF.</span></div>
+          <a class="btn btn-ink" href="resume.pdf" download="Rahul-Shah-Resume.pdf">Download<span class="sr-only"> résumé</span></a>
+        </div>
+        <div class="action">
+          <div class="action-text"><span class="action-title">LinkedIn</span><span class="action-line">rahul-shah-design</span></div>
+          <a class="btn btn-white" href="https://www.linkedin.com/in/rahul-shah-design/" target="_blank" rel="noopener">Connect<span class="sr-only"> on LinkedIn (opens in new tab)</span></a>
+        </div>
+        <div class="action">
+          <div class="action-text"><span class="action-title">GitHub</span><span class="action-line">Chiron and the code behind this site.</span></div>
+          <a class="btn btn-white" href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">Browse<span class="sr-only"> GitHub (opens in new tab)</span></a>
+        </div>
+      </nav>
+      <p class="todo"><b>TODO:</b> resume.pdf here is a copy of the general master, not yet tailored for DreamBox. It says "maintaining completion rates" (see the completion flag).</p>
+      <div class="footer-base">
+        <div class="mark"><img class="mark-dot" src="avatar-rahul.png" alt=""> Rahul Shah</div>
+        <p>Designed and built by Rahul Shah. An independent portfolio, not affiliated with DreamBox Learning.</p>
+      </div>
+    </div>
+  </footer>
+
+<script>
+
+  // ---------- Chiron session replay: the copy ----------
+  // Everything the replay says lives here. Edit freely; the layout code below
+  // reads it. `narration` is Rahul's speech bubble for the slide, plain text.
+  // In the slide copy, **text** is bold and ==text== gets the soft highlighter.
+  const replays = {
+    chiron: {
+      slides: [
+        {
+          name: "Diagnose and build",
+          split: true,
+          narration: "Chiron is an AI tutor I built as a Claude Skill. A few key questions find where you're stuck, then it fits a lesson to that gap, drafted while you talked.",
+          type: "chat",
+          messages: [
+            { who: "teacher", text: "**/teachme** I use ChatGPT to help plan lessons for my 7th graders, but I don’t really know how it works." },
+            { who: "chiron", text: "A lesson plan cites “Martinez & Cole (2019).” The study doesn’t exist. **Where did it come from?**" },
+            { who: "teacher", text: "Maybe ==it memorized everything and rewords it?== Autocomplete seems ==too simple to write a unit plan.==" },
+            { who: "chiron", think: "She just named what she can’t explain. That’s the gap. Stop asking and build.",
+              text: "**Hold onto that doubt.** Module 1 starts from it.",
+              status: "Building Module 1 around “too simple”" },
+          ],
+          artifact: {
+            src: "chiron-replay-module.webp", width: 880, height: 1280, fade: true, tall: true,
+            title: "Module 1 · One word at a time", note: "opens on her own words, highlighted",
+            alt: "Module 1 opening, quoting the teacher's doubt back to her with it highlighted",
+          },
+        },
+        {
+          name: "The loop",
+          narration: "Behind that exchange is the loop every course runs: questions until you're stuck, a lesson built there, then flashcards you write yourself.",
+          type: "loop",
+          label: "Chiron's core loop: Ask, then a repeating loop of Answer, Module and Flashcards, one lap per module.",
+          start: { title: "Ask", sub: ["Name anything you", "want to learn"] },
+          // angle in degrees around the loop; 180 is the left of the circle
+          nodes: [
+            { angle: 180, title: "Answer",     sub: ["Socratic questions find", "what you can't yet explain"] },
+            { angle: 300, title: "Module",     sub: ["A lesson built around", "that gap, with checks"] },
+            { angle: 60,  title: "Flashcards", sub: ["Write each card yourself,", "revise until it's right"] },
+          ],
+          center: ["One lap", "per module"],
+          centerSmall: ["until the", "course is done"],
+          notes: {
+            build: ["Builds the module while", "you keep talking"],
+            cards: ["Wrong answers", "become cards"],
+            next:  ["Next module adapts to", "what your answers showed"],
+          },
+          back: "↺ Back to 1 for the next module",
+        },
+        {
+          name: "Simulate",
+          narration: "Chiron builds a simulation only when there's a real control to turn. This one is live: press Write the rest a few times, then predict what randomness at 0 will do and try it.",
+          type: "machine",
+          // the panel as Chiron built it in Module 1, with its own wording;
+          // only the run history is shortened so it fits the window
+          frame: { title: "Module 1 · The next-token machine", note: "built during the session, live here" },
+          title: "The next-token machine",
+          caption: "Schematic: a tiny hand-built version with a few dozen tokens and made-up scores. A real model scores about 100,000 tokens using everything it has read, but the loop is the same.",
+          prompt: "A simple way for students to see photosynthesis is to",
+          scoresLabel: "Next-token scores",
+          stepLabel: "Step {n}: scores for the next token (picked one is filled in)",
+          waiting: "press Write",
+          slider: "Randomness:",
+          sliderWords: { zero: "(always the favorite)", normal: "(normal)", high: "(long shots get more chances)" },
+          button: "Write the rest",
+          clear: "Clear history",
+          runsLabel: "Runs so far",
+          keepRuns: 2,
+          stepMs: 550,
+          // Chiron's Module 1 token table with its grammar fixed. The original
+          // could write "a leaf disks" and "count bubbles form", so leaf goes
+          // to in or under, float only to spinach disks, and the 5% "count"
+          // opening is folded into "watch". Every path now reads as a sentence.
+          table: {
+            START:     [[" place", .45], [" put", .25], [" watch", .20], [" float", .10]],
+            " place":  [[" a", .75], [" two", .25]],
+            " put":    [[" a", .8], [" two", .2]],
+            " watch":  [[" a", .6], [" bubbles", .4]],
+            " float":  [[" spinach", 1]],
+            " a":      [[" plant", .5], [" leaf", .3], [" sprig", .2]],
+            " two":    [[" plants", 1]],
+            " plant":  [[" in", .55], [" under", .45]],
+            " sprig":  [[" in", .55], [" under", .45]],
+            " plants": [[" in", .5], [" under", .5]],
+            " leaf":   [[" in", .55], [" under", .45]],
+            " spinach":[[" disks", 1]],
+            " disks":  [[" in", 1]],
+            " bubbles":[[" form", .6], [" rise", .4]],
+            " form":   [[" on", .5], [" from", .5]],
+            " rise":   [[" from", 1]],
+            " on":     [[" the", 1]],
+            " from":   [[" the", 1]],
+            " the":    [[" leaves", .65], [" plant", .35]],
+            " in":     [[" bright", .5], [" sunlight", .35], [" water", .15]],
+            " under":  [[" bright", .4], [" sunlight", .4], [" lamplight", .2]],
+            " bright": [[" light", .6], [" sunlight", .4]],
+          },
+          stop: [" light", " sunlight", " water", " lamplight", " leaves"],
+        },
+        {
+          name: "Check",
+          narration: "Each wrong option in a check stands for a specific wrong model. Her pick shows she thinks the model can go back and fix its own mistakes.",
+          type: "check",
+          artifact: {
+            src: "chiron-replay-check.webp", width: 1360, height: 712,
+            title: "Module 1 · Knowledge check", note: "her answer",
+            alt: "Module check: she chose 'It notices the mistake a few lines later and goes back to fix it', marked Not this one",
+          },
+          results: [ { kind: "misconception", text: "Misconception noticed" } ],
+          lines: [
+            "**What she believes:** the model reasons about what it writes and catches its own mistakes.",
+            "**What Chiron does with it:** verifies the grade, then puts a case in the next module where that belief predicts wrong. It also becomes a flashcard.",
+          ],
+        },
+        {
+          name: "Grade",
+          narration: "Short written answers are graded live inside the module, against a rubric from the course plan. Her first try was half right, so the nudge asks about the missing half.",
+          type: "grade",
+          tries: [
+            { label: "Explain it to a colleague · try 1",
+              answer: "“There’s some randomness built in, so it comes out worded differently each time.”",
+              result: { kind: "flag", text: "Part of the way there" } },
+            { label: "Try 2",
+              answer: "“…if the first picks come out different, **everything after builds on that different start.**”",
+              result: { kind: "right", text: "That covers it" } },
+          ],
+          nudge: "**Nudge:** What happens to the words it chooses later if the very first word is different?",
+          hand: "Claude grades it inside the page",
+          note: "When she submits, the module sends her answer to Claude and the feedback appears right in the lesson, in seconds. She never leaves the page or copies anything back into chat. Claude grades the idea against the rubric, and wording doesn't count.",
+        },
+        {
+          name: "Flashcards",
+          narration: "Back in the chat, the learner writes flashcards, including ones from wrong answers. Chiron grades each but never writes the answer. Switch to Revised to see a second try.",
+          type: "cards",
+          card: {
+            kind: "Misconception card",
+            term: "Why is “it goes back to fix its mistakes” wrong?",
+            rounds: [
+              { label: "First try", badge: "close", badgeText: "Close",
+                answer: "Because it doesn’t really go back, it just keeps going forward.",
+                feedback: "**Close.** You said what it doesn’t do. Now say what happens to the wrong line once it’s written." },
+              { label: "Revised", badge: "done", badgeText: "Done",
+                answer: "It never rereads. A wrong line becomes part of the text every later pick reads, so the rest can build on the mistake.",
+                feedback: "**Done.** You named what happens to the mistake, which is the part that matters." },
+            ],
+          },
+          steps: [
+            { title: "Cards appear right in the chat", text: "An inline widget, no new tab or app." },
+            { title: "She writes every answer herself", text: "Generating it beats rereading a definition." },
+            { title: "Chiron grades each card and sends notes back", text: "Done, Close or Revise, with one pointed question." },
+            { title: "Revise until all pass, then it’s her deck", text: "A spaced-repetition deck that runs in any browser." },
+          ],
+        },
+        {
+          name: "Under the hood",
+          narration: "Each move maps to learning science research. The hardest design problem is restraint: helping enough without doing the learner's thinking.",
+          type: "hood",
+          now: {
+            label: "Under the hood today", title: "What Chiron does",
+            items: [
+              ["Uses Socratic questioning to find the gap, then stops and teaches", "Socratic method · impasse-driven learning"],
+              ["Confronts a wrong model with a case it gets wrong", "conceptual change"],
+              ["Builds simulations you predict, then test", "predict, observe, explain"],
+              ["Tags every wrong option with the belief behind it", "diagnostic distractors"],
+              ["Reads free-text answers and nudges toward the gap", "elaborated feedback"],
+              ["Makes you write the flashcards yourself", "generation and retrieval practice"],
+            ],
+          },
+          next: {
+            label: "Not built yet", title: "What I'm adding next",
+            items: [
+              ["Remembers you between sessions with a learner model that carries over", "knowledge tracing"],
+              ["Brings old misconceptions back on a spaced review schedule", "spacing and retrieval practice"],
+              ["Picks the lightest format that does the job: a question, a worked example, a widget or a full module", "KLI · revised Bloom's · expertise reversal"],
+              ["A standalone app on the Anthropic API, with adaptivity built in", "adaptive instruction"],
+            ],
+          },
+        },
+      ],
+    },
+  };
+
+  const slideshows = {
+    onboarding: {
+      n: 6,
+      bubbles: [
+        "Onboarding is the first thing a student sees in Encourage. When the survey had to grow to twice the questions, my job was to keep students finishing it.",
+        "The old design: boxed questions under one long progress bar. Every screen looked the same, so the survey felt longer than it was.",
+        "In classrooms, we watched students stall on account verification, and school wifi often blocked their personal inboxes. That told us where to cut friction first.",
+        "I chunked the questions by topic, each with its own short progress bar. Finishing a chunk plays a small animation, a beat of reward before the next one.",
+        "Account creation moved to the start, quietly, and verification to the end. A student stuck on a blocked inbox can swap their email and keep going.",
+        "I set up Encoura's first in-app A/B test to compare the new flow with the old one. The chart shows completion for each."
+      ],
+      images: [
+        "onboard-1.png",
+        "onboard-2.png",
+        "onboard-3.webp",
+        "onboard-4.gif",
+        "onboard-5.png",
+        "onboard-6.png"
+      ],
+      // slide index -> first-frame still, for the pause control and for
+      // visitors whose OS asks for reduced motion
+      posters: { 3: "onboard-4-poster.webp" },
+      alts: [
+        "The Encourage onboarding survey as it shipped, on a phone.",
+        "The previous onboarding design: boxed questions under a single full-length progress bar.",
+        "The account verification step students stalled on during classroom research.",
+        "The redesigned flow, questions chunked by topic, playing its section-complete animation on Next.",
+        "Account creation moved to the start of the flow, with the option to swap to a different email address.",
+        "The A/B test results comparing completion between the old and doubled-length surveys.",
+      ],
+    }
+  };
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  // short spoken status messages; the region is emptied first so the same
+  // message twice in a row is still announced twice
+  const srStatus = document.getElementById('sr-status');
+  function announce(msg){
+    srStatus.textContent = '';
+    setTimeout(()=>{ srStatus.textContent = msg; }, 50);
+  }
+
+  // ---------- VoiceOver: read styled text once ----------
+  // WebKit exposes every inline element in a text block (the <em>, a highlight
+  // <span>) as its own accessibility object, so VoiceOver reads the block whole
+  // and then again as "6 items". Hide the styled markup from assistive tech
+  // and add a visually hidden twin holding the same words in one text node.
+  // Built from the DOM so the spoken copy can never drift from the visible copy.
+  document.querySelectorAll('[data-flatten]').forEach(el=>{
+    const words = [...el.childNodes]
+      .map(n => n.nodeName === 'BR' ? ' ' : n.textContent)
+      .join('').replace(/\s+/g, ' ').trim();
+    const shown = document.createElement('span');
+    shown.setAttribute('aria-hidden', 'true');
+    while (el.firstChild) shown.appendChild(el.firstChild);
+    const spoken = document.createElement('span');
+    spoken.className = 'sr-only';
+    spoken.textContent = words;
+    el.append(shown, spoken);
+  });
+
+  // ---------- animated GIFs: one pause/play preference for the page ----------
+  // <img> cannot stop a GIF mid-loop, so "paused" swaps in a still of the
+  // first frame. A reduced-motion OS setting starts everything paused.
+  const gifs = (function(){
+    let paused = reduceMotion.matches;
+    const subs = [];
+    const apply = ()=> subs.forEach(fn => fn(paused));
+    if (reduceMotion.addEventListener) reduceMotion.addEventListener('change', e=>{ paused = e.matches; apply(); });
+    return {
+      isPaused: ()=> paused,
+      label: p => p ? 'Play animation' : 'Pause animation',
+      subscribe(fn){ subs.push(fn); fn(paused); },
+      toggle(){
+        paused = !paused;
+        apply();
+        announce(paused ? 'Animations paused.' : 'Animations playing.');
+      }
+    };
+  })();
+
+  document.querySelectorAll('.gif-toggle[data-for]').forEach(btn=>{
+    const img = document.getElementById(btn.dataset.for);
+    const gif = img.getAttribute('src'), poster = img.dataset.poster;
+    gifs.subscribe(p=>{ img.src = p ? poster : gif; btn.textContent = gifs.label(p); });
+    btn.addEventListener('click', gifs.toggle);
+  });
+
+  function buildSlideshow(key){
+    const cfg = slideshows[key];
+    let idx = 0;
+    // one segment per slide; the current one is filled. The caption above
+    // already says "Slide X of N" in words, so the bar is hidden from AT.
+    const strip = document.getElementById('strip-' + key);
+    const segs = Array.from({length: cfg.n}, ()=> strip.appendChild(document.createElement('span')));
+
+    const region  = document.getElementById('ss-' + key);
+    const cap     = document.getElementById('cap-k-' + key);
+    const bubble  = document.getElementById('bubble-' + key);
+    const img     = document.getElementById('img-' + key);
+    const zoomBtn = document.getElementById('zoom-' + key);
+    const gifBtn  = document.getElementById('gif-' + key);
+    const arrows  = [...document.querySelectorAll(`[data-target="${key}"]`)];
+
+    const syncMarks = ()=> segs.forEach((s, i)=> s.classList.toggle('on', i === idx));
+
+    // only write text that actually changed: both the caption and the bubble are
+    // live regions, and rewriting identical text would re-announce it
+    const setText = (el, s)=>{ if (el.textContent !== s) el.textContent = s; };
+
+    // replay the slide-up: dropping and re-adding the class restarts the keyframes
+    function popBubble(){
+      bubble.classList.remove('bubble-wait', 'bubble-in');
+      void bubble.offsetWidth;
+      bubble.classList.add('bubble-in');
+    }
+    if ('IntersectionObserver' in window){
+      bubble.classList.add('bubble-wait');
+      const io = new IntersectionObserver(entries=>{
+        if (entries.some(e=>e.isIntersecting)){ io.disconnect(); popBubble(); }
+      }, { threshold:0.5 });
+      io.observe(bubble);
+    }
+
+    function render(){
+      setText(cap, `Slide ${idx+1} of ${cfg.n}`);
+      setText(bubble, cfg.bubbles[idx]);
+
+      // each frame shows something different, so the alt has to change with
+      // it -- one alt on the <img> would describe only the slide it loaded on
+      const alt = cfg.alts ? cfg.alts[idx] : '';
+      const poster = cfg.posters && cfg.posters[idx];
+      img.src = poster && gifs.isPaused() ? poster : cfg.images[idx];
+      img.alt = alt;
+      zoomBtn.setAttribute('aria-label', alt ? 'Enlarge image: ' + alt : 'Enlarge image');
+
+      // the onboarding GIF ships with a 1px dark stroke drawn around all four
+      // edges; nudge it under the container's clip. Keyed on the slide, not the
+      // src, so the GIF and its first-frame still share the same 800x440 box.
+      img.closest('.device').classList.toggle('bleed', !!poster);
+      if (gifBtn){
+        gifBtn.hidden = !poster;
+        gifBtn.textContent = gifs.label(gifs.isPaused());
+      }
+
+      arrows.forEach(btn=>{
+        const dir = parseInt(btn.dataset.dir, 10);
+        const atEnd = dir < 0 ? idx === 0 : idx === cfg.n - 1;
+        btn.setAttribute('aria-disabled', atEnd ? 'true' : 'false');
+      });
+    }
+
+    function go(dir){
+      const next = Math.max(0, Math.min(cfg.n - 1, idx + dir));
+      const moved = next !== idx;
+      if(moved){
+        idx = next;
+        syncMarks();
+      }
+      render();
+      if(moved) popBubble();
+    }
+
+    arrows.forEach(btn=>{
+      btn.addEventListener('click', ()=> go(parseInt(btn.dataset.dir, 10)));
+    });
+    // left / right arrow keys work anywhere inside the carousel
+    region.addEventListener('keydown', e=>{
+      if (e.key === 'ArrowLeft'){ e.preventDefault(); go(-1); }
+      else if (e.key === 'ArrowRight'){ e.preventDefault(); go(1); }
+    });
+    if (gifBtn) gifBtn.addEventListener('click', gifs.toggle);
+    if (cfg.posters) gifs.subscribe(render);
+
+    syncMarks();
+    render();
+  }
+
+  Object.keys(slideshows).forEach(buildSlideshow);
+
+  // ---------- Chiron session replay: layout ----------
+  // Renders the `replays` data into the slide card. Copy belongs in the data;
+  // this only decides how each type of slide is laid out.
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  // **bold** and ==highlight==. Styled text gets the data-flatten treatment:
+  // the styled copy is hidden from assistive tech and a plain twin is read
+  // instead, so VoiceOver doesn't read the block twice
+  function rich(s, hlClass){
+    const plain = esc(s.replace(/\*\*|==/g, ''));
+    const styled = esc(s)
+      .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+      .replace(/==(.+?)==/g, `<span class="${hlClass || 'rp-said'}">$1</span>`);
+    return styled === plain ? plain
+      : `<span aria-hidden="true">${styled}</span><span class="sr-only">${plain}</span>`;
+  }
+
+  function rpArtifact(a){
+    return `<figure class="rp-artifact${a.wide ? ' wide' : ''}${a.fade ? ' fade' : ''}${a.tall ? ' tall' : ''}">
+      <figcaption class="rp-artifact-bar"><span>${esc(a.title)}</span><span>${esc(a.note)}</span></figcaption>
+      <img src="${a.src}" alt="${esc(a.alt)}" width="${a.width}" height="${a.height}">
+    </figure>`;
+  }
+
+  function rpMessage(m){
+    return `<div class="rp-msg ${m.who}">
+      <span class="rp-mono-label">${m.who === 'teacher' ? 'User' : 'Chiron'}</span>
+      ${m.think ? `<p class="rp-think"><span class="rp-think-k">Thinking</span>${rich(m.think)}</p>` : ''}
+      <p class="rp-body">${rich(m.text)}</p>
+      ${m.status ? `<p class="rp-build"><span class="rp-dot" aria-hidden="true"></span>${esc(m.status)}</p>` : ''}
+    </div>`;
+  }
+  const rpChat = s => s.split
+    // chat on the left, the module it builds on the right
+    ? `<div class="rp-split rp-chatsplit"><div class="rp-chatcol">${s.messages.map(rpMessage).join('')}</div>${rpArtifact(s.artifact)}</div>`
+    : s.messages.map(rpMessage).join('') + (s.artifact ? rpArtifact(s.artifact) : '');
+
+  // the loop: nodes sit on a circle at their data angles, and each arc runs
+  // from where it clears one node's box to where it reaches the next
+  function rpLoop(s){
+    const cx = 620, cy = 232, r = 188, W = 196, H = 86;
+    const f = v => v.toFixed(1);
+    const P = (a, rad = r) => [cx + rad * Math.cos(a * Math.PI / 180), cy + rad * Math.sin(a * Math.PI / 180)];
+    const inBox = (a, at, pad) => { const [x, y] = P(a), [bx, by] = P(at);
+      return Math.abs(x - bx) < W / 2 + pad && Math.abs(y - by) < H / 2 + pad; };
+    const arcs = s.nodes.map((nd, k) => {
+      const to = s.nodes[(k + 1) % s.nodes.length];
+      let a1 = nd.angle, a2 = to.angle; if (a2 <= a1) a2 += 360;
+      while (inBox(a1, nd.angle, 10)) a1++;
+      while (inBox(a2, to.angle, 14)) a2--;
+      return [a1, a2];
+    });
+    const arc = ([a1, a2], cls, rad = r, arrow = true) => { const [x1, y1] = P(a1, rad), [x2, y2] = P(a2, rad);
+      return `<path class="${cls}" d="M${f(x1)} ${f(y1)} A${rad} ${rad} 0 0 1 ${f(x2)} ${f(y2)}"${arrow ? ' marker-end="url(#rp-ah)"' : ''}/>`; };
+    const node = (x, y, n, it, cls) => `<g class="node ${cls || ''}"><rect x="${f(x - W / 2)}" y="${f(y - H / 2)}" width="${W}" height="${H}" rx="14"/>
+      <circle class="num" cx="${f(x - W / 2 + 22)}" cy="${f(y - H / 2 + 24)}" r="12"/><text class="numt" x="${f(x - W / 2 + 22)}" y="${f(y - H / 2 + 28.5)}" text-anchor="middle">${n}</text>
+      <text class="ttl" x="${f(x - W / 2 + 42)}" y="${f(y - H / 2 + 31)}">${esc(it.title)}</text>
+      <text class="sub" x="${f(x - W / 2 + 16)}" y="${f(y + 12)}">${esc(it.sub[0])}</text><text class="sub" x="${f(x - W / 2 + 16)}" y="${f(y + 30)}">${esc(it.sub[1])}</text></g>`;
+    const note = (lines, x, y, cls) => lines.map((l, k) => `<text class="hand ${cls || ''}" x="${x}" y="${y + k * 22}">${esc(l)}</text>`).join('');
+    const [b1, b2] = arcs[0];
+    let svg = `<svg class="rp-loop-svg" viewBox="0 0 1000 482" role="img" aria-label="${esc(s.label)}">
+      <defs><marker id="rp-ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#1D4ED8"/></marker>
+      <marker id="rp-ah2" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#182338"/></marker></defs>
+      <circle class="ring" cx="${cx}" cy="${cy}" r="${r}"/>`;
+    svg += arcs.map(a => arc(a, 'arc')).join('');
+    svg += arc([b1 + 6, b2 - 6], 'bgarc', r + 30, false);
+    svg += note(s.notes.build, 268, 38) + note(s.notes.cards, 830, 210) + note(s.notes.next, 268, 436);
+    svg += `<path class="entry" d="M${118 + W / 2 - 8} ${cy} L${f(cx - r - W / 2 - 10)} ${cy}" marker-end="url(#rp-ah2)"/>` + node(118, cy, 0, s.start, 'start');
+    svg += s.nodes.map((nd, k) => { const [x, y] = P(nd.angle); return node(x, y, k + 1, nd); }).join('');
+    svg += `<text class="center" x="${cx}" y="${cy - 25}" text-anchor="middle">${esc(s.center[0])}</text><text class="center" x="${cx}" y="${cy - 1}" text-anchor="middle">${esc(s.center[1])}</text>`;
+    svg += `<text class="center2" x="${cx}" y="${cy + 23}" text-anchor="middle">${esc(s.centerSmall[0].toUpperCase())}</text><text class="center2" x="${cx}" y="${cy + 40}" text-anchor="middle">${esc(s.centerSmall[1].toUpperCase())}</text></svg>`;
+    const li = (n, it, cls) => `<li class="${cls || ''}"><span class="rp-n">${n}</span><span><b>${esc(it.title)}</b>${esc(it.sub.join(' '))}</span></li>`;
+    return svg + `<ol class="rp-loop-list">${li(0, s.start, 'start')}${s.nodes.map((nd, k) => li(k + 1, nd)).join('')}<li class="back">${esc(s.back)}</li></ol>`;
+  }
+
+  let rpTried = false;   // the visitor has pressed Write the rest at least once
+  function rpMachine(s){
+    return `<figure class="rp-artifact rp-mod-frame">
+      <figcaption class="rp-artifact-bar"><span>${esc(s.frame.title)}</span><span>${esc(s.frame.note)}</span></figcaption>
+      <div class="rp-mod"><div class="rp-mod-panel">
+        <h3>${esc(s.title)}</h3>
+        <p class="rp-mod-cap">${esc(s.caption)}</p>
+        <p><code>${esc(s.prompt)}</code><span class="rp-mod-out" data-rp="out"></span></p>
+        <div>
+          <p class="rp-mod-eyebrow" data-rp="step">${esc(s.scoresLabel)}</p>
+          <div class="rp-mod-chips" data-rp="scores"><span class="rp-mod-chip">${esc(s.waiting)}</span></div>
+        </div>
+        <label for="rp-temp" class="rp-mod-slider">
+          <span><b>${esc(s.slider)}</b> <span data-rp="tval">1.0</span> <span class="rp-mod-cap" data-rp="tword">${esc(s.sliderWords.normal)}</span></span>
+          <input id="rp-temp" type="range" min="0" max="2" step="0.1" value="1">
+        </label>
+        <div class="rp-mod-btns">
+          <button type="button" class="rp-mod-btn${rpTried ? '' : ' rp-pulse'}" data-rp="go" aria-disabled="false">${esc(s.button)}</button>
+          <button type="button" class="rp-mod-btn quiet" data-rp="clear">${esc(s.clear)}</button>
+        </div>
+        <div><p class="rp-mod-eyebrow">${esc(s.runsLabel)}</p><ol class="rp-mod-hist" data-rp="runs"></ol></div>
+      </div></div>
+    </figure>`;
+  }
+  // scores reshaped by randomness: 0 always takes the favorite, 1 keeps the
+  // table's odds, 2 flattens them so long shots win more often
+  function rpReweight(list, T){
+    if (T < 0.05){ const m = Math.max(...list.map(x => x[1])); return list.map(([t, p]) => [t, p === m ? 1 : 0]); }
+    const w = list.map(([t, p]) => [t, Math.pow(p, 1 / T)]), sum = w.reduce((a, b) => a + b[1], 0);
+    return w.map(([t, v]) => [t, v / sum]);
+  }
+  function rpDraw(list){
+    let r = Math.random(), acc = 0;
+    for (const [t, p] of list){ acc += p; if (r <= acc) return t; }
+    return list[list.length - 1][0];
+  }
+  // the module's own loop and labels; runs are numbered from the first, and
+  // the list shows the latest few so the panel keeps its height
+  function rpInitMachine(view, s){
+    const q = k => view.querySelector(`[data-rp="${k}"]`);
+    const temp = view.querySelector('#rp-temp'), go = q('go'), stop = new Set(s.stop);
+    const waiting = `<span class="rp-mod-chip">${esc(s.waiting)}</span>`;
+    let runs = [], busy = false;
+    const showT = () => {
+      const v = +temp.value;
+      q('tval').textContent = v.toFixed(1);
+      q('tword').textContent = v < 0.05 ? s.sliderWords.zero : v <= 1 ? s.sliderWords.normal : s.sliderWords.high;
+      temp.setAttribute('aria-valuetext', `${v.toFixed(1)} ${q('tword').textContent}`);
+    };
+    const showRuns = () => {
+      q('runs').innerHTML = runs.slice(-s.keepRuns).map((r, k, shown) =>
+        `<li value="${runs.length - shown.length + k + 1}">…to${esc(r.text)}. (randomness ${r.T.toFixed(1)})</li>`).join('');
+    };
+    temp.addEventListener('input', showT); showT();
+    q('clear').addEventListener('click', () => {
+      if (busy) return;
+      runs = []; showRuns();
+      q('out').textContent = ''; q('scores').innerHTML = waiting; q('step').textContent = s.scoresLabel;
+    });
+    go.addEventListener('click', async () => {
+      rpTried = true; go.classList.remove('rp-pulse');
+      if (busy) return;
+      // aria-disabled, not disabled, so focus stays on the button mid-run
+      busy = true; go.setAttribute('aria-disabled', 'true');
+      const T = +temp.value; let prev = 'START', text = '';
+      q('out').textContent = '';
+      for (let n = 0; n < 10; n++){
+        const list = rpReweight(s.table[prev], T).sort((a, b) => b[1] - a[1]), pick = rpDraw(list);
+        q('scores').innerHTML = list.map(([t, p]) => `<span class="rp-mod-chip${t === pick ? ' top' : ''}">${esc(t.trim())}<span class="pct">${Math.round(p * 100)}%</span></span>`).join('');
+        q('step').textContent = s.stepLabel.replace('{n}', n + 1);
+        text += pick; q('out').textContent = text;
+        if (!reduceMotion.matches) await new Promise(res => setTimeout(res, s.stepMs));
+        if (!go.isConnected) return;      // left the slide mid-run
+        if (stop.has(pick) || !s.table[pick]) break;
+        prev = pick;
+      }
+      q('out').textContent = text + '.';
+      runs.push({ text, T }); showRuns();
+      // one announcement per run rather than a live region chattering every step
+      announce(`Run ${runs.length}: ${s.prompt}${text}.`);
+      busy = false; go.setAttribute('aria-disabled', 'false');
+    });
+  }
+
+  function rpShot(s){
+    return `<button type="button" class="zoom-btn rp-shot" aria-label="Enlarge image: ${esc(s.alt)}"><img src="${s.src}" alt="${esc(s.alt)}" width="${s.width}" height="${s.height}"></button>
+      <p class="rp-mono-label rp-shot-cap" aria-hidden="true">${esc(s.caption)}</p>`;
+  }
+  function rpInitShot(view){
+    const btn = view.querySelector('.rp-shot'), img = btn.querySelector('img');
+    btn.addEventListener('click', () => window.openLightbox && window.openLightbox(img.currentSrc || img.src, img.alt));
+  }
+
+  function rpCheck(s){
+    return `<div class="rp-split wide-left">${rpArtifact(s.artifact)}
+      <div class="rp-side"><p class="rp-chips">${s.results.map(r => `<span class="rp-chip ${r.kind}">${esc(r.text)}</span>`).join('')}</p>
+      ${s.lines.map(l => `<p>${rich(l)}</p>`).join('')}</div></div>`;
+  }
+
+  function rpGrade(s){
+    const attempt = t => `<div class="rp-attempt"><span class="rp-mono-label">${esc(t.label)}</span><p>${rich(t.answer)}</p><span class="rp-chip ${t.result.kind}">${esc(t.result.text)}</span></div>`;
+    return `<div class="rp-split">
+      <div class="rp-side">${attempt(s.tries[0])}<p class="rp-nudge">${rich(s.nudge)}</p>${attempt(s.tries[1])}</div>
+      <div class="rp-side"><p class="rp-hand">${esc(s.hand)}</p><p>${esc(s.note)}</p></div></div>`;
+  }
+
+  function rpCard(c, k){
+    const r = c.rounds[k];
+    return `<div class="rp-card"><div class="rp-card-top"><span class="rp-card-kind">${esc(c.kind)}</span><span class="rp-badge ${r.badge}">${esc(r.badgeText)}</span></div>
+      <p class="rp-card-term">${esc(c.term)}</p><p class="rp-card-back">${esc(r.answer)}</p>
+      <p class="rp-card-fb ${r.badge}">${rich(r.feedback)}</p></div>`;
+  }
+  function rpCards(s){
+    const c = s.card;
+    return `<div class="rp-fcslide">
+      <div class="rp-inline">
+        <div data-rp="card" aria-live="polite">${rpCard(c, 0)}</div>
+        <div class="rp-row"><div class="rp-seg">${c.rounds.map((r, k) => `<button type="button" data-round="${k}" aria-pressed="${k === 0}">${esc(r.label)}</button>`).join('')}</div></div>
+      </div>
+      <ol class="rp-steps">${s.steps.map(st => `<li><span><b>${esc(st.title)}</b>${esc(st.text)}</span></li>`).join('')}</ol>
+    </div>`;
+  }
+  function rpInitCards(view, s){
+    const btns = [...view.querySelectorAll('.rp-seg button')];
+    btns.forEach(b => b.addEventListener('click', () => {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      const k = +b.dataset.round;
+      btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      view.querySelector('[data-rp="card"]').innerHTML = rpCard(s.card, k);
+    }));
+  }
+
+  function rpHood(s){
+    const col = (c, cls, ic) => `<div class="rp-col ${cls}"><p class="rp-mono-label">${esc(c.label)}</p><h3>${esc(c.title)}</h3>
+      <ul>${c.items.map(([t, term]) => `<li><span class="rp-ic" aria-hidden="true">${ic}</span><span>${esc(t)}<small>${esc(term)}</small></span></li>`).join('')}</ul></div>`;
+    return `<div class="rp-hood">${col(s.now, 'now', '✓')}${col(s.next, 'next', '')}</div>`;
+  }
+
+  const RP_RENDER = { shot: rpShot, loop: rpLoop, chat: rpChat, machine: rpMachine, check: rpCheck, grade: rpGrade, cards: rpCards, hood: rpHood };
+
+  // the order a slide's pieces come in, as [elements, delay in ms] beats.
+  // Chat runs on a conversation's rhythm: the teacher replies quickly, and
+  // Chiron takes a longer beat, as if typing.
+  const RP_ENTER = {
+    chat: v => {
+      const beats = []; let t = 120, first = true;
+      v.querySelectorAll('.rp-msg, .rp-artifact').forEach(el => {
+        if (!first) t += el.classList.contains('chiron') ? 900 : el.classList.contains('teacher') ? 650 : 700;
+        first = false; beats.push([[el], t]);
+        // a Chiron turn shows its thinking first, then the reply, then what it's building
+        if (el.querySelector('.rp-think')) { t += 500; beats.push([[el.querySelector('.rp-body')], t]); }
+        if (el.querySelector('.rp-build')) { t += 400; beats.push([[el.querySelector('.rp-build')], t]); }
+      });
+      return beats;
+    },
+    loop: v => [
+      ...[...v.querySelectorAll('.rp-loop-svg .node')].map((el, k) => [[el], 100 + k * 150]),
+      [[...v.querySelectorAll('.rp-loop-svg .ring, .rp-loop-svg .arc, .rp-loop-svg .bgarc, .rp-loop-svg .entry, .rp-loop-svg .center, .rp-loop-svg .center2')], 450],
+      [[...v.querySelectorAll('.rp-loop-svg .hand')], 950],
+      ...[...v.querySelectorAll('.rp-loop-list li')].map((el, k) => [[el], 100 + k * 120]),
+    ],
+    machine: v => [[[v.querySelector('.rp-artifact')], 100]],
+    shot: v => [[[v.querySelector('.rp-shot')], 100], [[v.querySelector('.rp-shot-cap')], 500]],
+    check: v => [v.querySelector('.rp-artifact'), ...v.querySelectorAll('.rp-side > *')].map((el, k) => [[el], 100 + k * 160]),
+    grade: v => [...v.querySelectorAll('.rp-side > *')].map((el, k) => [[el], 100 + k * 220]),
+    cards: v => [v.querySelector('.rp-inline'), ...v.querySelectorAll('.rp-steps li')].map((el, k) => [[el], 100 + k * 160]),
+    hood: v => [...v.querySelectorAll('.rp-col')].flatMap((col, c) =>
+      [[[col], 100 + c * 200], ...[...col.querySelectorAll('li')].map((li, k) => [[li], 260 + c * 200 + k * 90])]),
+  };
+  function rpStage(view, type){
+    (RP_ENTER[type] ? RP_ENTER[type](view) : []).forEach(([els, t]) => els.forEach(el => {
+      if (!el) return;
+      el.classList.add('rp-in');
+      el.style.setProperty('--delay', t + 'ms');
+    }));
+  }
+  const RP_INIT = { shot: rpInitShot, machine: rpInitMachine, cards: rpInitCards };
+
+  function buildReplay(key){
+    const cfg = replays[key], n = cfg.slides.length;
+    let idx = 0;
+    const region = document.getElementById('ss-' + key);
+    const cap    = document.getElementById('cap-k-' + key);
+    const bubble = document.getElementById('bubble-' + key);
+    const view   = document.getElementById('view-' + key);
+    const arrows = [...document.querySelectorAll(`[data-target="${key}"]`)];
+    // one progress segment per slide, as on the screenshot slideshows
+    const strip = document.getElementById('strip-' + key);
+    const segs = Array.from({length: n}, () => strip.appendChild(document.createElement('span')));
+    const syncExtended = k => segs.forEach((sg, i) => sg.classList.toggle('on', i === k - 1));
+    syncExtended(1);
+
+    // same slide-up as the screenshot slideshows
+    function popBubble(){
+      bubble.classList.remove('bubble-wait', 'bubble-in');
+      void bubble.offsetWidth;
+      bubble.classList.add('bubble-in');
+    }
+    if ('IntersectionObserver' in window){
+      bubble.classList.add('bubble-wait');
+      const io = new IntersectionObserver(entries=>{
+        if (entries.some(e=>e.isIntersecting)){ io.disconnect(); popBubble(); }
+      }, { threshold:0.5 });
+      io.observe(bubble);
+    }
+
+    // entrances play once the card is on screen; before that the first slide
+    // waits, so its chat isn't over by the time anyone scrolls to it
+    let seen = !('IntersectionObserver' in window);
+    function play(){
+      if (!seen) return;
+      view.classList.remove('rp-play');
+      void view.offsetWidth;
+      view.classList.add('rp-play');
+    }
+    if (!seen){
+      const io = new IntersectionObserver(entries=>{
+        if (entries.some(e=>e.isIntersecting)){ io.disconnect(); seen = true; play(); }
+      }, { threshold:0.35 });
+      io.observe(view);
+    }
+
+    function render(){
+      const s = cfg.slides[idx];
+      // the caption and the narration are the live regions; the slide body is
+      // not, so a slide change announces two short lines, not a whole transcript
+      const label = `Slide ${idx + 1} of ${n} · ${s.name}`;
+      if (cap.textContent !== label) cap.textContent = label;
+      if (bubble.textContent !== s.narration) bubble.textContent = s.narration;
+      view.innerHTML = `<div class="rp-slide">${RP_RENDER[s.type](s)}</div>`;
+      view.scrollTop = 0;
+      rpStage(view, s.type);
+      play();
+      if (RP_INIT[s.type]) RP_INIT[s.type](view, s);
+      arrows.forEach(btn=>{
+        const dir = parseInt(btn.dataset.dir, 10);
+        btn.setAttribute('aria-disabled', (dir < 0 ? idx === 0 : idx === n - 1) ? 'true' : 'false');
+      });
+    }
+
+    function go(dir){
+      const next = Math.max(0, Math.min(n - 1, idx + dir));
+      if (next === idx) return;
+      idx = next;
+      syncExtended(idx + 1);
+      render();
+      popBubble();
+    }
+
+    arrows.forEach(btn => btn.addEventListener('click', () => go(parseInt(btn.dataset.dir, 10))));
+    // left / right anywhere in the card, except where the keys already mean
+    // something: the randomness slider
+    region.addEventListener('keydown', e=>{
+      if (e.target.closest('input, textarea, select')) return;
+      if (e.key === 'ArrowLeft'){ e.preventDefault(); go(-1); }
+      else if (e.key === 'ArrowRight'){ e.preventDefault(); go(1); }
+    });
+
+    render();
+  }
+
+  Object.keys(replays).forEach(buildReplay);
+
+
+  // ---------- motion reel ----------
+  // Cycles the real Encourage clips, each held for `ms`. It follows the
+  // page-wide animation preference: paused (or reduced motion) shows each
+  // clip's first-frame still and stops the cycling. Picking a clip shows it
+  // and restarts the timer from there. Only the clip on show is exposed to
+  // assistive tech, and nothing here is a live region, so it never chatters.
+  const reel = [ { ms: 6000 }, { ms: 6100 } ];
+  (function(){
+    const root = document.getElementById('reel');
+    if (!root) return;
+    const clips = [...root.querySelectorAll('.reel-clip')];
+    const picks = [...root.querySelectorAll('.reel-pick')];
+    const toggle = document.getElementById('reel-toggle');
+    const srcs = clips.map(c => { const img = c.querySelector('img'); return { img, gif: img.getAttribute('src'), poster: img.dataset.poster }; });
+    let idx = 0, timer = 0;
+
+    function show(k){
+      idx = k;
+      clips.forEach((c, i) => {
+        c.classList.toggle('on', i === k);
+        if (i === k) c.removeAttribute('aria-hidden'); else c.setAttribute('aria-hidden', 'true');
+      });
+      picks.forEach((p, i) => p.setAttribute('aria-pressed', String(i === k)));
+    }
+    function schedule(){
+      clearTimeout(timer);
+      if (gifs.isPaused()) return;
+      timer = setTimeout(() => { show((idx + 1) % clips.length); schedule(); }, reel[idx].ms);
+    }
+    picks.forEach((p, i) => p.addEventListener('click', () => { show(i); schedule(); }));
+    toggle.addEventListener('click', gifs.toggle);
+    gifs.subscribe(p => {
+      srcs.forEach(s => { s.img.src = p ? s.poster : s.gif; });
+      toggle.textContent = gifs.label(p);
+      schedule();
+    });
+  })();
+
+  // ---------- click an image to enlarge; pinch/scroll to zoom ----------
+  (function(){
+    const lb = document.createElement('div');
+    lb.className = 'lightbox';
+    lb.setAttribute('role', 'dialog');
+    lb.setAttribute('aria-modal', 'true');
+    lb.setAttribute('aria-label', 'Enlarged image');
+
+    const big = document.createElement('img');
+    big.alt = '';
+    const zoomBtn = document.createElement('button');
+    zoomBtn.type = 'button';
+    zoomBtn.className = 'lightbox-zoom';
+    zoomBtn.textContent = 'Zoom in';
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'lightbox-close';
+    closeBtn.setAttribute('aria-label', 'Close enlarged image');
+    closeBtn.innerHTML = '<span aria-hidden="true">&times;</span>';
+    const hint = document.createElement('div');
+    hint.className = 'lightbox-hint';
+    hint.setAttribute('aria-hidden', 'true');
+    hint.textContent = 'Tap image or press Zoom to magnify · pinch to zoom further · Esc to close';
+
+    lb.appendChild(big);
+    lb.appendChild(zoomBtn);
+    lb.appendChild(closeBtn);
+    lb.appendChild(hint);
+    document.body.appendChild(lb);
+
+    let lastFocus = null;
+    let inerted = [];
+
+    function setZoom(on){
+      lb.classList.toggle('zoomed', on);
+      zoomBtn.textContent = on ? 'Zoom out' : 'Zoom in';
+    }
+
+    window.openLightbox = openLightbox;
+    function openLightbox(src, alt){
+      lastFocus = document.activeElement;
+      big.src = src;
+      big.alt = alt || '';
+      lb.setAttribute('aria-label', alt ? 'Enlarged image: ' + alt : 'Enlarged image');
+      lb.classList.add('open');
+      setZoom(false);
+      lb.scrollTop = 0; lb.scrollLeft = 0;
+      document.body.style.overflow = 'hidden';
+      // everything behind the dialog is made inert so neither Tab nor a screen
+      // reader's virtual cursor can wander back into the page while it is open
+      inerted = [...document.body.children].filter(el => el !== lb && !el.hasAttribute('inert'));
+      inerted.forEach(el => el.setAttribute('inert', ''));
+      closeBtn.focus();
+    }
+
+    function closeLightbox(){
+      lb.classList.remove('open', 'zoomed');
+      big.removeAttribute('src');
+      document.body.style.overflow = '';
+      inerted.forEach(el => el.removeAttribute('inert'));
+      inerted = [];
+      if(lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    closeBtn.addEventListener('click', closeLightbox);
+    zoomBtn.addEventListener('click', ()=> setZoom(!lb.classList.contains('zoomed')));
+    lb.addEventListener('click', e => { if(e.target === lb) closeLightbox(); });
+    big.addEventListener('click', () => setZoom(!lb.classList.contains('zoomed')));
+    // on the document, not the dialog: tapping the image to zoom drops focus
+    // onto <body>, and Escape still has to close from there
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Escape' && lb.classList.contains('open')) closeLightbox();
+    });
+    lb.addEventListener('keydown', e => {
+      // belt and braces with inert: keep Tab cycling between the two controls
+      if(e.key === 'Tab'){
+        const order = [zoomBtn, closeBtn];
+        const i = order.indexOf(document.activeElement);
+        const next = e.shiftKey ? (i <= 0 ? order.length - 1 : i - 1) : (i === order.length - 1 ? 0 : i + 1);
+        e.preventDefault();
+        order[next].focus();
+      }
+    });
+
+    // the replay re-renders its slides, so it binds its own button (rpInitShot)
+    document.querySelectorAll('.zoom-btn:not(.rp-shot)').forEach(btn => {
+      const img = btn.querySelector('img');
+      btn.addEventListener('click', () => openLightbox(img.currentSrc || img.src, img.alt));
+    });
+  })();
+
+</script>
+
+<!-- GoatCounter: cookieless page-view analytics. build-artifact.py strips this line. -->
+<script data-goatcounter="https://rahulshah.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+
+</body>
+</html>
