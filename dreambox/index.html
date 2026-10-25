@@ -178,7 +178,14 @@
     gap:48px; align-items:center;
   }
   .hero-copy{ display:flex; flex-direction:column; gap:24px; }
-  .eyebrow{ align-self:flex-start; background:var(--paper); color:var(--navy); border:2px solid var(--sky-mid); }
+  /* "Prepared for" lockup: the caps label beside DreamBox's own logo, on a
+     white pill so the logo sits on the ground it was drawn for */
+  .eyebrow{
+    align-self:flex-start; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    background:var(--paper); border:2px solid var(--sky-mid); border-radius:999px; padding:8px 18px 8px 16px;
+  }
+  .eyebrow .caps{ color:var(--navy); }
+  .db-logo{ height:34px; width:auto; display:block; }
   .hero h1{ font-size:56px; line-height:1.08; letter-spacing:-0.5px; }
   .hero h1 .hl{ --hl:var(--lime); }
   .hero h1 .hl-sky{ --hl:var(--sky); }
@@ -777,13 +784,13 @@
   /* ---------- CHIRON REPLAY: DREAMBOX BRAND ----------
      The replay block above is shared with the root page and written against
      its tokens; this maps them onto the DreamBox-inspired palette and type.
-     The window takes a cream tray, so the blue user bubbles read against it;
-     pen blue is the brand blue (5.3:1 on it). */
+     The window takes the sky tray; pen blue is the brand blue (4.9:1 on it).
+     User bubbles are cream so they don't sit blue on blue. */
   .replay{
     --line:var(--hairline); --ink-soft:var(--text2); --ink-faint:var(--text2);
-    --pen:var(--blue); --pen-tint:var(--sky-pale); --sketch-tint:#DCEBFA;
+    --pen:var(--blue); --pen-tint:var(--sky-pale); --sketch-tint:var(--cream);
     --rp-yellow-soft:var(--butter); --hl-yellow:var(--sun); --bg:var(--cream); --mastery:var(--green);
-    --red-tint:#FDE2DF; --rp-tray:var(--cream);
+    --red-tint:#FDE2DF; --rp-tray:var(--sky-pale);
     --rp-display:'Fredoka', 'Nunito', sans-serif;
     --rp-body:'Nunito', 'Trebuchet MS', sans-serif;
     --rp-mono:'Nunito', 'Trebuchet MS', sans-serif;
@@ -796,7 +803,7 @@
   .replay .rp-slide{ gap:8px; }
   /* the loop's arrowheads are drawn in the root page's pen blue */
   .replay .rp-loop-svg #rp-ah path{ fill:var(--pen); }
-  .replay .rp-msg.teacher .rp-body{ border-color:#B9D3EE; }
+  .replay .rp-msg.teacher .rp-body{ border-color:#EED9A4; }
   .replay .rp-mono-label, .replay .rp-think-k, .replay .rp-card-kind{ font-weight:800; }
   .replay .rp-body{ border-radius:16px; }
 </style>
@@ -825,7 +832,9 @@
   <section class="hero" aria-label="Introduction">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <p class="chip eyebrow">Prepared for DreamBox</p>
+        <div class="eyebrow"><span class="caps">Prepared for</span>
+          <img class="db-logo" src="dreambox-logo.webp" alt="DreamBox by Discovery Education" width="768" height="246">
+        </div>
         <h1 data-flatten>Product designer building engaging, <span class="hl">student-facing</span> K–12 learning tools, backed by <span class="hl hl-sky">learning science</span>.</h1>
         <p class="hero-sub">Hi, I'm Rahul. For five years I've designed the student side of Encourage, a college and career planning app. On my own time I built Chiron, an adaptive tutor.</p>
         <ul class="hero-tags" aria-label="Highlights">
@@ -1035,7 +1044,7 @@
       <ol class="process">
         <li>
           <h3>Critique</h3>
-          <p>I bring work to critique early and rough, with the one question I most need answered. Better to hear "this is confusing" in week one than in QA.</p>
+          <p>I bring work to critique early and rough, along with the questions it raises. I'm good at uncovering the ones nobody has asked yet, and people tell me the work feels considered because of it.</p>
         </li>
         <li>
           <h3>Research, then validation</h3>
@@ -1086,7 +1095,7 @@
       </nav>
       <div class="footer-base">
         <div class="mark"><img class="mark-dot" src="avatar-rahul.png" alt=""> Rahul Shah</div>
-        <p>Designed and built by Rahul Shah. An independent portfolio, not affiliated with DreamBox Learning.</p>
+        <p>Designed and built by Rahul Shah</p>
       </div>
     </div>
   </footer>
