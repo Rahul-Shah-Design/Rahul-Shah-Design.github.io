@@ -193,94 +193,29 @@
   .hero-tags{ list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px; }
   .hero-tags li{ background:var(--paper); color:var(--navy); padding:6px 14px; border-radius:999px; font-size:15px; font-weight:800; box-shadow:var(--shadow-2); }
 
-  /* make a ten: a small base-ten manipulative in place of a portrait. A sky
-     flat and a lime rod sit behind as decoration; the card holds the one
-     real control, a ten-frame that fills from a tray of unit blocks. The
-     card sits in flow, so the box grows with it on any screen. */
-  .blocks{ position:relative; width:100%; max-width:440px; justify-self:center; padding:34px 26px 30px 40px; }
-  .flat, .rod, .sun-dot{ position:absolute; }
+  /* a tetris board on a sky flat, a few pieces stacked and one still falling
+     over the dashed ghost of where it will land. Purely decorative and
+     still; on hover the falling piece drops a row toward its spot. */
+  .blocks{ position:relative; width:100%; max-width:440px; aspect-ratio:1; justify-self:center; }
+  .flat, .sun-dot{ position:absolute; }
   .flat{
-    inset:4% 2% 2% 6%; border-radius:28px; transform:rotate(-3deg);
+    inset:3%; border-radius:28px; transform:rotate(-3deg);
     background-color:var(--sky);
     background-image:
-      linear-gradient(rgba(2,65,112,.18) 2px, transparent 2px),
-      linear-gradient(90deg, rgba(2,65,112,.18) 2px, transparent 2px);
+      linear-gradient(rgba(2,65,112,.16) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(2,65,112,.16) 2px, transparent 2px);
     background-size:10% 10%;
   }
-  .rod{
-    left:0; top:20%; width:9%; height:66%; border-radius:12px; transform:rotate(5deg);
-    background-color:var(--lime);
-    background-image:linear-gradient(rgba(2,65,112,.28) 2px, transparent 2px);
-    background-size:100% 10%;
-    box-shadow:var(--shadow-2);
-  }
-  .sun-dot{ right:0; top:0; width:15%; aspect-ratio:1; border-radius:50%; background:var(--sun); }
-  .ten-card{
-    position:relative; background:var(--paper); border-radius:22px; padding:18px 18px 16px;
-    box-shadow:var(--shadow-3); display:flex; flex-direction:column; gap:12px;
-  }
-  .ten-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
-  .ten-title{ font-family:var(--display); font-size:22px; font-weight:600; color:var(--navy); }
-  .ten-count{ font-weight:800; font-size:15px; color:var(--navy); background:var(--sky-pale); border-radius:999px; padding:3px 12px; font-variant-numeric:tabular-nums; }
-  /* the frame: two rows of five, filled left to right, top row first */
-  .ten-frame{
-    position:relative; display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:6px;
-    padding:6px; border-radius:16px; background:var(--sky-pale); cursor:default;
-    transition:gap .35s ease, padding .35s ease;
-  }
-  .ten-frame:focus-visible{ outline:3px solid var(--blue); outline-offset:3px; }
-  .cell{
-    aspect-ratio:1; border-radius:11px; border:2px dashed var(--outline); background:var(--paper);
-    display:grid; transition:border-color .3s ease, border-radius .35s ease;
-  }
-  /* units carry a navy edge so each reads at 3:1 against white */
-  .unit-block{
-    display:block; border-radius:9px; box-shadow:inset 0 0 0 2px rgba(2,65,112,.55);
-    touch-action:none; transition:border-radius .35s ease, margin .35s ease;
-  }
-  .cell .unit-block{ margin:3px; }
-  .ten-tray{ display:flex; flex-wrap:wrap; gap:6px; min-height:30px; align-items:center; }
-  .ten-tray .unit-block{ width:26px; height:26px; border-radius:7px; cursor:grab; }
-  .ten-tray .unit-block:active{ cursor:grabbing; }
-  .unit-block.ghost{ position:fixed; z-index:70; pointer-events:none; cursor:grabbing; box-shadow:inset 0 0 0 2px rgba(2,65,112,.55), var(--shadow-3); }
-  .ten-ctrl{ display:flex; align-items:center; gap:10px; }
-  .ten-btn{
-    flex:none; width:44px; height:44px; border-radius:50%; border:0; cursor:pointer;
-    background:var(--navy); color:#fff; font:800 24px/1 'Nunito', sans-serif;
-    display:grid; place-items:center;
-  }
-  .ten-btn:hover{ background:var(--blue); }
-  .ten-btn[aria-disabled="true"]{ background:var(--paper); color:var(--text2); box-shadow:inset 0 0 0 2px var(--outline); cursor:default; }
-  .ten-msg{ flex:1; text-align:center; font-size:15px; font-weight:700; line-height:1.35; color:var(--ink); }
-  /* ten units become one rod: the gaps and dashes close up, every unit goes
-     lime and a 10 sits on top */
-  .ten-frame.made{ gap:0; padding:0; background:var(--lime); }
-  .ten-frame.made .cell{ border-color:transparent; border-radius:0; background:transparent; }
-  .ten-frame.made .unit-block{ margin:0; border-radius:0; background:var(--lime) !important; box-shadow:inset 0 0 0 1px rgba(2,65,112,.28); }
-  .ten-frame.made .cell:first-child .unit-block{ border-top-left-radius:16px; }
-  .ten-frame.made .cell:nth-child(5) .unit-block{ border-top-right-radius:16px; }
-  .ten-frame.made .cell:nth-child(6) .unit-block{ border-bottom-left-radius:16px; }
-  .ten-frame.made .cell:nth-child(10) .unit-block{ border-bottom-right-radius:16px; }
-  .ten-label{
-    position:absolute; inset:0; display:grid; place-items:center; pointer-events:none;
-    font-family:var(--display); font-weight:600; font-size:52px; color:var(--navy); opacity:0; transform:scale(.6);
-    transition:opacity .3s ease .25s, transform .45s cubic-bezier(.34,1.56,.64,1) .25s;
-  }
-  .ten-frame.made .ten-label{ opacity:1; transform:none; }
-  .ten-bit{ position:absolute; left:50%; top:50%; width:12px; height:12px; border-radius:3px; pointer-events:none; }
-  @media (prefers-reduced-motion:no-preference){
-    .ten-bit{ animation:ten-burst 1s cubic-bezier(.2,.7,.3,1) .2s both; }
-  }
-  /* the pieces hold full color for most of the flight, then fade */
-  @keyframes ten-burst{
-    0%{ transform:translate(-50%, -50%) scale(1); opacity:1; }
-    70%{ opacity:1; }
-    100%{ transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--r)) scale(.6); opacity:0; }
-  }
-  /* the sun and rod drift a touch while the pointer is over the card */
+  .sun-dot{ right:-2%; top:-3%; width:15%; aspect-ratio:1; border-radius:50%; background:var(--sun); }
+  /* same box and tilt as the flat, so each piece sits in a grid square */
+  .board{ position:absolute; inset:3%; width:94%; height:94%; transform:rotate(-3deg); overflow:visible; }
+  .board .piece rect{ stroke:rgba(2,65,112,.55); stroke-width:2; }
+  .board .piece{ filter:drop-shadow(0 3px 4px rgba(2,65,112,.18)); }
+  .board .ghost rect{ fill:none; stroke:var(--navy); stroke-width:2; stroke-dasharray:5 5; opacity:.45; }
   @media (hover:hover) and (prefers-reduced-motion:no-preference){
-    .blocks .rod, .blocks .sun-dot{ transition:translate .5s cubic-bezier(.34,1.56,.64,1); }
-    .blocks:hover .rod{ translate:-6px -4px; }
+    .board .drop{ transition:transform .5s cubic-bezier(.34,1.56,.64,1); }
+    .blocks:hover .board .drop{ transform:translateY(40px); }
+    .blocks .sun-dot{ transition:translate .5s cubic-bezier(.34,1.56,.64,1); }
     .blocks:hover .sun-dot{ translate:4px -4px; }
   }
 
@@ -497,7 +432,7 @@
 
   @media (max-width:960px){
     .hero-grid{ grid-template-columns:1fr; }
-    .blocks{ max-width:400px; }
+    .blocks{ max-width:380px; }
     .hero h1{ font-size:46px; }
     .case-row{ flex-direction:column; align-items:flex-start; }
     .reel, .a11y{ grid-template-columns:1fr; }
@@ -511,7 +446,7 @@
     .hero{ padding:44px 0 56px; }
     .hero h1{ font-size:34px; letter-spacing:0; }
     .hero-sub{ font-size:18px; }
-    .blocks{ max-width:340px; padding:28px 16px 24px 30px; }
+    .blocks{ max-width:300px; }
     .case-title, .footer-kicker{ font-size:32px; }
     .case-desc{ font-size:18px; }
     .footer-links{ grid-template-columns:1fr; }
@@ -889,31 +824,10 @@
           <li>M.S. Learning Design &amp; Technology</li>
         </ul>
       </div>
-      <div class="blocks">
-        <div class="flat" aria-hidden="true"></div>
-        <div class="rod" aria-hidden="true"></div>
-        <div class="sun-dot" aria-hidden="true"></div>
-        <!-- Make a ten. The frame is a slider for keyboard and screen-reader
-             users; dragging from the tray and the +/- buttons are the
-             pointer routes to the same count. Logic is in the script. -->
-        <div class="ten-card" id="ten">
-          <div class="ten-head">
-            <p class="ten-title" id="ten-title">Make a ten</p>
-            <span class="ten-count" aria-hidden="true"><span id="ten-n">0</span> / 10</span>
-          </div>
-          <div class="ten-frame" id="ten-frame" role="slider" tabindex="0" aria-labelledby="ten-title" aria-describedby="ten-hint" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-valuetext="0 of 10 blocks">
-            <span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span>
-            <span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span>
-            <span class="ten-label" aria-hidden="true">10</span>
-          </div>
-          <div class="ten-tray" id="ten-tray" aria-hidden="true"></div>
-          <div class="ten-ctrl">
-            <button type="button" class="ten-btn" id="ten-minus" aria-label="Remove a block">−</button>
-            <p class="ten-msg" id="ten-msg" aria-hidden="true">Drag a block in, or tap +</p>
-            <button type="button" class="ten-btn" id="ten-plus" aria-label="Add a block">+</button>
-          </div>
-          <p class="sr-only" id="ten-hint">Arrow keys add or remove a block.</p>
-        </div>
+      <div class="blocks" aria-hidden="true">
+        <div class="flat"></div>
+        <div class="sun-dot"></div>
+        <svg class="board" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><g class="ghost"><rect x="124" y="244" width="32" height="32" rx="7"/><rect x="164" y="244" width="32" height="32" rx="7"/><rect x="164" y="284" width="32" height="32" rx="7"/><rect x="204" y="284" width="32" height="32" rx="7"/></g><g class="piece"><rect x="3" y="363" width="34" height="34" rx="8" fill="var(--navy)"/><rect x="43" y="363" width="34" height="34" rx="8" fill="var(--navy)"/><rect x="83" y="363" width="34" height="34" rx="8" fill="var(--navy)"/><rect x="123" y="363" width="34" height="34" rx="8" fill="var(--navy)"/></g><g class="piece"><rect x="3" y="323" width="34" height="34" rx="8" fill="var(--lime)"/><rect x="43" y="323" width="34" height="34" rx="8" fill="var(--lime)"/><rect x="83" y="323" width="34" height="34" rx="8" fill="var(--lime)"/><rect x="43" y="283" width="34" height="34" rx="8" fill="var(--lime)"/></g><g class="piece"><rect x="163" y="323" width="34" height="34" rx="8" fill="var(--sun)"/><rect x="203" y="323" width="34" height="34" rx="8" fill="var(--sun)"/><rect x="163" y="363" width="34" height="34" rx="8" fill="var(--sun)"/><rect x="203" y="363" width="34" height="34" rx="8" fill="var(--sun)"/></g><g class="piece"><rect x="243" y="363" width="34" height="34" rx="8" fill="var(--orange)"/><rect x="283" y="363" width="34" height="34" rx="8" fill="var(--orange)"/><rect x="323" y="363" width="34" height="34" rx="8" fill="var(--orange)"/><rect x="323" y="323" width="34" height="34" rx="8" fill="var(--orange)"/></g><g class="piece"><rect x="243" y="323" width="34" height="34" rx="8" fill="var(--blue)"/><rect x="283" y="323" width="34" height="34" rx="8" fill="var(--blue)"/><rect x="283" y="283" width="34" height="34" rx="8" fill="var(--blue)"/><rect x="323" y="283" width="34" height="34" rx="8" fill="var(--blue)"/></g><g class="piece"><rect x="363" y="243" width="34" height="34" rx="8" fill="var(--green)"/><rect x="363" y="283" width="34" height="34" rx="8" fill="var(--green)"/><rect x="363" y="323" width="34" height="34" rx="8" fill="var(--green)"/><rect x="363" y="363" width="34" height="34" rx="8" fill="var(--green)"/></g><g class="piece drop"><rect x="123" y="83" width="34" height="34" rx="8" fill="var(--paper)"/><rect x="163" y="83" width="34" height="34" rx="8" fill="var(--paper)"/><rect x="163" y="123" width="34" height="34" rx="8" fill="var(--paper)"/><rect x="203" y="123" width="34" height="34" rx="8" fill="var(--paper)"/></g></svg>
       </div>
     </div>
   </section>
@@ -1890,143 +1804,6 @@
 
   Object.keys(replays).forEach(buildReplay);
 
-
-  // ---------- make a ten ----------
-  // A ten-frame that fills from a tray of unit blocks. Three routes to the
-  // same count: drag (or tap) a block from the tray, the +/- buttons, or the
-  // arrow keys on the frame, which is a slider. Ten units merge into one rod
-  // with a small burst; reduced motion gets the same states without movement.
-  (function(){
-    const frame = document.getElementById('ten-frame');
-    if (!frame) return;
-    const cells = [...frame.querySelectorAll('.cell')];
-    const tray = document.getElementById('ten-tray');
-    const nEl = document.getElementById('ten-n'), msg = document.getElementById('ten-msg');
-    const plus = document.getElementById('ten-plus'), minus = document.getElementById('ten-minus');
-    const COLORS = ['var(--lime)', 'var(--sun)', 'var(--orange)', 'var(--sky)', 'var(--green)'];
-    const fresh = () => Array.from({length: 10}, (_, i) => COLORS[i % 5]);
-    let left = fresh(), placed = [], madeAt = 0;
-    const still = () => reduceMotion.matches;
-
-    const block = c => { const b = document.createElement('span'); b.className = 'unit-block'; b.style.background = c; return b; };
-    function drawTray(){
-      tray.replaceChildren(...left.map((c, i) => { const b = block(c); b.dataset.i = i; return b; }));
-    }
-    function update(){
-      const n = placed.length, made = n === 10;
-      nEl.textContent = n;
-      frame.setAttribute('aria-valuenow', n);
-      frame.setAttribute('aria-valuetext', made ? '10 of 10 blocks, one ten' : `${n} of 10 blocks`);
-      msg.textContent = made ? "That's a ten!" : n ? `${10 - n} more to make a ten` : 'Drag a block in, or tap +';
-      // at ten, + starts over; at zero, - has nothing to take
-      plus.setAttribute('aria-label', made ? 'Start over' : 'Add a block');
-      plus.textContent = made ? '↺' : '+';
-      minus.setAttribute('aria-disabled', n ? 'false' : 'true');
-    }
-    // fly a block in from where it was (a tray block or the ghost) to its cell
-    function fly(el, from){
-      if (still()) return;
-      if (!from){ el.animate([{ transform:'scale(.4)' }, { transform:'none' }], { duration:320, easing:'cubic-bezier(.34,1.56,.64,1)' }); return; }
-      const to = el.getBoundingClientRect();
-      el.animate([
-        { transform:`translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width})` },
-        { transform:'none' }
-      ], { duration:420, easing:'cubic-bezier(.34,1.4,.64,1)' });
-    }
-    function add(src, fromRect){
-      if (placed.length === 10) return;
-      const i = src ? +src.dataset.i : 0;
-      const from = fromRect || (tray.children[i] && tray.children[i].getBoundingClientRect());
-      const c = left.splice(i, 1)[0];
-      placed.push(c);
-      const b = block(c);
-      cells[placed.length - 1].appendChild(b);
-      drawTray();
-      fly(b, from);
-      update();
-      if (placed.length === 10) makeTen();
-    }
-    function remove(){
-      if (!placed.length) return;
-      if (placed.length === 10) frame.classList.remove('made');
-      left.push(placed.pop());
-      cells[placed.length].replaceChildren();
-      drawTray();
-      if (!still()) tray.lastElementChild.animate([{ transform:'scale(.4)' }, { transform:'none' }], { duration:280, easing:'cubic-bezier(.34,1.56,.64,1)' });
-      update();
-    }
-    function reset(){
-      frame.classList.remove('made');
-      cells.forEach(c => c.replaceChildren());
-      left = fresh(); placed = [];
-      drawTray(); update();
-    }
-    function makeTen(){
-      frame.classList.add('made');
-      madeAt = Date.now();
-      announce('Ten units make one ten.');
-      if (still()) return;
-      for (let k = 0; k < 12; k++){
-        const bit = document.createElement('span');
-        const a = (k / 12) * Math.PI * 2, d = 90 + (k % 3) * 30;
-        bit.className = 'ten-bit';
-        bit.style.background = COLORS[k % 5];
-        bit.style.setProperty('--dx', `${Math.cos(a) * d}px`);
-        bit.style.setProperty('--dy', `${Math.sin(a) * d}px`);
-        bit.style.setProperty('--r', `${(k % 2 ? 1 : -1) * 160}deg`);
-        frame.appendChild(bit);
-        setTimeout(() => bit.remove(), 1300);
-      }
-    }
-
-    // a quick double tap on the ninth block shouldn't make the ten and wipe it
-    // in one go, so + only starts over once the ten has had a moment on screen
-    plus.addEventListener('click', () => placed.length < 10 ? add() : Date.now() - madeAt > 700 && reset());
-    minus.addEventListener('click', remove);
-    frame.addEventListener('keydown', e => {
-      const k = e.key;
-      if (k === 'ArrowRight' || k === 'ArrowUp'){ e.preventDefault(); add(); }
-      else if (k === 'ArrowLeft' || k === 'ArrowDown'){ e.preventDefault(); remove(); }
-      else if (k === 'Home'){ e.preventDefault(); reset(); }
-      else if (k === 'End'){ e.preventDefault(); while (placed.length < 10) add(); }
-    });
-
-    // drag from the tray; a tap without moving counts as a drop too
-    tray.addEventListener('pointerdown', e => {
-      const src = e.target.closest('.unit-block');
-      if (!src || placed.length === 10) return;
-      e.preventDefault();
-      const r = src.getBoundingClientRect(), ox = e.clientX - r.left, oy = e.clientY - r.top;
-      const ghost = block(src.style.background);
-      ghost.classList.add('ghost');
-      Object.assign(ghost.style, { left:`${r.left}px`, top:`${r.top}px`, width:`${r.width}px`, height:`${r.height}px` });
-      document.body.appendChild(ghost);
-      src.style.visibility = 'hidden';
-      let moved = false;
-      const move = ev => {
-        if (Math.abs(ev.clientX - e.clientX) + Math.abs(ev.clientY - e.clientY) > 4) moved = true;
-        ghost.style.left = `${ev.clientX - ox}px`; ghost.style.top = `${ev.clientY - oy}px`;
-      };
-      const up = ev => {
-        window.removeEventListener('pointermove', move);
-        window.removeEventListener('pointerup', up);
-        window.removeEventListener('pointercancel', up);
-        const g = ghost.getBoundingClientRect(), f = frame.getBoundingClientRect();
-        ghost.remove();
-        const over = ev.type === 'pointerup' && ev.clientX >= f.left && ev.clientX <= f.right && ev.clientY >= f.top && ev.clientY <= f.bottom;
-        if (!moved || over) add(src, g);
-        else {
-          src.style.visibility = '';
-          if (!still()) src.animate([{ transform:`translate(${g.left - r.left}px, ${g.top - r.top}px)` }, { transform:'none' }], { duration:300, easing:'cubic-bezier(.34,1.3,.64,1)' });
-        }
-      };
-      window.addEventListener('pointermove', move);
-      window.addEventListener('pointerup', up);
-      window.addEventListener('pointercancel', up);
-    });
-
-    drawTray(); update();
-  })();
 
   // ---------- motion reel ----------
   // Cycles the real Encourage clips, each held for `ms`. It follows the
