@@ -254,6 +254,9 @@
   /* the nav-bar clip is a wide strip: contain it on its own navy */
   .reel-clip.contain{ background:#003359; padding:0 6%; }
   .reel-clip.contain img{ height:auto; object-fit:contain; }
+  /* the launch rocket is square: centre it on the dithered off-white its frames average to */
+  .reel-clip.square{ background:#FCFCFD; }
+  .reel-clip.square img{ width:auto; height:100%; object-fit:contain; }
   .reel-side{ display:flex; flex-direction:column; gap:14px; }
   .reel-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
   .reel-pick{
@@ -853,7 +856,7 @@
       <div class="case-head">
         <div class="caps">Motion</div>
         <h2 class="case-title" id="title-motion" data-flatten>Small moments that <span class="hl">keep students moving</span></h2>
-        <p class="case-desc">Micro-interactions from Encourage, the app 150,000+ students use to plan life after high school. Each one marks progress, so the next step feels close.</p>
+        <p class="case-desc">Micro-interactions from Encourage, for the 150,000+ students who use it to plan life after high school and the educators who guide them. Each one marks progress, so the next step feels close.</p>
       </div>
       <div class="reel" id="reel" role="region" aria-label="Motion reel">
         <div class="reel-stage">
@@ -863,11 +866,15 @@
           <figure class="reel-clip contain" aria-hidden="true">
             <img src="craft-micro.gif" data-poster="craft-micro-poster.webp" alt="A bottom navigation bar with four tabs, Home, Profile, Explore and Feedback, each icon filling in or spinning as it's selected." width="584" height="167">
           </figure>
+          <figure class="reel-clip square" aria-hidden="true">
+            <img src="launch-rocket.gif" data-poster="launch-rocket-poster.webp" alt="A navy line-drawn rocket flying up and to the right past streaks of blue, orange, pink and yellow, shown after an educator launches a Learning Module." width="500" height="500">
+          </figure>
         </div>
         <div class="reel-side">
           <ol class="reel-list">
             <li><button type="button" class="reel-pick" data-clip="0" aria-pressed="true"><span class="reel-num" aria-hidden="true">1</span><span><b>Section complete</b><span>Plays when a student finishes a chunk of onboarding.</span></span></button></li>
             <li><button type="button" class="reel-pick" data-clip="1" aria-pressed="false"><span class="reel-num" aria-hidden="true">2</span><span><b>App navigation</b><span>Each tab's icon fills in or spins as it's picked.</span></span></button></li>
+            <li><button type="button" class="reel-pick" data-clip="2" aria-pressed="false"><span class="reel-num" aria-hidden="true">3</span><span><b>Module launched</b><span>Plays when an educator assigns a Learning Module. Educators loved it: delight works in tools for adults too.</span></span></button></li>
           </ol>
           <div class="reel-ctrl"><button type="button" class="gif-toggle" id="reel-toggle">Pause animation</button></div>
         </div>
@@ -1788,7 +1795,7 @@
   // clip's first-frame still and stops the cycling. Picking a clip shows it
   // and restarts the timer from there. Only the clip on show is exposed to
   // assistive tech, and nothing here is a live region, so it never chatters.
-  const reel = [ { ms: 6000 }, { ms: 6100 } ];
+  const reel = [ { ms: 6000 }, { ms: 6100 }, { ms: 4900 } ];
   (function(){
     const root = document.getElementById('reel');
     if (!root) return;
