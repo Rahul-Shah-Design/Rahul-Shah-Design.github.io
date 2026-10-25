@@ -240,6 +240,7 @@
   .case-row{ display:flex; align-items:center; justify-content:space-between; gap:24px 48px; }
   .case-desc{ max-width:660px; font-size:20px; line-height:1.55; text-wrap:pretty; }
   #onboarding{ --well:var(--sky-pale); }
+  #educators{ --well:var(--sky-pale); }
 
   /* ---------- MOTION REEL ---------- */
   .reel{ display:grid; grid-template-columns:minmax(0, 1.6fr) minmax(0, 1fr); gap:28px; align-items:start; }
@@ -302,6 +303,8 @@
   /* GIF only (see render()): it is 800x440, so it gets its own box */
   .device.filled.bleed{ aspect-ratio:800/440; }
   .device.filled.bleed img{ width:calc(100% + 8px); height:calc(100% + 8px); margin:-4px; }
+  /* the educator screenshots are 1465x957 */
+  .device.filled.tall{ aspect-ratio:1465/957; }
 
   /* pause / play for the animated GIFs (WCAG 2.2.2) */
   .gif-toggle{
@@ -364,11 +367,7 @@
     .bubble.bubble-in{ animation:none; }
   }
 
-  /* ---------- LEARNING MODULES ---------- */
-  .mod-grid{ display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:28px; align-items:start; }
-  .card{ background:var(--paper); border-radius:24px; padding:28px; box-shadow:var(--shadow-2); }
-  .card h3{ font-size:24px; line-height:1.2; margin-bottom:12px; }
-  .card p + p{ margin-top:10px; }
+  /* ---------- ACCESSIBILITY + REACT NATIVE ---------- */
   .ticks{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
   .ticks li{ display:grid; grid-template-columns:26px minmax(0, 1fr); gap:10px; align-items:start; }
   .ticks li::before{
@@ -376,19 +375,6 @@
     background:var(--lime);
     box-shadow:inset 0 0 0 2px rgba(2,65,112,.25);
   }
-  .shot-slots{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; margin-top:20px; }
-  .shot-slot{
-    aspect-ratio:9/16; border-radius:18px; border:3px dashed var(--flag); background:var(--butter);
-    display:flex; align-items:center; justify-content:center; text-align:center; padding:10px;
-    font-size:14px; font-weight:700; color:var(--ink);
-  }
-  .quote{
-    margin:0; border-radius:24px; padding:24px 28px; background:var(--navy); color:#fff;
-  }
-  .quote p{ font-family:var(--display); font-size:24px; line-height:1.3; font-weight:500; }
-  .quote .todo{ margin-top:14px; }
-
-  /* ---------- ACCESSIBILITY + REACT NATIVE ---------- */
   .a11y{
     display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:28px;
     background:var(--paper); border-radius:28px; padding:36px; box-shadow:var(--shadow-2);
@@ -446,7 +432,7 @@
     .blocks{ max-width:360px; }
     .hero h1{ font-size:46px; }
     .case-row{ flex-direction:column; align-items:flex-start; }
-    .reel, .mod-grid, .a11y{ grid-template-columns:1fr; }
+    .reel, .a11y{ grid-template-columns:1fr; }
     .process{ grid-template-columns:1fr; }
   }
 
@@ -478,9 +464,7 @@
     .nav-arrow{ width:42px; height:42px; box-shadow:var(--shadow-2); }
     .nav-arrow.left{ left:-6px; }
     .nav-arrow.right{ right:-6px; }
-    .card, .a11y{ padding:22px; }
-    .shot-slots{ gap:8px; }
-    .shot-slot{ font-size:12px; padding:6px; border-radius:12px; }
+    .a11y{ padding:22px; }
     section.case{ padding:64px 0; }
     .site-footer{ padding:64px 0 40px; }
   }
@@ -921,38 +905,40 @@
     </div>
   </section>
 
-  <section class="case band-sky" id="modules" aria-labelledby="title-modules">
+  <section class="case band-sky" id="educators" aria-labelledby="title-educators">
     <div class="wrap">
       <div class="case-head">
-        <div class="caps">02 · Encoura · Learning Modules</div>
-        <h2 class="case-title" id="title-modules" data-flatten>Learning Modules: short lessons for <span class="hl">planning what's next</span></h2>
-        <p class="case-desc">Short in-app lessons on careers, building a college list and planning for the future. Our content partners brought the subject matter, and I worked with them to shape it into guided steps a student can follow alone.</p>
-      </div>
-      <div class="mod-grid">
-        <div class="card">
-          <h3>Curriculum and design, together</h3>
-          <ul class="ticks">
-            <li>Content partners brought the subject expertise. I shaped the lesson flow and screens around it.</li>
-            <li>Three topics: exploring careers, building a college list, and planning the years ahead.</li>
-          </ul>
-          <!-- TODO: real screenshots; no Learning Modules images are in the repo -->
-          <div class="shot-slots">
-            <div class="shot-slot">TODO: screenshot of a careers lesson</div>
-            <div class="shot-slot">TODO: screenshot of a college list lesson</div>
-            <div class="shot-slot">TODO: screenshot of a planning lesson</div>
-          </div>
+        <div class="caps">02 · Encoura · Educator tools</div>
+        <h2 class="case-title" id="title-educators" data-flatten>Encourage for Educators: designing for the <span class="hl">counselor's</span> workflow</h2>
+        <div class="case-row">
+          <p class="case-desc">The counselor side of Encourage, built around how guidance staff already organize their day, so they can track hundreds of students and see who's stuck and why.</p>
+          <p class="chip" style="background:var(--sky)">Shipped</p>
         </div>
-        <div class="mod-side">
-          <figure class="quote">
-            <p>In feedback, students told us the guidance was a relief.</p>
-            <div class="todo"><b>TODO:</b>
-              <ul>
-                <li>Add 1 or 2 real student quotes and where they came from (survey, interview, in-app poll).</li>
-                <li>Confirm the partners, how many modules shipped, and which parts you owned.</li>
-                <li>Any numbers (completions, ratings) only if you have them.</li>
-              </ul>
+      </div>
+      <div class="slideshow" id="ss-educators" role="region" aria-roledescription="carousel" aria-label="Encourage for Educators screenshots">
+        <div class="stage">
+          <div class="frame-caption">
+            <div class="k" id="cap-k-educators" aria-live="polite" aria-atomic="true">Slide 1 of 4</div>
+            <div class="progress" id="strip-educators" aria-hidden="true"></div>
+          </div>
+          <div class="talker">
+            <span class="sr-only">Rahul says:</span>
+            <img class="avatar" src="avatar-rahul.png" alt="">
+            <div class="bubble" id="bubble-educators" aria-live="polite" aria-atomic="true">A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.</div>
+          </div>
+          <div class="device-wrap">
+            <button class="nav-arrow left" data-dir="-1" data-target="educators" aria-label="Previous slide">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="well">
+              <div class="device filled tall">
+                <button type="button" class="zoom-btn" id="zoom-educators" aria-label="Enlarge image"><img id="img-educators" src="" alt=""></button>
+              </div>
             </div>
-          </figure>
+            <button class="nav-arrow right" data-dir="1" data-target="educators" aria-label="Next slide">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1261,6 +1247,27 @@
   };
 
   const slideshows = {
+    educators: {
+      n: 4,
+      bubbles: [
+        "A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.",
+        "Counselors don't hold one giant roster in their head. They think in class periods, graduation years, and caseloads. Groups mirror how they already organize their day.",
+        "I worked with developers to map each stage of student onboarding. The statuses follow those stages, so educators can see in real time what a student needs to get unstuck.",
+        "Filter, search, and read connection status inline. Students already in the group stay checked and dimmed, so what you're actually adding is never ambiguous."
+      ],
+      images: [
+        "educator-1.png",
+        "educator-2.png",
+        "educator-3.png",
+        "educator-4.png"
+      ],
+      alts: [
+        "The empty state for a brand-new group, showing the shape of the table to come and a single primary action.",
+        "The groups list, organized the way counselors think about their caseload: by class period and graduation year.",
+        "A group roster with per-student onboarding status shown inline.",
+        "The add-students panel: filter and search, with students already in the group checked and dimmed.",
+      ],
+    },
     onboarding: {
       n: 6,
       bubbles: [
