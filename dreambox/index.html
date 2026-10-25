@@ -239,7 +239,6 @@
   .case-title{ font-size:46px; line-height:1.1; letter-spacing:-0.3px; text-wrap:pretty; }
   .case-row{ display:flex; align-items:center; justify-content:space-between; gap:24px 48px; }
   .case-desc{ max-width:660px; font-size:20px; line-height:1.55; text-wrap:pretty; }
-  .case-note{ max-width:660px; font-size:17px; color:var(--text2); }
   #onboarding{ --well:var(--sky-pale); }
 
   /* ---------- MOTION REEL ---------- */
@@ -888,17 +887,8 @@
         <div class="caps">01 · Encoura · Student onboarding</div>
         <h2 class="case-title" id="title-onboarding" data-flatten>Encourage onboarding: <span class="hl">twice the questions</span>, chunked so students keep going</h2>
         <div class="case-row">
-          <p class="case-desc">The onboarding survey had to double in length. I watched students take it in real classrooms, then rebuilt it around where they stalled: questions chunked by topic, small animations that mark progress, and an A/B test to check it.</p>
+          <p class="case-desc">The onboarding survey had to double in length. I watched students take it in real classrooms, then rebuilt it around where they stalled: questions chunked by topic, small animations that mark progress. In Encoura's first in-app A/B test, completion held near 84% with twice the questions.</p>
           <p class="chip" style="background:var(--butter)">Shipping Fall 2026</p>
-        </div>
-        <p class="case-note">DreamBox's March 2025 update made lessons easier to start, play and finish. Onboarding is the same problem at the front door: every extra step is a chance to lose a student.</p>
-        <!-- TODO(flag): completion number. Do not ship until Rahul picks one. -->
-        <div class="todo"><b>Flag, completion number:</b> the site and the résumé disagree, so this page states no number yet.
-          <ul>
-            <li>Site (A/B slide and chart): completion held near 84%, 83.69% vs 87.87%, a 4.2-point dip.</li>
-            <li>Résumé linked on this page: "maintaining completion rates." (The CodePath and Playlab résumés say "near 84%".)</li>
-            <li>The old first slide also said the redesign aimed to "raise completion." Which framing do you want?</li>
-          </ul>
         </div>
       </div>
       <div class="slideshow" id="ss-onboarding" role="region" aria-roledescription="carousel" aria-label="Encourage onboarding screenshots">
@@ -1080,7 +1070,7 @@
           <a class="btn btn-white" href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">Browse<span class="sr-only"> GitHub (opens in new tab)</span></a>
         </div>
       </nav>
-      <p class="todo"><b>TODO:</b> resume.pdf here is a copy of the general master, not yet tailored for DreamBox. It says "maintaining completion rates" (see the completion flag).</p>
+      <p class="todo"><b>TODO:</b> resume.pdf here is a copy of the general master, not yet tailored for DreamBox. It says "maintaining completion rates" where this page says completion held near 84%.</p>
       <div class="footer-base">
         <div class="mark"><img class="mark-dot" src="avatar-rahul.png" alt=""> Rahul Shah</div>
         <p>Designed and built by Rahul Shah. An independent portfolio, not affiliated with DreamBox Learning.</p>
@@ -1279,7 +1269,7 @@
         "In classrooms, we watched students stall on account verification, and school wifi often blocked their personal inboxes. That told us where to cut friction first.",
         "I chunked the questions by topic, each with its own short progress bar. Finishing a chunk plays a small animation, a beat of reward before the next one.",
         "Account creation moved to the start, quietly, and verification to the end. A student stuck on a blocked inbox can swap their email and keep going.",
-        "I set up Encoura's first in-app A/B test to compare the new flow with the old one. The chart shows completion for each."
+        "I set up Encoura's first in-app A/B test to check it. With twice the questions, completion held near 84%."
       ],
       images: [
         "onboard-1.png",
