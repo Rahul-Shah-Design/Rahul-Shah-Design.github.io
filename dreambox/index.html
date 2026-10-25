@@ -181,6 +181,7 @@
   .eyebrow{ align-self:flex-start; background:var(--paper); color:var(--navy); border:2px solid var(--sky-mid); }
   .hero h1{ font-size:56px; line-height:1.08; letter-spacing:-0.5px; }
   .hero h1 .hl{ --hl:var(--lime); }
+  .hero h1 .hl-sky{ --hl:var(--sky); }
   .hero-sub{ max-width:620px; font-size:20px; line-height:1.55; }
   .hero-tags{ list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px; }
   .hero-tags li{ background:var(--paper); color:var(--navy); padding:6px 14px; border-radius:999px; font-size:15px; font-weight:800; box-shadow:var(--shadow-2); }
@@ -401,6 +402,21 @@
   .process p{ font-size:16px; }
   .process .todo{ margin-top:12px; font-size:14px; padding:10px 12px; }
 
+  /* ---------- RESUME ---------- */
+  .resume-head{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:32px; flex-wrap:wrap; gap:14px;
+  }
+  .resume-preview{
+    background:var(--paper); border-radius:24px; overflow:hidden;
+    border:4px solid var(--paper); box-shadow:var(--shadow-3);
+    max-width:800px; margin:0 auto;
+  }
+  /* the zoom button's height:100% would otherwise cap the preview and clip
+     the bottom of the résumé */
+  .resume-preview .zoom-btn{ height:auto; }
+  .resume-embed{ display:block; width:100%; height:auto; }
+
   /* ---------- FOOTER ---------- */
   .site-footer{ background:var(--navy); color:#fff; padding:96px 0 48px; }
   .footer-kicker{ color:#fff; font-family:var(--display); font-size:46px; font-weight:600; line-height:1.1; margin-bottom:36px; }
@@ -419,7 +435,6 @@
   }
   .footer-base .mark{ font-size:17px; color:#fff; }
   .footer-base .mark-dot{ width:26px; height:26px; }
-  .site-footer .todo{ margin-top:20px; }
 
   @media (prefers-reduced-motion: reduce){
     html{ scroll-behavior:auto; }
@@ -762,12 +777,13 @@
   /* ---------- CHIRON REPLAY: DREAMBOX BRAND ----------
      The replay block above is shared with the root page and written against
      its tokens; this maps them onto the DreamBox-inspired palette and type.
-     The window takes the sky tray; pen blue is the brand blue (4.9:1 on it). */
+     The window takes a cream tray, so the blue user bubbles read against it;
+     pen blue is the brand blue (5.3:1 on it). */
   .replay{
     --line:var(--hairline); --ink-soft:var(--text2); --ink-faint:var(--text2);
     --pen:var(--blue); --pen-tint:var(--sky-pale); --sketch-tint:#DCEBFA;
     --rp-yellow-soft:var(--butter); --hl-yellow:var(--sun); --bg:var(--cream); --mastery:var(--green);
-    --red-tint:#FDE2DF; --rp-tray:var(--sky-pale);
+    --red-tint:#FDE2DF; --rp-tray:var(--cream);
     --rp-display:'Fredoka', 'Nunito', sans-serif;
     --rp-body:'Nunito', 'Trebuchet MS', sans-serif;
     --rp-mono:'Nunito', 'Trebuchet MS', sans-serif;
@@ -798,6 +814,7 @@
         <a href="#motion" class="hide-sm">Motion</a>
         <a href="#onboarding">Work</a>
         <a href="#access" class="hide-sm">Accessibility</a>
+        <a href="#resume">Résumé</a>
         <a href="#contact">Contact</a>
       </nav>
     </div>
@@ -809,7 +826,7 @@
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <p class="chip eyebrow">Prepared for DreamBox</p>
-        <h1 data-flatten>Product designer building engaging, <span class="hl">student-facing</span> K–12 learning tools, backed by learning science.</h1>
+        <h1 data-flatten>Product designer building engaging, <span class="hl">student-facing</span> K–12 learning tools, backed by <span class="hl hl-sky">learning science</span>.</h1>
         <p class="hero-sub">Hi, I'm Rahul. For five years I've designed the student side of Encourage, a college and career planning app. On my own time I built Chiron, an adaptive tutor.</p>
         <ul class="hero-tags" aria-label="Highlights">
           <li>5 years in ed-tech UX</li>
@@ -1031,6 +1048,19 @@
       </ol>
     </div>
   </section>
+
+  <!-- RESUME -->
+  <section class="case band-cream resume-section" id="resume" aria-labelledby="title-resume">
+    <div class="wrap">
+      <div class="resume-head">
+        <h2 class="case-title" id="title-resume">Résumé</h2>
+        <a class="btn btn-ink" href="resume.pdf" download="Rahul-Shah-Resume.pdf"><span aria-hidden="true">↓</span> Download PDF</a>
+      </div>
+      <div class="resume-preview">
+        <button type="button" class="zoom-btn" aria-label="Enlarge résumé image"><img class="resume-embed" src="resume.png" alt="Rahul Shah's r&eacute;sum&eacute;, one page: experience at Chiron, Encoura, Rochester Regional Health and Prudential Financial, then education and a skills list. Download the PDF for the accessible text version." width="1836" height="2376" loading="lazy"></button>
+      </div>
+    </div>
+  </section>
   </main>
 
   <footer class="site-footer" id="contact">
@@ -1042,7 +1072,7 @@
           <a class="btn btn-ink" href="mailto:rahulshah.design@gmail.com">Write to me</a>
         </div>
         <div class="action">
-          <div class="action-text"><span class="action-title">Résumé</span><span class="action-line">One page, as a PDF.</span></div>
+          <div class="action-text"><span class="action-title">Résumé</span><span class="action-line">One page, tailored for DreamBox.</span></div>
           <a class="btn btn-ink" href="resume.pdf" download="Rahul-Shah-Resume.pdf">Download<span class="sr-only"> résumé</span></a>
         </div>
         <div class="action">
@@ -1054,7 +1084,6 @@
           <a class="btn btn-white" href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">Browse<span class="sr-only"> GitHub (opens in new tab)</span></a>
         </div>
       </nav>
-      <p class="todo"><b>TODO:</b> resume.pdf here is a copy of the general master, not yet tailored for DreamBox. It says "maintaining completion rates" where this page says completion held near 84%.</p>
       <div class="footer-base">
         <div class="mark"><img class="mark-dot" src="avatar-rahul.png" alt=""> Rahul Shah</div>
         <p>Designed and built by Rahul Shah. An independent portfolio, not affiliated with DreamBox Learning.</p>
@@ -1729,11 +1758,20 @@
     // entrances play once the card is on screen; before that the first slide
     // waits, so its chat isn't over by the time anyone scrolls to it
     let seen = !('IntersectionObserver' in window);
+    // pieces rise in from a few pixels below, which pushes them past the
+    // window's edge mid-entrance and flashed a scrollbar; hold the overflow
+    // until the last piece has landed
+    let settle = 0;
     function play(){
       if (!seen) return;
       view.classList.remove('rp-play');
       void view.offsetWidth;
       view.classList.add('rp-play');
+      clearTimeout(settle);
+      if (reduceMotion.matches){ view.style.overflowY = ''; return; }
+      const last = Math.max(0, ...[...view.querySelectorAll('.rp-in')].map(el => parseFloat(el.style.getPropertyValue('--delay')) || 0));
+      view.style.overflowY = 'hidden';
+      settle = setTimeout(() => { view.style.overflowY = ''; }, last + 700);
     }
     if (!seen){
       const io = new IntersectionObserver(entries=>{

@@ -126,7 +126,7 @@ Some pages are tailored portfolios built for a specific job application, not gen
 | CodePath pitch | `codepath/` | Application to CodePath (first Senior Product Designer). Portfolio style; cases reordered onboarding → Chiron → staff tools → design system |
 | Playlab pitch | `playlab/` | Application to Playlab (Senior Product Designer). Restyled in Playlab's own brand: cream/mist bands, cyan hero with a cut-paper collage holding a team-page portrait card (`rahul-team.webp`, greyscale until hovered), Inter Tight standing in for Neue Haas Grotesk, Ink buttons at a 4px radius, pink graph-paper panel, a "How I made this page" section with a screenshot of the moodboard session, ruled-paper résumé band, no doodles or drawing toolbar. Copy angled at building with AI and educators as makers; cases ordered Chiron → educator tools → onboarding → other disciplines |
 | Playlab pitch, classic | `playlab-classic/` | The earlier version in the portfolio's own graph-paper style, kept for reference |
-| DreamBox pitch | `dreambox/` | Application to DreamBox / Discovery Education (Product Designer, student-facing K–8 math). DreamBox-inspired palette pulled from dreambox.com (navy, blue, lime, sky, sun; green and orange decorative only), Fredoka + Nunito standing in for Mikado/Proxima, base-ten-block hero, no logo. Order: motion reel → onboarding → Encourage for Educators → Chiron → accessibility + React Native → process. Visible `.todo` flags mark placeholders and open questions; clear them all before sharing |
+| DreamBox pitch | `dreambox/` | Application to DreamBox / Discovery Education (Product Designer, student-facing K–8 math). DreamBox-inspired palette pulled from dreambox.com (navy, blue, lime, sky, sun; green and orange decorative only), Fredoka + Nunito standing in for Mikado/Proxima, base-ten-block hero, no logo. Order: motion reel → onboarding → Encourage for Educators → Chiron → accessibility + React Native → process → résumé preview. The replay's tray is cream rather than sky so the blue user bubbles read, and its `play()` holds the window's overflow until entrances land (the rise-in otherwise flashed a scrollbar). Visible `.todo` flags mark placeholders and open questions; clear them all before sharing |
 
 `wayfinder2/` is only a redirect to `/wayfinder`: the branded page lived there while it was compared
 with the original, and those links were shared.
@@ -153,7 +153,8 @@ the others. **The `.docx` is the source; edit it, never the PDF.**
 `assets/resume.docx` is the general master. `wayfinder/resume.docx` is tailored for Wayfinder
 (`wayfinder-classic/` holds the earlier copy of it). `codepath/resume.docx` is tailored for CodePath (built from the Wayfinder copy: design system first, flows and IA in the summary).
 `playlab/resume.docx` is tailored for Playlab (built from the CodePath copy: AI prototyping leads the Encoura bullets, AI first in Skills); `playlab-classic/` holds a copy of it.
-`modern-classroom-project/resume.docx` and `dreambox/resume.docx` are copies of the root master, not yet tailored.
+`dreambox/resume.docx` is tailored for DreamBox (built from the CodePath copy: onboarding with chunking and micro-interactions leads the Encoura bullets, Storybook/Chromatic UI review on the design system, interaction design and accessibility first in Skills).
+`modern-classroom-project/resume.docx` is a copy of the root master, not yet tailored.
 
 Edit `word/document.xml` inside the `.docx` (unzip, edit, re-zip; no pretty-printing), then:
 
