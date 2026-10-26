@@ -22,6 +22,7 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 ├── codepath/                   ← CodePath pitch (Senior Product Designer)
 ├── playlab/                    ← Playlab pitch, restyled in Playlab's own brand
 ├── playlab-classic/            ← The earlier Playlab pitch in the portfolio's own style
+├── dreambox/                   ← DreamBox pitch, in a DreamBox-inspired palette
 └── ClaudeProjects/
     ├── index.html              ← Unlinked card grid of the vibe-coded projects
     ├── BudgetTracker/
@@ -102,11 +103,11 @@ the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
   slides; `buildExtendedScribble` handles it.
 - Every employer page carries the same replay, with its own copies of the `chiron-replay-*.webp`
   images in its folder. The portfolio-style pages (`modern-classroom-project/`, `wayfinder-classic/`,
-  `codepath/`, `playlab-classic/`) use the root page's block as is. `playlab/` and `wayfinder/` use
-  it too, followed by a short brand bridge (`CHIRON REPLAY: PLAYLAB BRAND` / `WAYFINDER BRAND`)
+  `codepath/`, `playlab-classic/`) use the root page's block as is. `playlab/`, `wayfinder/` and `dreambox/` use
+  it too, followed by a short brand bridge (`CHIRON REPLAY: PLAYLAB BRAND` / `WAYFINDER BRAND` / `DREAMBOX BRAND`)
   that maps the root tokens and fonts onto the brand, swaps the scribble for the brand's progress
   segments, and trims the window's padding so the slides still fit. A copy or layout change to
-  the replay has to be made in all seven pages.
+  the replay has to be made in all eight pages.
 
 ## Employer-Specific Portfolio Pages
 
@@ -125,6 +126,7 @@ Some pages are tailored portfolios built for a specific job application, not gen
 | CodePath pitch | `codepath/` | Application to CodePath (first Senior Product Designer). Portfolio style; cases reordered onboarding → Chiron → staff tools → design system |
 | Playlab pitch | `playlab/` | Application to Playlab (Senior Product Designer). Restyled in Playlab's own brand: cream/mist bands, cyan hero with a cut-paper collage holding a team-page portrait card (`rahul-team.webp`, greyscale until hovered), Inter Tight standing in for Neue Haas Grotesk, Ink buttons at a 4px radius, pink graph-paper panel, a "How I made this page" section with a screenshot of the moodboard session, ruled-paper résumé band, no doodles or drawing toolbar. Copy angled at building with AI and educators as makers; cases ordered Chiron → educator tools → onboarding → other disciplines |
 | Playlab pitch, classic | `playlab-classic/` | The earlier version in the portfolio's own graph-paper style, kept for reference |
+| DreamBox pitch | `dreambox/` | Application to DreamBox / Discovery Education (Product Designer, student-facing K–8 math). DreamBox-inspired palette pulled from dreambox.com (navy, blue, lime, sky, sun; green and orange decorative only), Fredoka + Nunito standing in for Mikado/Proxima, base-ten-block hero with a "Prepared for" lockup of DreamBox's logo (`dreambox-logo.webp`, from dreambox.com). Order: motion reel → onboarding → Encourage for Educators → Chiron → accessibility + React Native → process → résumé preview. The replay's user bubbles are cream on the sky tray, not blue on blue, and its `play()` holds the window's overflow until entrances land (the rise-in otherwise flashed a scrollbar). Visible `.todo` flags mark placeholders and open questions; clear them all before sharing |
 
 `wayfinder2/` is only a redirect to `/wayfinder`: the branded page lived there while it was compared
 with the original, and those links were shared.
@@ -151,6 +153,7 @@ the others. **The `.docx` is the source; edit it, never the PDF.**
 `assets/resume.docx` is the general master. `wayfinder/resume.docx` is tailored for Wayfinder
 (`wayfinder-classic/` holds the earlier copy of it). `codepath/resume.docx` is tailored for CodePath (built from the Wayfinder copy: design system first, flows and IA in the summary).
 `playlab/resume.docx` is tailored for Playlab (built from the CodePath copy: AI prototyping leads the Encoura bullets, AI first in Skills); `playlab-classic/` holds a copy of it.
+`dreambox/resume.docx` is tailored for DreamBox (built from the CodePath copy: onboarding with chunking and micro-interactions leads the Encoura bullets, Storybook/Chromatic UI review on the design system, interaction design and accessibility first in Skills).
 `modern-classroom-project/resume.docx` is a copy of the root master, not yet tailored.
 
 Edit `word/document.xml` inside the `.docx` (unzip, edit, re-zip; no pretty-printing), then:
