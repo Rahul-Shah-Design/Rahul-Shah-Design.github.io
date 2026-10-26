@@ -193,30 +193,49 @@
   .hero-tags{ list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px; }
   .hero-tags li{ background:var(--paper); color:var(--navy); padding:6px 14px; border-radius:999px; font-size:15px; font-weight:800; box-shadow:var(--shadow-2); }
 
-  /* a tetris board on a sky flat, a few pieces stacked and one still falling
-     over the dashed ghost of where it will land. Purely decorative and
-     still; on hover the falling piece drops a row toward its spot. */
+  /* base-ten blocks around the portrait: a flat, a rod and loose units, the
+     pieces of a K-8 math kit. Sized in percentages of one box so it scales
+     down whole on a phone. Purely decorative. */
   .blocks{ position:relative; width:100%; max-width:440px; aspect-ratio:1; justify-self:center; }
-  .flat, .sun-dot{ position:absolute; }
+  .blocks > *{ position:absolute; }
   .flat{
-    inset:3%; border-radius:28px; transform:rotate(-3deg);
+    left:8%; top:6%; width:80%; height:80%; border-radius:28px; transform:rotate(-4deg);
     background-color:var(--sky);
     background-image:
-      linear-gradient(rgba(2,65,112,.16) 2px, transparent 2px),
-      linear-gradient(90deg, rgba(2,65,112,.16) 2px, transparent 2px);
+      linear-gradient(rgba(2,65,112,.18) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(2,65,112,.18) 2px, transparent 2px);
     background-size:10% 10%;
   }
-  .sun-dot{ right:-2%; top:-3%; width:15%; aspect-ratio:1; border-radius:50%; background:var(--sun); }
-  /* same box and tilt as the flat, so each piece sits in a grid square */
-  .board{ position:absolute; inset:3%; width:94%; height:94%; transform:rotate(-3deg); overflow:visible; }
-  .board .piece rect{ stroke:rgba(2,65,112,.55); stroke-width:2; }
-  .board .piece{ filter:drop-shadow(0 3px 4px rgba(2,65,112,.18)); }
-  .board .ghost rect{ fill:none; stroke:var(--navy); stroke-width:2; stroke-dasharray:5 5; opacity:.45; }
+  .rod{
+    left:-1%; top:22%; width:11%; height:72%; border-radius:12px; transform:rotate(6deg);
+    background-color:var(--lime);
+    background-image:linear-gradient(rgba(2,65,112,.28) 2px, transparent 2px);
+    background-size:100% 10%;
+    box-shadow:var(--shadow-2);
+  }
+  .unit{ width:11%; aspect-ratio:1; border-radius:10px; box-shadow:var(--shadow-2); }
+  .unit-1{ right:2%;  top:4%;  background:var(--orange); transform:rotate(12deg); }
+  .unit-2{ right:10%; top:15%; background:var(--sun); transform:rotate(-8deg); }
+  .unit-3{ right:0;   bottom:10%; background:var(--green); transform:rotate(18deg); }
+  .sun-dot{ left:4%; top:-2%; width:16%; aspect-ratio:1; border-radius:50%; background:var(--sun); }
+  .team-card{
+    left:20%; top:14%; width:58%; margin:0;
+    border-radius:20px; overflow:hidden; background:var(--paper);
+    box-shadow:var(--shadow-3); transform:rotate(2deg);
+    border:4px solid var(--paper);
+  }
+  .team-card img{ width:100%; height:auto; aspect-ratio:1; object-fit:cover; border-radius:16px 16px 0 0; }
+  .team-card figcaption{ background:var(--sun); padding:10px 14px 12px; display:flex; flex-direction:column; gap:1px; color:var(--navy); }
+  .team-name{ font-family:var(--display); font-size:18px; font-weight:600; line-height:1.25; }
+  .team-role{ font-size:14px; font-weight:700; line-height:1.35; }
+  /* the loose blocks bob while the pointer is over them; nothing moves on its own */
   @media (hover:hover) and (prefers-reduced-motion:no-preference){
-    .board .drop{ transition:transform .5s cubic-bezier(.34,1.56,.64,1); }
-    .blocks:hover .board .drop{ transform:translateY(40px); }
-    .blocks .sun-dot{ transition:translate .5s cubic-bezier(.34,1.56,.64,1); }
-    .blocks:hover .sun-dot{ translate:4px -4px; }
+    .blocks .unit, .blocks .rod, .blocks .sun-dot{ transition:translate .5s cubic-bezier(.34,1.56,.64,1); }
+    .blocks:hover .unit-1{ translate:4px -10px; }
+    .blocks:hover .unit-2{ translate:-6px -6px; }
+    .blocks:hover .unit-3{ translate:6px -8px; }
+    .blocks:hover .rod{ translate:-6px -4px; }
+    .blocks:hover .sun-dot{ translate:-4px 4px; }
   }
 
   /* ---------- SECTIONS ---------- */
@@ -432,7 +451,7 @@
 
   @media (max-width:960px){
     .hero-grid{ grid-template-columns:1fr; }
-    .blocks{ max-width:380px; }
+    .blocks{ max-width:360px; }
     .hero h1{ font-size:46px; }
     .case-row{ flex-direction:column; align-items:flex-start; }
     .reel, .a11y{ grid-template-columns:1fr; }
@@ -446,7 +465,7 @@
     .hero{ padding:44px 0 56px; }
     .hero h1{ font-size:34px; letter-spacing:0; }
     .hero-sub{ font-size:18px; }
-    .blocks{ max-width:300px; }
+    .blocks{ max-width:280px; }
     .case-title, .footer-kicker{ font-size:32px; }
     .case-desc{ font-size:18px; }
     .footer-links{ grid-template-columns:1fr; }
@@ -824,10 +843,17 @@
           <li>M.S. Learning Design &amp; Technology</li>
         </ul>
       </div>
-      <div class="blocks" aria-hidden="true">
-        <div class="flat"></div>
-        <div class="sun-dot"></div>
-        <svg class="board" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><g class="ghost"><rect x="124" y="244" width="32" height="32" rx="7"/><rect x="164" y="244" width="32" height="32" rx="7"/><rect x="164" y="284" width="32" height="32" rx="7"/><rect x="204" y="284" width="32" height="32" rx="7"/></g><g class="piece"><rect x="3" y="363" width="34" height="34" rx="8" fill="var(--navy)"/><rect x="43" y="363" width="34" height="34" rx="8" fill="var(--navy)"/><rect x="83" y="363" width="34" height="34" rx="8" fill="var(--navy)"/><rect x="123" y="363" width="34" height="34" rx="8" fill="var(--navy)"/></g><g class="piece"><rect x="3" y="323" width="34" height="34" rx="8" fill="var(--lime)"/><rect x="43" y="323" width="34" height="34" rx="8" fill="var(--lime)"/><rect x="83" y="323" width="34" height="34" rx="8" fill="var(--lime)"/><rect x="43" y="283" width="34" height="34" rx="8" fill="var(--lime)"/></g><g class="piece"><rect x="163" y="323" width="34" height="34" rx="8" fill="var(--sun)"/><rect x="203" y="323" width="34" height="34" rx="8" fill="var(--sun)"/><rect x="163" y="363" width="34" height="34" rx="8" fill="var(--sun)"/><rect x="203" y="363" width="34" height="34" rx="8" fill="var(--sun)"/></g><g class="piece"><rect x="243" y="363" width="34" height="34" rx="8" fill="var(--orange)"/><rect x="283" y="363" width="34" height="34" rx="8" fill="var(--orange)"/><rect x="323" y="363" width="34" height="34" rx="8" fill="var(--orange)"/><rect x="323" y="323" width="34" height="34" rx="8" fill="var(--orange)"/></g><g class="piece"><rect x="243" y="323" width="34" height="34" rx="8" fill="var(--blue)"/><rect x="283" y="323" width="34" height="34" rx="8" fill="var(--blue)"/><rect x="283" y="283" width="34" height="34" rx="8" fill="var(--blue)"/><rect x="323" y="283" width="34" height="34" rx="8" fill="var(--blue)"/></g><g class="piece"><rect x="363" y="243" width="34" height="34" rx="8" fill="var(--green)"/><rect x="363" y="283" width="34" height="34" rx="8" fill="var(--green)"/><rect x="363" y="323" width="34" height="34" rx="8" fill="var(--green)"/><rect x="363" y="363" width="34" height="34" rx="8" fill="var(--green)"/></g><g class="piece drop"><rect x="123" y="83" width="34" height="34" rx="8" fill="var(--paper)"/><rect x="163" y="83" width="34" height="34" rx="8" fill="var(--paper)"/><rect x="163" y="123" width="34" height="34" rx="8" fill="var(--paper)"/><rect x="203" y="123" width="34" height="34" rx="8" fill="var(--paper)"/></g></svg>
+      <div class="blocks">
+        <div class="flat" aria-hidden="true"></div>
+        <div class="sun-dot" aria-hidden="true"></div>
+        <figure class="team-card">
+          <img src="rahul-team.webp" alt="Rahul, smiling, in front of flowering azaleas." width="720" height="720">
+          <figcaption><span class="team-name">Rahul Shah</span><span class="team-role">Product Designer</span></figcaption>
+        </figure>
+        <div class="rod" aria-hidden="true"></div>
+        <div class="unit unit-1" aria-hidden="true"></div>
+        <div class="unit unit-2" aria-hidden="true"></div>
+        <div class="unit unit-3" aria-hidden="true"></div>
       </div>
     </div>
   </section>
