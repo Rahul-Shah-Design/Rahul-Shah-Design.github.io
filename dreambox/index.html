@@ -19,7 +19,7 @@
     --blue:#046AB8; --blue-dark:#03568F;
     --sky:#72CDF4; --sky-pale:#E6F1FB; --sky-mid:#CFE6F8;
     --lime:#C3D941; --lime-pale:#F2F7D9;
-    --green:#42B921; --orange:#F47820; --purple:#7E00CC; --sun:#FDD12E; --butter:#FEECAD;
+    --green:#42B921; --orange:#F47820; --purple:#7E00CC; --pink:#F82289; --sun:#FDD12E; --butter:#FEECAD;
     --cream:#FFF8E7; --paper:#FFFFFF;
     --hairline:#D5E3EE; --outline:#7891A6;
     --flag:#9A4300;
@@ -229,14 +229,23 @@
   .zpiece span:nth-child(2){ left:33.333%; top:0;   border-radius:0 8px 0 0;     box-shadow:inset 0 -2px 0 var(--zl); }
   .zpiece span:nth-child(3){ left:33.333%; top:50%; border-radius:0 0 0 8px;     box-shadow:inset -2px 0 0 var(--zl); }
   .zpiece span:nth-child(4){ left:66.666%; top:50%; border-radius:0 8px 8px 0; }
+  /* an upside-down T in pink, built the same way, three columns right of
+     the Z's start and two rows below it */
+  .tpiece{ left:41.1%; top:55.5%; width:24%; aspect-ratio:3/2; transform:rotate(-4deg); filter:drop-shadow(0 3px 6px rgba(2,65,112,.2)); }
+  .tpiece span{ position:absolute; width:33.334%; height:50%; background:var(--pink); --zl:rgba(255,255,255,.36); }
+  .tpiece span:nth-child(1){ left:33.333%; top:0;   border-radius:8px 8px 0 0; box-shadow:inset 0 -2px 0 var(--zl); }
+  .tpiece span:nth-child(2){ left:0;       top:50%; border-radius:8px 0 0 8px; box-shadow:inset -2px 0 0 var(--zl); }
+  .tpiece span:nth-child(3){ left:33.333%; top:50%; box-shadow:inset -2px 0 0 var(--zl); }
+  .tpiece span:nth-child(4){ left:66.666%; top:50%; border-radius:0 8px 8px 0; }
   /* the loose blocks bob while the pointer is over them; nothing moves on its own */
   @media (hover:hover) and (prefers-reduced-motion:no-preference){
-    .blocks .unit, .blocks .rod, .blocks .sun-dot, .blocks .zpiece{ transition:translate .5s cubic-bezier(.34,1.56,.64,1); }
+    .blocks .unit, .blocks .rod, .blocks .sun-dot, .blocks .zpiece, .blocks .tpiece{ transition:translate .5s cubic-bezier(.34,1.56,.64,1); }
     .blocks:hover .unit-1{ translate:4px -10px; }
     .blocks:hover .unit-2{ translate:-6px -6px; }
     .blocks:hover .unit-3{ translate:6px -8px; }
     .blocks:hover .rod{ translate:-6px -4px; }
     .blocks:hover .zpiece{ translate:2px -4px; }
+    .blocks:hover .tpiece{ translate:-3px -3px; }
     .blocks:hover .sun-dot{ translate:-4px 4px; }
   }
 
@@ -264,8 +273,9 @@
   /* the nav-bar clip is a wide strip: contain it on its own navy */
   .reel-clip.contain{ background:#003359; padding:0 6%; }
   .reel-clip.contain img{ height:auto; object-fit:contain; }
-  /* the launch rocket is square: centre it on the dithered off-white its frames average to */
-  .reel-clip.square{ background:#FCFCFD; }
+  /* the square clips (section icons, launch rocket) sit centred on the
+     off-white their own frames are drawn on, set per clip as --clip-bg */
+  .reel-clip.square{ background:var(--clip-bg, #fff); }
   .reel-clip.square img{ width:auto; height:100%; object-fit:contain; }
   .reel-side{ display:flex; flex-direction:column; gap:14px; }
   .reel-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
@@ -849,6 +859,7 @@
         <div class="flat" aria-hidden="true"></div>
         <div class="sun-dot" aria-hidden="true"></div>
         <div class="zpiece" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <div class="tpiece" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
         <div class="rod" aria-hidden="true"></div>
         <div class="unit unit-1" aria-hidden="true"></div>
         <div class="unit unit-2" aria-hidden="true"></div>
@@ -868,19 +879,19 @@
       </div>
       <div class="reel" id="reel" role="region" aria-label="Motion reel">
         <div class="reel-stage">
-          <figure class="reel-clip on">
-            <img src="onboard-4.gif" data-poster="onboard-4-poster.webp" alt="Encourage onboarding: a student checks an answer and presses Next, and the section's progress bar fills with a short animation." width="800" height="440">
+          <figure class="reel-clip square on" style="--clip-bg:#FEFCFF">
+            <img src="icon-animation-loop.gif" data-poster="icon-animation-loop-poster.webp" alt="The four onboarding section icons in navy and mint, a student for My Profile, a backpack for Plan Your Future, a school for Match with Colleges and a piggy bank with a coin for Match with Scholarships, each playing the animation for finishing its section." width="800" height="720">
           </figure>
           <figure class="reel-clip contain" aria-hidden="true">
             <img src="craft-micro.gif" data-poster="craft-micro-poster.webp" alt="A bottom navigation bar with four tabs, Home, Profile, Explore and Feedback, each icon filling in or spinning as it's selected." width="584" height="167">
           </figure>
-          <figure class="reel-clip square" aria-hidden="true">
+          <figure class="reel-clip square" style="--clip-bg:#FCFCFD" aria-hidden="true">
             <img src="launch-rocket.gif" data-poster="launch-rocket-poster.webp" alt="A navy line-drawn rocket flying up and to the right past streaks of blue, orange, pink and yellow, shown after an educator launches a Learning Module." width="500" height="500">
           </figure>
         </div>
         <div class="reel-side">
           <ol class="reel-list">
-            <li><button type="button" class="reel-pick" data-clip="0" aria-pressed="true"><span class="reel-num" aria-hidden="true">1</span><span><b>Section complete</b><span>Plays when a student finishes a chunk of onboarding.</span></span></button></li>
+            <li><button type="button" class="reel-pick" data-clip="0" aria-pressed="true"><span class="reel-num" aria-hidden="true">1</span><span><b>Section complete</b><span>Each onboarding section has its own icon that animates when a student finishes it.</span></span></button></li>
             <li><button type="button" class="reel-pick" data-clip="1" aria-pressed="false"><span class="reel-num" aria-hidden="true">2</span><span><b>App navigation</b><span>Each tab's icon fills in or spins as it's picked.</span></span></button></li>
             <li><button type="button" class="reel-pick" data-clip="2" aria-pressed="false"><span class="reel-num" aria-hidden="true">3</span><span><b>Module launched</b><span>Plays when an educator assigns a Learning Module. Educators loved it: delight works in tools for adults too.</span></span></button></li>
           </ol>
@@ -1836,7 +1847,7 @@
   // clip's first-frame still and stops the cycling. Picking a clip shows it
   // and restarts the timer from there. Only the clip on show is exposed to
   // assistive tech, and nothing here is a live region, so it never chatters.
-  const reel = [ { ms: 6000 }, { ms: 6100 }, { ms: 4900 } ];
+  const reel = [ { ms: 5200 }, { ms: 6100 }, { ms: 4900 } ];
   (function(){
     const root = document.getElementById('reel');
     if (!root) return;
