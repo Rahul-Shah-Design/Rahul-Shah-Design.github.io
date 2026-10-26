@@ -13,11 +13,15 @@ Needs LibreOffice Writer and Poppler, which the cloud container does not ship wi
     apt-get install -y --no-install-recommends libreoffice-writer poppler-utils
 
 The PDF is tagged (headings, lists, reading order) and takes its title from the
-.docx's core properties. The script refuses to write anything that isn't one page.
+.docx's core properties. The script refuses to write anything that isn't one page,
+or a résumé whose site link doesn't point at its own page: a tailored résumé in
+`playlab/` shows and links rahulshah.design/playlab, the master in `assets/` the
+bare domain, so whoever reads the PDF lands on the version made for them.
 """
-import argparse, os, shutil, subprocess, sys, tempfile
+import argparse, os, re, shutil, subprocess, sys, tempfile, zipfile
 
 DPI = 216  # Letter at 216 dpi = 1836x2376, the size the pages were designed around
+SITE = "rahulshah.design"
 PDF_FILTER = 'pdf:writer_pdf_Export:{"UseTaggedPDF":{"type":"boolean","value":"true"}}'
 
 
@@ -26,6 +30,24 @@ def run(cmd, **kw):
     if r.returncode:
         sys.exit(f"{cmd[0]} failed:\n{r.stdout}{r.stderr}")
     return r.stdout
+
+
+def check_site_link(folder, src):
+    """The header's site link must name the page this résumé ships with."""
+    repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    slug = os.path.relpath(folder, repo).replace(os.sep, "/")
+    want = SITE if slug == "assets" else f"{SITE}/{slug}"
+    with zipfile.ZipFile(src) as z:
+        doc = z.read("word/document.xml").decode("utf-8")
+        rels = z.read("word/_rels/document.xml.rels").decode("utf-8")
+    # the visible text: a run reading exactly the URL (the email shares its prefix)
+    shown = re.findall(rf">({re.escape(SITE)}(?:/[\w-]+)?)</w:t>", doc)
+    linked = re.findall(rf'Target="https?://({re.escape(SITE)}(?:/[\w-]+)?)/?"', rels)
+    if shown != [want] or linked != [want]:
+        sys.exit(f"site link in {os.path.relpath(src)} should read and point to {want}; "
+                 f"it reads {shown or 'nothing'} and points to {linked or 'nothing'}. "
+                 "Edit the header run in word/document.xml and the hyperlink Target in "
+                 "word/_rels/document.xml.rels")
 
 
 def main():
@@ -38,6 +60,7 @@ def main():
     for tool in ("soffice", "pdfinfo", "pdftoppm"):
         if not shutil.which(tool):
             sys.exit(f"{tool} not found; see the install line at the top of this script")
+    check_site_link(folder, src)
 
     with tempfile.TemporaryDirectory() as tmp:
         # a private profile keeps a stale or locked user profile from failing the run

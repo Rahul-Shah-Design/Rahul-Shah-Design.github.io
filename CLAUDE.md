@@ -156,6 +156,15 @@ the others. **The `.docx` is the source; edit it, never the PDF.**
 `dreambox/resume.docx` is tailored for DreamBox (built from the CodePath copy: onboarding with chunking and micro-interactions leads the Encoura bullets, Storybook/Chromatic UI review on the design system, interaction design and accessibility first in Skills).
 `modern-classroom-project/resume.docx` is a copy of the root master, not yet tailored.
 
+**A tailored résumé shows and links its own page.** The header's site link in `playlab/resume.docx`
+reads `rahulshah.design/playlab` and points to `https://rahulshah.design/playlab`, so whoever opens
+the PDF lands on the version made for them; only the master in `assets/` uses the bare domain. When
+you copy a résumé into a new folder, change both the header run in `word/document.xml` and the
+hyperlink `Target` in `word/_rels/document.xml.rels`. `tools/build-resume.py` checks this and
+refuses to build a résumé whose link doesn't match its folder. As of October 2026 `playlab/` and
+`dreambox/` follow it; `wayfinder/`, `wayfinder-classic/`, `codepath/`, `playlab-classic/` and
+`modern-classroom-project/` still show the bare domain and need the fix before their next rebuild.
+
 Edit `word/document.xml` inside the `.docx` (unzip, edit, re-zip; no pretty-printing), then:
 
 ```
