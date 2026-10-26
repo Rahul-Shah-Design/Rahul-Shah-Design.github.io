@@ -165,6 +165,13 @@ refuses to build a résumé whose link doesn't match its folder. As of October 2
 `dreambox/` follow it; `wayfinder/`, `wayfinder-classic/`, `codepath/`, `playlab-classic/` and
 `modern-classroom-project/` still show the bare domain and need the fix before their next rebuild.
 
+**The header is centred.** The name, contact line and summary each sit on the page's centre line:
+`<w:jc w:val="center"/>` and no left, right or first-line indent. Don't fake it with a left
+indent tuned to one URL; a longer `/slug` then pushes the line off centre, which is how
+`codepath/` ended up 32pt right and `playlab/` 11pt. `tools/build-resume.py` measures the three
+lines on the rendered PDF and refuses anything more than 3pt off; `codepath/` and `playlab/` (and
+the copies built from them) need the fix before their next rebuild.
+
 Edit `word/document.xml` inside the `.docx` (unzip, edit, re-zip; no pretty-printing), then:
 
 ```

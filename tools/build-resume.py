@@ -14,6 +14,8 @@ Needs LibreOffice Writer and Poppler, which the cloud container does not ship wi
 
 The PDF is tagged (headings, lists, reading order) and takes its title from the
 .docx's core properties. The script refuses to write anything that isn't one page,
+or one whose name, contact line and summary aren't centred on the page (checked
+on the rendered PDF, so an indent or a tab stop tuned for a shorter URL shows up),
 or a résumé whose site link doesn't point at its own page: a tailored résumé in
 `playlab/` shows and links rahulshah.design/playlab, the master in `assets/` the
 bare domain, so whoever reads the PDF lands on the version made for them.
@@ -50,6 +52,23 @@ def check_site_link(folder, src):
                  "word/_rels/document.xml.rels")
 
 
+HEADER_LINES = 3     # name, contact line, summary
+CENTRE_TOLERANCE = 3  # points; a stray indent or left-aligned line is far more
+
+
+def check_header_centred(pdf):
+    """The header lines must sit on the page's centre line, as rendered."""
+    xml = run(["pdftotext", "-bbox-layout", "-f", "1", "-l", "1", pdf, "-"])
+    width = float(re.search(r'<page width="([\d.]+)"', xml).group(1))
+    lines = re.findall(r'<line xMin="([\d.]+)" yMin="[\d.]+" xMax="([\d.]+)"[^>]*>(.*?)</line>', xml, re.S)
+    for x0, x1, body in lines[:HEADER_LINES]:
+        text = " ".join(re.findall(r">([^<]+)</word>", body))
+        off = (float(x0) + float(x1)) / 2 - width / 2
+        if abs(off) > CENTRE_TOLERANCE:
+            sys.exit(f"header line {text!r} sits {off:+.1f}pt off centre; give its paragraph "
+                     '<w:jc w:val="center"/> and no left, right or first-line indent')
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("folder", help="folder holding resume.docx (e.g. wayfinder, assets)")
@@ -70,6 +89,7 @@ def main():
         pages = next(int(l.split()[1]) for l in run(["pdfinfo", pdf]).splitlines() if l.startswith("Pages:"))
         if pages != 1:
             sys.exit(f"résumé renders to {pages} pages; tighten spacing or copy until it fits on one")
+        check_header_centred(pdf)
         run(["pdftoppm", "-png", "-r", str(DPI), "-singlefile", pdf, os.path.join(tmp, "resume")])
         shutil.copy(pdf, os.path.join(folder, "resume.pdf"))
         shutil.copy(os.path.join(tmp, "resume.png"), os.path.join(folder, "resume.png"))
