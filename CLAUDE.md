@@ -23,6 +23,7 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 ├── playlab/                    ← Playlab pitch, restyled in Playlab's own brand
 ├── playlab-classic/            ← The earlier Playlab pitch in the portfolio's own style
 ├── dreambox/                   ← DreamBox pitch, in a DreamBox-inspired palette
+├── parentsquare/               ← ParentSquare pitch, in a ParentSquare-inspired palette
 └── ClaudeProjects/
     ├── index.html              ← Unlinked card grid of the vibe-coded projects
     ├── BudgetTracker/
@@ -103,11 +104,11 @@ the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
   slides; `buildExtendedScribble` handles it.
 - Every employer page carries the same replay, with its own copies of the `chiron-replay-*.webp`
   images in its folder. The portfolio-style pages (`modern-classroom-project/`, `wayfinder-classic/`,
-  `codepath/`, `playlab-classic/`) use the root page's block as is. `playlab/`, `wayfinder/` and `dreambox/` use
-  it too, followed by a short brand bridge (`CHIRON REPLAY: PLAYLAB BRAND` / `WAYFINDER BRAND` / `DREAMBOX BRAND`)
+  `codepath/`, `playlab-classic/`) use the root page's block as is. `playlab/`, `wayfinder/`, `dreambox/` and `parentsquare/` use
+  it too, followed by a short brand bridge (`CHIRON REPLAY: PLAYLAB BRAND` / `WAYFINDER BRAND` / `DREAMBOX BRAND` / `PARENTSQUARE BRAND`)
   that maps the root tokens and fonts onto the brand, swaps the scribble for the brand's progress
   segments, and trims the window's padding so the slides still fit. A copy or layout change to
-  the replay has to be made in all eight pages.
+  the replay has to be made in all nine pages.
 
 ## Employer-Specific Portfolio Pages
 
@@ -127,6 +128,7 @@ Some pages are tailored portfolios built for a specific job application, not gen
 | Playlab pitch | `playlab/` | Application to Playlab (Senior Product Designer). Restyled in Playlab's own brand: cream/mist bands, cyan hero with a cut-paper collage holding a team-page portrait card (`rahul-team.webp`, greyscale until hovered), Inter Tight standing in for Neue Haas Grotesk, Ink buttons at a 4px radius, pink graph-paper panel, a "How I made this page" section with a screenshot of the moodboard session, ruled-paper résumé band, no doodles or drawing toolbar. Copy angled at building with AI and educators as makers; cases ordered Chiron → educator tools → onboarding → other disciplines |
 | Playlab pitch, classic | `playlab-classic/` | The earlier version in the portfolio's own graph-paper style, kept for reference |
 | DreamBox pitch | `dreambox/` | Application to DreamBox / Discovery Education (Product Designer, student-facing K–8 math). DreamBox-inspired palette pulled from dreambox.com (navy, blue, lime, sky, sun; green and orange decorative only), Fredoka + Nunito standing in for Mikado/Proxima, a blocks hero (sky flat, lime rod, loose units, a purple Z and a pink upside-down T where the portrait was, each cell one square of the flat's grid and sharing its tilt; `rahul-team.webp` is no longer used here) with a "Prepared for" lockup of DreamBox's logo (`dreambox-logo.webp`, from dreambox.com). The motion reel opens on the onboarding section icons (`icon-animation-loop.gif`, My Profile / Plan Your Future / Match with Colleges / Match with Scholarships), then the nav bar and the module-launch rocket. Order: motion reel → onboarding → Encourage for Educators → Chiron → accessibility + React Native → process → résumé preview. The replay's user bubbles are cream on the sky tray, not blue on blue, and its `play()` holds the window's overflow until entrances land (the rise-in otherwise flashed a scrollbar). Visible `.todo` flags mark placeholders and open questions; clear them all before sharing |
+| ParentSquare pitch | `parentsquare/` | Application to ParentSquare (Senior Product Designer, family and educator communications). Built from the DreamBox page with a ParentSquare-inspired palette pulled from parentsquare.com (forest green buttons, bright green accent used only as fill, pale mint and cream bands) in its own Poppins + Noto Sans. The hero is a grid of squares with one class post shown three ways (English, auto-translated Spanish, right-to-left Arabic) as square cards, aria-hidden; the "Prepared for" lockup sets ParentSquare's name as a text wordmark, no logo file. No motion reel. Order: onboarding (framed as problem first → measured result) → Encourage for Educators → Chiron (AI made legible, built in code) → accessibility, native and every language → how I work (problem first, research, crit + design system, AI) → résumé. Two `.todo` flags (multilingual/RTL experience, mentoring) must be resolved before sharing |
 
 `wayfinder2/` is only a redirect to `/wayfinder`: the branded page lived there while it was compared
 with the original, and those links were shared.
@@ -154,6 +156,7 @@ the others. **The `.docx` is the source; edit it, never the PDF.**
 (`wayfinder-classic/` holds the earlier copy of it). `codepath/resume.docx` is tailored for CodePath (built from the Wayfinder copy: design system first, flows and IA in the summary).
 `playlab/resume.docx` is tailored for Playlab (built from the CodePath copy: AI prototyping leads the Encoura bullets, AI first in Skills); `playlab-classic/` holds a copy of it.
 `dreambox/resume.docx` is tailored for DreamBox (built from the CodePath copy: onboarding with chunking and micro-interactions leads the Encoura bullets, Storybook/Chromatic UI review on the design system, interaction design and accessibility first in Skills).
+`parentsquare/resume.docx` is tailored for ParentSquare (built from the DreamBox copy: onboarding framed around where students got stuck, counselor workflow second, React Native on iOS and Android, IA and research early in Skills).
 `modern-classroom-project/resume.docx` is a copy of the root master, not yet tailored.
 
 **A tailored résumé shows and links its own page.** The header's site link in `playlab/resume.docx`
@@ -161,8 +164,8 @@ reads `rahulshah.design/playlab` and points to `https://rahulshah.design/playlab
 the PDF lands on the version made for them; only the master in `assets/` uses the bare domain. When
 you copy a résumé into a new folder, change both the header run in `word/document.xml` and the
 hyperlink `Target` in `word/_rels/document.xml.rels`. `tools/build-resume.py` checks this and
-refuses to build a résumé whose link doesn't match its folder. As of October 2026 `playlab/` and
-`dreambox/` follow it; `wayfinder/`, `wayfinder-classic/`, `codepath/`, `playlab-classic/` and
+refuses to build a résumé whose link doesn't match its folder. As of October 2026 `playlab/`,
+`dreambox/` and `parentsquare/` follow it; `wayfinder/`, `wayfinder-classic/`, `codepath/`, `playlab-classic/` and
 `modern-classroom-project/` still show the bare domain and need the fix before their next rebuild.
 
 **The header is centred.** The name, contact line and summary each sit on the page's centre line:
