@@ -174,11 +174,9 @@
     background-size:32px 32px;
   }
   .hero .wrap{ max-width:1200px; }
-  .hero-grid{
-    display:grid; grid-template-columns:minmax(0, 1.3fr) minmax(0, 1fr);
-    gap:48px; align-items:center;
-  }
-  .hero-copy{ display:flex; flex-direction:column; gap:24px; }
+  /* Wayfinder's layout: the headline beside an "At a glance" card, the
+     intro line underneath */
+  .hero-copy{ display:flex; flex-direction:column; gap:28px; }
   /* "Prepared for" lockup: the caps label beside ParentSquare's name, set
      as a wordmark in its own Poppins with a green square, on a white pill */
   .eyebrow{
@@ -188,67 +186,17 @@
   .eyebrow .caps{ color:var(--forest); }
   .ps-mark{ display:inline-flex; align-items:center; gap:8px; font-family:var(--display); font-weight:700; font-size:21px; letter-spacing:-0.2px; color:var(--forest); line-height:1; }
   .ps-mark::before{ content:""; width:18px; height:18px; border-radius:4px; background:var(--green); box-shadow:inset 0 0 0 2px var(--forest); }
-  .hero h1{ font-size:52px; line-height:1.12; letter-spacing:-0.8px; }
-  .hero-sub{ max-width:620px; font-size:20px; line-height:1.55; }
-  .hero-tags{ list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px; }
-  .hero-tags li{ background:var(--paper); color:var(--forest); padding:6px 14px; border-radius:999px; font-size:15px; font-weight:700; box-shadow:var(--shadow-2); }
-
-  /* blocks on a flat, carried over from the DreamBox page as a placeholder
-     until Rahul settles on a ParentSquare hero: a mint board, a green rod,
-     loose units, a forest Z and a green upside-down T. Sized in percentages of one box so it scales
-     down whole on a phone. Purely decorative. */
-  .blocks{ position:relative; width:100%; max-width:440px; aspect-ratio:1; justify-self:center; }
-  .blocks > *{ position:absolute; }
-  .flat{
-    left:8%; top:6%; width:80%; height:80%; border-radius:28px; transform:rotate(-4deg);
-    background-color:var(--mint);
-    background-image:
-      linear-gradient(rgba(34,75,23,.18) 2px, transparent 2px),
-      linear-gradient(90deg, rgba(34,75,23,.18) 2px, transparent 2px);
-    background-size:10% 10%;
+  .hero-row{ display:flex; align-items:center; justify-content:space-between; gap:48px; }
+  .hero h1{ font-size:56px; line-height:1.1; letter-spacing:-0.8px; max-width:700px; }
+  .hero-sub{ max-width:640px; font-size:20px; line-height:1.55; }
+  .glance{
+    width:360px; flex-shrink:0; background:var(--paper); border-radius:16px;
+    padding:28px 30px; box-shadow:var(--shadow-2); border-top:8px solid var(--green);
   }
-  .rod{
-    left:-1%; top:22%; width:11%; height:72%; border-radius:12px; transform:rotate(6deg);
-    background-color:var(--green);
-    background-image:linear-gradient(rgba(34,75,23,.28) 2px, transparent 2px);
-    background-size:100% 10%;
-    box-shadow:var(--shadow-2);
-  }
-  .unit{ width:11%; aspect-ratio:1; border-radius:10px; box-shadow:var(--shadow-2); }
-  .unit-1{ right:2%;  top:4%;  background:var(--forest); transform:rotate(12deg); }
-  .unit-2{ right:10%; top:15%; background:var(--peach); transform:rotate(-8deg); }
-  .unit-3{ right:0;   bottom:10%; background:var(--green); transform:rotate(18deg); }
-  .sun-dot{ left:4%; top:-2%; width:16%; aspect-ratio:1; border-radius:50%; background:var(--peach); }
-  /* a Z piece built like the rod: four cells, a faint line on each inner
-     edge, the outer corners rounded. The shadow sits on the wrapper so it
-     follows the whole shape. */
-  /* each cell is one square of the flat's grid (8% of the box) and the piece
-     shares the flat's tilt, placed so it sits on grid columns 4-6, rows 4-5 */
-  .zpiece{ left:31.45%; top:32.1%; width:24%; aspect-ratio:3/2; transform:rotate(-4deg); filter:drop-shadow(0 3px 6px rgba(34,75,23,.2)); }
-  .zpiece span{ position:absolute; width:33.334%; height:50%; background:var(--forest); --zl:rgba(255,255,255,.32); }
-  .zpiece span:nth-child(1){ left:0;       top:0;   border-radius:8px 0 0 8px; box-shadow:inset -2px 0 0 var(--zl); }
-  .zpiece span:nth-child(2){ left:33.333%; top:0;   border-radius:0 8px 0 0;     box-shadow:inset 0 -2px 0 var(--zl); }
-  .zpiece span:nth-child(3){ left:33.333%; top:50%; border-radius:0 0 0 8px;     box-shadow:inset -2px 0 0 var(--zl); }
-  .zpiece span:nth-child(4){ left:66.666%; top:50%; border-radius:0 8px 8px 0; }
-  /* an upside-down T in green, built the same way, four columns right of
-     the Z's start and two rows below it */
-  .tpiece{ left:49.1%; top:54.9%; width:24%; aspect-ratio:3/2; transform:rotate(-4deg); filter:drop-shadow(0 3px 6px rgba(34,75,23,.2)); }
-  .tpiece span{ position:absolute; width:33.334%; height:50%; background:var(--green); --zl:rgba(255,255,255,.36); }
-  .tpiece span:nth-child(1){ left:33.333%; top:0;   border-radius:8px 8px 0 0; box-shadow:inset 0 -2px 0 var(--zl); }
-  .tpiece span:nth-child(2){ left:0;       top:50%; border-radius:8px 0 0 8px; box-shadow:inset -2px 0 0 var(--zl); }
-  .tpiece span:nth-child(3){ left:33.333%; top:50%; box-shadow:inset -2px 0 0 var(--zl); }
-  .tpiece span:nth-child(4){ left:66.666%; top:50%; border-radius:0 8px 8px 0; }
-  /* the loose blocks bob while the pointer is over them; nothing moves on its own */
-  @media (hover:hover) and (prefers-reduced-motion:no-preference){
-    .blocks .unit, .blocks .rod, .blocks .sun-dot, .blocks .zpiece, .blocks .tpiece{ transition:translate .5s cubic-bezier(.34,1.56,.64,1); }
-    .blocks:hover .unit-1{ translate:4px -10px; }
-    .blocks:hover .unit-2{ translate:-6px -6px; }
-    .blocks:hover .unit-3{ translate:6px -8px; }
-    .blocks:hover .rod{ translate:-6px -4px; }
-    .blocks:hover .zpiece{ translate:2px -4px; }
-    .blocks:hover .tpiece{ translate:-3px -3px; }
-    .blocks:hover .sun-dot{ translate:-4px 4px; }
-  }
+  .glance .caps{ margin-bottom:16px; }
+  .glance ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px; }
+  .glance li{ display:flex; gap:12px; align-items:flex-start; font-size:17px; line-height:1.45; font-weight:600; color:var(--ink); }
+  .glance svg{ flex-shrink:0; }
 
   /* ---------- SECTIONS ---------- */
   section.case{ padding:96px 0; }
@@ -435,8 +383,8 @@
   }
 
   @media (max-width:960px){
-    .hero-grid{ grid-template-columns:1fr; }
-    .blocks{ max-width:360px; }
+    .hero-row{ flex-direction:column; align-items:flex-start; gap:28px; }
+    .glance{ width:100%; max-width:420px; }
     .hero h1{ font-size:46px; }
     .case-row{ flex-direction:column; align-items:flex-start; }
     .a11y{ grid-template-columns:1fr; }
@@ -450,7 +398,6 @@
     .hero{ padding:44px 0 56px; }
     .hero h1{ font-size:34px; letter-spacing:0; }
     .hero-sub{ font-size:18px; }
-    .blocks{ max-width:280px; }
     .case-title, .footer-kicker{ font-size:32px; }
     .case-desc{ font-size:18px; }
     .footer-links{ grid-template-columns:1fr; }
@@ -804,7 +751,7 @@
       <div class="mark"><img class="mark-dot" src="avatar-rahul.png" alt=""> Rahul Shah</div>
       <nav class="topnav" aria-label="Page">
         <a href="#onboarding">Work</a>
-        <a href="#access" class="hide-sm">Every family</a>
+        <a href="#access" class="hide-sm">Accessibility</a>
         <a href="#process" class="hide-sm">How I work</a>
         <a href="#resume">Résumé</a>
         <a href="#contact">Contact</a>
@@ -815,30 +762,23 @@
   <main id="main">
   <!-- HERO -->
   <section class="hero" aria-label="Introduction">
-    <div class="wrap hero-grid">
-      <div class="hero-copy">
-        <div class="eyebrow"><span class="caps">Prepared for</span>
-          <span class="ps-mark">ParentSquare</span>
+    <div class="wrap hero-copy">
+      <div class="eyebrow"><span class="caps">Prepared for</span>
+        <span class="ps-mark">ParentSquare</span>
+      </div>
+      <div class="hero-row">
+        <h1 data-flatten>Making complex school tools <span class="hl">feel simple</span> for students and educators.</h1>
+        <div class="glance">
+          <p class="caps" id="glance-label">At a glance</p>
+          <ul aria-labelledby="glance-label">
+            <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#224B17" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><path d="M7.5 12.5l3 3 6-6.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>5 years in K–12 ed-tech</span></li>
+            <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#224B17" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><path d="M7.5 12.5l3 3 6-6.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>React &amp; React Native</span></li>
+            <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#224B17" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><path d="M7.5 12.5l3 3 6-6.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>WCAG 2.1 AA</span></li>
+            <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#224B17" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><path d="M7.5 12.5l3 3 6-6.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Prototyping with Claude Code</span></li>
+          </ul>
         </div>
-        <h1 data-flatten>Senior product designer who makes complex school workflows <span class="hl">feel simple</span> for every family and educator.</h1>
-        <p class="hero-sub">Hi, I'm Rahul. I've spent five years designing Encourage for high school students and the counselors who guide them.</p>
-        <ul class="hero-tags" aria-label="Highlights">
-          <li>5 years in K–12 ed-tech</li>
-          <li>React &amp; React Native</li>
-          <li>WCAG 2.1 AA</li>
-          <li>Prototyping with Claude Code</li>
-        </ul>
       </div>
-      <div class="blocks">
-        <div class="flat" aria-hidden="true"></div>
-        <div class="sun-dot" aria-hidden="true"></div>
-        <div class="zpiece" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-        <div class="tpiece" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-        <div class="rod" aria-hidden="true"></div>
-        <div class="unit unit-1" aria-hidden="true"></div>
-        <div class="unit unit-2" aria-hidden="true"></div>
-        <div class="unit unit-3" aria-hidden="true"></div>
-      </div>
+      <p class="hero-sub">Hi, I'm Rahul. I've spent five years designing Encourage for high school students and the counselors who guide them.</p>
     </div>
   </section>
 
@@ -888,7 +828,7 @@
         <div class="caps">02 · Encoura · Staff tools</div>
         <h2 class="case-title" id="title-educators" data-flatten>Encourage for Educators: hundreds of students, <span class="hl">one clear next step</span></h2>
         <div class="case-row">
-          <p class="case-desc">The staff side of Encourage. Counselors track hundreds of students at once, so I built groups, rosters and status tracking around how they already organize their day. It's the same problem as reaching the right families with the right message: who's in the audience, and what each person needs next.</p>
+          <p class="case-desc">The staff side of Encourage. Counselors track hundreds of students at once, so I built groups, rosters and status tracking around how they already organize their day.</p>
           <p class="chip" style="background:var(--paper)">Shipped</p>
         </div>
       </div>
@@ -961,8 +901,8 @@
   <section class="case band-cream" id="access" aria-labelledby="title-access">
     <div class="wrap">
       <div class="case-head">
-        <div class="caps">04 · Designing for every family</div>
-        <h2 class="case-title" id="title-access" data-flatten>Accessible, cross-platform, and <span class="hl">built for every family</span></h2>
+        <div class="caps">04 · Accessibility and reach</div>
+        <h2 class="case-title" id="title-access" data-flatten>Accessible, cross-platform, and <span class="hl">built for everyone</span></h2>
       </div>
       <div class="a11y">
         <div>
@@ -980,7 +920,6 @@
             <li>Led the migration of Encourage, used by 150,000+ students, to cross-platform React Native.</li>
             <li>Reworked layouts to hold up on the school-issued devices students actually use.</li>
           </ul>
-          <p class="echo">A family reading a message in Arabic on an old phone with a screen reader is one family, not three edge cases. I'd build translation-ready text, right-to-left mirroring and accessible states into the design system's components, so every screen gets them by default.</p>
         </div>
       </div>
     </div>
