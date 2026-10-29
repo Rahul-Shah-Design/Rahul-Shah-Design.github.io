@@ -156,7 +156,7 @@ the others. **The `.docx` is the source; edit it, never the PDF.**
 (`wayfinder-classic/` holds the earlier copy of it). `codepath/resume.docx` is tailored for CodePath (built from the Wayfinder copy: design system first, flows and IA in the summary).
 `playlab/resume.docx` is tailored for Playlab (built from the CodePath copy: AI prototyping leads the Encoura bullets, AI first in Skills); `playlab-classic/` holds a copy of it.
 `dreambox/resume.docx` is tailored for DreamBox (built from the CodePath copy: onboarding with chunking and micro-interactions leads the Encoura bullets, Storybook/Chromatic UI review on the design system, interaction design and accessibility first in Skills).
-`parentsquare/resume.docx` is tailored for ParentSquare (built from the DreamBox copy: onboarding framed around where students got stuck, counselor workflow second, IA and research early in Skills).
+`parentsquare/resume.docx` is tailored for ParentSquare (the Wayfinder copy as is, which Rahul prefers to the more heavily tailored versions, with the link changed to its page and the contact line centred).
 `modern-classroom-project/resume.docx` is a copy of the root master, not yet tailored.
 
 **A tailored résumé shows and links its own page.** The header's site link in `playlab/resume.docx`
