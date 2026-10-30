@@ -1,0 +1,2330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahul Shah — for College Board</title>
+<link rel="icon" type="image/png" href="avatar-rahul.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Rock+Salt&family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FCFBF7;
+    --paper: #FFFFFF;
+    --ink: #182338;
+    --ink-soft: #4A5670;
+    /* was #8792A8 (3.0:1) -- lifted so the 11px captions and eyebrows clear
+       the 4.5:1 text minimum on both the paper and the grid background */
+    --ink-faint: #66718A;
+    --line: #D9E1EC;
+    --pen: #1D4ED8;
+    --pen-deep: #1440B0;
+    --pen-tint: #E4ECFC;
+    --red: #C43B4E;
+    --red-tint: #FBE3E6;
+    --mastery: #3F8A66;
+    --sketch: #9FC1E8;
+    --sketch-tint: #EAF2FC;
+    --hl-yellow: #F5E14F;
+    --sticky-pink: #FFB6D9;
+    --sticky-blue: #BEDAF7;
+    --sticky-green: #BFE7C9;
+    --sticky-shadow: rgba(24,35,56,0.18);
+    --grid: rgba(74,110,168,0.15);
+    --radius: 14px;
+    --wrap: 1040px;
+  }
+  *{ box-sizing:border-box; }
+  /* scroll-padding keeps a focused or anchored element from landing under
+     the sticky top bar */
+  html{ scroll-behavior:smooth; scroll-padding-top:84px; }
+  body{
+    margin:0;
+    background-color:var(--bg);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:28px 28px;
+    color:var(--ink);
+    font-family:'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:'Fraunces', Georgia, serif; margin:0; text-wrap: balance; }
+  p{ margin:0; }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; }
+  ::selection{ background:var(--hl-yellow); color:var(--ink); }
+  .hl-mark{
+    background-color:var(--hl-yellow);
+    mix-blend-mode:multiply;
+    /* em-based so the swipe stays proportional at headline and body sizes */
+    padding:0 0.18em;
+    border-radius:0.06em;
+  }
+
+  .wrap{ max-width:var(--wrap); margin:0 auto; padding:0 28px; position:relative; }
+
+  /* ---------- ACCESSIBILITY UTILITIES ---------- */
+  /* visually hidden but still read by screen readers */
+  .sr-only{
+    position:absolute !important; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+  /* first tab stop on the page; parked off-screen until it has focus */
+  .skip-link{
+    position:absolute; left:16px; top:-100px; z-index:60;
+    background:var(--ink); color:var(--bg); padding:12px 18px; border-radius:8px;
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:13px;
+    letter-spacing:0.03em; text-decoration:none;
+  }
+  .skip-link:focus{ top:12px; outline:2px solid var(--pen); outline-offset:2px; }
+
+  /* ---------- IMAGE LIGHTBOX ---------- */
+  /* a real <button> around each enlargeable image: native keyboard and
+     screen-reader semantics instead of role=button on an <img> */
+  .zoom-btn{
+    display:block; width:100%; height:100%; padding:0; margin:0; border:0;
+    background:none; cursor:zoom-in; font:inherit; color:inherit;
+  }
+  /* the ring is inset because every container that holds one of these
+     clips overflow, which would swallow an outline drawn outside */
+  .zoom-btn:focus-visible{ outline:3px solid var(--pen); outline-offset:-3px; }
+  .lightbox{
+    position:fixed; inset:0; z-index:100;
+    background:rgba(24,35,56,0.93);
+    display:none; overflow:auto;
+    padding:20px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .lightbox.open{ display:flex; }
+  .lightbox img{
+    margin:auto; display:block;
+    max-width:100%; max-height:calc(100vh - 40px);
+    width:auto; height:auto;
+    border-radius:8px; background:var(--paper);
+    cursor:zoom-in;
+  }
+  .lightbox.zoomed img{
+    max-width:none; max-height:none;
+    width:auto; cursor:zoom-out;
+  }
+  .lightbox-close, .lightbox-zoom{
+    position:fixed; top:14px; z-index:101;
+    height:44px; border-radius:22px;
+    border:1px solid rgba(245,242,234,0.35);
+    background:rgba(24,35,56,0.75); color:#F5F2EA;
+    line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .lightbox-close{ right:16px; width:44px; font-size:24px; }
+  /* keyboard route to the zoom that tapping the image gives pointer users */
+  .lightbox-zoom{
+    right:70px; padding:0 16px;
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:12px;
+    letter-spacing:0.04em;
+  }
+  .lightbox-close:focus-visible, .lightbox-zoom:focus-visible{ outline:2px solid #F5F2EA; outline-offset:2px; }
+  .lightbox-hint{
+    position:fixed; left:50%; bottom:14px; transform:translateX(-50%);
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px;
+    letter-spacing:0.04em; color:rgba(245,242,234,0.7);
+    pointer-events:none; text-align:center;
+  }
+
+  /* ---------- DOODLES ---------- */
+  .doodle{
+    position:absolute; z-index:-1;
+    pointer-events:none; user-select:none;
+    opacity:0.42;
+  }
+  /* hero cluster, in the blank space right of the headline */
+  /* widths are per-shape, not uniform: the crystal is tall and narrow (0.48
+     aspect) so it needs a much smaller width than the wide marks to carry the
+     same visual weight */
+  .d-h1{ top:-6px;  right:10px;  width:78px;  transform:rotate(-9deg); }
+  .d-h3{ top:176px; right:61px;  width:44px;  transform:rotate(-4deg); }
+  /* margin doodles down the page — offsets stay inside the 130px gutter at 1300px */
+  /* mountain sits in the right margin, moon in the left; each keeps its own
+     size and tilt, only the side changes */
+  /* ice cream is tall and narrow (0.50) where the mountain was wide (1.85),
+     so a much smaller width keeps it from towering over its neighbours */
+  .d-m1{ top:34px;  right:-104px; width:46px;  transform:rotate(8deg); }
+  .d-m2{ top:74px;  left:-124px;  width:92px;  transform:rotate(-7deg); }
+  .d-m3{ top:12px;  left:-108px;  width:62px;  transform:rotate(-12deg); }
+  /* the lettering is already drawn on a slant, so the CSS tilt is dialled back
+     from 10deg to avoid reading as double-rotated */
+  .d-m4{ top:26px;  right:-108px; width:64px;  transform:rotate(4deg); }
+  .d-m5{ top:118px; left:-118px;  width:84px;  transform:rotate(-6deg); }
+  @media (max-width:1299px){
+    .d-m1, .d-m2, .d-m3, .d-m4, .d-m5{ display:none; }
+  }
+  /* 900px matches where .case-grid drops the status sticky notes inline, so the
+     hero art and the sticky notes change behaviour at the same width */
+  @media (max-width:900px){
+    .d-h1, .d-h3{ display:none; }
+  }
+
+  /* ---------- TOP BAR ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:40;
+    background:rgba(252,251,247,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar-inner{
+    max-width:var(--wrap); margin:0 auto; padding:14px 28px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .mark{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Fraunces', Georgia, serif; font-weight:600; font-size:16px;
+  }
+  .mark-dot{
+    width:22px; height:22px; border-radius:50%;
+    /* the drawing carries its own yellow disc, so no background here -- a
+       --pen fill would ring it where the art's circle is anti-aliased */
+    object-fit:cover; flex-shrink:0;
+  }
+  /* ---------- DOODLE TOOLBAR ---------- */
+  .doodle-toolbar{
+    display:flex; align-items:center; gap:2px;
+    background:var(--bg); border:1px solid var(--line); border-radius:12px;
+    padding:4px;
+  }
+  .dtool{
+    display:flex; align-items:center; justify-content:center;
+    width:34px; height:34px; padding:0;
+    background:transparent; border:1px solid transparent; border-radius:8px;
+    color:var(--ink-soft); cursor:pointer; -webkit-tap-highlight-color:transparent;
+    transition:background .15s, border-color .15s;
+  }
+  .dtool:hover{ background:var(--paper); }
+  .dtool:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
+  /* the pen-blue border is what carries the pressed state: the tint alone is
+     1.15:1 against the bar, well under the 3:1 non-text minimum */
+  .dtool.active{ background:var(--pen-tint); border-color:var(--pen); }
+  .dtool svg{ display:block; }
+  .dtool-sep{ width:1px; height:20px; background:var(--line); margin:0 3px; flex:none; }
+  .dtool-erase:hover{ background:var(--red-tint); }
+  @media (max-width:380px){
+    .dtool{ width:30px; height:30px; }
+  }
+
+  /* full-document drawing surface. two canvases (ink + highlighter, which
+     needs its own layer for mix-blend-mode:multiply) plus an invisible hit
+     layer that only captures pointer events while a drawing tool is active,
+     so normal clicks/links pass straight through in cursor mode. */
+  .doodle-canvas{ position:absolute; top:0; left:0; width:100%; z-index:5; pointer-events:none; }
+  .doodle-hl{ mix-blend-mode:multiply; z-index:6; }
+  .doodle-hit{ position:absolute; top:0; left:0; width:100%; z-index:7; pointer-events:none; }
+  body.doodle-drawing .doodle-hit{ pointer-events:auto; touch-action:none; }
+
+  /* points up at the toolbar but lives in normal document flow, not the
+     sticky topbar -- so it greets a fresh page load and then scrolls away
+     like any other content, rather than nagging the whole visit */
+  .doodle-hint{
+    display:flex; align-items:flex-end; justify-content:flex-end; gap:4px;
+    max-width:var(--wrap); margin:0 auto; padding:2px 28px 0;
+    color:var(--ink-faint); pointer-events:none;
+  }
+  .doodle-hint svg{ flex:none; }
+  .doodle-hint span{
+    font-family:'Rock Salt', cursive; font-size:12px; line-height:1;
+    padding-bottom:1px; white-space:nowrap;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{ padding:80px 0 56px; }
+  .hero h1{
+    font-size:52px; line-height:1.08; font-weight:500;
+    letter-spacing:-0.015em; max-width:820px;
+  }
+  .hero h1 em{ font-style:italic; color:var(--red); font-weight:500; }
+  .hero-sub{
+    margin-top:32px; max-width:620px; font-size:17px;
+    line-height:1.65; color:var(--ink-soft);
+  }
+  .hero-tags{
+    margin:26px 0 0; padding:0; list-style:none;
+    display:flex; gap:18px; flex-wrap:wrap;
+  }
+  .tag{
+    position:relative;
+    font-size:12.5px; font-weight:600; padding:9px 16px;
+    border-radius:1px 8px 8px 1px;
+    color:var(--ink);
+    box-shadow:2px 4px 7px var(--sticky-shadow);
+    display:inline-flex; align-items:center;
+  }
+  .tag::after{
+    content:''; position:absolute; right:0; bottom:0; width:10px; height:10px;
+    background:linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.16) 50%);
+    border-radius:0 0 8px 0;
+  }
+  .tag:nth-child(1){ background:var(--hl-yellow); transform:rotate(-2deg); }
+  .tag:nth-child(2){ background:var(--sticky-pink); transform:rotate(1.5deg); }
+  .tag:nth-child(3){ background:var(--sticky-blue); transform:rotate(-1deg); }
+
+  .eyebrow{
+    font-family:'Rock Salt', cursive; font-size:13px;
+    letter-spacing:0.01em; color:var(--red);
+    text-transform:uppercase; margin-bottom:24px;
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  }
+  .eyebrow::before{
+    content:''; width:26px; height:1px; background:var(--red);
+  }
+  .cb-logo{ height:26px; width:auto; display:block; }
+
+  .ds-note{ margin-top:14px; font-size:16px; line-height:1.65; color:var(--ink-soft); }
+
+  /* ---------- SECTION SCAFFOLD ---------- */
+  section.case{ padding:52px 0 10px; }
+  .case-head{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    flex-wrap:wrap; gap:16px; margin-bottom:10px;
+  }
+  .case-index{
+    font-family:'Rock Salt', cursive; font-size:14px;
+    color:var(--ink-faint); letter-spacing:0.01em;
+  }
+  /* titles run the full row; "pretty" instead of the global "balance", which
+     would halve any title that wraps. pretty only avoids a one-word last line */
+  .case-title{
+    font-size:32px; font-weight:500; margin-top:6px; letter-spacing:-0.01em;
+    text-wrap:pretty;
+  }
+  .status-pill{
+    position:relative;
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px;
+    letter-spacing:0.05em; padding:8px 14px 8px 12px; border-radius:1px 8px 8px 1px;
+    color:var(--ink); height:fit-content;
+    box-shadow:2px 4px 7px var(--sticky-shadow);
+  }
+  .status-pill::after{
+    content:''; position:absolute; right:0; bottom:0; width:9px; height:9px;
+    background:linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.16) 50%);
+    border-radius:0 0 8px 0;
+  }
+  /* the tilt is held in a variable so states that add to the transform (the
+     link hover below) can re-apply it instead of flattening the note */
+  .status-pill.shipped{ background:var(--sticky-green); --tilt:1.5deg; transform:rotate(var(--tilt)); }
+  /* "Shipped" alone made a scrap of a note; hold it to the GitHub note's width */
+  .status-pill.shipped{ min-width:146px; text-align:center; }
+  .status-pill.progress{ background:var(--sticky-pink); --tilt:-1.5deg; transform:rotate(var(--tilt)); }
+  /* one note is a way out to the code; the others are plain labels */
+  a.status-pill{
+    display:block; color:var(--ink);
+    /* underlined so it reads as a link: nothing else about a sticky note
+       suggests you can click it, and the lift only shows once you are on it */
+    text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1px;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  a.status-pill:hover{
+    transform:rotate(var(--tilt)) translateY(-2px);
+    box-shadow:2px 7px 12px var(--sticky-shadow);
+  }
+  a.status-pill:focus-visible{ outline:2px solid var(--pen); outline-offset:3px; }
+  .case-grid{
+    display:grid;
+    grid-template-columns:minmax(0, 620px) auto;
+    grid-template-areas:
+      "head head"
+      "desc note";
+    column-gap:160px; row-gap:16px;
+    align-items:center;
+    margin-bottom:36px;
+  }
+  .case-grid > .case-head{ grid-area:head; }
+  .case-grid > .case-desc{ grid-area:desc; }
+  .case-grid > .status-pill{ grid-area:note; justify-self:start; }
+
+  /* a long note reads better up beside the title than crowding the blurb */
+  .case-grid.long-note{
+    grid-template-areas:
+      "head note"
+      "desc desc";
+    column-gap:40px;
+  }
+  .case-grid.long-note > .status-pill{ justify-self:end; align-self:end; }
+
+  /* pretty keeps a lone word ("on.") off the last line */
+  .case-desc{
+    max-width:620px; color:var(--ink-soft); font-size:15px;
+    line-height:1.6; margin:0; text-wrap:pretty;
+  }
+
+  /* ---------- SLIDESHOW MODULE ---------- */
+  .slideshow{
+    position:relative; margin-bottom:56px;
+  }
+  .scribble-strip{
+    display:flex; justify-content:flex-start; align-items:center; gap:8px;
+    width:100%; --n:1;
+    min-height:16px; margin-top:12px;
+  }
+  .scribble-extended{
+    width:100%; overflow:hidden;
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:3px 12px;
+  }
+  .scribble-extended-inner{
+    width:calc(100% * 6 / var(--n));
+    aspect-ratio:2055.205/72.732;
+  }
+  /* more slides than strokes: copies of the artwork run end to end */
+  .scribble-extended.chained{ display:flex; }
+  .scribble-extended.chained .scribble-extended-inner{ flex:none; }
+
+  .stage{
+    position:relative;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:38px;
+    display:flex; flex-direction:column; align-items:center;
+    min-height:440px; justify-content:center;
+    box-shadow:0 1px 2px rgba(29,33,38,0.03);
+  }
+
+  .frame-caption{
+    text-align:center; margin-bottom:22px;
+    width:100%; max-width:860px;
+  }
+  .frame-caption .k{
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px;
+    color:var(--ink-faint); letter-spacing:0.06em; text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .frame-caption .t{ font-size:16px; font-weight:600; color:var(--ink); }
+
+  .device{
+    width:100%; max-width:560px; aspect-ratio:16/10;
+    background-color:var(--sketch-tint);
+    background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><path d='M8,40 Q28,10 48,40 T88,40 T128,40 T168,40' stroke='%239FC1E8' stroke-width='2.5' fill='none' opacity='0.55' stroke-linecap='round'/><path d='M-12,95 Q8,60 28,95 T68,95 T108,95 T148,95' stroke='%239FC1E8' stroke-width='2.5' fill='none' opacity='0.4' stroke-linecap='round'/><path d='M15,145 Q35,120 55,145 T95,145 T135,145' stroke='%239FC1E8' stroke-width='2' fill='none' opacity='0.3' stroke-linecap='round'/></svg>");
+    background-size:170px 170px;
+    border:1.5px dashed var(--sketch); border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--ink-faint); font-family:'JetBrains Mono', ui-monospace, monospace;
+    font-size:12px; letter-spacing:0.04em; text-align:center; padding:20px;
+    position:relative;
+  }
+  .device .placeholder-label{
+    background:var(--paper); border:1px dashed var(--ink-faint);
+    padding:10px 16px; border-radius:8px;
+  }
+  .device.filled{
+    max-width:860px;
+    /* matches the five 1465x834 screenshots rather than the one GIF. At
+       1401/770 cover cropped ~6px off their top -- almost exactly the padding
+       the mockups carry above the browser window -- so they sat flush while the
+       educator slides, whose box matches their source, kept theirs. The GIF is
+       full-bleed with no padding to lose, so the slight side crop costs it
+       nothing. */
+    aspect-ratio:1465/834;
+    background-color:var(--paper); background-image:none;
+    border:none; padding:0; border-radius:14px;
+    /* the onboarding GIF has ~11px black arcs baked into its corners where the
+       export flattened transparency out to black; the radius here is wider than
+       those arcs, so overflow:hidden clips them away. do not add an inward bleed
+       to "help" — it drags the educator PNGs' own corner arcs inside the radius
+       and reintroduces the black it was meant to remove. */
+    overflow:hidden;
+  }
+  .device.filled img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  /* GIF only — see render() */
+  /* the GIF is 800x440 where the screenshots are 1465x834, so it gets its own
+     box. Sharing one box means cropping somebody: cover sliced the GIF's browser
+     chrome off at the sides, and contain letterboxed it, which lifted its baked-in
+     black corner arcs off the container edge where the radius was hiding them.
+     Its own aspect means every slide is cover with nothing cropped; the cost is
+     ~12px of height change stepping on and off slide 4. */
+  .device.filled.bleed{ aspect-ratio:800/440; }
+  .device.filled.bleed img{
+    width:calc(100% + 8px); height:calc(100% + 8px); margin:-4px;
+  }
+  .device.filled.tall{ aspect-ratio:1465/957; }
+
+  /* pause / play for the animated GIFs (WCAG 2.2.2). Sits over the bottom
+     corner of whichever image it controls. */
+  .gif-toggle{
+    position:absolute; right:10px; bottom:10px; z-index:2;
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px;
+    letter-spacing:0.03em;
+    background:rgba(24,35,56,0.88); color:#F5F2EA;
+    border:1px solid rgba(245,242,234,0.35); border-radius:100px;
+    padding:0 12px; min-height:32px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .gif-toggle:hover{ background:var(--ink); }
+  .gif-toggle:focus-visible{ outline:2px solid #F5F2EA; outline-offset:2px; }
+  .gif-toggle[hidden]{ display:none; }
+
+  .nav-arrow{
+    /* translate, not transform: the individual properties apply translate
+       before scale, so the hover scale grows from the centre. With transform
+       the -50% was applied after scaling and the arrow crept upward. */
+    position:absolute; top:50%; translate:0 -50%;
+    width:42px; height:42px; border-radius:50%;
+    background:var(--hl-yellow); border:1.5px solid var(--ink); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:background .15s, border-color .15s, color .15s, scale .15s;
+    user-select:none; z-index:5;
+  }
+  /* highlighter yellow with an ink ring, so the edge holds against the white
+     card (the ring is 15.7:1) and the arrows don't echo the ink speech bubble.
+     Hover inverts outright: ink fill, yellow chevron, a touch larger. */
+  .nav-arrow:hover{ background:var(--ink); color:var(--hl-yellow); scale:1.1; }
+  .nav-arrow:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
+  /* aria-disabled rather than disabled so the button keeps focus at either
+     end of the strip instead of dropping a keyboard user back to the top */
+  /* at either end the arrow drops back to an outline, so "can't go further"
+     reads as a change of state rather than a washed-out version of the same */
+  .slideshow .nav-arrow[aria-disabled="true"],
+  .slideshow .nav-arrow[aria-disabled="true"]:hover{
+    background:var(--paper); border-color:var(--line); color:var(--ink-faint); cursor:default; scale:1;
+  }
+  .nav-arrow.left{ left:-18px; }
+  .nav-arrow.right{ right:-18px; }
+  /* Deliberately static: the arrows are absolutely positioned and skip over a
+     static ancestor, so they keep resolving against .stage and every breakpoint
+     above mobile is untouched. It only becomes their containing block in the
+     mobile rule below, where the card is gone and centring on the stage leaves
+     them floating up by the avatar. */
+  .device-wrap{ position:static; width:100%; display:flex; justify-content:center; }
+  .nav-arrow svg{ width:16px; height:16px; stroke-width:2.4; }
+  .nav-arrow svg path{ stroke:currentColor; }
+
+  /* ---------- FLOATING HEAD / SPEECH ---------- */
+  .talker{
+    display:flex; align-items:flex-end; gap:12px;
+    max-width:78%; margin:0 auto 24px;
+  }
+  .avatar{
+    width:56px; height:56px; border-radius:50%;
+    border:2px solid var(--paper);
+    box-shadow:0 2px 6px rgba(29,33,38,0.12);
+    flex-shrink:0; object-fit:cover; display:block;
+  }
+  .bubble{
+    background:var(--ink); color:#F5F2EA;
+    padding:14px 18px; border-radius:16px 16px 16px 4px;
+    font-size:13.5px; line-height:1.5; font-weight:500;
+    box-shadow:0 8px 20px rgba(29,33,38,0.18);
+    min-height:20px;
+  }
+  /* the bubble slides up the first time it scrolls into view and again on every
+     slide change. The hidden start state is added by JS, so the text is never
+     lost if the script doesn't run. */
+  .bubble.bubble-wait{ opacity:0; }
+  .bubble.bubble-in{ animation:bubble-in .6s cubic-bezier(.22,.8,.36,1) both; }
+  @keyframes bubble-in{
+    from{ opacity:0; transform:translateY(12px); }
+    to{ opacity:1; transform:none; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .bubble.bubble-wait{ opacity:1; }
+    .bubble.bubble-in{ animation:none; }
+  }
+
+  /* ---------- CHIRON REPLAY ---------- */
+  /* The Chiron card runs a 9-slide replay of one tutoring session instead of
+     screenshots. It reuses the slideshow parts above (caption, scribble track,
+     talker, arrows) and adds a fixed-height window the slides render into. The
+     copy lives in the `replays` data in the script, not here. Colors are the
+     site tokens; the few tints below have no site equivalent, and the deeper
+     green and red keep chip text over 4.5:1 on their tints. */
+  .replay{
+    --rp-yellow-soft:#FBF3B8;
+    --rp-green:#2C6B4D;  --rp-green-tint:#E3F1E8;
+    --rp-amber:#8A5A00;  --rp-amber-tint:#FDF0CF; --rp-amber-paper:#FFFBF0;
+    --rp-red:#A3283B;
+    --rp-quiet:#FBFBF8;
+    --rp-tray:#F3F1EA;
+    /* the module's own dark ground, so screenshot frames read as one piece */
+    --rp-module:#12191D; --rp-module-line:#2A3442;
+    --rp-mono:'JetBrains Mono', ui-monospace, monospace;
+    /* side notes in the replay: the body face, set apart by colour and weight */
+    --rp-hand:'Inter', -apple-system, sans-serif;
+  }
+  .replay .frame-caption{ max-width:none; }
+  .replay .device-wrap{ flex-direction:column; }
+  /* the window is its own surface: a plain warm tint a step darker than the
+     page, no grid, so it reads as a panel on the card rather than a hole
+     through to the page, and the white cards inside it still stand out */
+  .replay-window{
+    container-type:inline-size;
+    width:100%;
+    background:var(--rp-tray);
+    /* the page's faintest text is 4.3:1 on the tray; one step darker clears 4.5 */
+    --ink-faint:#5F6A83;
+    border:1px solid var(--line); border-radius:12px; overflow:hidden;
+  }
+  /* fixed height so the card never jumps between slides; the slide centres
+     itself with auto margins, which (unlike justify-content) never pushes
+     the top of a too-tall slide out of reach */
+  .rp-view{
+    height:540px; overflow-y:auto;
+    padding:16px clamp(16px, 4cqi, 36px);
+    display:flex; flex-direction:column;
+  }
+  .rp-slide{ margin:auto 0; width:100%; display:flex; flex-direction:column; gap:10px; }
+  /* on phones the shared arrows sit on the window's edge, which here is text
+     rather than an image: push them into the page gutter and pad the slide so
+     they clear it */
+  @media (max-width:720px){
+    .replay .device-wrap > .nav-arrow.left{ left:-14px; }
+    .replay .device-wrap > .nav-arrow.right{ right:-14px; }
+    .rp-view{ padding-inline:28px; }
+  }
+
+
+  /* shared bits */
+  .rp-mono-label{ font-family:var(--rp-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); }
+  .rp-chips{ display:flex; gap:6px; flex-wrap:wrap; }
+  .rp-chip{ font-family:var(--rp-mono); font-size:11.5px; border-radius:999px; padding:2px 9px; white-space:nowrap; }
+  .rp-chip.right{ color:var(--rp-green); background:var(--rp-green-tint); }
+  .rp-chip.wrong{ color:var(--rp-red); background:var(--red-tint); }
+  .rp-chip.flag{ color:var(--rp-amber); background:var(--rp-amber-tint); white-space:normal; }
+  /* solid orange so the one thing Chiron caught on the check slide stands out (5.2:1) */
+  .rp-chip.misconception{ color:#fff; background:#B54E08; font-weight:600; font-size:12.5px; padding:3px 11px; }
+  .rp-chip.blue{ color:var(--pen); background:var(--pen-tint); }
+  .rp-hand{ font-family:var(--rp-hand); font-weight:600; color:var(--pen); font-size:15px; line-height:1.5; }
+  .rp-said{ background:var(--rp-yellow-soft); box-shadow:inset 0 -2px 0 var(--hl-yellow); padding:0 2px; }
+
+  /* chat */
+  .rp-msg{ display:flex; flex-direction:column; gap:4px; max-width:74%; }
+  .rp-msg.teacher{ align-self:flex-end; }
+  .rp-msg.teacher .rp-mono-label{ text-align:right; }
+  .rp-msg.chiron{ align-self:flex-start; }
+  .rp-body{ border-radius:12px; padding:9px 14px; font-size:15px; line-height:1.5; }
+  .rp-msg.teacher .rp-body{ background:var(--sketch-tint); border:1px solid #D2E1F4; }
+  .rp-msg.chiron .rp-body{ border:1px solid var(--line); background:var(--paper); }
+  /* annotations written for the portfolio, not Chiron's output, so they stay
+     plain italic notes rather than anything styled like a model trace */
+  .rp-think{ font-size:13px; line-height:1.45; color:var(--ink-faint); font-style:italic; border-left:2px solid var(--line); padding:1px 0 1px 10px; max-width:60ch; }
+  .rp-think-k{ font-style:normal; font-family:var(--rp-mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--pen); margin-right:8px; }
+  .rp-build{
+    display:inline-flex; align-items:center; gap:8px; align-self:flex-start;
+    font-family:var(--rp-mono); font-size:11.5px; color:var(--rp-green);
+    background:var(--rp-green-tint); border-radius:6px; padding:5px 9px;
+  }
+  .rp-dot{ width:7px; height:7px; border-radius:50%; background:var(--mastery); flex:none; }
+  @media (prefers-reduced-motion:no-preference){ .rp-dot{ animation:rp-pulse 1.4s ease-in-out infinite; } }
+  @keyframes rp-pulse{ 50%{ opacity:.25; } }
+
+  /* entrances. The render code tags a slide's pieces .rp-in with a --delay;
+     they wait hidden until the window gets .rp-play, then rise in like the
+     narration bubble. Chat messages arrive one at a time on a conversation's
+     rhythm. Layout is reserved the whole time, so nothing shifts. Reduced
+     motion skips all of it and shows the slide at once. */
+  @media (prefers-reduced-motion:no-preference){
+    .rp-in{ opacity:0; }
+    .rp-view.rp-play .rp-in{ animation:rp-rise .5s cubic-bezier(.22,.8,.36,1) var(--delay, 0ms) both; }
+    .rp-view.rp-play .rp-msg.rp-in{ animation-name:rp-chat; animation-duration:.42s; }
+    .rp-msg.teacher{ transform-origin:100% 100%; }
+    .rp-msg.chiron{ transform-origin:0 100%; }
+    .rp-loop-svg .rp-in{ transform-box:fill-box; }
+  }
+  @keyframes rp-rise{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+  @keyframes rp-chat{ from{ opacity:0; transform:translateY(12px) scale(.96); } to{ opacity:1; transform:none; } }
+
+  /* screenshot frames */
+  .rp-artifact{ margin:0; border:1px solid var(--rp-module-line); border-radius:10px; overflow:hidden; background:var(--rp-module); }
+  /* the two labels wrap as whole phrases on a narrow screen, never mid-phrase */
+  .rp-artifact-bar{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:2px 10px;
+    font-family:var(--rp-mono); font-size:11px; color:#C9CDE0;
+    padding:6px 10px; border-bottom:1px solid var(--rp-module-line);
+  }
+  .rp-artifact-bar span{ white-space:nowrap; }
+  .rp-artifact img{ width:100%; height:auto; }
+  .rp-artifact.wide{ width:100%; max-width:790px; align-self:center; }
+  /* the folded diagnose-and-build slide: chat column beside the module */
+  .rp-chatsplit{ grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); align-items:center; }
+  /* a tall crop of the module, cut to the window and faded out at the bottom */
+  .rp-artifact.fade.tall{
+    max-width:none; max-height:500px;
+    -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 110px), transparent);
+            mask-image:linear-gradient(to bottom, #000 calc(100% - 110px), transparent);
+  }
+  .rp-chatcol{ display:flex; flex-direction:column; gap:8px; }
+  .rp-chatcol .rp-msg{ max-width:92%; }
+  /* slide 1: the real session, chat beside the module it built */
+  .rp-shot{
+    height:auto; max-width:820px; align-self:center; border-radius:10px; overflow:hidden;
+    border:1px solid var(--rp-module-line); box-shadow:0 10px 30px rgba(24,35,56,0.18);
+  }
+  .rp-shot img{ display:block; width:100%; height:auto; }
+  .rp-shot-cap{ text-align:center; margin-top:4px; }
+  /* a crop of a longer page: the bottom fades into the paper so the module
+     reads as carrying on past the frame. Narrower than .wide so the intro
+     and a ghost of the next paragraph fit the 540px window */
+  .rp-artifact.fade{
+    max-width:700px; border-bottom:0; border-radius:10px 10px 0 0;
+    -webkit-mask-image:linear-gradient(to bottom, #000 calc(100% - 56px), transparent);
+            mask-image:linear-gradient(to bottom, #000 calc(100% - 56px), transparent);
+  }
+
+  /* two-column slides */
+  .rp-split{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.25fr); gap:20px; align-items:center; }
+  .rp-split.wide-left{ grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); }
+  .rp-side{ display:flex; flex-direction:column; gap:12px; }
+  .rp-side p{ font-size:15px; line-height:1.55; color:var(--ink-soft); }
+  .rp-side p b{ color:var(--ink); }
+  .rp-side .rp-hand{ color:var(--pen); font-size:18px; line-height:1.4; }
+  .rp-attempt{ border:1px solid var(--line); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:6px; font-size:14.5px; line-height:1.5; background:var(--paper); }
+  .rp-attempt .rp-chip{ align-self:flex-start; }
+  .rp-nudge{ border-left:3px solid var(--rp-amber); padding:4px 0 4px 12px; font-size:14.5px; line-height:1.5; }
+
+  /* next-token machine: shown as Chiron built it in Module 1, with the
+     module's own dark theme, type and controls. Scoped to .rp-mod so none of
+     it leaks into the page. */
+  .rp-mod-frame{ width:100%; max-width:790px; align-self:center; }
+  .rp-mod{
+    --m-surface:#1A2329; --m-ink:#E6ECEF; --m-muted:#9FB0B9; --m-line:#2D3A41;
+    --m-accent:#4FBFB6; --m-accent-ink:#0C1A1C; --m-chip:#26323A;
+    color-scheme:dark;
+    background:var(--rp-module); color:var(--m-ink); padding:12px;
+    font-family:'Atkinson Hyperlegible', Verdana, system-ui, sans-serif;
+    font-size:17px; line-height:1.6;
+  }
+  .rp-mod-panel{
+    background:var(--m-surface); border:1px solid var(--m-line); border-radius:10px;
+    padding:16px 18px; display:flex; flex-direction:column; gap:10px;
+  }
+  .rp-mod h3{ font-family:'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif; font-size:19px; font-weight:700; line-height:1.15; color:var(--m-ink); }
+  .rp-mod-cap{ font-size:14px; line-height:1.5; color:var(--m-muted); }
+  .rp-mod code, .rp-mod-out{ font-family:'JetBrains Mono', ui-monospace, monospace; font-size:.88em; }
+  .rp-mod code{ font-weight:400; }
+  .rp-mod-out{ font-weight:600; color:var(--m-accent); }
+  .rp-mod-eyebrow{ font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--m-muted); font-weight:700; margin-bottom:6px; }
+  .rp-mod-chips{ display:flex; flex-wrap:wrap; gap:8px; min-height:38px; }
+  .rp-mod-chip{
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:14px; font-weight:400;
+    background:var(--m-chip); color:var(--m-ink); border:1px solid var(--m-line);
+    border-radius:999px; padding:6px 12px; display:inline-flex; gap:8px; align-items:baseline;
+  }
+  .rp-mod-chip .pct{ color:var(--m-muted); font-size:12px; }
+  .rp-mod-chip.top{ background:var(--m-accent); color:var(--m-accent-ink); border-color:var(--m-accent); }
+  .rp-mod-chip.top .pct{ color:var(--m-accent-ink); opacity:.85; }
+  .rp-mod-slider{ display:flex; flex-direction:column; gap:4px; }
+  .rp-mod-slider input{ width:100%; margin:0; }
+  .rp-mod-btns{ display:flex; gap:10px; flex-wrap:wrap; }
+  .rp-mod-btn{
+    font:inherit; font-weight:700; min-height:44px; padding:0 16px; border:0; border-radius:8px;
+    background:var(--m-accent); color:var(--m-accent-ink); cursor:pointer;
+  }
+  .rp-mod-btn.quiet{ background:var(--m-chip); color:var(--m-ink); }
+  /* aria-disabled rather than the module's disabled, so focus stays put mid-run */
+  .rp-mod-btn[aria-disabled="true"]{ opacity:.55; cursor:default; }
+  /* a ring pulses out of Write the rest until a visitor first presses it, so
+     it reads as something they can use, not a picture of a button */
+  @media (prefers-reduced-motion:no-preference){
+    .rp-mod-btn.rp-pulse{ animation:rp-ring 1.8s ease-out 1s infinite; }
+  }
+  @keyframes rp-ring{
+    0%{ box-shadow:0 0 0 0 rgba(79,191,182,0.7); }
+    70%,100%{ box-shadow:0 0 0 12px rgba(79,191,182,0); }
+  }
+  .rp-mod button:focus-visible, .rp-mod input:focus-visible{ outline:3px solid var(--m-accent); outline-offset:2px; }
+  .rp-mod-hist{ margin:0; padding-left:22px; font-size:15px; min-height:24px; }
+
+  /* flashcards */
+  .rp-fcslide{ display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:28px; align-items:center; }
+  /* just the card and its toggle, no chat frame around them */
+  .rp-inline{ display:flex; flex-direction:column; gap:10px; }
+  .rp-ctx{ font-size:14px; color:var(--ink-soft); }
+  .rp-ctx b{ color:var(--ink); font-weight:600; }
+  .rp-card{ border:1.5px solid var(--rp-amber); border-radius:12px; background:var(--rp-amber-paper); padding:14px; display:flex; flex-direction:column; gap:9px; }
+  .rp-card-top{ display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .rp-card-kind{ font-family:var(--rp-mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--rp-amber); }
+  .rp-badge{ font-family:var(--rp-mono); font-size:11px; border-radius:999px; padding:1px 8px; white-space:nowrap; }
+  .rp-badge.done{ color:var(--rp-green); background:var(--rp-green-tint); }
+  .rp-badge.close{ color:var(--rp-amber); background:var(--rp-amber-tint); }
+  .rp-card-term{ font-family:'Fraunces', Georgia, serif; font-weight:600; font-size:19px; line-height:1.25; }
+  .rp-card-back{ font-size:14.5px; line-height:1.5; background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:9px 11px; }
+  .rp-card-fb{ font-size:13.5px; line-height:1.5; border-left:3px solid var(--rp-amber); padding-left:10px; }
+  .rp-card-fb b{ color:var(--rp-amber); }
+  .rp-card-fb.done b{ color:var(--rp-green); }
+  .rp-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .rp-seg{ display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--bg); }
+  .rp-seg button{ border:0; background:none; border-radius:999px; padding:0 14px; min-height:36px; font:500 13.5px 'Inter', sans-serif; cursor:pointer; color:var(--ink-soft); }
+  .rp-seg button[aria-pressed="true"]{ background:var(--ink); color:#fff; }
+  .rp-seg button:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
+  .rp-steps{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px; counter-reset:rp-step; }
+  .rp-steps li{ display:grid; grid-template-columns:30px minmax(0,1fr); gap:12px; align-items:start; counter-increment:rp-step; }
+  .rp-steps li::before{
+    content:counter(rp-step); width:28px; height:28px; border-radius:50%;
+    background:var(--hl-yellow); border:1.4px solid var(--ink);
+    display:grid; place-items:center; font:500 12px var(--rp-mono);
+  }
+  .rp-steps b{ display:block; font-family:'Fraunces', Georgia, serif; font-size:18px; font-weight:600; line-height:1.25; margin-bottom:2px; }
+  .rp-steps span{ font-size:14px; line-height:1.5; color:var(--ink-soft); }
+
+  /* now vs next */
+  .rp-hood{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:stretch; }
+  .rp-col{ border:1px solid var(--line); border-radius:12px; padding:16px 18px; display:flex; flex-direction:column; gap:10px; min-width:0; background:var(--paper); }
+  .rp-col.next{ border-style:dashed; background:var(--rp-quiet); }
+  .rp-col .rp-mono-label{ letter-spacing:0.12em; }
+  .rp-col.now .rp-mono-label{ color:var(--rp-green); }
+  .rp-col h3{ font-size:20px; font-weight:600; }
+  .rp-col ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
+  .rp-col li{ display:grid; grid-template-columns:20px minmax(0,1fr); gap:8px; font-size:14.5px; line-height:1.4; }
+  .rp-ic{ width:18px; height:18px; border-radius:50%; margin-top:1px; display:grid; place-items:center; font-size:11px; font-weight:700; }
+  .rp-col.now .rp-ic{ background:var(--rp-green-tint); color:var(--rp-green); }
+  .rp-col.next .rp-ic{ border:1.5px dashed var(--ink-faint); }
+  .rp-col small{ display:block; font-family:var(--rp-mono); font-size:11px; color:var(--ink-faint); letter-spacing:0.02em; margin-top:2px; }
+
+  /* the core loop: SVG built from data, swapped for a list when narrow */
+  .rp-loop-svg{ width:100%; height:auto; max-height:440px; display:block; flex:none; }
+  .rp-loop-svg .ring{ fill:none; stroke:var(--line); stroke-width:2; stroke-dasharray:3 7; }
+  .rp-loop-svg .arc{ fill:none; stroke:var(--pen); stroke-width:3.5; stroke-linecap:round; }
+  .rp-loop-svg .entry{ fill:none; stroke:var(--ink); stroke-width:2.5; stroke-linecap:round; }
+  .rp-loop-svg .node rect{ fill:var(--paper); stroke:var(--ink); stroke-width:1.6; }
+  .rp-loop-svg .node.start rect{ fill:var(--rp-yellow-soft); stroke-dasharray:5 4; }
+  .rp-loop-svg .num{ fill:var(--hl-yellow); stroke:var(--ink); stroke-width:1.4; }
+  .rp-loop-svg .numt{ font:500 13px var(--rp-mono); fill:var(--ink); }
+  .rp-loop-svg .ttl{ font:600 21px 'Fraunces', Georgia, serif; fill:var(--ink); }
+  .rp-loop-svg .sub{ font:400 13.5px 'Inter', sans-serif; fill:var(--ink-soft); }
+  .rp-loop-svg .hand{ font:500 16px var(--rp-hand); fill:var(--ink-soft); }
+  .rp-loop-svg .center{ font:600 19px 'Fraunces', Georgia, serif; fill:var(--ink); }
+  .rp-loop-svg .center2{ font:500 13px var(--rp-mono); fill:var(--ink-faint); letter-spacing:0.06em; }
+  .rp-loop-svg .bgarc{ fill:none; stroke:var(--ink-faint); stroke-width:2; stroke-dasharray:2 6; stroke-linecap:round; }
+  .rp-loop-list{ display:none; list-style:none; margin:0; padding:0; flex-direction:column; gap:8px; }
+  .rp-loop-list li{ display:flex; gap:12px; align-items:flex-start; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:14px; line-height:1.45; color:var(--ink-soft); background:var(--paper); }
+  .rp-loop-list li.start{ background:var(--rp-yellow-soft); border-style:dashed; }
+  .rp-loop-list .rp-n{ flex:none; width:26px; height:26px; border-radius:50%; background:var(--hl-yellow); border:1.4px solid var(--ink); display:grid; place-items:center; font:500 12px var(--rp-mono); color:var(--ink); }
+  .rp-loop-list b{ font-family:'Fraunces', Georgia, serif; font-size:18px; font-weight:600; display:block; color:var(--ink); }
+  .rp-loop-list li.back{ border:0; background:none; padding:0 0 0 38px; font-family:var(--rp-hand); font-weight:600; font-size:14px; color:var(--pen); }
+
+  @container (max-width:760px){
+    .rp-artifact.fade.tall{ max-height:360px; }
+    .rp-view{ height:auto; min-height:420px; }
+    .rp-split, .rp-split.wide-left, .rp-hood, .rp-fcslide{ grid-template-columns:1fr; }
+    .rp-msg{ max-width:92%; }
+  }
+  @container (max-width:640px){
+    .rp-loop-svg{ display:none; }
+    .rp-loop-list{ display:flex; }
+  }
+  @container (max-width:460px){
+    .rp-msg{ max-width:100%; }
+    /* three nested paddings squeeze the module panel on a phone */
+    .rp-mod{ padding:8px; }
+    .rp-mod-panel{ padding:14px; }
+  }
+
+  /* ---------- WHAT I'M KNOWN FOR — POLAROIDS ---------- */
+  .ds-section{ padding:58px 0; }
+  .ds-head{ max-width:560px; margin-bottom:44px; }
+  .ds-head .case-index{ margin-bottom:10px; display:block; }
+  .ds-head h2{ font-size:26px; font-weight:500; }
+
+  .polaroid-row{
+    display:grid; grid-template-columns:repeat(3, 1fr);
+    gap:22px; justify-items:center;
+    /* room for the tilt + lifted hover state to not clip against neighbours */
+    padding:10px 0 18px;
+  }
+  .polaroid{
+    --tilt:0deg;
+    margin:0; width:100%; max-width:320px;
+    background:var(--paper);
+    padding:14px 14px 0;
+    border:1px solid var(--line);
+    border-radius:3px;
+    box-shadow:0 6px 18px var(--sticky-shadow);
+    transform:rotate(var(--tilt));
+    transition:transform .18s ease, box-shadow .18s ease;
+    /* the delay lives on the resting state, so it applies on the way *back*
+       down -- the card holds its lift for a beat after the cursor leaves.
+       The :hover rule zeroes it so picking one up is still immediate. */
+    transition-delay:.14s;
+  }
+  /* scattered, not stacked — uneven angles and drops read as tossed on a desk */
+  .polaroid:nth-child(1){ --tilt:-3deg;   margin-top:0;    }
+  .polaroid:nth-child(2){ --tilt:1.8deg;  margin-top:18px; }
+  .polaroid:nth-child(3){ --tilt:-1.4deg; margin-top:6px;  }
+  .polaroid:hover, .polaroid:focus-within{
+    transform:rotate(0deg) translateY(-5px);
+    box-shadow:0 14px 28px var(--sticky-shadow);
+    transition-delay:0s;
+  }
+  .polaroid-photo{
+    position:relative;
+    aspect-ratio:1/1;
+    background-color:var(--sketch-tint);
+    background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><path d='M8,40 Q28,10 48,40 T88,40 T128,40 T168,40' stroke='%239FC1E8' stroke-width='2.5' fill='none' opacity='0.55' stroke-linecap='round'/><path d='M-12,95 Q8,60 28,95 T68,95 T108,95 T148,95' stroke='%239FC1E8' stroke-width='2.5' fill='none' opacity='0.4' stroke-linecap='round'/><path d='M15,145 Q35,120 55,145 T95,145 T135,145' stroke='%239FC1E8' stroke-width='2' fill='none' opacity='0.3' stroke-linecap='round'/></svg>");
+    background-size:170px 170px;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  .polaroid-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  /* the nav-bar clip is a wide strip, not a square — contain it instead of
+     cropping to ~1 icon, and match its own navy so the letterbox is invisible */
+  .polaroid-photo.contain{ background-color:#003359; background-image:none; }
+  .polaroid-photo.contain img{ object-fit:contain; }
+  .polaroid figcaption{
+    /* the wide bottom lip is what makes it read as a polaroid */
+    font-family:'Rock Salt', cursive; color:var(--pen);
+    font-size:13px; line-height:1.4; text-align:center;
+    padding:20px 4px 24px;
+  }
+  @media (prefers-reduced-motion:reduce){
+    .polaroid{ transition:none; }
+    .polaroid:hover, .polaroid:focus-within{ transform:rotate(var(--tilt)); }
+  }
+
+
+  /* ---------- RESUME ---------- */
+  .resume-section{ padding:56px 0 28px; }
+
+  /* ---------- FOOTER ---------- */
+  /* no border-top: a 1px rule lands at an arbitrary point in the 28px grid
+     rhythm and reads as a stray line crossing the paper, not a divider */
+  .site-footer{ padding:40px 0 28px; }
+  .footer-kicker{
+    font-family:'Rock Salt', cursive; font-size:15px;
+    color:var(--pen); margin-bottom:18px;
+  }
+  .footer-links{ display:flex; flex-wrap:wrap; gap:10px 26px; align-items:center; }
+  .footer-links a{
+    font-size:14px; color:var(--ink-soft); text-decoration:none;
+    border-bottom:1px solid var(--line); padding-bottom:2px;
+    transition:color .15s, border-color .15s;
+  }
+  .footer-links a:hover{ color:var(--pen-deep); border-color:var(--pen); }
+  .footer-links a:focus-visible{ outline:2px solid var(--pen); outline-offset:3px; }
+  .footer-note{
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px;
+    letter-spacing:0.04em; color:var(--ink-faint); margin-top:26px;
+  }
+  .resume-head{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:26px; flex-wrap:wrap; gap:14px;
+  }
+  .resume-head h2{ font-size:26px; font-weight:500; }
+  .dl-btn{
+    font-family:'JetBrains Mono', ui-monospace, monospace; font-size:12px;
+    background:var(--ink); color:var(--bg); border:none;
+    padding:12px 20px; border-radius:100px; cursor:pointer;
+    display:flex; align-items:center; gap:8px; letter-spacing:0.03em;
+  }
+  .dl-btn:focus-visible{ outline:2px solid var(--pen); outline-offset:2px; }
+  .resume-preview{
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:var(--radius); padding:0; overflow:hidden;
+    box-shadow:0 1px 2px rgba(29,33,38,0.03);
+    max-width:800px; margin:0 auto;
+  }
+  /* the zoom button's height:100% would otherwise cap the preview and clip
+     the bottom of the résumé */
+  .resume-preview .zoom-btn{ height:auto; }
+  .resume-embed{
+    display:block; width:100%; height:auto;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ transition-duration:0.01ms !important; }
+  }
+
+  @media (max-width:900px){
+    .case-grid, .case-grid.long-note{
+      grid-template-columns:1fr;
+      grid-template-areas:
+        "head"
+        "desc"
+        "note";
+      column-gap:0;
+    }
+    .case-grid > .status-pill,
+    .case-grid.long-note > .status-pill{ justify-self:start; align-self:auto; }
+  }
+
+  @media (max-width:720px){
+    .hero h1{ font-size:36px; }
+    /* arrows tuck inside the card so they don't push the page sideways */
+    .nav-arrow{ width:38px; height:38px; box-shadow:0 2px 10px rgba(24,35,56,0.18); }
+    .nav-arrow.left{ left:6px; }
+    .nav-arrow.right{ right:6px; }
+    /* one column, and drop the stagger — offsets only read as scatter in a row */
+    .polaroid-row{ grid-template-columns:1fr; gap:26px; }
+    .polaroid:nth-child(1),
+    .polaroid:nth-child(2),
+    .polaroid:nth-child(3){ margin-top:0; }
+    /* stack the avatar under the bubble so the text gets the full card width */
+    .talker{
+      max-width:100%; width:100%; margin:0 0 20px;
+      flex-direction:column-reverse; align-items:flex-start; gap:10px;
+    }
+    .talker .bubble{ width:100%; font-size:14.5px; padding:15px 17px; }
+    .talker .avatar{ width:46px; height:46px; }
+    /* drop the card entirely on phones — content sits on the paper and
+       reclaims the ~96px the wrap + card padding was eating */
+    .wrap{ padding:0 16px; }
+    .stage{
+      background:none; border:none; box-shadow:none;
+      border-radius:0; padding:0; min-height:0;
+    }
+    .device.filled{ box-shadow:0 2px 14px rgba(24,35,56,0.10); }
+    /* without the card behind it, the track needs its own fill so the
+       grid lines don't read through the scribbles */
+    .scribble-extended{ background:var(--paper); }
+    /* now that the card is gone, centre the arrows on the image rather than on
+       the whole stage -- the stage also holds the caption, progress track and a
+       bubble whose height varies with its text, which dragged them ~140px high */
+    /* margin, not padding: padding would grow the wrapper and drag the
+       arrows' top:50% down off the image centre */
+    .device-wrap{ position:relative; margin-top:20px; }
+    .nav-arrow.left{ left:-2px; }
+    .nav-arrow.right{ right:-2px; }
+    /* tighten the vertical rhythm now that the card isn't holding it apart */
+    .slideshow{ margin-bottom:44px; }
+    section.case{ padding:46px 0 6px; }
+    .ds-section{ padding:46px 0; }
+    .resume-section{ padding:46px 0 24px; }
+    .site-footer{ padding:34px 0 24px; }
+    .hero{ padding:56px 0 48px; }
+    .resume-doc{ padding:36px 24px; }
+    .doodle-hint{ padding:2px 16px 0; }
+  }
+</style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <!-- one polite live region for short status messages (animation
+       pause/play). Screen readers read it; nobody sees it. -->
+  <div id="sr-status" class="sr-only" role="status"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="mark"><img class="mark-dot" src="avatar-rahul.png" alt=""> Rahul Shah</div>
+      <!-- Hidden from assistive tech and the Tab order on purpose. Freehand
+           drawing is pointer-only by nature (the WCAG 2.1.1 path-dependent
+           exception), so a screen reader or keyboard user could reach these
+           buttons but never use what they switch on. VoiceOver testing showed
+           the toolbar as a dead end to wade through, so it is decorative UI. -->
+      <div class="doodle-toolbar" aria-hidden="true">
+        <button type="button" class="dtool active" data-tool="cursor" tabindex="-1" title="Cursor">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M6 3 L6 19 L10 15.2 L12.6 21 L15 19.9 L12.4 14.3 L18 13.6 Z" fill="currentColor"/>
+          </svg>
+        </button>
+        <button type="button" class="dtool" data-tool="pen" tabindex="-1" title="Pen">
+          <svg viewBox="0 0 32 32" width="19" height="19" aria-hidden="true">
+            <g transform="translate(-6 -2.6) rotate(45 12 27)">
+              <rect x="9.5" y="3" width="5" height="5" rx="1" fill="#1D4ED8"/>
+              <rect x="9.5" y="9" width="5" height="13" rx="1" fill="#182338"/>
+              <path d="M9.5 22 L14.5 22 L12 27 Z" fill="#1D4ED8"/>
+            </g>
+          </svg>
+        </button>
+        <button type="button" class="dtool" data-tool="highlighter" tabindex="-1" title="Highlighter">
+          <svg viewBox="0 0 32 32" width="19" height="19" aria-hidden="true">
+            <g transform="translate(-6.7 -1.9) rotate(45 13 26)">
+              <rect x="8.5" y="3" width="9" height="5" rx="1" fill="#182338"/>
+              <rect x="8.5" y="9" width="9" height="11" rx="1" fill="#F5E14F"/>
+              <path d="M9 20 L17 20 L14.5 26 L11.5 26 Z" fill="#182338"/>
+            </g>
+          </svg>
+        </button>
+        <div class="dtool-sep"></div>
+        <button type="button" class="dtool dtool-erase" data-tool="erase" tabindex="-1" title="Clear drawing">
+          <svg viewBox="0 0 32 32" width="19" height="19" aria-hidden="true">
+            <g transform="rotate(45 16 16)">
+              <rect x="10" y="6"  width="12" height="13" rx="2" fill="#182338"/>
+              <rect x="10" y="17" width="12" height="9"  rx="2" fill="#F6C9D6" stroke="#182338" stroke-width="1.2"/>
+            </g>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="doodle-hint" aria-hidden="true">
+    <!-- viewBox is cropped to the artwork (was 0 0 70 65 with ~20 units of dead
+         space to the right), so the tail actually ends near the text instead of
+         being held off by empty box. width/height keep the previous 0.5px-per-
+         unit scale, so the arrow is the same visual size, just not padded. -->
+    <svg viewBox="10 2 44 60" width="22" height="30">
+      <path d="M50 52 C 34 56, 25 40, 22 20 C 30 15, 26 8, 18 11 C 12 13, 14 20, 22 20 C 34 20, 44 14, 50 8"
+            fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M50 8 L 41 8 L 46 16 Z" fill="currentColor"/>
+    </svg>
+    <span>doodle on my site!</span>
+  </div>
+
+  <main id="main">
+  <!-- HERO -->
+  <section class="hero" aria-label="Introduction">
+    <div class="wrap">
+      <img class="doodle d-h1" src="doodle-tictactoe.png" alt="">
+      <img class="doodle d-h3" src="doodle-crystal.png" alt="">
+      <div class="eyebrow">Prepared for
+        <img class="cb-logo" src="collegeboard-logo.png" alt="College Board" width="430" height="78">
+      </div>
+      <h1 data-flatten>A designer who makes the <em>first steps</em> clear, and proves it with research.<br>Hi, I'm <span class="hl-mark">Rahul</span>.</h1>
+      <ul class="hero-tags" aria-label="Highlights">
+        <li class="tag">5 Years in Ed-Tech UX</li>
+        <li class="tag">Research &amp; A/B Testing</li>
+        <li class="tag">WCAG 2.1 AA</li>
+      </ul>
+      <p class="hero-sub" data-flatten>
+        For five years I've designed Encourage, a <span class="hl-mark">college and career readiness</span> platform
+        that reaches 1 million students: the <span class="hl-mark">onboarding</span> students start in, the setup counselors start in, and the design system under both.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- CASE 1: ENCOURAGE STUDENTS -->
+  <section class="case" id="students" aria-labelledby="title-students">
+    <div class="wrap">
+      <img class="doodle d-m1" src="doodle-icecream.png" alt="">
+      <div class="case-grid">
+        <div class="case-head">
+          <div>
+          <div class="case-index">01 — ENCOURA, RESEARCH-LED ONBOARDING</div>
+          <h2 class="case-title" id="title-students" data-flatten>Encourage — asking students for <span class="hl-mark">2x</span> the data and holding completion near 84%</h2>
+          </div>
+        </div>
+        <p class="case-desc">
+        When the onboarding survey for 150,000+ students had to double in length, I led classroom research, rebuilt the flow from it, and held completion near 84%.
+        </p>
+        <div class="status-pill progress">Shipping Fall 2026</div>
+      </div>
+
+      <div class="slideshow" id="ss-students" role="region" aria-roledescription="carousel" aria-label="Encourage onboarding screenshots">
+                <div class="stage">
+          <div class="frame-caption">
+            <div class="k" id="cap-k-students" aria-live="polite" aria-atomic="true">Slide 1 of 6</div>
+            <div class="scribble-strip" id="strip-students" aria-hidden="true"></div>
+          </div>
+          <div class="talker">
+            <span class="sr-only">Rahul says:</span>
+            <img class="avatar" src="avatar-rahul.png" alt="">
+            <div class="bubble" id="bubble-students" aria-live="polite" aria-atomic="true">Onboarding is a student's first moment in Encourage. I led the redesign from classroom research to an A/B test, and worked with developers on the account and verification problems underneath it.</div>
+          </div>
+        
+          <div class="device-wrap">
+            <button class="nav-arrow left" data-dir="-1" data-target="students" aria-label="Previous slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="device filled">
+              <button type="button" class="zoom-btn" id="zoom-students" aria-label="Enlarge image"><img id="img-students" src="" alt=""></button>
+              <button type="button" class="gif-toggle" id="gif-students" hidden>Pause animation</button>
+            </div>
+            <button class="nav-arrow right" data-dir="1" data-target="students" aria-label="Next slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE 2: ENCOURAGE EDUCATORS -->
+  <section class="case red-case" id="educators" aria-labelledby="title-educators">
+    <div class="wrap">
+      <img class="doodle d-m2" src="doodle-hangman.png" alt="">
+      <div class="case-grid">
+        <div class="case-head">
+          <div>
+          <div class="case-index">02 — ENCOURA, STAFF TOOLS</div>
+          <h2 class="case-title" id="title-educators" data-flatten>Encourage for Educators — designing for the <span class="hl-mark">counselor's</span> workflow</h2>
+          </div>
+        </div>
+        <p class="case-desc">
+        The counselor side of Encourage, where guidance staff track hundreds of students at once and see exactly who's stuck and why.
+        </p>
+        <div class="status-pill shipped">Shipped</div>
+      </div>
+
+      <div class="slideshow red" id="ss-educators" role="region" aria-roledescription="carousel" aria-label="Encourage for Educators screenshots">
+                <div class="stage">
+          <div class="frame-caption">
+            <div class="k" id="cap-k-educators" aria-live="polite" aria-atomic="true">Slide 1 of 4</div>
+            <div class="scribble-strip" id="strip-educators" aria-hidden="true"></div>
+          </div>
+          <div class="talker">
+            <span class="sr-only">Rahul says:</span>
+            <img class="avatar" src="avatar-rahul.png" alt="">
+            <div class="bubble" id="bubble-educators" aria-live="polite" aria-atomic="true">A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.</div>
+          </div>
+        
+          <div class="device-wrap">
+            <button class="nav-arrow left" data-dir="-1" data-target="educators" aria-label="Previous slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="device filled tall">
+              <button type="button" class="zoom-btn" id="zoom-educators" aria-label="Enlarge image"><img id="img-educators" src="" alt=""></button>
+            </div>
+            <button class="nav-arrow right" data-dir="1" data-target="educators" aria-label="Next slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE 3: CHIRON -->
+  <section class="case" id="chiron" aria-labelledby="title-chiron">
+    <div class="wrap">
+      <img class="doodle d-m3" src="doodle-star.png" alt="">
+      <div class="case-grid">
+        <div class="case-head">
+          <div>
+          <div class="case-index">03 — PERSONAL PROJECT, BUILT ON CLAUDE</div>
+          <h2 class="case-title" id="title-chiron" data-flatten>Chiron — building a <span class="hl-mark">personalized</span>, Socratic tutor out of an LLM</h2>
+          </div>
+        </div>
+        <p class="case-desc">
+        A Claude skill that finds exactly where you're stuck, builds an interactive lesson around it while you talk, and adapts the next one to what your answers show.
+        </p>
+        <a class="status-pill progress" href="https://github.com/Rahul-Shah-Design/Chiron" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">&rarr;</span><span class="sr-only"> (opens in new tab)</span></a>
+      </div>
+
+      <!-- Session replay. Slides render into #view-chiron from the `replays`
+           data in the script below; edit the copy there, not here. -->
+      <div class="slideshow replay" id="ss-chiron" role="region" aria-roledescription="carousel" aria-label="Chiron session, condensed">
+        <div class="stage">
+          <div class="frame-caption">
+            <div class="k" id="cap-k-chiron" aria-live="polite" aria-atomic="true">Slide 1 of 7</div>
+            <div class="scribble-strip" id="strip-chiron" aria-hidden="true"></div>
+          </div>
+          <div class="talker">
+            <span class="sr-only">Rahul says:</span>
+            <img class="avatar" src="avatar-rahul.png" alt="">
+            <div class="bubble" id="bubble-chiron" aria-live="polite" aria-atomic="true"></div>
+          </div>
+          <div class="device-wrap">
+            <button class="nav-arrow left" data-dir="-1" data-target="chiron" aria-label="Previous slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="replay-window"><div class="rp-view" id="view-chiron"></div></div>
+            <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#182338" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESIGN SYSTEM CALLOUT -->
+  <section class="ds-section" id="craft" aria-labelledby="title-craft">
+    <div class="wrap">
+      <div class="ds-head">
+        <img class="doodle d-m4" src="doodle-uxwuzhere.png" alt="">
+        <span class="case-index">04 — DESIGN SYSTEMS, DATA AND CRAFT</span>
+        <h2 id="title-craft">What I&rsquo;d bring as the team&rsquo;s first designer</h2>
+        <p class="ds-note">I own the Encourage Design System and rebuilt its governance so engineers and designers ship consistent components without case-by-case review. I also drive much of the team&rsquo;s product analytics, turning Pendo funnels and drop-off points into the questions research goes after next.</p>
+      </div>
+      <div class="polaroid-row">
+        <figure class="polaroid">
+          <div class="polaroid-photo">
+            <img src="craft-design-system.webp" alt="A design system colour palette: eight named ramps — Navy, Seafoam, Neon, Orange, Fuschia, Mist, Teal and Sapphire — each stepped from darkest to lightest across numbered tint levels.">
+          </div>
+          <figcaption>Design Systems</figcaption>
+        </figure>
+        <figure class="polaroid">
+          <div class="polaroid-photo contain">
+            <img id="img-craft-micro" src="craft-micro.gif" data-poster="craft-micro-poster.webp" alt="A bottom navigation bar with four tabs — Home, Profile, Explore, Feedback — cycling through hover and active states, each icon filling in or spinning as it's selected.">
+            <button type="button" class="gif-toggle" data-for="img-craft-micro">Pause animation</button>
+          </div>
+          <figcaption>Micro-interactions</figcaption>
+        </figure>
+        <figure class="polaroid">
+          <div class="polaroid-photo">
+            <img src="craft-analytics.webp" alt="A product analytics report: bar charts of saved colleges per visitor and mean saved colleges by grade level, above a table of summary statistics.">
+          </div>
+          <figcaption>User Analytics</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESUME -->
+  <section class="resume-section" id="resume" aria-labelledby="title-resume">
+    <div class="wrap">
+      <img class="doodle d-m5" src="doodle-morse.png" alt="">
+      <div class="resume-head">
+        <h2 id="title-resume">Résumé</h2>
+        <a class="dl-btn" href="resume.pdf" download="Rahul-Shah-Resume.pdf"><span aria-hidden="true">↓</span> Download PDF</a>
+      </div>
+      <div class="resume-preview">
+        <button type="button" class="zoom-btn" aria-label="Enlarge résumé image"><img class="resume-embed" src="resume.png" alt="Rahul Shah's r&eacute;sum&eacute; — one page: experience at Chiron, Encoura, Rochester Regional Health and Prudential Financial, then education and a skills list. Download the PDF for the accessible text version."></button>
+      </div>
+    </div>
+  </section>
+  </main>
+
+<script src="lottie_svg.min.js"></script>
+<script>
+  // each stroke's trim-path keyframe eases out (0.33,1 / 0.68,1) rather than running
+  // linear, so the pen leaves at full speed and settles like a hand stroke
+  const SCRIBBLE_EXT_DATA = {"nm":"Main Scene","h":72.732,"w":2055.205,"meta":{"g":"@lottiefiles/creator@1.104.0"},"layers":[{"ty":4,"nm":"Shape Layer 6","sr":1,"st":0,"op":183,"ip":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[164,23.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[1879.752,34.179]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"shapes":[{"ty":"gr","nm":"Group 4","it":[{"ty":"sh","nm":"Path 4","d":1,"ks":{"a":0,"k":{"c":false,"i":[[0,0],[-0.007,4.583],[-0.042,5.039],[-0.272,2.692],[-0.412,-1.033],[-0.887,-4.114],[-0.981,-4.827],[-0.46,-1.696],[-1.447,5.443],[-1.508,5.599],[-0.115,-0.333],[-0.414,-3.386],[-0.486,-3.514],[-0.704,-1.671],[-1.188,3.257],[-1.191,3.402],[-0.174,0.352],[-0.701,-3.747],[-0.642,-4.15],[-0.297,-1.778],[-0.547,-0.349],[-0.667,0.566],[-0.493,4.408],[-0.339,3.86],[-0.312,0.538],[-0.343,0.106],[-0.415,-0.345],[-0.833,-2.741],[-0.982,-3.743],[-0.277,-0.573],[-0.684,-1.373],[-0.211,0.036],[-2.198,4.435],[-0.186,3.133],[-0.211,0.787],[-0.242,-0.032],[-0.573,-3.175],[-0.459,-3.938],[-0.712,-0.668],[-2.045,7.376],[-0.612,2.882],[-0.568,0.873],[-0.192,-0.307],[-1.542,-6.82],[-0.778,-2.673],[-0.169,-0.188],[-0.224,0.154],[-1.359,4.92],[-1.341,4.957],[-0.188,0.089],[-0.676,-3.943],[-0.743,-5.618],[-0.423,-0.112],[-1.655,2.734],[-0.731,4.167],[-0.465,3.686],[-0.288,-0.052],[-0.981,-4.574],[-0.475,-1.859],[-0.129,-3.014],[-0.057,-2.28],[-1.032,2.599],[-1.372,3.736],[-0.396,0.854],[-0.398,0.506],[-0.532,-3.266],[-0.424,-3.707],[-0.43,-3.603],[-3.399,4.553],[-3.499,4.47],[-0.92,1.434],[0.574,-1.254],[1.41,-4.136],[0.915,-3.314],[-0.135,-2.096],[-0.692,0.501],[-1.9,2.061],[-2.743,3.584],[-1.754,2.365],[-0.38,0.015],[0.45,-2.76],[0.656,-3.997],[-1.7,0.747],[-4.817,4.492],[-3.093,2.411],[-0.11,-0.197],[1.734,-7.372],[0.251,-2.862],[-0.238,-0.549],[-3.358,3.79],[-3.407,3.952],[-1.385,2.74],[0.016,-6.163],[-0.526,-2.575],[-0.62,-0.646],[-1.321,2.811],[-2.425,4.678],[-1.213,2.106],[-0.086,-0.076],[-0.289,-3.894],[-0.418,-4.811],[-1.262,4.969],[-1.164,6.015],[-0.412,-3.434],[-1.012,-5.332],[-1.148,-2.997],[-0.597,-1.05],[-0.32,0.56],[-0.867,4.186],[-0.827,3.457],[-1.247,-3.874],[-1.281,-4.159],[-0.26,-0.263],[-1.336,5.464],[-1.428,5.341],[-0.982,-3.798],[-1.015,-4.145],[-0.965,-1.413],[-1.509,4.574],[-1.488,4.634],[-0.341,-2.919],[-0.564,-3.784],[-0.598,-1.406],[-0.402,-0.109],[-1.653,3.273],[-2.097,4.827],[-0.596,1.83],[-0.198,0.117],[-0.792,-4.843],[-0.726,-5.271],[-0.236,-0.543],[-0.539,-0.732]],"o":[[0,0.022],[0.007,-4.583],[0.055,-6.59],[0.084,-0.836],[0.412,1.033],[0.887,4.114],[0.981,4.827],[0.46,1.696],[1.447,-5.443],[1.508,-5.599],[0.115,0.333],[0.414,3.386],[0.694,5.016],[0.062,0.146],[1.188,-3.257],[2.159,-6.168],[0.063,-0.127],[0.701,3.747],[1.023,6.614],[0.182,1.086],[1.02,0.652],[2.193,-1.86],[0.347,-3.101],[0.501,-5.693],[0.151,-0.261],[0.807,-0.25],[0.466,0.387],[0.713,2.345],[1.772,6.755],[0.559,1.156],[0.117,0.235],[0.553,-0.094],[2.092,-4.222],[0.352,-5.928],[0.087,-0.326],[1.229,0.165],[0.513,2.843],[1.073,9.215],[0.343,0.322],[1.149,-4.146],[0.729,-3.428],[0.218,-0.336],[0.485,0.776],[0.899,3.974],[0.778,2.673],[0.169,0.188],[0.224,-0.154],[1.358,-4.92],[1.342,-4.957],[0.188,-0.089],[0.676,3.943],[1.16,8.779],[0.491,0.13],[2.062,-3.405],[0.584,-3.33],[0.635,-5.026],[0.961,0.174],[0.507,2.367],[0.475,1.859],[0.128,3.014],[0.056,2.28],[1.031,-2.599],[2.249,-6.124],[0.75,-1.616],[0.152,-0.194],[0.531,3.266],[0.691,6.047],[0.179,1.501],[2.66,-3.564],[3.499,-4.47],[0.921,-1.434],[-0.574,1.254],[-1.41,4.136],[-1.027,3.718],[0.045,0.697],[0.692,-0.501],[1.9,-2.06],[2.744,-3.584],[3.177,-4.284],[0.182,-0.007],[-0.45,2.76],[-0.656,3.997],[1.699,-0.747],[4.817,-4.491],[3.092,-2.411],[0.345,0.617],[-0.861,3.665],[-0.637,7.277],[0.097,0.225],[3.358,-3.79],[3.566,-4.137],[0.335,-0.662],[-0.011,3.933],[0.266,1.302],[0.118,0.123],[1.322,-2.811],[2.424,-4.678],[1.213,-2.106],[0.086,0.076],[0.289,3.894],[0.419,4.812],[1.261,-4.97],[1.164,-6.015],[0.412,3.434],[1.011,5.332],[1.148,2.997],[0.596,1.051],[0.32,-0.56],[0.867,-4.186],[0.827,-3.457],[1.248,3.874],[1.28,4.159],[0.261,0.263],[1.335,-5.464],[1.427,-5.341],[0.982,3.798],[1.228,5.017],[0.373,0.546],[1.508,-4.574],[1.489,-4.634],[0.342,2.919],[0.849,5.704],[0.819,1.925],[0.197,0.054],[1.652,-3.273],[2.097,-4.827],[0.596,-1.83],[0.199,-0.117],[0.793,4.843],[0.898,7.041],[0.136,0.289],[0,0]],"v":[[3,42.997],[3.007,38.459],[3.07,19.649],[3.67,7.872],[4.462,8.368],[6.362,15.288],[9.383,30.629],[11.596,40.21],[13.627,36.703],[19.347,14.526],[21.137,9.534],[21.725,13.635],[23.392,26.911],[26.264,36.949],[27.749,33.365],[32.344,20.494],[35.647,9.456],[36.653,13.342],[39.208,28.535],[40.565,39.662],[41.661,41.881],[44.509,41.319],[47.874,32.986],[48.416,20.226],[50.384,11.946],[51.09,11.401],[53.04,11.759],[54.726,15.545],[57.419,26.023],[60.542,36.723],[62.624,41.46],[63.123,41.839],[67.5,34.114],[70.225,23.116],[72.264,12.543],[72.858,12.172],[75.011,17.321],[76.686,29.502],[78.628,41.068],[82.379,30.461],[85.027,18.31],[86.881,12.893],[87.591,12.967],[90.152,24.115],[93.313,35.674],[94.375,38.794],[94.989,38.938],[96.794,33.442],[101.981,14.16],[103.629,8.889],[104.745,12.796],[107.255,30.188],[109.352,42.487],[112.506,38.214],[116.338,27.642],[117.926,14.737],[119.319,8.198],[121.251,16.778],[123.022,23.391],[123.832,29.504],[124.063,39.547],[125.217,38.894],[129.616,27.705],[132.878,17.859],[134.781,14.356],[135.77,17.762],[137.539,31.026],[138.538,42.176],[144.185,33.295],[155.508,19.738],[161.761,10.734],[162.059,10.879],[158.977,18.441],[154.965,31.924],[153.999,39.581],[155.095,39.671],[158.793,36.203],[166.097,27.371],[173.341,17.538],[177.877,12.836],[177.624,16.102],[175.565,27.984],[176.279,33.949],[186.535,24.419],[200.226,12.954],[203.656,10.617],[201.016,22.921],[199.544,33.083],[199.705,42.05],[203.5,38.359],[216.704,23.105],[222.756,14.156],[223.322,24.183],[222.737,35.817],[224.793,38.216],[226.436,35.122],[232.66,22.284],[238.594,11.656],[239.952,9.374],[240.438,13.755],[241.608,29.824],[243.649,31.702],[248.226,8.681],[249.912,6.473],[252.046,21.722],[255.497,34.034],[258.205,39.973],[259.32,40.616],[260.943,34.591],[263.923,19.892],[266.325,20.665],[271.011,36.079],[272.891,41.214],[274.66,35.805],[279.917,14.285],[282.613,13.098],[286.28,28.271],[289.456,36.426],[291.567,32.514],[297.367,14.018],[299.285,12.603],[300.782,24.833],[303.233,34.392],[305.147,37.69],[307.19,34.136],[314.048,19.736],[317.731,9.915],[318.696,7.566],[319.907,12.47],[322.783,32.087],[324.154,40.421],[325,41.756]]}}},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":6},"c":{"a":0,"k":[0.145,0.357,0.729]}},{"ty":"tr","a":{"a":0,"k":[164,23.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[164,23.5]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}}]},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":1,"o":{"a":0,"k":100},"w":{"a":0,"k":4},"c":{"a":0,"k":[0.118,0.118,0.118]}},{"ty":"tm","nm":"Trim Path","e":{"a":1,"k":[{"o":{"x":0.33,"y":1},"i":{"x":0.68,"y":1},"s":[0],"t":150},{"s":[100],"t":180}]},"o":{"a":0,"k":0},"s":{"a":0,"k":0},"m":1}],"ind":1},{"ty":4,"nm":"Shape Layer 5","sr":1,"st":0,"op":183,"ip":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[166,22.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[1531.065,38.001]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"shapes":[{"ty":"gr","nm":"Group 1","it":[{"ty":"sh","nm":"Path 1","d":1,"ks":{"a":0,"k":{"c":false,"i":[[0,0],[-2.098,6.01],[-1.726,4.331],[-0.186,0.938],[-0.522,-3.347],[-0.301,-2.302],[-0.487,-0.394],[-2.823,11.768],[-0.401,0.629],[-1.7,-7.832],[-0.943,-1.25],[-2.722,11.277],[-0.527,0.651],[-0.132,-8.709],[-1.032,-2.707],[-0.533,-0.577],[-1.851,12.323],[-0.162,1.264],[-1.217,-4.273],[-1.428,-5.072],[-0.521,-0.625],[-0.698,4.137],[-0.568,2.185],[-0.029,-0.118],[-1.388,-7.128],[-1.084,-1.838],[-0.198,0.012],[-1.334,4.66],[-0.624,1.837],[-0.179,-0.029],[-0.329,-2.017],[-0.26,-0.851],[-0.683,0.742],[-1.292,3.591],[-0.217,2.248],[-0.773,-2.053],[-0.45,-1.169],[-1.64,4.075],[-1.698,4.754],[-0.203,1.098],[-0.284,-9.046],[-1.617,-3.903],[-0.349,-0.266],[-1.691,8.965],[-0.37,1.337],[-3.014,-8.234],[-1.169,-2.645],[-0.506,-0.409],[-2.938,10.123],[-0.233,0.886],[-3.312,-10.986],[-0.646,-1.662],[-0.261,-0.017],[-1.046,8.039],[-0.296,2.229],[-1.188,-4.346],[-1.259,-5.116],[-0.22,0.061],[-0.838,4.836],[-1.002,5.475],[-0.405,0.68],[-2.36,-10.623],[-1.034,-1.583],[-0.281,-0.001],[-1.232,4.439],[-1.315,5.26],[-0.272,0.644],[-2.785,-12.006],[-0.463,-1.855],[-3.688,10.694],[-0.604,1.347],[-1.303,-4.683],[-1.226,-4.138],[-1.25,5.024],[-1.392,4.859],[-0.536,-0.723],[-1.637,-5.88],[-0.269,-2.605],[-0.772,5.104],[-0.814,5.165],[-0.242,-0.012],[-1.549,-4.277],[-1.544,-4.427],[-0.805,-1.465],[-1.769,11.699],[-0.301,2.242],[-0.165,-1.159],[-1.492,-8.68],[-0.135,-0.824],[-1.495,7.812],[-1.057,2.534],[-1.19,-4.908],[-1.101,-4.979],[-0.361,-0.351],[-1.115,11.063],[-0.458,0.335],[-2.444,-7.288],[-1.568,-5.465],[-0.304,-0.372],[-1.013,4.574],[-1.018,4.896],[-0.875,2.351],[-0.628,0.272],[-2.512,-4.959],[-0.799,-2.792],[-0.968,-3.198],[-1.697,9.746],[-0.099,1.119],[0.066,0.858]],"o":[[0,-0.546],[1.649,-4.725],[1.906,-4.783],[0.847,-4.267],[0.483,3.096],[0.141,1.08],[0.623,0.504],[1.237,-5.156],[0.343,-0.537],[1.932,8.9],[0.413,0.547],[1.274,-5.28],[0.412,-0.509],[0.101,6.639],[0.572,1.5],[0.427,0.463],[0.762,-5.07],[0.162,-1.264],[1.217,4.273],[1.428,5.072],[2.93,3.514],[0.543,-3.217],[0.136,-0.523],[0.196,0.787],[2.421,12.432],[0.22,0.373],[0.511,-0.031],[4.602,-16.071],[0.165,-0.485],[5.819,0.956],[0.498,3.051],[0.132,0.43],[2.193,-2.382],[3.04,-8.448],[0.563,-5.815],[0.81,2.15],[0.141,0.365],[1.64,-4.075],[2.236,-6.26],[0.182,-0.986],[0.31,9.874],[0.885,2.138],[0.649,0.495],[1.974,-10.473],[0.186,-0.668],[1.593,4.35],[0.371,0.839],[0.484,0.391],[1.672,-5.761],[0.232,-0.881],[1.552,5.151],[0.158,0.407],[0.636,0.04],[0.514,-3.951],[0.295,-2.229],[1.187,4.346],[1.259,5.116],[0.221,-0.061],[0.838,-4.836],[1.003,-5.475],[0.414,-0.695],[1.934,8.708],[0.255,0.391],[0.28,0.001],[1.233,-4.439],[1.314,-5.26],[0.172,-0.409],[1.604,6.916],[0.292,1.171],[1.631,-4.731],[0.604,-1.347],[1.303,4.683],[1.226,4.138],[1.25,-5.024],[1.392,-4.859],[1.367,1.846],[1.777,6.382],[0.076,0.744],[0.772,-5.104],[0.814,-5.165],[0.241,0.012],[1.549,4.277],[2.097,6.011],[0.392,0.713],[0.985,-6.514],[0.125,-0.927],[0.566,3.977],[0.625,3.631],[0.083,0.506],[1.936,-10.117],[0.129,-0.31],[1.19,4.908],[1.204,5.449],[0.5,0.488],[1.014,-10.067],[0.608,-0.445],[1.881,5.609],[1.848,6.445],[0.105,0.129],[1.013,-4.574],[1.52,-7.31],[0.479,-1.288],[0.662,-0.287],[3.481,6.873],[1.06,3.704],[0.217,0.716],[0.623,-6.438],[0.04,-0.63],[0,0]],"v":[[3,38.834],[5.445,29.941],[12.064,12.946],[14.502,6.329],[16.882,26.47],[17.569,33.854],[18.814,36.137],[24.504,16.053],[26.504,8.782],[29.691,22.038],[34.871,34.368],[39.982,15.05],[42.645,7.47],[43.282,22.678],[45.563,34.395],[47.395,37.668],[51.279,17.469],[52.084,8.377],[53.776,11.677],[58.532,29.268],[61.162,36.611],[66.926,17.769],[68.926,8.757],[69.097,7.895],[71.102,19.968],[76.817,36.361],[77.461,37.068],[79.606,30.447],[85.926,10.382],[86.456,9.387],[90.702,29.295],[92.495,36.423],[93.433,36.54],[98.591,26.693],[101.284,10.203],[107.183,28.773],[109.335,34.862],[111.601,30.611],[117.853,14.077],[120.651,4.464],[121.308,17.214],[125.522,34.965],[127.478,38.423],[130.593,23.007],[133.939,9.193],[139.602,23.709],[143.584,34.206],[144.839,36.241],[150.535,19.136],[152.999,10.17],[158.871,26.963],[161.901,35.388],[162.551,36.172],[165.026,23.356],[166.236,13.474],[167.876,14.945],[172.536,33.765],[174.254,39.41],[175.508,33.783],[178.821,14.554],[180.715,6.639],[185.461,23.925],[190.243,36.216],[191.03,36.998],[192.844,32.16],[197.545,13.996],[199.54,6.295],[204.47,26.036],[207.637,37.995],[214.146,22.874],[217.055,13.279],[219.356,17.494],[224.085,34.776],[226.748,33.449],[231.698,13.972],[234.033,10.002],[238.399,21.959],[240.832,36.429],[241.978,31.568],[244.888,11.589],[246.209,6.109],[248.21,10.759],[254.185,27.644],[258.174,37.626],[262.182,18.682],[263.41,6.56],[263.732,6.287],[266.951,26.912],[267.624,33.516],[270.502,21.22],[275.071,5.303],[276.937,10.739],[281.22,29.849],[283.151,36.517],[285.31,18.538],[288.478,3.042],[292.496,12.957],[298.603,33.734],[301.158,41.986],[302.47,36.871],[306.374,18.77],[309.227,5.894],[311.183,3.487],[315.832,10.946],[321.713,26.686],[324.291,36.929],[328.147,21.032],[328.963,10.566],[328.957,8.322]]}}},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":6},"c":{"a":0,"k":[0.145,0.357,0.729]}},{"ty":"tr","a":{"a":0,"k":[166,22.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[166,22.5]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}}]},{"ty":"tm","nm":"Trim Path","e":{"a":1,"k":[{"o":{"x":0.33,"y":1},"i":{"x":0.68,"y":1},"s":[0],"t":121},{"s":[100],"t":151}]},"o":{"a":0,"k":0},"s":{"a":0,"k":0},"m":1},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":1,"o":{"a":0,"k":100},"w":{"a":0,"k":4},"c":{"a":0,"k":[0.118,0.118,0.118]}}],"ind":2},{"ty":4,"nm":"Shape Layer 2","sr":1,"st":0,"op":183,"ip":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[166,22.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[1194.087,35.791]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"shapes":[{"ty":"gr","nm":"Group 1","it":[{"ty":"sh","nm":"Path 1","d":1,"ks":{"a":0,"k":{"c":false,"i":[[0,0],[-2.098,6.01],[-1.726,4.331],[-0.186,0.938],[-0.522,-3.347],[-0.301,-2.302],[-0.487,-0.394],[-2.823,11.768],[-0.401,0.629],[-1.7,-7.832],[-0.943,-1.25],[-2.722,11.277],[-0.527,0.651],[-0.132,-8.709],[-1.032,-2.707],[-0.533,-0.577],[-1.851,12.323],[-0.162,1.264],[-1.217,-4.273],[-1.428,-5.072],[-0.521,-0.625],[-0.698,4.137],[-0.568,2.185],[-0.029,-0.118],[-1.388,-7.128],[-1.084,-1.838],[-0.198,0.012],[-1.334,4.66],[-0.624,1.837],[-0.179,-0.029],[-0.329,-2.017],[-0.26,-0.851],[-0.683,0.742],[-1.292,3.591],[-0.217,2.248],[-0.773,-2.053],[-0.45,-1.169],[-1.64,4.075],[-1.698,4.754],[-0.203,1.098],[-0.284,-9.046],[-1.617,-3.903],[-0.349,-0.266],[-1.691,8.965],[-0.37,1.337],[-3.014,-8.234],[-1.169,-2.645],[-0.506,-0.409],[-2.938,10.123],[-0.233,0.886],[-3.312,-10.986],[-0.646,-1.662],[-0.261,-0.017],[-1.046,8.039],[-0.296,2.229],[-1.188,-4.346],[-1.259,-5.116],[-0.22,0.061],[-0.838,4.836],[-1.002,5.475],[-0.405,0.68],[-2.36,-10.623],[-1.034,-1.583],[-0.281,-0.001],[-1.232,4.439],[-1.315,5.26],[-0.272,0.644],[-2.785,-12.006],[-0.463,-1.855],[-3.688,10.694],[-0.604,1.347],[-1.303,-4.683],[-1.226,-4.138],[-1.25,5.024],[-1.392,4.859],[-0.536,-0.723],[-1.637,-5.88],[-0.269,-2.605],[-0.772,5.104],[-0.814,5.165],[-0.242,-0.012],[-1.549,-4.277],[-1.544,-4.427],[-0.805,-1.465],[-1.769,11.699],[-0.301,2.242],[-0.165,-1.159],[-1.492,-8.68],[-0.135,-0.824],[-1.495,7.812],[-1.057,2.534],[-1.19,-4.908],[-1.101,-4.979],[-0.361,-0.351],[-1.115,11.063],[-0.458,0.335],[-2.444,-7.288],[-1.568,-5.465],[-0.304,-0.372],[-1.013,4.574],[-1.018,4.896],[-0.875,2.351],[-0.628,0.272],[-2.512,-4.959],[-0.799,-2.792],[-0.968,-3.198],[-1.697,9.746],[-0.099,1.119],[0.066,0.858]],"o":[[0,-0.546],[1.649,-4.725],[1.906,-4.783],[0.847,-4.267],[0.483,3.096],[0.141,1.08],[0.623,0.504],[1.237,-5.156],[0.343,-0.537],[1.932,8.9],[0.413,0.547],[1.274,-5.28],[0.412,-0.509],[0.101,6.639],[0.572,1.5],[0.427,0.463],[0.762,-5.07],[0.162,-1.264],[1.217,4.273],[1.428,5.072],[2.93,3.514],[0.543,-3.217],[0.136,-0.523],[0.196,0.787],[2.421,12.432],[0.22,0.373],[0.511,-0.031],[4.602,-16.071],[0.165,-0.485],[5.819,0.956],[0.498,3.051],[0.132,0.43],[2.193,-2.382],[3.04,-8.448],[0.563,-5.815],[0.81,2.15],[0.141,0.365],[1.64,-4.075],[2.236,-6.26],[0.182,-0.986],[0.31,9.874],[0.885,2.138],[0.649,0.495],[1.974,-10.473],[0.186,-0.668],[1.593,4.35],[0.371,0.839],[0.484,0.391],[1.672,-5.761],[0.232,-0.881],[1.552,5.151],[0.158,0.407],[0.636,0.04],[0.514,-3.951],[0.295,-2.229],[1.187,4.346],[1.259,5.116],[0.221,-0.061],[0.838,-4.836],[1.003,-5.475],[0.414,-0.695],[1.934,8.708],[0.255,0.391],[0.28,0.001],[1.233,-4.439],[1.314,-5.26],[0.172,-0.409],[1.604,6.916],[0.292,1.171],[1.631,-4.731],[0.604,-1.347],[1.303,4.683],[1.226,4.138],[1.25,-5.024],[1.392,-4.859],[1.367,1.846],[1.777,6.382],[0.076,0.744],[0.772,-5.104],[0.814,-5.165],[0.241,0.012],[1.549,4.277],[2.097,6.011],[0.392,0.713],[0.985,-6.514],[0.125,-0.927],[0.566,3.977],[0.625,3.631],[0.083,0.506],[1.936,-10.117],[0.129,-0.31],[1.19,4.908],[1.204,5.449],[0.5,0.488],[1.014,-10.067],[0.608,-0.445],[1.881,5.609],[1.848,6.445],[0.105,0.129],[1.013,-4.574],[1.52,-7.31],[0.479,-1.288],[0.662,-0.287],[3.481,6.873],[1.06,3.704],[0.217,0.716],[0.623,-6.438],[0.04,-0.63],[0,0]],"v":[[3,38.834],[5.445,29.941],[12.064,12.946],[14.502,6.329],[16.882,26.47],[17.569,33.854],[18.814,36.137],[24.504,16.053],[26.504,8.782],[29.691,22.038],[34.871,34.368],[39.982,15.05],[42.645,7.47],[43.282,22.678],[45.563,34.395],[47.395,37.668],[51.279,17.469],[52.084,8.377],[53.776,11.677],[58.532,29.268],[61.162,36.611],[66.926,17.769],[68.926,8.757],[69.097,7.895],[71.102,19.968],[76.817,36.361],[77.461,37.068],[79.606,30.447],[85.926,10.382],[86.456,9.387],[90.702,29.295],[92.495,36.423],[93.433,36.54],[98.591,26.693],[101.284,10.203],[107.183,28.773],[109.335,34.862],[111.601,30.611],[117.853,14.077],[120.651,4.464],[121.308,17.214],[125.522,34.965],[127.478,38.423],[130.593,23.007],[133.939,9.193],[139.602,23.709],[143.584,34.206],[144.839,36.241],[150.535,19.136],[152.999,10.17],[158.871,26.963],[161.901,35.388],[162.551,36.172],[165.026,23.356],[166.236,13.474],[167.876,14.945],[172.536,33.765],[174.254,39.41],[175.508,33.783],[178.821,14.554],[180.715,6.639],[185.461,23.925],[190.243,36.216],[191.03,36.998],[192.844,32.16],[197.545,13.996],[199.54,6.295],[204.47,26.036],[207.637,37.995],[214.146,22.874],[217.055,13.279],[219.356,17.494],[224.085,34.776],[226.748,33.449],[231.698,13.972],[234.033,10.002],[238.399,21.959],[240.832,36.429],[241.978,31.568],[244.888,11.589],[246.209,6.109],[248.21,10.759],[254.185,27.644],[258.174,37.626],[262.182,18.682],[263.41,6.56],[263.732,6.287],[266.951,26.912],[267.624,33.516],[270.502,21.22],[275.071,5.303],[276.937,10.739],[281.22,29.849],[283.151,36.517],[285.31,18.538],[288.478,3.042],[292.496,12.957],[298.603,33.734],[301.158,41.986],[302.47,36.871],[306.374,18.77],[309.227,5.894],[311.183,3.487],[315.832,10.946],[321.713,26.686],[324.291,36.929],[328.147,21.032],[328.963,10.566],[328.957,8.322]]}}},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":6},"c":{"a":0,"k":[0.145,0.357,0.729]}},{"ty":"tr","a":{"a":0,"k":[166,22.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[166,22.5]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}}]},{"ty":"tm","nm":"Trim Path","e":{"a":1,"k":[{"o":{"x":0.33,"y":1},"i":{"x":0.68,"y":1},"s":[0],"t":91},{"s":[100],"t":121}]},"o":{"a":0,"k":0},"s":{"a":0,"k":0},"m":1},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":1,"o":{"a":0,"k":100},"w":{"a":0,"k":4},"c":{"a":0,"k":[0.118,0.118,0.118]}}],"ind":3},{"ty":4,"nm":"Shape Layer 4","sr":1,"st":0,"op":183,"ip":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[164,23.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[855.42,34.135]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"shapes":[{"ty":"gr","nm":"Group 4","it":[{"ty":"sh","nm":"Path 4","d":1,"ks":{"a":0,"k":{"c":false,"i":[[0,0],[-0.007,4.583],[-0.042,5.039],[-0.272,2.692],[-0.412,-1.033],[-0.887,-4.114],[-0.981,-4.827],[-0.46,-1.696],[-1.447,5.443],[-1.508,5.599],[-0.115,-0.333],[-0.414,-3.386],[-0.486,-3.514],[-0.704,-1.671],[-1.188,3.257],[-1.191,3.402],[-0.174,0.352],[-0.701,-3.747],[-0.642,-4.15],[-0.297,-1.778],[-0.547,-0.349],[-0.667,0.566],[-0.493,4.408],[-0.339,3.86],[-0.312,0.538],[-0.343,0.106],[-0.415,-0.345],[-0.833,-2.741],[-0.982,-3.743],[-0.277,-0.573],[-0.684,-1.373],[-0.211,0.036],[-2.198,4.435],[-0.186,3.133],[-0.211,0.787],[-0.242,-0.032],[-0.573,-3.175],[-0.459,-3.938],[-0.712,-0.668],[-2.045,7.376],[-0.612,2.882],[-0.568,0.873],[-0.192,-0.307],[-1.542,-6.82],[-0.778,-2.673],[-0.169,-0.188],[-0.224,0.154],[-1.359,4.92],[-1.341,4.957],[-0.188,0.089],[-0.676,-3.943],[-0.743,-5.618],[-0.423,-0.112],[-1.655,2.734],[-0.731,4.167],[-0.465,3.686],[-0.288,-0.052],[-0.981,-4.574],[-0.475,-1.859],[-0.129,-3.014],[-0.057,-2.28],[-1.032,2.599],[-1.372,3.736],[-0.396,0.854],[-0.398,0.506],[-0.532,-3.266],[-0.424,-3.707],[-0.43,-3.603],[-3.399,4.553],[-3.499,4.47],[-0.92,1.434],[0.574,-1.254],[1.41,-4.136],[0.915,-3.314],[-0.135,-2.096],[-0.692,0.501],[-1.9,2.061],[-2.743,3.584],[-1.754,2.365],[-0.38,0.015],[0.45,-2.76],[0.656,-3.997],[-1.7,0.747],[-4.817,4.492],[-3.093,2.411],[-0.11,-0.197],[1.734,-7.372],[0.251,-2.862],[-0.238,-0.549],[-3.358,3.79],[-3.407,3.952],[-1.385,2.74],[0.016,-6.163],[-0.526,-2.575],[-0.62,-0.646],[-1.321,2.811],[-2.425,4.678],[-1.213,2.106],[-0.086,-0.076],[-0.289,-3.894],[-0.418,-4.811],[-1.262,4.969],[-1.164,6.015],[-0.412,-3.434],[-1.012,-5.332],[-1.148,-2.997],[-0.597,-1.05],[-0.32,0.56],[-0.867,4.186],[-0.827,3.457],[-1.247,-3.874],[-1.281,-4.159],[-0.26,-0.263],[-1.336,5.464],[-1.428,5.341],[-0.982,-3.798],[-1.015,-4.145],[-0.965,-1.413],[-1.509,4.574],[-1.488,4.634],[-0.341,-2.919],[-0.564,-3.784],[-0.598,-1.406],[-0.402,-0.109],[-1.653,3.273],[-2.097,4.827],[-0.596,1.83],[-0.198,0.117],[-0.792,-4.843],[-0.726,-5.271],[-0.236,-0.543],[-0.539,-0.732]],"o":[[0,0.022],[0.007,-4.583],[0.055,-6.59],[0.084,-0.836],[0.412,1.033],[0.887,4.114],[0.981,4.827],[0.46,1.696],[1.447,-5.443],[1.508,-5.599],[0.115,0.333],[0.414,3.386],[0.694,5.016],[0.062,0.146],[1.188,-3.257],[2.159,-6.168],[0.063,-0.127],[0.701,3.747],[1.023,6.614],[0.182,1.086],[1.02,0.652],[2.193,-1.86],[0.347,-3.101],[0.501,-5.693],[0.151,-0.261],[0.807,-0.25],[0.466,0.387],[0.713,2.345],[1.772,6.755],[0.559,1.156],[0.117,0.235],[0.553,-0.094],[2.092,-4.222],[0.352,-5.928],[0.087,-0.326],[1.229,0.165],[0.513,2.843],[1.073,9.215],[0.343,0.322],[1.149,-4.146],[0.729,-3.428],[0.218,-0.336],[0.485,0.776],[0.899,3.974],[0.778,2.673],[0.169,0.188],[0.224,-0.154],[1.358,-4.92],[1.342,-4.957],[0.188,-0.089],[0.676,3.943],[1.16,8.779],[0.491,0.13],[2.062,-3.405],[0.584,-3.33],[0.635,-5.026],[0.961,0.174],[0.507,2.367],[0.475,1.859],[0.128,3.014],[0.056,2.28],[1.031,-2.599],[2.249,-6.124],[0.75,-1.616],[0.152,-0.194],[0.531,3.266],[0.691,6.047],[0.179,1.501],[2.66,-3.564],[3.499,-4.47],[0.921,-1.434],[-0.574,1.254],[-1.41,4.136],[-1.027,3.718],[0.045,0.697],[0.692,-0.501],[1.9,-2.06],[2.744,-3.584],[3.177,-4.284],[0.182,-0.007],[-0.45,2.76],[-0.656,3.997],[1.699,-0.747],[4.817,-4.491],[3.092,-2.411],[0.345,0.617],[-0.861,3.665],[-0.637,7.277],[0.097,0.225],[3.358,-3.79],[3.566,-4.137],[0.335,-0.662],[-0.011,3.933],[0.266,1.302],[0.118,0.123],[1.322,-2.811],[2.424,-4.678],[1.213,-2.106],[0.086,0.076],[0.289,3.894],[0.419,4.812],[1.261,-4.97],[1.164,-6.015],[0.412,3.434],[1.011,5.332],[1.148,2.997],[0.596,1.051],[0.32,-0.56],[0.867,-4.186],[0.827,-3.457],[1.248,3.874],[1.28,4.159],[0.261,0.263],[1.335,-5.464],[1.427,-5.341],[0.982,3.798],[1.228,5.017],[0.373,0.546],[1.508,-4.574],[1.489,-4.634],[0.342,2.919],[0.849,5.704],[0.819,1.925],[0.197,0.054],[1.652,-3.273],[2.097,-4.827],[0.596,-1.83],[0.199,-0.117],[0.793,4.843],[0.898,7.041],[0.136,0.289],[0,0]],"v":[[3,42.997],[3.007,38.459],[3.07,19.649],[3.67,7.872],[4.462,8.368],[6.362,15.288],[9.383,30.629],[11.596,40.21],[13.627,36.703],[19.347,14.526],[21.137,9.534],[21.725,13.635],[23.392,26.911],[26.264,36.949],[27.749,33.365],[32.344,20.494],[35.647,9.456],[36.653,13.342],[39.208,28.535],[40.565,39.662],[41.661,41.881],[44.509,41.319],[47.874,32.986],[48.416,20.226],[50.384,11.946],[51.09,11.401],[53.04,11.759],[54.726,15.545],[57.419,26.023],[60.542,36.723],[62.624,41.46],[63.123,41.839],[67.5,34.114],[70.225,23.116],[72.264,12.543],[72.858,12.172],[75.011,17.321],[76.686,29.502],[78.628,41.068],[82.379,30.461],[85.027,18.31],[86.881,12.893],[87.591,12.967],[90.152,24.115],[93.313,35.674],[94.375,38.794],[94.989,38.938],[96.794,33.442],[101.981,14.16],[103.629,8.889],[104.745,12.796],[107.255,30.188],[109.352,42.487],[112.506,38.214],[116.338,27.642],[117.926,14.737],[119.319,8.198],[121.251,16.778],[123.022,23.391],[123.832,29.504],[124.063,39.547],[125.217,38.894],[129.616,27.705],[132.878,17.859],[134.781,14.356],[135.77,17.762],[137.539,31.026],[138.538,42.176],[144.185,33.295],[155.508,19.738],[161.761,10.734],[162.059,10.879],[158.977,18.441],[154.965,31.924],[153.999,39.581],[155.095,39.671],[158.793,36.203],[166.097,27.371],[173.341,17.538],[177.877,12.836],[177.624,16.102],[175.565,27.984],[176.279,33.949],[186.535,24.419],[200.226,12.954],[203.656,10.617],[201.016,22.921],[199.544,33.083],[199.705,42.05],[203.5,38.359],[216.704,23.105],[222.756,14.156],[223.322,24.183],[222.737,35.817],[224.793,38.216],[226.436,35.122],[232.66,22.284],[238.594,11.656],[239.952,9.374],[240.438,13.755],[241.608,29.824],[243.649,31.702],[248.226,8.681],[249.912,6.473],[252.046,21.722],[255.497,34.034],[258.205,39.973],[259.32,40.616],[260.943,34.591],[263.923,19.892],[266.325,20.665],[271.011,36.079],[272.891,41.214],[274.66,35.805],[279.917,14.285],[282.613,13.098],[286.28,28.271],[289.456,36.426],[291.567,32.514],[297.367,14.018],[299.285,12.603],[300.782,24.833],[303.233,34.392],[305.147,37.69],[307.19,34.136],[314.048,19.736],[317.731,9.915],[318.696,7.566],[319.907,12.47],[322.783,32.087],[324.154,40.421],[325,41.756]]}}},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":6},"c":{"a":0,"k":[0.145,0.357,0.729]}},{"ty":"tr","a":{"a":0,"k":[164,23.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[164,23.5]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}}]},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":1,"o":{"a":0,"k":100},"w":{"a":0,"k":4},"c":{"a":0,"k":[0.118,0.118,0.118]}},{"ty":"tm","nm":"Trim Path","e":{"a":1,"k":[{"o":{"x":0.33,"y":1},"i":{"x":0.68,"y":1},"s":[0],"t":61},{"s":[100],"t":91}]},"o":{"a":0,"k":0},"s":{"a":0,"k":0},"m":1}],"ind":4},{"ty":4,"nm":"Shape Layer 3","sr":1,"st":0,"op":183,"ip":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[166,24]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[514.981,36.366]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"shapes":[{"ty":"gr","nm":"Group 3","it":[{"ty":"sh","nm":"Path 3","d":1,"ks":{"a":0,"k":{"c":false,"i":[[0,0],[-0.75,-5.255],[-0.301,-3.225],[-0.307,-0.418],[-1.32,4.212],[-1.371,5.164],[-0.383,0.595],[-0.302,0.127],[-0.247,-0.152],[-0.116,-0.349],[0.067,-4.063],[0.066,-4.19],[-0.34,-0.691],[-0.946,-0.71],[-0.646,4.454],[-0.673,4.655],[-0.335,0.602],[-0.274,-0.072],[-0.943,-3.216],[-0.081,-6.596],[-0.679,-1.855],[-0.323,-0.191],[-0.302,0.129],[-1.765,6.073],[-0.57,4.191],[-0.447,1.496],[-0.653,0.377],[-0.293,-0.147],[-0.258,-5.091],[-0.269,-5.33],[-0.447,-0.628],[-0.326,-0.134],[-0.282,0.19],[-1.267,6.6],[-0.83,5.35],[-0.467,0.443],[-0.304,-0.199],[-1.009,-7.042],[-0.478,-4.65],[-0.945,-1.037],[-0.29,0.126],[-1.049,4.777],[-0.689,3.963],[-1.177,2.098],[-0.31,-0.179],[-0.913,-6.818],[-0.285,-1.649],[-0.685,-0.596],[-0.263,0.385],[-1.304,5.837],[-0.525,3.414],[-0.41,0.293],[-1.657,-9.746],[-0.697,-1.317],[-1.415,-0.328],[-0.33,5.951],[-0.457,4.038],[-0.465,0.665],[-0.292,-0.19],[-1.837,-4.82],[-1.842,-4.906],[-0.248,-0.059],[-0.821,6.274],[-0.822,6.143],[-1.259,-4.798],[-1.378,-5.318],[-1.354,-2.73],[-0.574,3.913],[-0.511,4.001],[0.681,3.771],[-0.095,0.032],[-3.133,-10.177],[-0.305,-1.218],[-0.739,3.782],[-0.819,5.295],[-0.522,1.674],[-0.374,0.008],[-0.979,-2.207],[0.009,-5.055],[-0.89,-1.504],[-0.618,-0.695],[-1.912,0.068],[-0.449,0.501],[0.283,6.41],[-0.015,5.342],[-0.162,0.379],[-0.283,0.086],[-0.468,-0.612],[-1.374,-3.913],[-1.185,-3.697],[-0.638,-1.413],[-0.098,0.143],[-0.648,5.278],[-0.858,2.129],[-0.952,-1.384],[-1.794,-5.375],[-0.154,-1.222],[-0.316,0.791],[-1.206,3.295],[-1.259,3.695],[-0.671,1.427],[-0.958,-4.12],[-0.839,-4.872],[-0.127,-0.698],[-1.132,4.768],[-1.12,5.296],[-0.386,0.715],[-0.264,-0.079],[-0.488,-13.249],[-0.754,-1.522],[-0.625,-0.034],[-0.485,7.693],[-0.705,1.184],[-1.451,-0.162],[-0.257,-0.445],[-0.683,-6.263],[-0.538,-1.896],[-0.08,-0.379],[-0.47,-0.195],[-0.516,0.148],[-0.859,3.569],[-0.207,5.765],[-0.767,1.119],[-0.995,-4.932],[-0.423,-1.572],[-0.922,-1.589],[-1.243,5.518],[-1.322,5.413],[-0.222,-0.502],[-0.705,-4.608],[-0.904,-5.257],[-0.386,-0.244],[-1.019,5.355],[-1.066,6.406],[-0.231,0.94],[-0.849,-5.132],[-0.851,-5.598],[-0.467,-0.978],[-1.882,10.632],[-1.035,3.134],[-0.992,-5.881],[-0.881,-5.626],[-0.031,0.718],[-2.357,9.53],[-1.185,2.813],[-0.507,-3.979],[-0.615,-4.684],[-0.773,-0.777],[-2.021,7.076],[-0.19,2.618],[0,0.683]],"o":[[0,0.655],[0.756,5.294],[0.649,6.955],[0.142,0.193],[1.32,-4.212],[1.868,-7.037],[0.194,-0.302],[0.302,-0.127],[0.247,0.152],[0.116,0.349],[-0.067,4.063],[-0.072,4.587],[0.742,1.506],[0.166,0.125],[0.646,-4.454],[0.762,-5.272],[0.168,-0.302],[0.64,0.167],[0.912,3.109],[0.067,5.507],[0.143,0.39],[0.323,0.191],[1.321,-0.564],[1.04,-3.579],[1.04,-7.648],[0.309,-1.032],[0.312,-0.18],[1.266,0.637],[0.229,4.52],[0.368,7.297],[0.231,0.324],[0.326,0.134],[0.615,-0.414],[1.037,-5.402],[0.948,-6.106],[0.232,-0.221],[1.312,0.857],[0.751,5.237],[0.599,5.833],[0.221,0.243],[1.299,-0.564],[0.882,-4.017],[0.938,-5.394],[0.169,-0.302],[1.313,0.757],[0.578,4.318],[0.787,4.558],[0.303,0.264],[0.653,-0.954],[0.808,-3.619],[1.321,-8.588],[0.527,-0.377],[0.89,5.235],[2.586,4.886],[0.638,0.148],[0.39,-7.028],[0.214,-1.89],[0.209,-0.299],[0.293,0.19],[1.837,4.82],[1.842,4.906],[0.247,0.059],[0.821,-6.274],[0.823,-6.143],[1.258,4.798],[2.216,8.555],[0.196,0.395],[0.574,-3.913],[0.668,-5.229],[-0.152,-0.837],[0.426,-0.142],[3.571,11.601],[0.139,0.557],[0.739,-3.781],[1.177,-7.606],[0.208,-0.667],[2.466,-0.053],[0.672,1.517],[-0.021,11.098],[0.479,0.81],[0.518,0.581],[1.066,-0.038],[0.458,-0.51],[-0.241,-5.434],[0.006,-1.96],[0.162,-0.379],[0.283,-0.086],[0.467,0.612],[1.374,3.913],[1.84,5.737],[0.173,0.383],[1.319,-1.933],[0.776,-6.315],[0.304,-0.757],[2.691,3.914],[2.842,8.518],[0.073,0.583],[0.316,-0.791],[1.205,-3.295],[2.188,-6.427],[0.214,-0.455],[0.958,4.12],[0.839,4.872],[0.126,0.698],[1.132,-4.768],[1.35,-6.381],[0.179,-0.332],[1.254,0.377],[0.468,12.716],[0.673,1.358],[0.73,0.039],[0.609,-9.682],[0.394,-0.661],[0.613,0.068],[0.541,0.936],[1.265,11.601],[0.111,0.392],[0.081,0.379],[0.469,0.195],[0.822,-0.236],[0.841,-3.493],[0.277,-7.716],[0.335,-0.489],[1.816,8.996],[0.959,3.57],[0.145,0.251],[1.244,-5.518],[1.322,-5.413],[0.222,0.502],[0.704,4.608],[1.225,7.122],[0.17,0.107],[1.019,-5.355],[1.066,-6.406],[0.231,-0.94],[0.848,5.132],[1.269,8.34],[0.364,0.761],[1.03,-5.814],[1.035,-3.134],[0.992,5.881],[0.882,5.626],[0.075,-1.762],[1.296,-5.241],[1.185,-2.813],[0.508,3.979],[1.109,8.44],[0.419,0.421],[2.007,-9.639],[0.033,-0.627],[0,0]],"v":[[3,8.436],[4.008,17.143],[4.768,29.676],[5.767,41.992],[7.635,37.592],[12.622,20.047],[15.303,10.086],[16.095,9.451],[16.968,9.459],[17.492,10.28],[17.608,15.06],[17.272,31.061],[17.858,37.092],[20.823,40.425],[21.773,35.438],[24.26,17.881],[25.687,11.062],[26.436,10.659],[28.732,16.264],[29.78,31.731],[31.473,42.972],[32.324,43.801],[33.282,43.935],[37.303,33.666],[39.678,21.105],[41.337,7.441],[42.997,5.511],[43.94,5.5],[45.583,13.02],[46.065,31.346],[47.867,41.559],[48.765,42.249],[49.699,42.196],[52.085,33.465],[55.203,13.009],[57.141,5.42],[58.079,5.516],[60.791,16.48],[62.731,35.071],[65.195,43.487],[66.088,43.525],[68.869,36.085],[71.587,20.735],[74.705,8.88],[75.675,9.041],[78.91,20.877],[79.724,30.259],[84.352,41.394],[85.299,41.142],[87.896,31.295],[89.633,19.127],[93.966,6.674],[97.341,23.236],[99.873,31.707],[107.888,40.145],[108.852,30.694],[112.045,13.531],[113.125,10.173],[114.002,10.1],[116.386,15.519],[123.476,34.464],[125.736,39.741],[127.124,33.32],[130.08,8.565],[132.453,7.645],[137.306,26.92],[142.243,40.715],[143.405,36.613],[145.377,21.323],[145.515,10.589],[145.402,9.31],[150.739,25.874],[155.911,39.716],[156.887,36.928],[159.821,19.839],[161.868,7.093],[162.779,6.232],[168.029,12.344],[168.646,22.027],[169.794,36.028],[171.526,38.289],[175.482,38.905],[177.557,37.826],[177.616,26.936],[176.324,10.367],[176.659,7.595],[177.299,6.82],[178.415,7.495],[180.816,13.091],[185.547,27.422],[189.314,37.374],[189.748,38.042],[191.893,22.171],[195.038,9.06],[196.723,9.835],[203.659,24.809],[205.757,38.601],[206.172,38.908],[208.29,32.71],[212.552,21.306],[216.173,9.345],[217.757,13.493],[221.161,30.327],[222.149,37.563],[223.639,33.174],[227.918,13.903],[229.889,5.217],[230.689,4.881],[232.511,22.407],[235.765,38.778],[238.339,40.576],[239.95,27.634],[241.704,11.58],[245.079,11.464],[246.257,12.394],[248.016,23.08],[249.407,38.672],[249.564,39.838],[250.27,40.776],[252.033,40.839],[254.364,34.713],[255.427,20.512],[257.534,9.833],[259.588,16.938],[262.27,34.07],[264.956,41.008],[266.647,35.345],[271.474,13.678],[273.332,9],[274.379,14.873],[277.271,33.17],[279.746,42.678],[281.119,36.842],[285.068,14.807],[286.575,5.236],[287.901,9.843],[291.044,30.411],[293.665,41.31],[296.659,26.955],[300.624,11.524],[302.948,14.729],[306.499,37.527],[307.446,42.055],[310.766,25.333],[315.478,11.468],[317.427,13.059],[319.3,29.243],[322.549,39.619],[326.507,28.443],[328.967,13.752],[329,11.778]]}}},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":6},"c":{"a":0,"k":[0.145,0.357,0.729]}},{"ty":"tr","a":{"a":0,"k":[166,24]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[166,24]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}}]},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":1,"o":{"a":0,"k":100},"w":{"a":0,"k":4},"c":{"a":0,"k":[0.118,0.118,0.118]}},{"ty":"tm","nm":"Trim Path","e":{"a":1,"k":[{"o":{"x":0.33,"y":1},"i":{"x":0.68,"y":1},"s":[0],"t":30},{"s":[100],"t":60}]},"o":{"a":0,"k":0},"s":{"a":0,"k":0},"m":1}],"ind":5},{"ty":4,"nm":"Shape Layer 1","sr":1,"st":0,"op":183,"ip":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[166,22.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[171.124,36.353]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"shapes":[{"ty":"gr","nm":"Group 1","it":[{"ty":"sh","nm":"Path 1","d":1,"ks":{"a":0,"k":{"c":false,"i":[[0,0],[-2.098,6.01],[-1.726,4.331],[-0.186,0.938],[-0.522,-3.347],[-0.301,-2.302],[-0.487,-0.394],[-2.823,11.768],[-0.401,0.629],[-1.7,-7.832],[-0.943,-1.25],[-2.722,11.277],[-0.527,0.651],[-0.132,-8.709],[-1.032,-2.707],[-0.533,-0.577],[-1.851,12.323],[-0.162,1.264],[-1.217,-4.273],[-1.428,-5.072],[-0.521,-0.625],[-0.698,4.137],[-0.568,2.185],[-0.029,-0.118],[-1.388,-7.128],[-1.084,-1.838],[-0.198,0.012],[-1.334,4.66],[-0.624,1.837],[-0.179,-0.029],[-0.329,-2.017],[-0.26,-0.851],[-0.683,0.742],[-1.292,3.591],[-0.217,2.248],[-0.773,-2.053],[-0.45,-1.169],[-1.64,4.075],[-1.698,4.754],[-0.203,1.098],[-0.284,-9.046],[-1.617,-3.903],[-0.349,-0.266],[-1.691,8.965],[-0.37,1.337],[-3.014,-8.234],[-1.169,-2.645],[-0.506,-0.409],[-2.938,10.123],[-0.233,0.886],[-3.312,-10.986],[-0.646,-1.662],[-0.261,-0.017],[-1.046,8.039],[-0.296,2.229],[-1.188,-4.346],[-1.259,-5.116],[-0.22,0.061],[-0.838,4.836],[-1.002,5.475],[-0.405,0.68],[-2.36,-10.623],[-1.034,-1.583],[-0.281,-0.001],[-1.232,4.439],[-1.315,5.26],[-0.272,0.644],[-2.785,-12.006],[-0.463,-1.855],[-3.688,10.694],[-0.604,1.347],[-1.303,-4.683],[-1.226,-4.138],[-1.25,5.024],[-1.392,4.859],[-0.536,-0.723],[-1.637,-5.88],[-0.269,-2.605],[-0.772,5.104],[-0.814,5.165],[-0.242,-0.012],[-1.549,-4.277],[-1.544,-4.427],[-0.805,-1.465],[-1.769,11.699],[-0.301,2.242],[-0.165,-1.159],[-1.492,-8.68],[-0.135,-0.824],[-1.495,7.812],[-1.057,2.534],[-1.19,-4.908],[-1.101,-4.979],[-0.361,-0.351],[-1.115,11.063],[-0.458,0.335],[-2.444,-7.288],[-1.568,-5.465],[-0.304,-0.372],[-1.013,4.574],[-1.018,4.896],[-0.875,2.351],[-0.628,0.272],[-2.512,-4.959],[-0.799,-2.792],[-0.968,-3.198],[-1.697,9.746],[-0.099,1.119],[0.066,0.858]],"o":[[0,-0.546],[1.649,-4.725],[1.906,-4.783],[0.847,-4.267],[0.483,3.096],[0.141,1.08],[0.623,0.504],[1.237,-5.156],[0.343,-0.537],[1.932,8.9],[0.413,0.547],[1.274,-5.28],[0.412,-0.509],[0.101,6.639],[0.572,1.5],[0.427,0.463],[0.762,-5.07],[0.162,-1.264],[1.217,4.273],[1.428,5.072],[2.93,3.514],[0.543,-3.217],[0.136,-0.523],[0.196,0.787],[2.421,12.432],[0.22,0.373],[0.511,-0.031],[4.602,-16.071],[0.165,-0.485],[5.819,0.956],[0.498,3.051],[0.132,0.43],[2.193,-2.382],[3.04,-8.448],[0.563,-5.815],[0.81,2.15],[0.141,0.365],[1.64,-4.075],[2.236,-6.26],[0.182,-0.986],[0.31,9.874],[0.885,2.138],[0.649,0.495],[1.974,-10.473],[0.186,-0.668],[1.593,4.35],[0.371,0.839],[0.484,0.391],[1.672,-5.761],[0.232,-0.881],[1.552,5.151],[0.158,0.407],[0.636,0.04],[0.514,-3.951],[0.295,-2.229],[1.187,4.346],[1.259,5.116],[0.221,-0.061],[0.838,-4.836],[1.003,-5.475],[0.414,-0.695],[1.934,8.708],[0.255,0.391],[0.28,0.001],[1.233,-4.439],[1.314,-5.26],[0.172,-0.409],[1.604,6.916],[0.292,1.171],[1.631,-4.731],[0.604,-1.347],[1.303,4.683],[1.226,4.138],[1.25,-5.024],[1.392,-4.859],[1.367,1.846],[1.777,6.382],[0.076,0.744],[0.772,-5.104],[0.814,-5.165],[0.241,0.012],[1.549,4.277],[2.097,6.011],[0.392,0.713],[0.985,-6.514],[0.125,-0.927],[0.566,3.977],[0.625,3.631],[0.083,0.506],[1.936,-10.117],[0.129,-0.31],[1.19,4.908],[1.204,5.449],[0.5,0.488],[1.014,-10.067],[0.608,-0.445],[1.881,5.609],[1.848,6.445],[0.105,0.129],[1.013,-4.574],[1.52,-7.31],[0.479,-1.288],[0.662,-0.287],[3.481,6.873],[1.06,3.704],[0.217,0.716],[0.623,-6.438],[0.04,-0.63],[0,0]],"v":[[3,38.834],[5.445,29.941],[12.064,12.946],[14.502,6.329],[16.882,26.47],[17.569,33.854],[18.814,36.137],[24.504,16.053],[26.504,8.782],[29.691,22.038],[34.871,34.368],[39.982,15.05],[42.645,7.47],[43.282,22.678],[45.563,34.395],[47.395,37.668],[51.279,17.469],[52.084,8.377],[53.776,11.677],[58.532,29.268],[61.162,36.611],[66.926,17.769],[68.926,8.757],[69.097,7.895],[71.102,19.968],[76.817,36.361],[77.461,37.068],[79.606,30.447],[85.926,10.382],[86.456,9.387],[90.702,29.295],[92.495,36.423],[93.433,36.54],[98.591,26.693],[101.284,10.203],[107.183,28.773],[109.335,34.862],[111.601,30.611],[117.853,14.077],[120.651,4.464],[121.308,17.214],[125.522,34.965],[127.478,38.423],[130.593,23.007],[133.939,9.193],[139.602,23.709],[143.584,34.206],[144.839,36.241],[150.535,19.136],[152.999,10.17],[158.871,26.963],[161.901,35.388],[162.551,36.172],[165.026,23.356],[166.236,13.474],[167.876,14.945],[172.536,33.765],[174.254,39.41],[175.508,33.783],[178.821,14.554],[180.715,6.639],[185.461,23.925],[190.243,36.216],[191.03,36.998],[192.844,32.16],[197.545,13.996],[199.54,6.295],[204.47,26.036],[207.637,37.995],[214.146,22.874],[217.055,13.279],[219.356,17.494],[224.085,34.776],[226.748,33.449],[231.698,13.972],[234.033,10.002],[238.399,21.959],[240.832,36.429],[241.978,31.568],[244.888,11.589],[246.209,6.109],[248.21,10.759],[254.185,27.644],[258.174,37.626],[262.182,18.682],[263.41,6.56],[263.732,6.287],[266.951,26.912],[267.624,33.516],[270.502,21.22],[275.071,5.303],[276.937,10.739],[281.22,29.849],[283.151,36.517],[285.31,18.538],[288.478,3.042],[292.496,12.957],[298.603,33.734],[301.158,41.986],[302.47,36.871],[306.374,18.77],[309.227,5.894],[311.183,3.487],[315.832,10.946],[321.713,26.686],[324.291,36.929],[328.147,21.032],[328.963,10.566],[328.957,8.322]]}}},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":6},"c":{"a":0,"k":[0.145,0.357,0.729]}},{"ty":"tr","a":{"a":0,"k":[166,22.5]},"s":{"a":0,"k":[100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[166,22.5]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}}]},{"ty":"st","nm":"Stroke","lc":2,"lj":2,"ml":1,"o":{"a":0,"k":100},"w":{"a":0,"k":4},"c":{"a":0,"k":[0.118,0.118,0.118]}},{"ty":"tm","nm":"Trim Path","e":{"a":1,"k":[{"o":{"x":0.33,"y":1},"i":{"x":0.68,"y":1},"s":[0],"t":0},{"s":[100],"t":30}]},"o":{"a":0,"k":0},"s":{"a":0,"k":0},"m":1}],"ind":6}],"v":"5.7.0","fr":30,"op":180,"ip":0,"assets":[]};
+
+  // ---------- Chiron session replay: the copy ----------
+  // Everything the replay says lives here. Edit freely; the layout code below
+  // reads it. `narration` is Rahul's speech bubble for the slide, plain text.
+  // In the slide copy, **text** is bold and ==text== gets the soft highlighter.
+  const replays = {
+    chiron: {
+      slides: [
+        {
+          name: "Diagnose and build",
+          split: true,
+          narration: "Chiron is an AI tutor I built as a Claude Skill. A few key questions find where you're stuck, then it fits a lesson to that gap, drafted while you talked.",
+          type: "chat",
+          messages: [
+            { who: "teacher", text: "**/teachme** I use ChatGPT to help plan lessons for my 7th graders, but I don’t really know how it works." },
+            { who: "chiron", text: "A lesson plan cites “Martinez & Cole (2019).” The study doesn’t exist. **Where did it come from?**" },
+            { who: "teacher", text: "Maybe ==it memorized everything and rewords it?== Autocomplete seems ==too simple to write a unit plan.==" },
+            { who: "chiron", think: "She just named what she can’t explain. That’s the gap. Stop asking and build.",
+              text: "**Hold onto that doubt.** Module 1 starts from it.",
+              status: "Building Module 1 around “too simple”" },
+          ],
+          artifact: {
+            src: "chiron-replay-module.webp", width: 880, height: 1280, fade: true, tall: true,
+            title: "Module 1 · One word at a time", note: "opens on her own words, highlighted",
+            alt: "Module 1 opening, quoting the teacher's doubt back to her with it highlighted",
+          },
+        },
+        {
+          name: "The loop",
+          narration: "Behind that exchange is the loop every course runs: questions until you're stuck, a lesson built there, then flashcards you write yourself.",
+          type: "loop",
+          label: "Chiron's core loop: Ask, then a repeating loop of Answer, Module and Flashcards, one lap per module.",
+          start: { title: "Ask", sub: ["Name anything you", "want to learn"] },
+          // angle in degrees around the loop; 180 is the left of the circle
+          nodes: [
+            { angle: 180, title: "Answer",     sub: ["Socratic questions find", "what you can't yet explain"] },
+            { angle: 300, title: "Module",     sub: ["A lesson built around", "that gap, with checks"] },
+            { angle: 60,  title: "Flashcards", sub: ["Write each card yourself,", "revise until it's right"] },
+          ],
+          center: ["One lap", "per module"],
+          centerSmall: ["until the", "course is done"],
+          notes: {
+            build: ["Builds the module while", "you keep talking"],
+            cards: ["Wrong answers", "become cards"],
+            next:  ["Next module adapts to", "what your answers showed"],
+          },
+          back: "↺ Back to 1 for the next module",
+        },
+        {
+          name: "Simulate",
+          narration: "Chiron builds a simulation only when there's a real control to turn. This one is live: press Write the rest a few times, then predict what randomness at 0 will do and try it.",
+          type: "machine",
+          // the panel as Chiron built it in Module 1, with its own wording;
+          // only the run history is shortened so it fits the window
+          frame: { title: "Module 1 · The next-token machine", note: "built during the session, live here" },
+          title: "The next-token machine",
+          caption: "Schematic: a tiny hand-built version with a few dozen tokens and made-up scores. A real model scores about 100,000 tokens using everything it has read, but the loop is the same.",
+          prompt: "A simple way for students to see photosynthesis is to",
+          scoresLabel: "Next-token scores",
+          stepLabel: "Step {n}: scores for the next token (picked one is filled in)",
+          waiting: "press Write",
+          slider: "Randomness:",
+          sliderWords: { zero: "(always the favorite)", normal: "(normal)", high: "(long shots get more chances)" },
+          button: "Write the rest",
+          clear: "Clear history",
+          runsLabel: "Runs so far",
+          keepRuns: 2,
+          stepMs: 550,
+          // Chiron's Module 1 token table with its grammar fixed. The original
+          // could write "a leaf disks" and "count bubbles form", so leaf goes
+          // to in or under, float only to spinach disks, and the 5% "count"
+          // opening is folded into "watch". Every path now reads as a sentence.
+          table: {
+            START:     [[" place", .45], [" put", .25], [" watch", .20], [" float", .10]],
+            " place":  [[" a", .75], [" two", .25]],
+            " put":    [[" a", .8], [" two", .2]],
+            " watch":  [[" a", .6], [" bubbles", .4]],
+            " float":  [[" spinach", 1]],
+            " a":      [[" plant", .5], [" leaf", .3], [" sprig", .2]],
+            " two":    [[" plants", 1]],
+            " plant":  [[" in", .55], [" under", .45]],
+            " sprig":  [[" in", .55], [" under", .45]],
+            " plants": [[" in", .5], [" under", .5]],
+            " leaf":   [[" in", .55], [" under", .45]],
+            " spinach":[[" disks", 1]],
+            " disks":  [[" in", 1]],
+            " bubbles":[[" form", .6], [" rise", .4]],
+            " form":   [[" on", .5], [" from", .5]],
+            " rise":   [[" from", 1]],
+            " on":     [[" the", 1]],
+            " from":   [[" the", 1]],
+            " the":    [[" leaves", .65], [" plant", .35]],
+            " in":     [[" bright", .5], [" sunlight", .35], [" water", .15]],
+            " under":  [[" bright", .4], [" sunlight", .4], [" lamplight", .2]],
+            " bright": [[" light", .6], [" sunlight", .4]],
+          },
+          stop: [" light", " sunlight", " water", " lamplight", " leaves"],
+        },
+        {
+          name: "Check",
+          narration: "Each wrong option in a check stands for a specific wrong model. Her pick shows she thinks the model can go back and fix its own mistakes.",
+          type: "check",
+          artifact: {
+            src: "chiron-replay-check.webp", width: 1360, height: 712,
+            title: "Module 1 · Knowledge check", note: "her answer",
+            alt: "Module check: she chose 'It notices the mistake a few lines later and goes back to fix it', marked Not this one",
+          },
+          results: [ { kind: "misconception", text: "Misconception noticed" } ],
+          lines: [
+            "**What she believes:** the model reasons about what it writes and catches its own mistakes.",
+            "**What Chiron does with it:** verifies the grade, then puts a case in the next module where that belief predicts wrong. It also becomes a flashcard.",
+          ],
+        },
+        {
+          name: "Grade",
+          narration: "Short written answers are graded live inside the module, against a rubric from the course plan. Her first try was half right, so the nudge asks about the missing half.",
+          type: "grade",
+          tries: [
+            { label: "Explain it to a colleague · try 1",
+              answer: "“There’s some randomness built in, so it comes out worded differently each time.”",
+              result: { kind: "flag", text: "Part of the way there" } },
+            { label: "Try 2",
+              answer: "“…if the first picks come out different, **everything after builds on that different start.**”",
+              result: { kind: "right", text: "That covers it" } },
+          ],
+          nudge: "**Nudge:** What happens to the words it chooses later if the very first word is different?",
+          hand: "Claude grades it inside the page",
+          note: "When she submits, the module sends her answer to Claude and the feedback appears right in the lesson, in seconds. She never leaves the page or copies anything back into chat. Claude grades the idea against the rubric, and wording doesn't count.",
+        },
+        {
+          name: "Flashcards",
+          narration: "Back in the chat, the learner writes flashcards, including ones from wrong answers. Chiron grades each but never writes the answer. Switch to Revised to see a second try.",
+          type: "cards",
+          card: {
+            kind: "Misconception card",
+            term: "Why is “it goes back to fix its mistakes” wrong?",
+            rounds: [
+              { label: "First try", badge: "close", badgeText: "Close",
+                answer: "Because it doesn’t really go back, it just keeps going forward.",
+                feedback: "**Close.** You said what it doesn’t do. Now say what happens to the wrong line once it’s written." },
+              { label: "Revised", badge: "done", badgeText: "Done",
+                answer: "It never rereads. A wrong line becomes part of the text every later pick reads, so the rest can build on the mistake.",
+                feedback: "**Done.** You named what happens to the mistake, which is the part that matters." },
+            ],
+          },
+          steps: [
+            { title: "Cards appear right in the chat", text: "An inline widget, no new tab or app." },
+            { title: "She writes every answer herself", text: "Generating it beats rereading a definition." },
+            { title: "Chiron grades each card and sends notes back", text: "Done, Close or Revise, with one pointed question." },
+            { title: "Revise until all pass, then it’s her deck", text: "A spaced-repetition deck that runs in any browser." },
+          ],
+        },
+        {
+          name: "Under the hood",
+          narration: "Each move maps to learning science research. The hardest design problem is restraint: helping enough without doing the learner's thinking.",
+          type: "hood",
+          now: {
+            label: "Under the hood today", title: "What Chiron does",
+            items: [
+              ["Uses Socratic questioning to find the gap, then stops and teaches", "Socratic method · impasse-driven learning"],
+              ["Confronts a wrong model with a case it gets wrong", "conceptual change"],
+              ["Builds simulations you predict, then test", "predict, observe, explain"],
+              ["Tags every wrong option with the belief behind it", "diagnostic distractors"],
+              ["Reads free-text answers and nudges toward the gap", "elaborated feedback"],
+              ["Makes you write the flashcards yourself", "generation and retrieval practice"],
+            ],
+          },
+          next: {
+            label: "Not built yet", title: "What I'm adding next",
+            items: [
+              ["Remembers you between sessions with a learner model that carries over", "knowledge tracing"],
+              ["Brings old misconceptions back on a spaced review schedule", "spacing and retrieval practice"],
+              ["Picks the lightest format that does the job: a question, a worked example, a widget or a full module", "KLI · revised Bloom's · expertise reversal"],
+              ["A standalone app on the Anthropic API, with adaptivity built in", "adaptive instruction"],
+            ],
+          },
+        },
+      ],
+    },
+  };
+
+  const slideshows = {
+    students: {
+      n: 6,
+      bubbles: [
+        "Onboarding is a student's first moment in Encourage. I led the redesign from classroom research to an A/B test, and worked with developers on the account and verification problems underneath it.",
+        "Here's the old design. Boxy, bland, and the one giant progress bar felt like a slog. I had been doodling new ideas for months in my spare time.",
+        "I led sessions watching students take the survey in real classrooms. They didn't stall on the questions; they stalled on account verification. Meanwhile the survey had to double in length to align with other data streams.",
+        "I chunked the questions by topic, gave it a fresh new look, and added micro-interactions to keep up momentum. Hitting Next plays an animation for that section.",
+        "So we moved account creation to the start, silently, and pushed verification to the end. A student who gets stuck can swap their email, since personal inboxes are often blocked on school wifi.",
+        "I built Encoura's first A/B test to check it. With twice the questions, completion held near 84%, only a 4.2-point dip."
+      ],
+      images: [
+        "onboard-1.png",
+        "onboard-2.png",
+        "onboard-3.webp",
+        "onboard-4.gif",
+        "onboard-5.png",
+        "onboard-6.png"
+      ],
+      // slide index -> first-frame still, for the pause control and for
+      // visitors whose OS asks for reduced motion
+      posters: { 3: "onboard-4-poster.webp" },
+      alts: [
+        "The Encourage onboarding survey as it shipped, on a phone.",
+        "The previous onboarding design: boxed questions under a single full-length progress bar.",
+        "The account verification step students stalled on during classroom research.",
+        "The redesigned flow, questions chunked by topic, playing its section-complete animation on Next.",
+        "Account creation moved to the start of the flow, with the option to swap to a different email address.",
+        "The A/B test results comparing completion between the old and doubled-length surveys.",
+      ],
+    },
+    educators: {
+      n: 4,
+      bubbles: [
+        "A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.",
+        "Counselors don't hold one giant roster in their head. They think in class periods, graduation years, and caseloads. Groups mirror how they already organize their day.",
+        "I worked with developers to map each stage of student onboarding. The statuses follow those stages, so educators can see in real time what a student needs to get unstuck.",
+        "Filter, search, and read connection status inline. Students already in the group stay checked and dimmed, so what you're actually adding is never ambiguous."
+      ],
+      images: [
+        "educator-1.png",
+        "educator-2.png",
+        "educator-3.png",
+        "educator-4.png"
+      ],
+      alts: [
+        "The empty state for a brand-new group, showing the shape of the table to come and a single primary action.",
+        "The groups list, organized the way counselors think about their caseload: by class period and graduation year.",
+        "A group roster with per-student onboarding status shown inline.",
+        "The add-students panel: filter and search, with students already in the group checked and dimmed.",
+      ],
+    }
+  };
+
+  const SCRIBBLE_EXT_COUNT = 6;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  // short spoken status messages; the region is emptied first so the same
+  // message twice in a row is still announced twice
+  const srStatus = document.getElementById('sr-status');
+  function announce(msg){
+    srStatus.textContent = '';
+    setTimeout(()=>{ srStatus.textContent = msg; }, 50);
+  }
+
+  // ---------- VoiceOver: read styled text once ----------
+  // WebKit exposes every inline element in a text block (the <em>, a highlight
+  // <span>) as its own accessibility object, so VoiceOver reads the block whole
+  // and then again as "6 items". Hide the styled markup from assistive tech
+  // and add a visually hidden twin holding the same words in one text node.
+  // Built from the DOM so the spoken copy can never drift from the visible copy.
+  document.querySelectorAll('[data-flatten]').forEach(el=>{
+    const words = [...el.childNodes]
+      .map(n => n.nodeName === 'BR' ? ' ' : n.textContent)
+      .join('').replace(/\s+/g, ' ').trim();
+    const shown = document.createElement('span');
+    shown.setAttribute('aria-hidden', 'true');
+    while (el.firstChild) shown.appendChild(el.firstChild);
+    const spoken = document.createElement('span');
+    spoken.className = 'sr-only';
+    spoken.textContent = words;
+    el.append(shown, spoken);
+  });
+
+  // ---------- animated GIFs: one pause/play preference for the page ----------
+  // <img> cannot stop a GIF mid-loop, so "paused" swaps in a still of the
+  // first frame. A reduced-motion OS setting starts everything paused.
+  const gifs = (function(){
+    let paused = reduceMotion.matches;
+    const subs = [];
+    const apply = ()=> subs.forEach(fn => fn(paused));
+    if (reduceMotion.addEventListener) reduceMotion.addEventListener('change', e=>{ paused = e.matches; apply(); });
+    return {
+      isPaused: ()=> paused,
+      label: p => p ? 'Play animation' : 'Pause animation',
+      subscribe(fn){ subs.push(fn); fn(paused); },
+      toggle(){
+        paused = !paused;
+        apply();
+        announce(paused ? 'Animations paused.' : 'Animations playing.');
+      }
+    };
+  })();
+
+  document.querySelectorAll('.gif-toggle[data-for]').forEach(btn=>{
+    const img = document.getElementById(btn.dataset.for);
+    const gif = img.getAttribute('src'), poster = img.dataset.poster;
+    gifs.subscribe(p=>{ img.src = p ? poster : gif; btn.textContent = gifs.label(p); });
+    btn.addEventListener('click', gifs.toggle);
+  });
+
+  function buildExtendedScribble(key){
+    const strip = document.getElementById('strip-' + key);
+    const holder = document.createElement('div');
+    holder.className = 'scribble-extended';
+    strip.appendChild(holder);
+    // the artwork holds SCRIBBLE_EXT_COUNT strokes; a longer slideshow chains
+    // copies end to end, each still sized so one stroke is one slide
+    const n = parseInt(strip.style.getPropertyValue('--n'), 10) || SCRIBBLE_EXT_COUNT;
+    const anims = Array.from({ length: Math.ceil(n / SCRIBBLE_EXT_COUNT) }, ()=>{
+      const inner = document.createElement('div');
+      inner.className = 'scribble-extended-inner';
+      holder.appendChild(inner);
+      const a = lottie.loadAnimation({
+        container: inner,
+        renderer: 'svg',
+        loop: false,
+        autoplay: false,
+        animationData: JSON.parse(JSON.stringify(SCRIBBLE_EXT_DATA))
+      });
+      a.setSpeed(1.5);
+      return a;
+    });
+    if (anims.length > 1) holder.classList.add('chained');
+    const per = SCRIBBLE_EXT_DATA.op / SCRIBBLE_EXT_COUNT;
+    // one copy's frame for overall stroke t; the first copy stays full once
+    // the strip has moved past it
+    const local = (k, t)=> Math.max(0, Math.min(SCRIBBLE_EXT_COUNT, t - k * SCRIBBLE_EXT_COUNT));
+    // goToAndStop counts from the start of the last segment played, so each
+    // copy drops its segment before jumping, or a finished copy would blank
+    const settle = (a, frame)=>{ a.resetSegments(true); a.goToAndStop(frame, true); };
+    const anim = {
+      setDirection(d){ anims.forEach(a=>a.setDirection(d)); },
+      resetSegments(f){ anims.forEach(a=>a.resetSegments(f)); },
+      goToAndStop(frame){ const t = frame / per; anims.forEach((a, k)=> settle(a, local(k, t) * per)); },
+      playSegments([from, to]){
+        const f = from / per, t = to / per;
+        anims.forEach((a, k)=>{
+          const lf = local(k, f), lt = local(k, t);
+          if (lt > lf) a.playSegments([lf * per, lt * per], true);
+          else if (anims.length > 1) settle(a, lt * per);
+        });
+      },
+    };
+    let shown = 0, loaded = false, seen = false;
+    // the first stroke waits until the strip is both loaded and half on screen,
+    // so it draws in front of the reader rather than on page load
+    function drawFirst(){
+      if (!loaded || !seen || shown) return;
+      anim.setDirection(1);
+      if (reduceMotion.matches) anim.goToAndStop(per, true);
+      else anim.playSegments([0, per], true);
+      shown = 1;
+    }
+    let pending = anims.length;
+    anims.forEach(a=> a.addEventListener('DOMLoaded', ()=>{ if (--pending === 0){ loaded = true; drawFirst(); } }));
+    if ('IntersectionObserver' in window){
+      const io = new IntersectionObserver(entries=>{
+        // a beat's pause lets the section's screenshot decode first; drawing
+        // straight away stalled on it and the stroke skipped ahead
+        if (entries.some(e=>e.isIntersecting)){
+          io.disconnect();
+          setTimeout(()=>{ seen = true; drawFirst(); }, 200);
+        }
+      }, { threshold:0.5 });
+      io.observe(strip);
+    } else {
+      seen = true;
+    }
+    return function sync(target){
+      if(target === shown) return;
+      if (reduceMotion.matches){
+        // land on the finished state rather than drawing the scribble in
+        anim.resetSegments(true);
+        anim.goToAndStop(target * per, true);
+      } else if(target > shown){
+        anim.setDirection(1);
+        anim.playSegments([shown * per, target * per], true);
+      } else {
+        anim.setDirection(1);
+        anim.resetSegments(true);
+        anim.goToAndStop(target * per, true);
+      }
+      shown = target;
+    };
+  }
+
+  function buildSlideshow(key){
+    const cfg = slideshows[key];
+    let idx = 0;
+    const strip = document.getElementById('strip-' + key);
+    strip.style.setProperty('--n', cfg.n);
+
+    const region  = document.getElementById('ss-' + key);
+    const cap     = document.getElementById('cap-k-' + key);
+    const bubble  = document.getElementById('bubble-' + key);
+    const img     = document.getElementById('img-' + key);
+    const zoomBtn = document.getElementById('zoom-' + key);
+    const gifBtn  = document.getElementById('gif-' + key);
+    const arrows  = [...document.querySelectorAll(`[data-target="${key}"]`)];
+
+    const syncExtended = buildExtendedScribble(key);
+    const syncMarks = ()=> syncExtended(idx + 1);
+
+    // only write text that actually changed: both the caption and the bubble are
+    // live regions, and rewriting identical text would re-announce it
+    const setText = (el, s)=>{ if (el.textContent !== s) el.textContent = s; };
+
+    // replay the slide-up: dropping and re-adding the class restarts the keyframes
+    function popBubble(){
+      bubble.classList.remove('bubble-wait', 'bubble-in');
+      void bubble.offsetWidth;
+      bubble.classList.add('bubble-in');
+    }
+    if ('IntersectionObserver' in window){
+      bubble.classList.add('bubble-wait');
+      const io = new IntersectionObserver(entries=>{
+        if (entries.some(e=>e.isIntersecting)){ io.disconnect(); popBubble(); }
+      }, { threshold:0.5 });
+      io.observe(bubble);
+    }
+
+    function render(){
+      setText(cap, `Slide ${idx+1} of ${cfg.n}`);
+      setText(bubble, cfg.bubbles[idx]);
+
+      // each frame shows something different, so the alt has to change with
+      // it -- one alt on the <img> would describe only the slide it loaded on
+      const alt = cfg.alts ? cfg.alts[idx] : '';
+      const poster = cfg.posters && cfg.posters[idx];
+      img.src = poster && gifs.isPaused() ? poster : cfg.images[idx];
+      img.alt = alt;
+      zoomBtn.setAttribute('aria-label', alt ? 'Enlarge image: ' + alt : 'Enlarge image');
+
+      // the onboarding GIF ships with a 1px dark stroke drawn around all four
+      // edges; nudge it under the container's clip. Keyed on the slide, not the
+      // src, so the GIF and its first-frame still share the same 800x440 box.
+      img.closest('.device').classList.toggle('bleed', !!poster);
+      if (gifBtn){
+        gifBtn.hidden = !poster;
+        gifBtn.textContent = gifs.label(gifs.isPaused());
+      }
+
+      arrows.forEach(btn=>{
+        const dir = parseInt(btn.dataset.dir, 10);
+        const atEnd = dir < 0 ? idx === 0 : idx === cfg.n - 1;
+        btn.setAttribute('aria-disabled', atEnd ? 'true' : 'false');
+      });
+    }
+
+    function go(dir){
+      const next = Math.max(0, Math.min(cfg.n - 1, idx + dir));
+      const moved = next !== idx;
+      if(moved){
+        idx = next;
+        syncMarks();
+      }
+      render();
+      if(moved) popBubble();
+    }
+
+    arrows.forEach(btn=>{
+      btn.addEventListener('click', ()=> go(parseInt(btn.dataset.dir, 10)));
+    });
+    // left / right arrow keys work anywhere inside the carousel
+    region.addEventListener('keydown', e=>{
+      if (e.key === 'ArrowLeft'){ e.preventDefault(); go(-1); }
+      else if (e.key === 'ArrowRight'){ e.preventDefault(); go(1); }
+    });
+    if (gifBtn) gifBtn.addEventListener('click', gifs.toggle);
+    if (cfg.posters) gifs.subscribe(render);
+
+    render();
+  }
+
+  Object.keys(slideshows).forEach(buildSlideshow);
+
+  // ---------- Chiron session replay: layout ----------
+  // Renders the `replays` data into the slide card. Copy belongs in the data;
+  // this only decides how each type of slide is laid out.
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  // **bold** and ==highlight==. Styled text gets the data-flatten treatment:
+  // the styled copy is hidden from assistive tech and a plain twin is read
+  // instead, so VoiceOver doesn't read the block twice
+  function rich(s, hlClass){
+    const plain = esc(s.replace(/\*\*|==/g, ''));
+    const styled = esc(s)
+      .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+      .replace(/==(.+?)==/g, `<span class="${hlClass || 'rp-said'}">$1</span>`);
+    return styled === plain ? plain
+      : `<span aria-hidden="true">${styled}</span><span class="sr-only">${plain}</span>`;
+  }
+
+  function rpArtifact(a){
+    return `<figure class="rp-artifact${a.wide ? ' wide' : ''}${a.fade ? ' fade' : ''}${a.tall ? ' tall' : ''}">
+      <figcaption class="rp-artifact-bar"><span>${esc(a.title)}</span><span>${esc(a.note)}</span></figcaption>
+      <img src="${a.src}" alt="${esc(a.alt)}" width="${a.width}" height="${a.height}">
+    </figure>`;
+  }
+
+  function rpMessage(m){
+    return `<div class="rp-msg ${m.who}">
+      <span class="rp-mono-label">${m.who === 'teacher' ? 'User' : 'Chiron'}</span>
+      ${m.think ? `<p class="rp-think"><span class="rp-think-k">Thinking</span>${rich(m.think)}</p>` : ''}
+      <p class="rp-body">${rich(m.text)}</p>
+      ${m.status ? `<p class="rp-build"><span class="rp-dot" aria-hidden="true"></span>${esc(m.status)}</p>` : ''}
+    </div>`;
+  }
+  const rpChat = s => s.split
+    // chat on the left, the module it builds on the right
+    ? `<div class="rp-split rp-chatsplit"><div class="rp-chatcol">${s.messages.map(rpMessage).join('')}</div>${rpArtifact(s.artifact)}</div>`
+    : s.messages.map(rpMessage).join('') + (s.artifact ? rpArtifact(s.artifact) : '');
+
+  // the loop: nodes sit on a circle at their data angles, and each arc runs
+  // from where it clears one node's box to where it reaches the next
+  function rpLoop(s){
+    const cx = 620, cy = 232, r = 188, W = 196, H = 86;
+    const f = v => v.toFixed(1);
+    const P = (a, rad = r) => [cx + rad * Math.cos(a * Math.PI / 180), cy + rad * Math.sin(a * Math.PI / 180)];
+    const inBox = (a, at, pad) => { const [x, y] = P(a), [bx, by] = P(at);
+      return Math.abs(x - bx) < W / 2 + pad && Math.abs(y - by) < H / 2 + pad; };
+    const arcs = s.nodes.map((nd, k) => {
+      const to = s.nodes[(k + 1) % s.nodes.length];
+      let a1 = nd.angle, a2 = to.angle; if (a2 <= a1) a2 += 360;
+      while (inBox(a1, nd.angle, 10)) a1++;
+      while (inBox(a2, to.angle, 14)) a2--;
+      return [a1, a2];
+    });
+    const arc = ([a1, a2], cls, rad = r, arrow = true) => { const [x1, y1] = P(a1, rad), [x2, y2] = P(a2, rad);
+      return `<path class="${cls}" d="M${f(x1)} ${f(y1)} A${rad} ${rad} 0 0 1 ${f(x2)} ${f(y2)}"${arrow ? ' marker-end="url(#rp-ah)"' : ''}/>`; };
+    const node = (x, y, n, it, cls) => `<g class="node ${cls || ''}"><rect x="${f(x - W / 2)}" y="${f(y - H / 2)}" width="${W}" height="${H}" rx="14"/>
+      <circle class="num" cx="${f(x - W / 2 + 22)}" cy="${f(y - H / 2 + 24)}" r="12"/><text class="numt" x="${f(x - W / 2 + 22)}" y="${f(y - H / 2 + 28.5)}" text-anchor="middle">${n}</text>
+      <text class="ttl" x="${f(x - W / 2 + 42)}" y="${f(y - H / 2 + 31)}">${esc(it.title)}</text>
+      <text class="sub" x="${f(x - W / 2 + 16)}" y="${f(y + 12)}">${esc(it.sub[0])}</text><text class="sub" x="${f(x - W / 2 + 16)}" y="${f(y + 30)}">${esc(it.sub[1])}</text></g>`;
+    const note = (lines, x, y, cls) => lines.map((l, k) => `<text class="hand ${cls || ''}" x="${x}" y="${y + k * 22}">${esc(l)}</text>`).join('');
+    const [b1, b2] = arcs[0];
+    let svg = `<svg class="rp-loop-svg" viewBox="0 0 1000 482" role="img" aria-label="${esc(s.label)}">
+      <defs><marker id="rp-ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#1D4ED8"/></marker>
+      <marker id="rp-ah2" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#182338"/></marker></defs>
+      <circle class="ring" cx="${cx}" cy="${cy}" r="${r}"/>`;
+    svg += arcs.map(a => arc(a, 'arc')).join('');
+    svg += arc([b1 + 6, b2 - 6], 'bgarc', r + 30, false);
+    svg += note(s.notes.build, 268, 38) + note(s.notes.cards, 830, 210) + note(s.notes.next, 268, 436);
+    svg += `<path class="entry" d="M${118 + W / 2 - 8} ${cy} L${f(cx - r - W / 2 - 10)} ${cy}" marker-end="url(#rp-ah2)"/>` + node(118, cy, 0, s.start, 'start');
+    svg += s.nodes.map((nd, k) => { const [x, y] = P(nd.angle); return node(x, y, k + 1, nd); }).join('');
+    svg += `<text class="center" x="${cx}" y="${cy - 25}" text-anchor="middle">${esc(s.center[0])}</text><text class="center" x="${cx}" y="${cy - 1}" text-anchor="middle">${esc(s.center[1])}</text>`;
+    svg += `<text class="center2" x="${cx}" y="${cy + 23}" text-anchor="middle">${esc(s.centerSmall[0].toUpperCase())}</text><text class="center2" x="${cx}" y="${cy + 40}" text-anchor="middle">${esc(s.centerSmall[1].toUpperCase())}</text></svg>`;
+    const li = (n, it, cls) => `<li class="${cls || ''}"><span class="rp-n">${n}</span><span><b>${esc(it.title)}</b>${esc(it.sub.join(' '))}</span></li>`;
+    return svg + `<ol class="rp-loop-list">${li(0, s.start, 'start')}${s.nodes.map((nd, k) => li(k + 1, nd)).join('')}<li class="back">${esc(s.back)}</li></ol>`;
+  }
+
+  let rpTried = false;   // the visitor has pressed Write the rest at least once
+  function rpMachine(s){
+    return `<figure class="rp-artifact rp-mod-frame">
+      <figcaption class="rp-artifact-bar"><span>${esc(s.frame.title)}</span><span>${esc(s.frame.note)}</span></figcaption>
+      <div class="rp-mod"><div class="rp-mod-panel">
+        <h3>${esc(s.title)}</h3>
+        <p class="rp-mod-cap">${esc(s.caption)}</p>
+        <p><code>${esc(s.prompt)}</code><span class="rp-mod-out" data-rp="out"></span></p>
+        <div>
+          <p class="rp-mod-eyebrow" data-rp="step">${esc(s.scoresLabel)}</p>
+          <div class="rp-mod-chips" data-rp="scores"><span class="rp-mod-chip">${esc(s.waiting)}</span></div>
+        </div>
+        <label for="rp-temp" class="rp-mod-slider">
+          <span><b>${esc(s.slider)}</b> <span data-rp="tval">1.0</span> <span class="rp-mod-cap" data-rp="tword">${esc(s.sliderWords.normal)}</span></span>
+          <input id="rp-temp" type="range" min="0" max="2" step="0.1" value="1">
+        </label>
+        <div class="rp-mod-btns">
+          <button type="button" class="rp-mod-btn${rpTried ? '' : ' rp-pulse'}" data-rp="go" aria-disabled="false">${esc(s.button)}</button>
+          <button type="button" class="rp-mod-btn quiet" data-rp="clear">${esc(s.clear)}</button>
+        </div>
+        <div><p class="rp-mod-eyebrow">${esc(s.runsLabel)}</p><ol class="rp-mod-hist" data-rp="runs"></ol></div>
+      </div></div>
+    </figure>`;
+  }
+  // scores reshaped by randomness: 0 always takes the favorite, 1 keeps the
+  // table's odds, 2 flattens them so long shots win more often
+  function rpReweight(list, T){
+    if (T < 0.05){ const m = Math.max(...list.map(x => x[1])); return list.map(([t, p]) => [t, p === m ? 1 : 0]); }
+    const w = list.map(([t, p]) => [t, Math.pow(p, 1 / T)]), sum = w.reduce((a, b) => a + b[1], 0);
+    return w.map(([t, v]) => [t, v / sum]);
+  }
+  function rpDraw(list){
+    let r = Math.random(), acc = 0;
+    for (const [t, p] of list){ acc += p; if (r <= acc) return t; }
+    return list[list.length - 1][0];
+  }
+  // the module's own loop and labels; runs are numbered from the first, and
+  // the list shows the latest few so the panel keeps its height
+  function rpInitMachine(view, s){
+    const q = k => view.querySelector(`[data-rp="${k}"]`);
+    const temp = view.querySelector('#rp-temp'), go = q('go'), stop = new Set(s.stop);
+    const waiting = `<span class="rp-mod-chip">${esc(s.waiting)}</span>`;
+    let runs = [], busy = false;
+    const showT = () => {
+      const v = +temp.value;
+      q('tval').textContent = v.toFixed(1);
+      q('tword').textContent = v < 0.05 ? s.sliderWords.zero : v <= 1 ? s.sliderWords.normal : s.sliderWords.high;
+      temp.setAttribute('aria-valuetext', `${v.toFixed(1)} ${q('tword').textContent}`);
+    };
+    const showRuns = () => {
+      q('runs').innerHTML = runs.slice(-s.keepRuns).map((r, k, shown) =>
+        `<li value="${runs.length - shown.length + k + 1}">…to${esc(r.text)}. (randomness ${r.T.toFixed(1)})</li>`).join('');
+    };
+    temp.addEventListener('input', showT); showT();
+    q('clear').addEventListener('click', () => {
+      if (busy) return;
+      runs = []; showRuns();
+      q('out').textContent = ''; q('scores').innerHTML = waiting; q('step').textContent = s.scoresLabel;
+    });
+    go.addEventListener('click', async () => {
+      rpTried = true; go.classList.remove('rp-pulse');
+      if (busy) return;
+      // aria-disabled, not disabled, so focus stays on the button mid-run
+      busy = true; go.setAttribute('aria-disabled', 'true');
+      const T = +temp.value; let prev = 'START', text = '';
+      q('out').textContent = '';
+      for (let n = 0; n < 10; n++){
+        const list = rpReweight(s.table[prev], T).sort((a, b) => b[1] - a[1]), pick = rpDraw(list);
+        q('scores').innerHTML = list.map(([t, p]) => `<span class="rp-mod-chip${t === pick ? ' top' : ''}">${esc(t.trim())}<span class="pct">${Math.round(p * 100)}%</span></span>`).join('');
+        q('step').textContent = s.stepLabel.replace('{n}', n + 1);
+        text += pick; q('out').textContent = text;
+        if (!reduceMotion.matches) await new Promise(res => setTimeout(res, s.stepMs));
+        if (!go.isConnected) return;      // left the slide mid-run
+        if (stop.has(pick) || !s.table[pick]) break;
+        prev = pick;
+      }
+      q('out').textContent = text + '.';
+      runs.push({ text, T }); showRuns();
+      // one announcement per run rather than a live region chattering every step
+      announce(`Run ${runs.length}: ${s.prompt}${text}.`);
+      busy = false; go.setAttribute('aria-disabled', 'false');
+    });
+  }
+
+  function rpShot(s){
+    return `<button type="button" class="zoom-btn rp-shot" aria-label="Enlarge image: ${esc(s.alt)}"><img src="${s.src}" alt="${esc(s.alt)}" width="${s.width}" height="${s.height}"></button>
+      <p class="rp-mono-label rp-shot-cap" aria-hidden="true">${esc(s.caption)}</p>`;
+  }
+  function rpInitShot(view){
+    const btn = view.querySelector('.rp-shot'), img = btn.querySelector('img');
+    btn.addEventListener('click', () => window.openLightbox && window.openLightbox(img.currentSrc || img.src, img.alt));
+  }
+
+  function rpCheck(s){
+    return `<div class="rp-split wide-left">${rpArtifact(s.artifact)}
+      <div class="rp-side"><p class="rp-chips">${s.results.map(r => `<span class="rp-chip ${r.kind}">${esc(r.text)}</span>`).join('')}</p>
+      ${s.lines.map(l => `<p>${rich(l)}</p>`).join('')}</div></div>`;
+  }
+
+  function rpGrade(s){
+    const attempt = t => `<div class="rp-attempt"><span class="rp-mono-label">${esc(t.label)}</span><p>${rich(t.answer)}</p><span class="rp-chip ${t.result.kind}">${esc(t.result.text)}</span></div>`;
+    return `<div class="rp-split">
+      <div class="rp-side">${attempt(s.tries[0])}<p class="rp-nudge">${rich(s.nudge)}</p>${attempt(s.tries[1])}</div>
+      <div class="rp-side"><p class="rp-hand">${esc(s.hand)}</p><p>${esc(s.note)}</p></div></div>`;
+  }
+
+  function rpCard(c, k){
+    const r = c.rounds[k];
+    return `<div class="rp-card"><div class="rp-card-top"><span class="rp-card-kind">${esc(c.kind)}</span><span class="rp-badge ${r.badge}">${esc(r.badgeText)}</span></div>
+      <p class="rp-card-term">${esc(c.term)}</p><p class="rp-card-back">${esc(r.answer)}</p>
+      <p class="rp-card-fb ${r.badge}">${rich(r.feedback)}</p></div>`;
+  }
+  function rpCards(s){
+    const c = s.card;
+    return `<div class="rp-fcslide">
+      <div class="rp-inline">
+        <div data-rp="card" aria-live="polite">${rpCard(c, 0)}</div>
+        <div class="rp-row"><div class="rp-seg">${c.rounds.map((r, k) => `<button type="button" data-round="${k}" aria-pressed="${k === 0}">${esc(r.label)}</button>`).join('')}</div></div>
+      </div>
+      <ol class="rp-steps">${s.steps.map(st => `<li><span><b>${esc(st.title)}</b>${esc(st.text)}</span></li>`).join('')}</ol>
+    </div>`;
+  }
+  function rpInitCards(view, s){
+    const btns = [...view.querySelectorAll('.rp-seg button')];
+    btns.forEach(b => b.addEventListener('click', () => {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      const k = +b.dataset.round;
+      btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      view.querySelector('[data-rp="card"]').innerHTML = rpCard(s.card, k);
+    }));
+  }
+
+  function rpHood(s){
+    const col = (c, cls, ic) => `<div class="rp-col ${cls}"><p class="rp-mono-label">${esc(c.label)}</p><h3>${esc(c.title)}</h3>
+      <ul>${c.items.map(([t, term]) => `<li><span class="rp-ic" aria-hidden="true">${ic}</span><span>${esc(t)}<small>${esc(term)}</small></span></li>`).join('')}</ul></div>`;
+    return `<div class="rp-hood">${col(s.now, 'now', '✓')}${col(s.next, 'next', '')}</div>`;
+  }
+
+  const RP_RENDER = { shot: rpShot, loop: rpLoop, chat: rpChat, machine: rpMachine, check: rpCheck, grade: rpGrade, cards: rpCards, hood: rpHood };
+
+  // the order a slide's pieces come in, as [elements, delay in ms] beats.
+  // Chat runs on a conversation's rhythm: the teacher replies quickly, and
+  // Chiron takes a longer beat, as if typing.
+  const RP_ENTER = {
+    chat: v => {
+      const beats = []; let t = 120, first = true;
+      v.querySelectorAll('.rp-msg, .rp-artifact').forEach(el => {
+        if (!first) t += el.classList.contains('chiron') ? 900 : el.classList.contains('teacher') ? 650 : 700;
+        first = false; beats.push([[el], t]);
+        // a Chiron turn shows its thinking first, then the reply, then what it's building
+        if (el.querySelector('.rp-think')) { t += 500; beats.push([[el.querySelector('.rp-body')], t]); }
+        if (el.querySelector('.rp-build')) { t += 400; beats.push([[el.querySelector('.rp-build')], t]); }
+      });
+      return beats;
+    },
+    loop: v => [
+      ...[...v.querySelectorAll('.rp-loop-svg .node')].map((el, k) => [[el], 100 + k * 150]),
+      [[...v.querySelectorAll('.rp-loop-svg .ring, .rp-loop-svg .arc, .rp-loop-svg .bgarc, .rp-loop-svg .entry, .rp-loop-svg .center, .rp-loop-svg .center2')], 450],
+      [[...v.querySelectorAll('.rp-loop-svg .hand')], 950],
+      ...[...v.querySelectorAll('.rp-loop-list li')].map((el, k) => [[el], 100 + k * 120]),
+    ],
+    machine: v => [[[v.querySelector('.rp-artifact')], 100]],
+    shot: v => [[[v.querySelector('.rp-shot')], 100], [[v.querySelector('.rp-shot-cap')], 500]],
+    check: v => [v.querySelector('.rp-artifact'), ...v.querySelectorAll('.rp-side > *')].map((el, k) => [[el], 100 + k * 160]),
+    grade: v => [...v.querySelectorAll('.rp-side > *')].map((el, k) => [[el], 100 + k * 220]),
+    cards: v => [v.querySelector('.rp-inline'), ...v.querySelectorAll('.rp-steps li')].map((el, k) => [[el], 100 + k * 160]),
+    hood: v => [...v.querySelectorAll('.rp-col')].flatMap((col, c) =>
+      [[[col], 100 + c * 200], ...[...col.querySelectorAll('li')].map((li, k) => [[li], 260 + c * 200 + k * 90])]),
+  };
+  function rpStage(view, type){
+    (RP_ENTER[type] ? RP_ENTER[type](view) : []).forEach(([els, t]) => els.forEach(el => {
+      if (!el) return;
+      el.classList.add('rp-in');
+      el.style.setProperty('--delay', t + 'ms');
+    }));
+  }
+  const RP_INIT = { shot: rpInitShot, machine: rpInitMachine, cards: rpInitCards };
+
+  function buildReplay(key){
+    const cfg = replays[key], n = cfg.slides.length;
+    let idx = 0;
+    document.getElementById('strip-' + key).style.setProperty('--n', n);
+    const region = document.getElementById('ss-' + key);
+    const cap    = document.getElementById('cap-k-' + key);
+    const bubble = document.getElementById('bubble-' + key);
+    const view   = document.getElementById('view-' + key);
+    const arrows = [...document.querySelectorAll(`[data-target="${key}"]`)];
+    const syncExtended = buildExtendedScribble(key);
+
+    // same slide-up as the screenshot slideshows
+    function popBubble(){
+      bubble.classList.remove('bubble-wait', 'bubble-in');
+      void bubble.offsetWidth;
+      bubble.classList.add('bubble-in');
+    }
+    if ('IntersectionObserver' in window){
+      bubble.classList.add('bubble-wait');
+      const io = new IntersectionObserver(entries=>{
+        if (entries.some(e=>e.isIntersecting)){ io.disconnect(); popBubble(); }
+      }, { threshold:0.5 });
+      io.observe(bubble);
+    }
+
+    // entrances play once the card is on screen; before that the first slide
+    // waits, so its chat isn't over by the time anyone scrolls to it
+    let seen = !('IntersectionObserver' in window);
+    function play(){
+      if (!seen) return;
+      view.classList.remove('rp-play');
+      void view.offsetWidth;
+      view.classList.add('rp-play');
+    }
+    if (!seen){
+      const io = new IntersectionObserver(entries=>{
+        if (entries.some(e=>e.isIntersecting)){ io.disconnect(); seen = true; play(); }
+      }, { threshold:0.35 });
+      io.observe(view);
+    }
+
+    function render(){
+      const s = cfg.slides[idx];
+      // the caption and the narration are the live regions; the slide body is
+      // not, so a slide change announces two short lines, not a whole transcript
+      const label = `Slide ${idx + 1} of ${n} · ${s.name}`;
+      if (cap.textContent !== label) cap.textContent = label;
+      if (bubble.textContent !== s.narration) bubble.textContent = s.narration;
+      view.innerHTML = `<div class="rp-slide">${RP_RENDER[s.type](s)}</div>`;
+      view.scrollTop = 0;
+      rpStage(view, s.type);
+      play();
+      if (RP_INIT[s.type]) RP_INIT[s.type](view, s);
+      arrows.forEach(btn=>{
+        const dir = parseInt(btn.dataset.dir, 10);
+        btn.setAttribute('aria-disabled', (dir < 0 ? idx === 0 : idx === n - 1) ? 'true' : 'false');
+      });
+    }
+
+    function go(dir){
+      const next = Math.max(0, Math.min(n - 1, idx + dir));
+      if (next === idx) return;
+      idx = next;
+      syncExtended(idx + 1);
+      render();
+      popBubble();
+    }
+
+    arrows.forEach(btn => btn.addEventListener('click', () => go(parseInt(btn.dataset.dir, 10))));
+    // left / right anywhere in the card, except where the keys already mean
+    // something: the randomness slider
+    region.addEventListener('keydown', e=>{
+      if (e.target.closest('input, textarea, select')) return;
+      if (e.key === 'ArrowLeft'){ e.preventDefault(); go(-1); }
+      else if (e.key === 'ArrowRight'){ e.preventDefault(); go(1); }
+    });
+
+    render();
+  }
+
+  Object.keys(replays).forEach(buildReplay);
+
+  // ---------- click an image to enlarge; pinch/scroll to zoom ----------
+  (function(){
+    const lb = document.createElement('div');
+    lb.className = 'lightbox';
+    lb.setAttribute('role', 'dialog');
+    lb.setAttribute('aria-modal', 'true');
+    lb.setAttribute('aria-label', 'Enlarged image');
+
+    const big = document.createElement('img');
+    big.alt = '';
+    const zoomBtn = document.createElement('button');
+    zoomBtn.type = 'button';
+    zoomBtn.className = 'lightbox-zoom';
+    zoomBtn.textContent = 'Zoom in';
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'lightbox-close';
+    closeBtn.setAttribute('aria-label', 'Close enlarged image');
+    closeBtn.innerHTML = '<span aria-hidden="true">&times;</span>';
+    const hint = document.createElement('div');
+    hint.className = 'lightbox-hint';
+    hint.setAttribute('aria-hidden', 'true');
+    hint.textContent = 'Tap image or press Zoom to magnify · pinch to zoom further · Esc to close';
+
+    lb.appendChild(big);
+    lb.appendChild(zoomBtn);
+    lb.appendChild(closeBtn);
+    lb.appendChild(hint);
+    document.body.appendChild(lb);
+
+    let lastFocus = null;
+    let inerted = [];
+
+    function setZoom(on){
+      lb.classList.toggle('zoomed', on);
+      zoomBtn.textContent = on ? 'Zoom out' : 'Zoom in';
+    }
+
+    window.openLightbox = openLightbox;
+    function openLightbox(src, alt){
+      lastFocus = document.activeElement;
+      big.src = src;
+      big.alt = alt || '';
+      lb.setAttribute('aria-label', alt ? 'Enlarged image: ' + alt : 'Enlarged image');
+      lb.classList.add('open');
+      setZoom(false);
+      lb.scrollTop = 0; lb.scrollLeft = 0;
+      document.body.style.overflow = 'hidden';
+      // everything behind the dialog is made inert so neither Tab nor a screen
+      // reader's virtual cursor can wander back into the page while it is open
+      inerted = [...document.body.children].filter(el => el !== lb && !el.hasAttribute('inert'));
+      inerted.forEach(el => el.setAttribute('inert', ''));
+      closeBtn.focus();
+    }
+
+    function closeLightbox(){
+      lb.classList.remove('open', 'zoomed');
+      big.removeAttribute('src');
+      document.body.style.overflow = '';
+      inerted.forEach(el => el.removeAttribute('inert'));
+      inerted = [];
+      if(lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    closeBtn.addEventListener('click', closeLightbox);
+    zoomBtn.addEventListener('click', ()=> setZoom(!lb.classList.contains('zoomed')));
+    lb.addEventListener('click', e => { if(e.target === lb) closeLightbox(); });
+    big.addEventListener('click', () => setZoom(!lb.classList.contains('zoomed')));
+    // on the document, not the dialog: tapping the image to zoom drops focus
+    // onto <body>, and Escape still has to close from there
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Escape' && lb.classList.contains('open')) closeLightbox();
+    });
+    lb.addEventListener('keydown', e => {
+      // belt and braces with inert: keep Tab cycling between the two controls
+      if(e.key === 'Tab'){
+        const order = [zoomBtn, closeBtn];
+        const i = order.indexOf(document.activeElement);
+        const next = e.shiftKey ? (i <= 0 ? order.length - 1 : i - 1) : (i === order.length - 1 ? 0 : i + 1);
+        e.preventDefault();
+        order[next].focus();
+      }
+    });
+
+    // the replay re-renders its slides, so it binds its own button (rpInitShot)
+    document.querySelectorAll('.zoom-btn:not(.rp-shot)').forEach(btn => {
+      const img = btn.querySelector('img');
+      btn.addEventListener('click', () => openLightbox(img.currentSrc || img.src, img.alt));
+    });
+  })();
+
+</script>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p class="footer-kicker">Let&rsquo;s talk</p>
+      <nav class="footer-links" aria-label="Contact">
+        <a href="mailto:rahulshah.design@gmail.com">rahulshah.design@gmail.com</a>
+        <a href="https://www.linkedin.com/in/rahul-shah-design/" target="_blank" rel="noopener">LinkedIn<span class="sr-only"> (opens in new tab)</span></a>
+        <a href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">GitHub<span class="sr-only"> (opens in new tab)</span></a>
+        <a href="resume.pdf" download="Rahul-Shah-Resume.pdf">R&eacute;sum&eacute; (PDF)</a>
+      </nav>
+      <p class="footer-note">Designed and built by Rahul Shah</p>
+    </div>
+  </footer>
+
+<canvas id="doodle-ink" class="doodle-canvas" aria-hidden="true"></canvas>
+<canvas id="doodle-hl" class="doodle-canvas doodle-hl" aria-hidden="true"></canvas>
+<div id="doodle-hit" class="doodle-hit"></div>
+
+<script>
+  (function(){
+    const inkCanvas = document.getElementById('doodle-ink');
+    const hlCanvas   = document.getElementById('doodle-hl');
+    const hit        = document.getElementById('doodle-hit');
+    const inkCtx = inkCanvas.getContext('2d');
+    const hlCtx  = hlCanvas.getContext('2d');
+    const buttons = [...document.querySelectorAll('.dtool')];
+
+    const TOOL_STYLE = {
+      pen:         { color:'#1D4ED8', width:3,  ctx:()=>inkCtx },
+      highlighter: { color:'#F5E14F', width:16, ctx:()=>hlCtx  }
+    };
+    // same shapes as the toolbar icons, rotated 45° around their own tip so
+    // the tip point is invariant under rotation -- the hotspot below (12,27)
+    // and (13,26) is that exact pivot, not an eyeballed approximation, so the
+    // rendered nib lands precisely on the pixel that's actually drawn to
+    const CURSORS = {
+      pen: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'%3E%3Cg transform='rotate(45 12 27)'%3E%3Crect x='9.5' y='3' width='5' height='5' rx='1' fill='%231D4ED8'/%3E%3Crect x='9.5' y='9' width='5' height='13' rx='1' fill='%23182338'/%3E%3Cpath d='M9.5 22 L14.5 22 L12 27 Z' fill='%231D4ED8'/%3E%3C/g%3E%3C/svg%3E\") 12 27, crosshair",
+      highlighter: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'%3E%3Cg transform='rotate(45 13 26)'%3E%3Crect x='8.5' y='3' width='9' height='5' rx='1' fill='%23182338'/%3E%3Crect x='8.5' y='9' width='9' height='11' rx='1' fill='%23F5E14F'/%3E%3Cpath d='M9 20 L17 20 L14.5 26 L11.5 26 Z' fill='%23182338'/%3E%3C/g%3E%3C/svg%3E\") 13 26, crosshair"
+    };
+
+    // in-memory only, on purpose -- this is a throwaway gimmick, not a
+    // feature, and a stranger's leftover scribble greeting the next visitor
+    // (or Rahul himself) on reload would be a bug, not a nice touch.
+    let strokes = [];
+
+    let activeTool = 'cursor';
+    let current = null;
+    let docW = 0, docH = 0;
+
+    function strokePath(ctx, pts, color, width){
+      if (!pts.length) return;
+      if (pts.length === 1){
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(pts[0][0]*docW, pts[0][1]*docH, width/2, 0, Math.PI*2);
+        ctx.fill();
+        return;
+      }
+      ctx.strokeStyle = color; ctx.lineWidth = width;
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0]*docW, pts[0][1]*docH);
+      for (let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0]*docW, pts[i][1]*docH);
+      ctx.stroke();
+    }
+
+    function redraw(){
+      inkCtx.clearRect(0,0,docW,docH);
+      hlCtx.clearRect(0,0,docW,docH);
+      strokes.forEach(s=>{
+        const style = TOOL_STYLE[s.tool];
+        if (style) strokePath(style.ctx(), s.points, style.color, style.width);
+      });
+    }
+
+    function setSize(){
+      const newW = document.documentElement.scrollWidth;
+      const newH = document.documentElement.scrollHeight;
+      if (newW === docW && newH === docH) return;
+      docW = newW; docH = newH;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      [inkCanvas, hlCanvas].forEach(c=>{
+        c.width = Math.max(1, Math.round(docW*dpr));
+        c.height = Math.max(1, Math.round(docH*dpr));
+        c.style.height = docH + 'px';
+        c.getContext('2d').setTransform(dpr,0,0,dpr,0,0);
+      });
+      hit.style.height = docH + 'px';
+      redraw();
+    }
+
+    function setTool(tool){
+      activeTool = tool;
+      buttons.forEach(b=>{
+        if (b.dataset.tool === 'erase') return;
+        const on = b.dataset.tool === tool;
+        b.classList.toggle('active', on);
+      });
+      document.body.classList.toggle('doodle-drawing', tool !== 'cursor');
+      hit.style.cursor = CURSORS[tool] || 'auto';
+    }
+
+    function endStroke(){
+      if (!current) return;
+      if (current.points.length === 1){
+        const style = TOOL_STYLE[current.tool];
+        strokePath(style.ctx(), current.points, style.color, style.width);
+      }
+      strokes.push(current);
+      current = null;
+    }
+
+    buttons.forEach(b=>{
+      b.addEventListener('click', ()=>{
+        const tool = b.dataset.tool;
+        if (tool === 'erase'){
+          strokes = [];
+          redraw();
+          setTool('cursor');
+          return;
+        }
+        setTool(tool);
+      });
+    });
+
+
+    document.addEventListener('keydown', e=>{
+      if (e.key === 'Escape' && activeTool !== 'cursor') setTool('cursor');
+    });
+
+    hit.addEventListener('pointerdown', e=>{
+      if (activeTool !== 'pen' && activeTool !== 'highlighter') return;
+      e.preventDefault();
+      hit.setPointerCapture(e.pointerId);
+      current = { tool: activeTool, points: [[e.pageX/docW, e.pageY/docH]] };
+    });
+    hit.addEventListener('pointermove', e=>{
+      if (!current) return;
+      const prev = current.points[current.points.length-1];
+      const pt = [e.pageX/docW, e.pageY/docH];
+      current.points.push(pt);
+      const style = TOOL_STYLE[current.tool];
+      strokePath(style.ctx(), [prev, pt], style.color, style.width);
+    });
+    hit.addEventListener('pointerup', endStroke);
+    hit.addEventListener('pointercancel', endStroke);
+
+    setSize();
+    redraw();
+    window.addEventListener('resize', ()=>{ clearTimeout(window.__doodleRT); window.__doodleRT = setTimeout(setSize, 150); });
+    window.addEventListener('load', setSize);
+    if ('ResizeObserver' in window){
+      new ResizeObserver(()=>{ clearTimeout(window.__doodleRT); window.__doodleRT = setTimeout(setSize, 150); }).observe(document.body);
+    }
+  })();
+</script>
+
+<!-- GoatCounter: cookieless page-view analytics. build-artifact.py strips this line. -->
+<script data-goatcounter="https://rahulshah.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+
+</body>
+</html>
