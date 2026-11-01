@@ -35,7 +35,9 @@ If a page or résumé gains a new fact, add it here. Anything not listed: ask Ra
 3. **Chiron** (personal project, Mar 2026–present). A Claude Skill that acts as a Socratic AI
    tutor: asks calibrating questions, finds where the learner is stuck, builds interactive
    modules (e.g. a next-token machine), reads back check answers, notices misconceptions, adapts
-   the next lesson, then flashcards. Built in code. It does **not** gate progression on
+   the next lesson, then flashcards. It writes its modules as code, but Chiron itself is a
+   Claude Skill: not built or prototyped with Claude Code. Its design problem is giving the
+   learner exactly what they need in the moment, no more and no less. It does **not** gate progression on
    mastery (the master résumé still says it does; flag it if a résumé is being reused).
 4. **Design system, data and craft.** Owns the Encourage Design System (governance so engineers
    and designers compose from consistent components); Storybook/Chromatic UI review; drives much
@@ -53,6 +55,8 @@ If a page or résumé gains a new fact, add it here. Anything not listed: ask Ra
 - No claims about the employer's own product record (DreamBox's "past compliance" line was cut).
 - Completion "held near 84%", not "no drop".
 - Chiron doesn't gate on mastery.
+- Chiron is a Claude Skill, not something built "with Claude Code" or "in HTML and JavaScript".
+- Rahul didn't personally sit in classrooms: say "our research" or "classroom research", never "I watched students" or "classroom visits".
 - Headlines don't parrot the posting's phrases.
 - Case titles stay at their original wording and length unless he asks.
 - No em dashes in narration or body copy.
