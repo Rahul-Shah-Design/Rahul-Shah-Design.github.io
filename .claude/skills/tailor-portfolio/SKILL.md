@@ -108,6 +108,13 @@ The new folder is what keeps the main portfolio untouched; nothing outside it ch
    ```
    It refuses a résumé that's over one page, whose link doesn't match the folder, or whose
    header is off centre. Fit by tightening spacing or copy, never by shrinking type.
+   **Name the download after the company.** The file stays `resume.pdf` in the folder (the
+   build script and the page expect that), but every link to it gets a `download` attribute
+   of `Rahul-Shah-Resume-<CompanyName>.pdf`: the company in PascalCase, no spaces or
+   punctuation (`Rahul-Shah-Resume-CollegeBoard.pdf`, `Rahul-Shah-Resume-ParentSquare.pdf`).
+   There are usually two links, the résumé section's button and the footer; `grep -n
+   'resume.pdf' <slug>/index.html` and change them all. A page forked from another employer's
+   carries that employer's name in these attributes, so check none is left behind.
 9. **Open questions go on the page, visibly.** Anything you need Rahul to confirm (a number, a
    claim, a placeholder image) gets a `.todo` flag (see `dreambox/`) rather than a guess. List
    them in the hand-back; all must be cleared before the page is shared.
@@ -137,7 +144,8 @@ The new folder is what keeps the main portfolio untouched; nothing outside it ch
 - Accessibility intact: one `h1`, case titles `h2`, `aria-labelledby` on sections, alt text on
   every new image, 4.5:1 text contrast (3:1 UI), skip link first, GIFs have posters.
 - `grep` the folder for the base page's company name, slug and logo so nothing from the old
-  employer leaks through (titles, alt text, `aria-label`s, résumé link, lockup).
+  employer leaks through (titles, alt text, `aria-label`s, résumé link, résumé download
+  name, lockup).
 
 ## 5. Hand back
 
