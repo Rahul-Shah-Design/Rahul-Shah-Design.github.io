@@ -11,6 +11,9 @@ If a page or résumé gains a new fact, add it here. Anything not listed: ask Ra
 - M.S. Learning Design & Technology, University of Maryland Global Campus, 2024–2026.
 - CPACC in progress (not earned).
 - Mentoring: the RIT UX club.
+- Took statistics and research methods in college (his words; which school wasn't specified).
+- **Has not shipped AI features at Encoura.** Chiron is where he learned to design with AI; lead
+  with it as a personal project, never as a shipped product.
 - Interns: Rochester Regional Health UX/UI (Feb–Aug 2020): contact tracing system for RIT,
   18,000+ students and staff, reduced user workload by half. Prudential UX Research (Jun–Aug
   2019): usability tests and interviews with insurance brokers on a Salesforce CRM app.
@@ -42,7 +45,13 @@ If a page or résumé gains a new fact, add it here. Anything not listed: ask Ra
    of the team's product analytics, presents at Data Jams; first on the team to connect Pendo to
    Claude Code over MCP; pioneered AI prototyping at Encoura with Figma Make and Claude Code;
    motion with Lottie.
-5. **Accessibility and cross-platform.** Led the migration of Encourage to React and React
+5. **Data and analytics** (Panorama). Presents user analytics at recurring Data Jam calls to the
+   rest of the product team: makes the graphs and talks through the statistics for colleagues
+   less at home with numbers, explaining the concepts he uses (one call was a whole walkthrough
+   of Simpson's paradox). In Encourage he has designed views of salary data and college population
+   breakdowns (audience and screenshots not yet confirmed). `craft-analytics.webp` is a product
+   analytics report (saved colleges per visitor, by grade level).
+6. **Accessibility and cross-platform.** Led the migration of Encourage to React and React
    Native, layouts that hold up on school-issued devices, to WCAG 2.1 AA.
 
 ## Corrections Rahul has already made (don't reintroduce)
