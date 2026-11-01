@@ -14,6 +14,7 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 ├── index.html                  ← Design portfolio (the page people are sent to)
 ├── assets/                     ← Images, résumé and Lottie bundle for the root page
 ├── CLAUDE.md                   ← This file
+├── .claude/skills/tailor-portfolio/ ← Skill for building a new employer page from a job posting
 ├── tools/build-artifact.py     ← Builds a CSP-safe Artifact preview of any page
 ├── tools/build-resume.py       ← Renders a folder's resume.docx into resume.pdf + resume.png
 ├── modern-classroom-project/   ← Employer-tailored variant of the root page
@@ -112,6 +113,10 @@ the slide copy, `**text**` is bold and `==text==` gets the soft highlighter.
   the replay has to be made in all ten pages.
 
 ## Employer-Specific Portfolio Pages
+
+To build a new one from a job posting, use the `tailor-portfolio` skill
+(`.claude/skills/tailor-portfolio/`); its `references/facts.md` lists the facts copy may use and
+the corrections Rahul has already made. Keep it current when a page or résumé gains a new fact.
 
 Some pages are tailored portfolios built for a specific job application, not general vibe-coded projects. These live at the **repo root** (not under `ClaudeProjects/`) so the URL is short and memorable, e.g. `rahul-shah-design.github.io/modern-classroom-project`.
 
