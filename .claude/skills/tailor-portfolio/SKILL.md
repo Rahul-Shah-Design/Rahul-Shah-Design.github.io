@@ -29,6 +29,13 @@ writing any copy.
   text. **Never guess the posting.**
 - Also look at the company's own site for: brand colours and type, the product's real users,
   and a logo you could use in the "Prepared for" lockup.
+- **Rename the chat** as soon as you know the company and role, so Rahul can find it later.
+  In a cloud session: call `mcp__claude-code-remote__get_session` with no arguments to get
+  this session's id, then `mcp__claude-code-remote__set_session_title` with that id and a title
+  like `College Board: Senior Product Designer` (company first, role short). If they aren't in
+  your tool list, try ToolSearch with
+  `select:mcp__claude-code-remote__get_session,mcp__claude-code-remote__set_session_title`.
+  If they still aren't available (a local session), skip it silently.
 - Show a short **"What they're hiring for"** summary (5–8 bullets) before editing anything.
 
 ## 2. Read his material
