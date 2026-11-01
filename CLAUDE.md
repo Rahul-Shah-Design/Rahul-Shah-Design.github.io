@@ -285,3 +285,8 @@ This site is served via GitHub Pages from the `main` branch root. The portfolio 
 `https://rahulshah.design` (custom domain via `CNAME`; `rahul-shah-design.github.io` redirects there)
 
 When working on a new project, develop on a `claude/...` branch and merge to `main` to deploy.
+
+`_config.yml` keeps working files in the repo but off the site: `CLAUDE.md` files, `README.md`,
+`ACCESSIBILITY.md`, `chiron-stress-test/` and `tools/` are excluded (and Jekyll skips dot-folders
+such as `.claude/` on its own). They stay readable on GitHub while the repo is public. Add any new
+notes file or project `CLAUDE.md` to the list.

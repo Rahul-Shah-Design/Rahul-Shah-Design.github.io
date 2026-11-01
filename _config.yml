@@ -1,0 +1,13 @@
+# GitHub Pages (Jekyll) settings. The site is plain HTML; this file only keeps
+# working notes, prompts and build scripts in the repo but off rahulshah.design.
+# Folders starting with a dot (.claude/) are already left out by Jekyll.
+exclude:
+  - CLAUDE.md
+  - README.md
+  - ACCESSIBILITY.md
+  - ClaudeProjects/BudgetTracker/CLAUDE.md
+  - ClaudeProjects/GrindLog/CLAUDE.md
+  - ClaudeProjects/atlas-run/CLAUDE.md
+  - ClaudeProjects/User State Map/process-states.py
+  - chiron-stress-test
+  - tools
