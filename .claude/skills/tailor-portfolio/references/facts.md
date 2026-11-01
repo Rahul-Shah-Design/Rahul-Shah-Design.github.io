@@ -20,7 +20,7 @@ If a page or résumé gains a new fact, add it here. Anything not listed: ask Ra
 | Fact | Wording in use | Notes |
 |---|---|---|
 | Encourage reach | "reaches 1 million students" (hero) | Platform-wide |
-| Onboarding survey audience | "150,000+ students" | The onboarding case and the React Native résumé bullet |
+| Encourage reach | nearly 300,000 lifetime users (total students served, not active users) | Rahul updated this in Nov 2026; pages and résumés still say "150,000+ students" until they're updated. Never call it active or daily users |
 | Onboarding result | survey asked for **2x** the data, completion **held near 84%**, a **4.2-point dip** | Never "no drop" or "maintained completion" on a page |
 | A/B test | Encoura's **first in-app A/B test** | |
 | Educators | counselors "track hundreds of students at once" | |
