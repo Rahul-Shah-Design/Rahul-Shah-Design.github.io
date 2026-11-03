@@ -31,6 +31,9 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
     ├── BudgetTracker/
     │   ├── budget-tracker.html
     │   └── CLAUDE.md
+    ├── WadaPalette/
+    │   ├── wada-palette.html
+    │   └── CLAUDE.md
     └── User State Map/
         ├── state-map.html
         └── process-states.py
@@ -68,6 +71,7 @@ vibe-coded projects have their own index at `ClaudeProjects/index.html`, which i
 | Budget Tracker | `ClaudeProjects/BudgetTracker/` | Single-file budgeting SPA with paycheck calculator and YTD dashboard |
 | User State Map | `ClaudeProjects/User State Map/` | Interactive US map of college destination flows by state |
 | Atlas Run | `ClaudeProjects/atlas-run/` | Geography quiz game — pick/find/type countries on an interactive D3 world map |
+| Wada Palette | `ClaudeProjects/WadaPalette/` | Explorer for Sanzo Wada's color combinations, with locks, shades, skin tone and a wardrobe/outfit mode |
 
 ## Chiron Session Replay (root page)
 
