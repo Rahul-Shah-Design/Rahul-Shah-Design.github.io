@@ -7,122 +7,82 @@
 <link rel="icon" type="image/png" href="avatar-rahul.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
   :root{
-    /* Wikimedia Foundation's palette, from the --wp--preset--color tokens in
-       wikimediafoundation.org's theme: black type on white, the "AAA" blue,
-       green, red and purple for anything that carries text, the bright and
-       pale tints for bands and wells. Type is the site's own pairing:
-       Montserrat 700 for headings, Inter for text. Every text pair is
-       checked to 4.5:1. */
-    --ink:#000000; --text2:#404040;
-    --blue:#0C57A8; --blue-dark:#0A4686; --link:#0063BF;
-    --green:#246342; --red:#990000; --purple:#5748B5;
-    --bright-blue:#049DFF; --bright-green:#71D1B3; --pink:#E679A6; --yellow:#F0BC00;
-    --blue-01:#C0E6FF; --green-01:#DBF3EC; --pink-01:#F9DDE9; --purple-01:#D5D1EC; --yellow-01:#F3F3E2;
-    --lightest-blue:#F2FAFF; --lightest-purple:#F9F7FF; --lightest-pink:#FDF1F6;
-    --paper:#FFFFFF; --hairline:#E5E5E5; --outline:#7F7F7F;
-    --flag:#990000;
-    --shadow-2:0 4px 16px rgba(0,0,0,.06);
-    --shadow-3:0 16px 48px rgba(0,0,0,.10);
-    --wrap:1040px;
-    --display:'Montserrat', 'Inter', 'Helvetica Neue', sans-serif;
-    /* each section's well tint and dot color; set per section below */
-    --well:var(--blue-01); --dot:var(--blue);
+    /* Wikipedia's Vector 2022 skin and the Codex design system's tokens:
+       #202122 text on white, #36c progressive blue for links and primary
+       actions, #6a60b0 visited links, #54595d subtle text, #a2a9b1 and
+       #c8ccd1 borders, #f8f9fa and #eaecf0 for infoboxes and thumbs. Type
+       is Wikipedia's own: the system sans for text, Linux Libertine (or
+       Georgia) for headings. No web fonts; Wikipedia loads none either.
+       Links clear 3:1 against body text (Codex's own pairing) and underline
+       on hover and focus; every text pair is 4.5:1 or better. */
+    --ink:#202122; --text2:#54595d;
+    --link:#3366cc; --link-visited:#6a60b0; --link-hover:#3056a9;
+    --blue:#3366cc; --blue-dark:#233566;
+    --border:#a2a9b1; --border-soft:#c8ccd1; --hairline:#eaecf0;
+    --subtle:#f8f9fa; --interactive:#eaecf0;
+    --yellow-01:#fef6e7; --yellow:#fc3;
+    --paper:#FFFFFF; --outline:#72777d;
+    --shadow-2:0 1px 4px rgba(0,0,0,.12);
+    --sans:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Lato, Helvetica, Arial, sans-serif;
+    --serif:'Linux Libertine', 'Georgia', 'Times', serif;
+    --well:var(--interactive);
   }
   *{ box-sizing:border-box; }
-  /* scroll-padding keeps a focused or anchored element from landing under
-     the sticky top bar */
-  html{ scroll-behavior:smooth; scroll-padding-top:84px; }
+  html{ scroll-behavior:smooth; scroll-padding-top:16px; }
   body{
     margin:0; background:var(--paper); color:var(--ink);
-    font-family:'Inter', 'Helvetica Neue', Arial, sans-serif;
-    font-size:17px; line-height:1.6;
-    -webkit-font-smoothing:antialiased;
+    font-family:var(--sans); font-size:16px; line-height:1.6;
   }
-  h1,h2,h3{ margin:0; font-family:var(--display); font-weight:700; letter-spacing:-0.01em; color:var(--ink); text-wrap:balance; }
+  h1,h2,h3{ margin:0; color:var(--ink); font-weight:normal; }
   p{ margin:0; }
   img{ max-width:100%; display:block; }
-  a{ color:inherit; }
-  ::selection{ background:var(--blue-01); color:var(--ink); }
-  :focus-visible{ outline:3px solid var(--blue); outline-offset:3px; }
+  ::selection{ background:#c8ccd1; }
+  :focus-visible{ outline:2px solid var(--blue); outline-offset:2px; }
 
-  /* the homepage's highlighter: a pale pink block with a thin bright-blue
-     edge along its top, square cornered */
-  .hl{
-    background:linear-gradient(var(--blue-01) 0 .14em, var(--pink-01) .14em);
-    padding:0 .12em;
-    -webkit-box-decoration-break:clone; box-decoration-break:clone;
-    /* the block is taller than the tight heading line-height, so painted in
-       order it would cover the descenders of the line above. Drop it behind
-       the text; isolation keeps it from sinking behind the band as well. */
-    position:relative; z-index:-1;
-  }
-  [data-flatten]{ isolation:isolate; }
-  .wrap{ max-width:var(--wrap); margin:0 auto; padding:0 28px; position:relative; }
-  .caps{
-    font-size:14px; font-weight:700; line-height:1.35;
-    letter-spacing:0.6px; text-transform:uppercase; color:var(--text2);
-  }
+  /* links as Wikipedia draws them: blue, no underline until hover or focus */
+  a{ color:var(--link); text-decoration:none; }
+  a:visited{ color:var(--link-visited); }
+  a:hover, a:focus-visible{ text-decoration:underline; }
+  a:active{ color:var(--blue-dark); }
 
   /* ---------- ACCESSIBILITY UTILITIES ---------- */
-  /* visually hidden but still read by screen readers */
   .sr-only{
     position:absolute !important; width:1px; height:1px; padding:0; margin:-1px;
     overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
   }
-  /* first tab stop on the page; parked off-screen until it has focus */
   .skip-link{
     position:absolute; left:16px; top:-100px; z-index:60;
-    background:var(--blue); color:#fff; padding:12px 18px; border-radius:2px;
-    font-size:15px; font-weight:700; text-decoration:none;
+    background:var(--blue); color:#fff; padding:10px 16px; border-radius:2px;
+    font-weight:700;
   }
+  .skip-link:visited{ color:#fff; }
   .skip-link:focus{ top:12px; }
 
-  /* ---------- TODO FLAGS ----------
-     Placeholders and open questions for Rahul, styled so they cannot slip
-     through to a shared link unnoticed. Search the source for "TODO". */
-  .todo{
-    border:3px dashed var(--flag); border-radius:4px; background:var(--lightest-pink);
-    color:var(--ink); padding:14px 18px; font-size:15px; line-height:1.5;
-  }
-  .todo b{ color:var(--flag); text-transform:uppercase; letter-spacing:.5px; font-weight:700; }
-
-  /* ---------- BUTTONS + CHIPS ---------- */
-  /* the site's buttons: square cornered, bold Inter, solid fill or a
-     black outline */
+  /* ---------- BUTTONS (Codex) ---------- */
   .btn{
     display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
-    min-height:48px; padding:0 22px; border-radius:2px; border:2px solid transparent;
-    font:inherit; font-size:16px; font-weight:700; line-height:24px;
-    text-decoration:none; cursor:pointer;
-    transition:background .14s ease, border-color .14s ease;
+    min-height:44px; padding:0 16px; border-radius:2px; border:1px solid var(--border);
+    font:inherit; font-size:16px; font-weight:700; line-height:1.25;
+    cursor:pointer; text-decoration:none;
+    background:var(--subtle); color:var(--ink);
   }
-  .btn-ink{ background:var(--blue); color:#fff; border-color:var(--blue); }
-  .btn-ink:hover{ background:var(--blue-dark); border-color:var(--blue-dark); }
-  .btn-white{ background:var(--paper); color:var(--ink); border-color:var(--ink); }
-  .btn-white:hover{ background:var(--lightest-blue); }
-  .chip{
-    display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:2px;
-    font-size:14px; font-weight:600; line-height:1.4; white-space:nowrap; color:var(--ink);
-    background:var(--paper); border:1px solid var(--hairline);
-  }
-  .chip::before{ content:""; width:8px; height:8px; border-radius:50%; background:var(--c, var(--green)); }
+  .btn:visited{ color:var(--ink); }
+  .btn:hover{ background:var(--paper); color:#404244; text-decoration:none; }
+  .btn-ink, .btn-ink:visited{ background:var(--blue); border-color:var(--blue); color:#fff; }
+  .btn-ink:hover{ background:var(--link-hover); border-color:var(--link-hover); color:#fff; }
 
   /* ---------- IMAGE LIGHTBOX ---------- */
-  /* a real <button> around each enlargeable image: native keyboard and
-     screen-reader semantics instead of role=button on an <img> */
   .zoom-btn{
     display:block; width:100%; height:100%; padding:0; margin:0; border:0;
     background:none; cursor:zoom-in; font:inherit; color:inherit;
   }
-  /* the ring is inset because every container that holds one of these
-     clips overflow, which would swallow an outline drawn outside */
   .zoom-btn:focus-visible{ outline:3px solid var(--blue); outline-offset:-3px; }
   .lightbox{
     position:fixed; inset:0; z-index:100;
-    background:rgba(0,0,0,0.92);
+    background:rgba(32,33,34,0.94);
     display:none; overflow:auto; padding:20px;
     -webkit-overflow-scrolling:touch;
   }
@@ -130,115 +90,126 @@
   .lightbox img{
     margin:auto; display:block;
     max-width:100%; max-height:calc(100vh - 40px);
-    width:auto; height:auto;
-    border-radius:2px; background:var(--paper); cursor:zoom-in;
+    width:auto; height:auto; background:var(--paper); cursor:zoom-in;
   }
   .lightbox.zoomed img{ max-width:none; max-height:none; width:auto; cursor:zoom-out; }
   .lightbox-close, .lightbox-zoom{
     position:fixed; top:14px; z-index:101;
     height:44px; border-radius:2px;
-    border:1px solid rgba(255,255,255,0.5);
-    background:var(--blue); color:#fff;
+    border:1px solid var(--border); background:var(--subtle); color:var(--ink);
     line-height:1; cursor:pointer;
     display:flex; align-items:center; justify-content:center;
   }
   .lightbox-close{ right:16px; width:44px; font-size:24px; }
-  /* keyboard route to the zoom that tapping the image gives pointer users */
-  .lightbox-zoom{
-    right:70px; padding:0 18px;
-    font-family:inherit; font-size:15px; font-weight:700;
-  }
+  .lightbox-zoom{ right:70px; padding:0 16px; font-family:inherit; font-size:15px; font-weight:700; }
   .lightbox-close:focus-visible, .lightbox-zoom:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
   .lightbox-hint{
     position:fixed; left:50%; bottom:14px; transform:translateX(-50%);
     font-size:13px; color:rgba(255,255,255,0.85); pointer-events:none; text-align:center;
   }
 
-  /* ---------- TOP BAR ---------- */
-  .topbar{ position:sticky; top:0; z-index:40; background:var(--paper); border-bottom:1px solid var(--hairline); }
+  /* ---------- HEADER (Vector's top row) ---------- */
+  .topbar{ background:var(--paper); }
   .topbar-inner{
-    max-width:var(--wrap); margin:0 auto; padding:0 28px; height:76px;
+    max-width:1440px; margin:0 auto; padding:12px 48px 12px 40px; min-height:72px;
     display:flex; align-items:center; justify-content:space-between; gap:16px;
   }
-  .mark{ display:flex; align-items:center; gap:10px; font-family:var(--display); font-size:20px; font-weight:700; color:var(--ink); white-space:nowrap; }
-  .mark-dot{ width:34px; height:34px; flex-shrink:0; }
-  .topnav{ display:flex; align-items:center; gap:4px; }
-  .topnav a{
-    display:inline-flex; align-items:center; min-height:44px; padding:0 14px;
-    font-size:16px; font-weight:600; color:var(--ink); text-decoration:none; border-radius:2px;
-  }
-  .topnav a:hover{ text-decoration:underline; text-underline-offset:4px; }
+  /* his name set like the wordmark: serif small caps over a one-line tagline */
+  .mark{ display:flex; align-items:center; gap:12px; color:var(--ink); }
+  .mark-dot{ width:44px; height:44px; flex-shrink:0; }
+  .mark-name{ display:block; font-family:var(--serif); font-size:24px; line-height:1; font-variant:small-caps; letter-spacing:.02em; }
+  .mark-tag{ display:block; font-family:var(--serif); font-size:12px; line-height:1.4; margin-top:4px; }
+  .toplinks{ display:flex; gap:16px; font-size:15px; }
+  .toplinks a{ display:inline-flex; align-items:center; min-height:44px; }
 
-  /* ---------- HERO ---------- */
-  .hero{ padding:80px 0 88px; background:var(--paper); }
-  .hero-copy{ display:flex; flex-direction:column; gap:36px; }
-  /* "Prepared for" lockup: the caps label, a rule, then the Foundation's
-     own horizontal logo (wikimedia-logo.svg, from wikimediafoundation.org's
-     header), black on white as it is drawn */
-  .eyebrow{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
-  .eyebrow .caps{ padding-right:16px; border-right:1px solid var(--outline); line-height:28px; }
-  .wm-logo{ height:36px; width:auto; display:block; }
-  .hero-row{ display:flex; align-items:center; justify-content:space-between; gap:56px; }
-  .hero h1{ font-size:52px; line-height:1.12; max-width:640px; }
-  /* "At a glance" as the homepage's "By the numbers" row: a hairline
-     between items, a small colored mark, black text */
-  .glance{ width:300px; flex-shrink:0; }
-  .glance .caps{ margin-bottom:10px; }
-  .glance ul{ list-style:none; margin:0; padding:0; border-top:1px solid var(--hairline); }
-  .glance li{
-    display:flex; gap:14px; align-items:center; padding:14px 0;
-    border-bottom:1px solid var(--hairline);
-    font-size:17px; font-weight:500; line-height:1.4; color:var(--ink);
+  /* ---------- PAGE: contents rail + article ---------- */
+  .page{
+    max-width:1440px; margin:0 auto; padding:0 48px 0 40px;
+    display:grid; grid-template-columns:200px minmax(0, 1fr); gap:40px;
   }
-  .glance li::before{ content:""; width:22px; height:22px; flex:none; border-radius:50%; background:var(--d, var(--bright-blue)); }
-  .glance li:nth-child(2){ --d:var(--bright-green); }
-  .glance li:nth-child(3){ --d:var(--pink); }
-  .glance li:nth-child(4){ --d:var(--yellow); }
+  .toc{ position:sticky; top:0; align-self:start; max-height:100vh; overflow:auto; padding:22px 0 24px 20px; }
+  .toc-head{ display:flex; align-items:center; gap:12px; padding-bottom:8px; border-bottom:1px solid var(--hairline); margin-bottom:10px; }
+  .toc-head h2{ font-family:var(--sans); font-size:15px; font-weight:700; }
+  .toc-toggle{
+    font:inherit; font-size:13px; font-weight:700; color:var(--ink);
+    background:var(--interactive); border:0; border-radius:2px; padding:2px 8px; min-height:26px; cursor:pointer;
+  }
+  .toc ol{ list-style:none; margin:0; padding:0; font-size:15px; }
+  .toc li a{ display:block; padding:5px 0; line-height:1.35; }
+  .toc li a:visited{ color:var(--link); }
+  .toc li a[aria-current="true"]{ color:var(--ink); font-weight:700; }
+  .toc[data-collapsed] ol{ display:none; }
 
-  /* the homepage's deep-blue band under the hero, white bold type */
-  .intro-band{ background:var(--blue); color:#fff; padding:30px 0; }
-  .intro-band .wrap{ display:flex; align-items:center; justify-content:space-between; gap:20px 48px; flex-wrap:wrap; }
-  .hero-sub{ max-width:720px; font-size:20px; font-weight:600; line-height:1.5; }
-  .intro-band a{ color:#fff; font-weight:600; text-underline-offset:4px; white-space:nowrap; }
+  main{ min-width:0; max-width:960px; padding-bottom:40px; }
+
+  /* ---------- ARTICLE HEAD ---------- */
+  .art-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:8px 24px; flex-wrap:wrap; border-bottom:1px solid var(--border); padding-top:20px; }
+  .art-head h1{ font-family:var(--serif); font-size:28.8px; line-height:1.375; padding-bottom:2px; }
+  /* the "Prepared for" lockup sits where Wikipedia puts its language button */
+  .prepared{ display:flex; align-items:center; gap:10px; padding-bottom:8px; font-size:14px; font-weight:700; color:var(--text2); }
+  .wm-logo{ height:28px; width:auto; display:block; }
+  .tabs{ display:flex; justify-content:space-between; gap:16px; font-size:14px; border-bottom:1px solid var(--border-soft); margin-top:-1px; }
+  .tabs ul{ display:flex; gap:16px; list-style:none; margin:0; padding:0; }
+  .tabs a{ display:inline-flex; align-items:center; min-height:40px; border-bottom:2px solid transparent; margin-bottom:-1px; }
+  .tabs a:visited{ color:var(--link); }
+  .tabs a[aria-current="page"]{ color:var(--ink); border-bottom-color:var(--ink); }
+  .tabs a[aria-current="page"]:hover{ text-decoration:none; }
+  .tagline{ font-size:14px; color:var(--text2); margin:10px 0 18px; }
+
+  /* the infobox, floated right of the lead as on any biography */
+  .infobox{
+    float:right; clear:right; width:300px; margin:0 0 16px 24px;
+    border:1px solid var(--border); background:var(--subtle);
+    padding:4px; font-size:14px; line-height:1.5; border-collapse:separate; border-spacing:3px;
+  }
+  /* the caption sits outside a table's border, so it carries the box's
+     top and sides itself and the table drops its top edge */
+  .infobox{ border-top:0; }
+  .infobox caption{
+    font-size:17px; font-weight:700; padding:8px 4px 2px; caption-side:top;
+    background:var(--subtle); border:1px solid var(--border); border-bottom:0;
+  }
+  .infobox .ib-img td{ text-align:center; padding:6px 0 2px; }
+  .infobox .ib-img img{ width:120px; height:120px; margin:0 auto; }
+  .infobox .ib-cap td{ text-align:center; font-size:13px; color:var(--text2); padding-bottom:6px; }
+  .infobox th{ text-align:left; vertical-align:top; padding:3px 6px 3px 2px; width:96px; font-weight:700; }
+  .infobox td{ vertical-align:top; padding:3px 2px; }
+  .lead p{ margin-bottom:12px; }
+  .lead p:last-child{ margin-bottom:0; }
 
   /* ---------- SECTIONS ---------- */
-  section.case{ padding:96px 0; }
-  .band-white{ background:var(--paper); }
-  .band-tint{ background:var(--lightest-purple); }
-  .case-head{ display:flex; flex-direction:column; gap:14px; margin-bottom:40px; }
-  .case-head .caps{ display:flex; align-items:center; gap:10px; }
-  .case-head .caps::before{ content:""; width:12px; height:12px; flex:none; border-radius:50%; background:var(--dot); }
-  .case-title{ font-size:42px; line-height:1.15; letter-spacing:-0.01em; text-wrap:pretty; }
-  .case-row{ display:flex; align-items:center; justify-content:space-between; gap:24px 48px; }
-  .case-desc{ max-width:680px; font-size:19px; line-height:1.6; color:var(--ink); text-wrap:pretty; }
-  #onboarding{ --well:var(--blue-01); --dot:var(--bright-blue); }
-  #chiron{ --well:var(--purple-01); --dot:var(--purple); }
-  #educators{ --well:var(--green-01); --dot:var(--bright-green); }
-  #access{ --well:var(--paper); --dot:var(--pink); }
-  #process{ --dot:var(--yellow); }
+  section.case{ padding-top:28px; clear:both; }
+  .case-title{
+    font-family:var(--serif); font-size:24px; line-height:1.375;
+    border-bottom:1px solid var(--border); padding-bottom:2px; margin-bottom:10px;
+    text-wrap:pretty;
+  }
+  .case-title .ed{ font-family:var(--sans); font-size:13px; color:var(--text2); margin-left:10px; white-space:nowrap; }
+  h3{ font-family:var(--sans); font-size:16.8px; font-weight:700; line-height:1.6; margin:18px 0 4px; }
+  /* hatnotes: the italic, indented lines under a heading */
+  .hatnote{ font-style:italic; padding-left:1.6em; margin-bottom:8px; font-size:15px; }
+  .case-desc{ margin-bottom:16px; max-width:none; }
+  .art ul.plain{ margin:4px 0 12px; padding-left:1.6em; }
+  .art ul.plain li{ margin-bottom:4px; }
+  .see-also{ columns:2; column-gap:32px; }
 
-  /* ---------- SLIDESHOW MODULE ---------- */
-  .slideshow{ position:relative; }
+  /* ---------- SLIDESHOW AS A THUMB FRAME ---------- */
+  .slideshow{ position:relative; margin:8px 0 12px; }
   .stage{
-    position:relative; background:var(--paper);
-    border:1px solid var(--hairline); border-radius:2px;
-    padding:32px 38px 40px;
+    position:relative; background:var(--subtle);
+    border:1px solid var(--border-soft);
+    padding:16px 32px 20px;
     display:flex; flex-direction:column; align-items:center;
   }
-  .frame-caption{ margin-bottom:24px; width:100%; display:flex; flex-direction:column; align-items:center; gap:10px; }
-  .frame-caption .k{
-    font-size:14px; font-weight:700; letter-spacing:0.5px;
-    text-transform:uppercase; color:var(--text2);
-  }
-  /* one segment per slide, built by the slideshow script */
-  .progress{ display:flex; gap:4px; width:280px; max-width:100%; }
-  .progress span{ flex:1; height:6px; background:var(--hairline); transition:background .22s ease; }
+  .frame-caption{ margin-bottom:12px; width:100%; display:flex; align-items:center; justify-content:center; gap:14px; }
+  .frame-caption .k{ font-size:13px; font-weight:700; color:var(--text2); }
+  .progress{ display:flex; gap:3px; width:200px; max-width:40%; }
+  .progress span{ flex:1; height:4px; background:var(--border-soft); transition:background .2s ease; }
   .progress span.on{ background:var(--blue); }
 
-  .well{ width:100%; max-width:860px; background:var(--well); padding:20px; }
+  .well{ width:100%; max-width:860px; background:var(--well); padding:12px; border:1px solid var(--border-soft); }
   .device{ width:100%; position:relative; }
   .device.filled{
-    /* matches the 1465x834 screenshots */
     aspect-ratio:1465/834;
     background:var(--paper); border-radius:10px;
     /* the onboarding GIF has ~11px black arcs baked into its corners; the
@@ -247,66 +218,52 @@
     box-shadow:var(--shadow-2);
   }
   .device.filled img{ width:100%; height:100%; object-fit:cover; display:block; }
-  /* GIF only (see render()): it is 800x440, so it gets its own box */
   .device.filled.bleed{ aspect-ratio:800/440; }
   .device.filled.bleed img{ width:calc(100% + 8px); height:calc(100% + 8px); margin:-4px; }
-  /* the educator screenshots are 1465x957 */
   .device.filled.tall{ aspect-ratio:1465/957; }
 
-  /* pause / play for the animated GIFs (WCAG 2.2.2) */
   .gif-toggle{
-    font-family:inherit; font-size:15px; font-weight:700;
-    background:var(--paper); color:var(--ink);
-    border:2px solid var(--ink); border-radius:2px;
-    padding:0 14px; min-height:44px; cursor:pointer;
+    font-family:inherit; font-size:14px; font-weight:700;
+    background:var(--subtle); color:var(--ink);
+    border:1px solid var(--border); border-radius:2px;
+    padding:0 12px; min-height:36px; cursor:pointer;
     display:inline-flex; align-items:center; gap:6px;
   }
-  .gif-toggle:hover{ background:var(--lightest-blue); }
+  .gif-toggle:hover{ background:var(--paper); }
   .gif-toggle[hidden]{ display:none; }
-  .device .gif-toggle{ position:absolute; right:10px; bottom:10px; z-index:2; min-height:36px; font-size:14px; }
+  .device .gif-toggle{ position:absolute; right:10px; bottom:10px; z-index:2; }
 
-  /* the homepage carousel's round arrows */
+  /* Codex icon buttons */
   .nav-arrow{
     position:absolute; top:50%; translate:0 -50%;
-    width:48px; height:48px; border-radius:50%;
-    background:var(--blue); border:2px solid var(--blue); color:#fff;
+    width:44px; height:44px; border-radius:2px;
+    background:var(--subtle); border:1px solid var(--border); color:var(--ink);
     display:flex; align-items:center; justify-content:center;
-    cursor:pointer; transition:background .14s, border-color .14s, color .14s;
-    user-select:none; z-index:5;
+    cursor:pointer; user-select:none; z-index:5;
   }
-  .nav-arrow svg{ width:20px; height:20px; stroke-width:2.6; }
+  .nav-arrow svg{ width:20px; height:20px; stroke-width:2.4; }
   .nav-arrow svg path{ stroke:currentColor; }
-  .nav-arrow:hover{ background:var(--blue-dark); border-color:var(--blue-dark); }
-  /* aria-disabled rather than disabled so the button keeps focus at either
-     end of the strip instead of dropping a keyboard user back to the top */
+  .nav-arrow:hover{ background:var(--paper); }
   .slideshow .nav-arrow[aria-disabled="true"],
   .slideshow .nav-arrow[aria-disabled="true"]:hover{
-    background:var(--paper); border-color:var(--outline); color:var(--text2); cursor:default;
+    background:var(--interactive); border-color:var(--border-soft); color:#72777d; cursor:default;
   }
-  .nav-arrow.left{ left:-24px; }
-  .nav-arrow.right{ right:-24px; }
-  /* static on purpose: the arrows resolve against .stage above mobile, and
-     against this wrapper only in the mobile rule below */
+  .nav-arrow.left{ left:-22px; }
+  .nav-arrow.right{ right:-22px; }
   .device-wrap{ position:static; width:100%; display:flex; justify-content:center; }
 
-  /* ---------- SPEECH CARD ---------- */
+  /* ---------- SPEECH CAPTION ---------- */
   .talker{
-    display:flex; align-items:center; gap:14px;
-    width:100%; max-width:860px; margin:0 auto 24px;
-    background:var(--lightest-blue); border-left:4px solid var(--dot); padding:14px 20px 14px 14px;
+    display:flex; align-items:center; gap:12px;
+    width:100%; max-width:860px; margin:0 auto 12px;
+    background:var(--paper); border:1px solid var(--border-soft); padding:10px 16px 10px 10px;
   }
-  .avatar{ width:52px; height:52px; flex-shrink:0; display:block; }
-  .bubble{
-    color:var(--ink);
-    font-size:17px; line-height:1.55; min-height:20px;
-  }
-  /* the bubble slides up the first time it scrolls into view and again on every
-     slide change. The hidden start state is added by JS, so the text is never
-     lost if the script doesn't run. */
+  .avatar{ width:44px; height:44px; flex-shrink:0; display:block; }
+  .bubble{ color:var(--ink); font-size:15px; line-height:1.55; min-height:20px; }
   .bubble.bubble-wait{ opacity:0; }
-  .bubble.bubble-in{ animation:bubble-in .6s cubic-bezier(.34,1.3,.64,1) both; }
+  .bubble.bubble-in{ animation:bubble-in .5s ease both; }
   @keyframes bubble-in{
-    from{ opacity:0; transform:translateY(12px); }
+    from{ opacity:0; transform:translateY(8px); }
     to{ opacity:1; transform:none; }
   }
   @media (prefers-reduced-motion: reduce){
@@ -314,118 +271,53 @@
     .bubble.bubble-in{ animation:none; }
   }
 
-  /* ---------- DESIGN SYSTEM, ACCESSIBILITY + REACT NATIVE ---------- */
-  .ticks{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
-  .ticks li{ display:grid; grid-template-columns:22px minmax(0, 1fr); gap:10px; align-items:start; font-size:16px; }
-  .ticks li::before{
-    content:""; width:12px; height:12px; margin-top:7px; border-radius:50%;
-    background:var(--c);
-  }
-  .a11y{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:20px; }
-  .a11y > div{ background:var(--paper); border:1px solid var(--hairline); border-top:6px solid var(--c); padding:28px 26px; }
-  .a11y > div:nth-child(1){ --c:var(--bright-blue); }
-  .a11y > div:nth-child(2){ --c:var(--pink); }
-  .a11y > div:nth-child(3){ --c:var(--bright-green); }
-  .a11y h3{ font-size:21px; line-height:1.25; margin-bottom:14px; }
-
-  /* ---------- PROCESS STRIP ---------- */
-  /* numbered like the homepage's "Help expand" tiles: green, red, blue, purple */
-  .process{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px; counter-reset:step; }
-  .process li{
-    counter-increment:step; position:relative;
-    background:var(--paper); padding:26px 24px 24px; border:1px solid var(--hairline);
-  }
-  .process li::before{
-    content:counter(step); display:grid; place-items:center;
-    width:44px; height:44px; margin-bottom:16px;
-    font-family:var(--display); font-weight:700; font-size:20px; color:#fff;
-  }
-  .process li:nth-child(1)::before{ background:var(--green); }
-  .process li:nth-child(2)::before{ background:var(--red); }
-  .process li:nth-child(3)::before{ background:var(--blue); }
-  .process li:nth-child(4)::before{ background:var(--purple); }
-  .process h3{ font-size:21px; margin-bottom:8px; }
-  .process p{ font-size:16px; }
-
-  /* ---------- RESUME ---------- */
-  .band-blue{ background:var(--lightest-blue); }
-  .resume-head{
-    display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:32px; flex-wrap:wrap; gap:14px;
-  }
-  .resume-preview{
-    background:var(--paper); overflow:hidden;
-    border:1px solid var(--hairline); box-shadow:var(--shadow-3);
-    max-width:800px; margin:0 auto;
-  }
-  /* the zoom button's height:100% would otherwise cap the preview and clip
-     the bottom of the résumé */
-  .resume-preview .zoom-btn{ height:auto; }
+  /* ---------- RESUME THUMB ---------- */
+  .resume-thumb{ border:1px solid var(--border-soft); background:var(--subtle); padding:4px; max-width:620px; margin:8px 0 12px; }
+  .resume-thumb .zoom-btn{ height:auto; border:1px solid var(--border-soft); }
   .resume-embed{ display:block; width:100%; height:auto; }
+  .resume-thumb figcaption{ font-size:14px; padding:8px 6px 4px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 
   /* ---------- FOOTER ---------- */
-  .site-footer{ background:#202122; color:#fff; padding:96px 0 48px; }
-  .footer-kicker{ color:#fff; font-family:var(--display); font-size:48px; font-weight:700; line-height:1.1; margin-bottom:36px; }
-  .footer-links{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; }
-  .action{
-    background:var(--paper); color:var(--ink); border-radius:2px;
-    padding:20px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px;
-  }
-  .action-text{ display:flex; flex-direction:column; gap:4px; min-width:0; }
-  .action-title{ font-family:var(--display); font-size:19px; font-weight:700; color:var(--ink); }
-  .action-line{ font-size:15px; color:var(--text2); overflow-wrap:anywhere; }
-  .footer-base{
-    display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
-    margin-top:48px; padding-top:24px; border-top:1px solid rgba(255,255,255,.3);
-    font-size:14px; color:#fff;
-  }
-  .footer-base .mark{ font-size:17px; color:#fff; }
-  .footer-base .mark-dot{ width:26px; height:26px; }
+  .site-footer{ border-top:1px solid var(--border-soft); margin-top:24px; }
+  .site-footer .inner{ max-width:1440px; margin:0 auto; padding:20px 48px 40px 280px; font-size:14px; }
+  .footer-kicker{ font-family:var(--serif); font-size:24px; border-bottom:1px solid var(--border); padding-bottom:2px; margin-bottom:10px; }
+  .footer-links{ list-style:none; margin:0 0 20px; padding:0; display:flex; flex-wrap:wrap; gap:4px 20px; font-size:16px; }
+  .footer-links a{ display:inline-flex; align-items:center; min-height:44px; }
+  .footer-base{ color:var(--text2); }
 
   @media (prefers-reduced-motion: reduce){
     html{ scroll-behavior:auto; }
     *{ transition-duration:0.01ms !important; }
   }
 
-  @media (max-width:960px){
-    .hero-row{ flex-direction:column; align-items:flex-start; gap:32px; }
-    .glance{ width:100%; max-width:420px; }
-    .hero h1{ font-size:44px; }
-    .case-row{ flex-direction:column; align-items:flex-start; }
-    .a11y{ grid-template-columns:1fr; }
-    .process{ grid-template-columns:1fr; }
+  /* below 1200 the contents rail goes, as Vector moves it into a menu */
+  @media (max-width:1199px){
+    .page{ grid-template-columns:minmax(0, 1fr); padding:0 32px; }
+    .toc{ display:none; }
+    main{ margin:0 auto; }
+    .topbar-inner{ padding:12px 32px; }
+    .site-footer .inner{ padding:20px 32px 40px; }
   }
 
   @media (max-width:720px){
-    .topnav{ gap:0; }
-    .topnav a{ padding:0 8px; font-size:14px; }
-    .topnav .hide-sm{ display:none; }
-    .hero{ padding:44px 0 52px; }
-    .hero h1{ font-size:32px; letter-spacing:0; }
-    .wm-logo{ height:30px; }
-    .hero-sub{ font-size:18px; }
-    .case-title, .footer-kicker{ font-size:30px; }
-    .case-desc{ font-size:17px; }
-    .footer-links{ grid-template-columns:1fr; }
-    .action{ flex-wrap:wrap; }
-    .mark{ font-size:18px; }
-    .topbar-inner{ height:60px; }
-    .talker{ gap:10px; margin-bottom:20px; padding:12px 14px 12px 10px; }
-    .talker .avatar{ width:40px; height:40px; }
-    .bubble{ font-size:16px; }
-    /* drop the card on phones: content sits on the band and reclaims the
-       width the card padding was eating */
-    .wrap, .topbar-inner{ padding:0 16px; }
+    .page, .topbar-inner, .site-footer .inner{ padding-left:16px; padding-right:16px; }
+    .toplinks .hide-sm{ display:none; }
+    .mark-name{ font-size:20px; }
+    .mark-dot{ width:36px; height:36px; }
+    .art-head h1{ font-size:26px; }
+    .infobox{ float:none; width:100%; margin:0 0 16px; }
+    .case-title{ font-size:22px; }
+    .see-also{ columns:1; }
     .stage{ background:none; border:none; padding:0; }
-    .well{ padding:10px; }
-    /* without the card, centre the arrows on the image rather than the stage */
+    .frame-caption{ flex-direction:column; gap:6px; }
+    .progress{ max-width:60%; }
+    .talker{ padding:10px; }
+    .talker .avatar{ width:36px; height:36px; }
+    .well{ padding:6px; }
     .device-wrap{ position:relative; margin-top:4px; }
-    .nav-arrow{ width:42px; height:42px; box-shadow:var(--shadow-2); }
+    .nav-arrow{ width:40px; height:40px; box-shadow:var(--shadow-2); }
     .nav-arrow.left{ left:-6px; }
     .nav-arrow.right{ right:-6px; }
-    .a11y > div{ padding:22px; }
-    section.case{ padding:64px 0; }
-    .site-footer{ padding:64px 0 40px; }
   }
 
   /* ---------- CHIRON REPLAY ---------- */
@@ -720,30 +612,27 @@
 
   /* ---------- CHIRON REPLAY: WIKIMEDIA BRAND ----------
      The replay block above is shared with the root page and written against
-     its tokens; this maps them onto the Wikimedia Foundation palette and
-     type. The window takes the section's pale purple; pen blue becomes the
-     site's AAA blue. User bubbles are the pale yellow tint, not purple on
-     purple. Corners go square, as on wikimediafoundation.org. */
+     its tokens; this maps them onto Wikipedia's Vector 2022 / Codex tokens.
+     The window is the thumb frame's grey; pen blue becomes the progressive
+     blue (#36c, 4.6:1 on it). User bubbles take Codex's pale warning yellow.
+     Corners go square, and the replay's fonts become the system sans. */
   .replay{
-    --line:var(--hairline); --ink-soft:var(--text2); --ink-faint:var(--text2);
-    --pen:var(--blue); --pen-tint:var(--blue-01); --sketch-tint:var(--lightest-blue);
-    --rp-yellow-soft:var(--yellow-01); --hl-yellow:var(--pink-01); --bg:var(--lightest-purple); --mastery:var(--green);
-    --red-tint:var(--lightest-pink); --rp-tray:var(--well);
-    --rp-display:'Montserrat', 'Inter', sans-serif;
-    --rp-body:'Inter', 'Helvetica Neue', sans-serif;
-    --rp-mono:'Inter', 'Helvetica Neue', sans-serif;
-    --rp-hand:'Inter', 'Helvetica Neue', sans-serif;
+    --line:var(--border-soft); --ink-soft:var(--text2); --ink-faint:var(--text2);
+    --pen:var(--blue); --pen-tint:#eaf3ff; --sketch-tint:var(--subtle);
+    --rp-yellow-soft:var(--yellow-01); --hl-yellow:#fde29b; --bg:var(--subtle); --mastery:#14866d;
+    --red-tint:#ffe9e5; --rp-tray:var(--well);
+    --rp-display:var(--sans);
+    --rp-body:var(--sans);
+    --rp-mono:var(--sans);
+    --rp-hand:var(--sans);
   }
-  .replay .replay-window{ border:0; border-radius:2px; --ink-faint:var(--text2); }
-  /* the brand fonts set a touch taller and wider than the root page's, so
-     the chat slides need a little less air to fit the 540px window */
+  .replay .replay-window{ border:1px solid var(--border-soft); border-radius:0; --ink-faint:var(--text2); }
   .replay .rp-view{ padding-block:10px; }
   .replay .rp-slide{ gap:8px; }
-  /* the loop's arrowheads are drawn in the root page's pen blue */
   .replay .rp-loop-svg #rp-ah path{ fill:var(--pen); }
-  .replay .rp-msg.teacher .rp-body{ border-color:#E2E0C4; }
+  .replay .rp-msg.teacher .rp-body{ border-color:#edab00; }
   .replay .rp-mono-label, .replay .rp-think-k, .replay .rp-card-kind{ font-weight:700; }
-  .replay .rp-body{ border-radius:4px; }
+  .replay .rp-body{ border-radius:2px; }
 </style>
 </head>
 <body>
@@ -754,262 +643,223 @@
 
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="mark"><img class="mark-dot" src="avatar-rahul.png" alt=""> Rahul Shah</div>
-      <nav class="topnav" aria-label="Page">
-        <a href="#onboarding">Work</a>
-        <a href="#access" class="hide-sm">Craft</a>
-        <a href="#process" class="hide-sm">How I work</a>
-        <a href="#resume">Résumé</a>
-        <a href="#contact">Contact</a>
+      <div class="mark"><img class="mark-dot" src="avatar-rahul.png" alt="">
+        <div><span class="mark-name">Rahul Shah</span><span class="mark-tag">5 years of K–12 product design</span></div>
+      </div>
+      <nav class="toplinks" aria-label="Quick links">
+        <a href="resume.pdf" download="Rahul-Shah-Resume-WikimediaFoundation.pdf">Download résumé</a>
+        <a href="mailto:rahulshah.design@gmail.com" class="hide-sm">Email</a>
+        <a href="https://www.linkedin.com/in/rahul-shah-design/" target="_blank" rel="noopener" class="hide-sm">LinkedIn<span class="sr-only"> (opens in new tab)</span></a>
       </nav>
     </div>
   </header>
 
-  <main id="main">
-  <!-- HERO -->
-  <section class="hero" aria-label="Introduction">
-    <div class="wrap hero-copy">
-      <div class="eyebrow"><span class="caps">Prepared for</span>
-        <img class="wm-logo" src="wikimedia-logo.svg" alt="Wikimedia Foundation" width="279" height="62">
+  <div class="page">
+    <!-- Vector's "Contents" rail; the script below marks the section in view -->
+    <nav class="toc" id="toc" aria-labelledby="toc-title">
+      <div class="toc-head">
+        <h2 id="toc-title">Contents</h2>
+        <button type="button" class="toc-toggle" aria-expanded="true" aria-controls="toc-list">hide</button>
       </div>
-      <div class="hero-row">
-        <h1 data-flatten>I design the moment someone <span class="hl">starts learning</span>, and what keeps them going.<br>Hi, I'm Rahul.</h1>
-        <div class="glance">
-          <p class="caps" id="glance-label">At a glance</p>
-          <ul aria-labelledby="glance-label">
-            <li>5 years in K–12 ed-tech</li>
-            <li>Research and A/B testing</li>
-            <li>WCAG 2.1 AA</li>
-            <li>Design system owner</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="intro-band">
-    <div class="wrap">
-      <p class="hero-sub">For five years I've designed Encourage, a college and career readiness platform that reaches 1 million students: the onboarding they start in, the tools their counselors use, and the design system under both.</p>
-      <a href="#onboarding">See the work <span aria-hidden="true">&darr;</span></a>
-    </div>
-  </div>
-
-  <section class="case band-white" id="onboarding" aria-labelledby="title-onboarding">
-    <div class="wrap">
-      <div class="case-head">
-        <div class="caps">01 · Encoura · Research, then an experiment</div>
-        <h2 class="case-title" id="title-onboarding" data-flatten>Encourage onboarding: <span class="hl">twice the questions</span>, and students still finish</h2>
-        <div class="case-row">
-          <p class="case-desc">Our classroom research found students weren't stalling on the questions. They stalled on account verification and blocked school inboxes. So when the survey had to double, I rebuilt the flow around that: chunked by topic, with a way back from a mistyped or blocked email. In Encoura's first in-app A/B test, completion held near 84% with twice the questions.</p>
-          <p class="chip" style="--c:var(--yellow)">Shipping Fall 2026</p>
-        </div>
-      </div>
-      <div class="slideshow" id="ss-onboarding" role="region" aria-roledescription="carousel" aria-label="Encourage onboarding screenshots">
-        <div class="stage">
-          <div class="frame-caption">
-            <div class="k" id="cap-k-onboarding" aria-live="polite" aria-atomic="true">Slide 1 of 6</div>
-            <div class="progress" id="strip-onboarding" aria-hidden="true"></div>
-          </div>
-          <div class="talker">
-            <span class="sr-only">Rahul says:</span>
-            <img class="avatar" src="avatar-rahul.png" alt="">
-            <div class="bubble" id="bubble-onboarding" aria-live="polite" aria-atomic="true">Onboarding is the first thing a student sees in Encourage. When the survey had to grow to twice the questions, my job was to keep students finishing it.</div>
-          </div>
-          <div class="device-wrap">
-            <button class="nav-arrow left" data-dir="-1" data-target="onboarding" aria-label="Previous slide">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <div class="well">
-              <div class="device filled">
-                <button type="button" class="zoom-btn" id="zoom-onboarding" aria-label="Enlarge image"><img id="img-onboarding" src="" alt=""></button>
-                <button type="button" class="gif-toggle" id="gif-onboarding" hidden>Pause animation</button>
-              </div>
-            </div>
-            <button class="nav-arrow right" data-dir="1" data-target="onboarding" aria-label="Next slide">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="case band-tint" id="chiron" aria-labelledby="title-chiron">
-    <div class="wrap">
-      <div class="case-head">
-        <div class="caps">02 · Independent project, a Claude Skill</div>
-        <h2 class="case-title" id="title-chiron" data-flatten>Chiron: an AI tutor that gives you <span class="hl">exactly what you need</span></h2>
-        <div class="case-row">
-          <p class="case-desc">My own project, built as a Claude Skill. Chiron asks questions until it finds what you can't yet explain, builds a lesson around that gap, and adapts the next one to your answers. The design problem was giving each learner exactly what they need in that moment, no more and no less: working out where they're stuck, then deciding what to do with it.</p>
-          <a class="btn btn-white" href="https://github.com/Rahul-Shah-Design/Chiron" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">&rarr;</span><span class="sr-only"> (opens in new tab)</span></a>
-        </div>
-      </div>
-      <!-- Session replay. Slides render into #view-chiron from the `replays`
-           data in the script below; edit the copy there, not here. -->
-      <div class="slideshow replay" id="ss-chiron" role="region" aria-roledescription="carousel" aria-label="Chiron session, condensed">
-        <div class="stage">
-          <div class="frame-caption">
-            <div class="k" id="cap-k-chiron" aria-live="polite" aria-atomic="true">Slide 1 of 7</div>
-            <div class="progress" id="strip-chiron" aria-hidden="true"></div>
-          </div>
-          <div class="talker">
-            <span class="sr-only">Rahul says:</span>
-            <img class="avatar" src="avatar-rahul.png" alt="">
-            <div class="bubble" id="bubble-chiron" aria-live="polite" aria-atomic="true"></div>
-          </div>
-          <div class="device-wrap">
-            <button class="nav-arrow left" data-dir="-1" data-target="chiron" aria-label="Previous slide">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <div class="replay-window"><div class="rp-view" id="view-chiron"></div></div>
-            <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="case band-white" id="educators" aria-labelledby="title-educators">
-    <div class="wrap">
-      <div class="case-head">
-        <div class="caps">03 · Encoura · Staff tools</div>
-        <h2 class="case-title" id="title-educators" data-flatten>Encourage for Educators: hundreds of students, <span class="hl">one clear next step</span></h2>
-        <div class="case-row">
-          <p class="case-desc">The staff side of Encourage. Counselors track hundreds of students at once, so I built groups, rosters and status tracking around how they already organize their day.</p>
-          <p class="chip" style="--c:var(--green)">Shipped</p>
-        </div>
-      </div>
-      <div class="slideshow" id="ss-educators" role="region" aria-roledescription="carousel" aria-label="Encourage for Educators screenshots">
-        <div class="stage">
-          <div class="frame-caption">
-            <div class="k" id="cap-k-educators" aria-live="polite" aria-atomic="true">Slide 1 of 4</div>
-            <div class="progress" id="strip-educators" aria-hidden="true"></div>
-          </div>
-          <div class="talker">
-            <span class="sr-only">Rahul says:</span>
-            <img class="avatar" src="avatar-rahul.png" alt="">
-            <div class="bubble" id="bubble-educators" aria-live="polite" aria-atomic="true">A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.</div>
-          </div>
-          <div class="device-wrap">
-            <button class="nav-arrow left" data-dir="-1" data-target="educators" aria-label="Previous slide">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <div class="well">
-              <div class="device filled tall">
-                <button type="button" class="zoom-btn" id="zoom-educators" aria-label="Enlarge image"><img id="img-educators" src="" alt=""></button>
-              </div>
-            </div>
-            <button class="nav-arrow right" data-dir="1" data-target="educators" aria-label="Next slide">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="case band-tint" id="access" aria-labelledby="title-access">
-    <div class="wrap">
-      <div class="case-head">
-        <div class="caps">04 · Design system, accessibility and reach</div>
-        <h2 class="case-title" id="title-access" data-flatten>Accessible, cross-platform, and <span class="hl">built for everyone</span></h2>
-      </div>
-      <div class="a11y">
-        <div>
-          <h3>One design system underneath</h3>
-          <ul class="ticks">
-            <li>I own the Encourage Design System, with governance so engineers and designers compose from the same components.</li>
-            <li>Every screen gets a UI review in Storybook and Chromatic before it ships.</li>
-          </ul>
-        </div>
-        <div>
-          <h3>Accessible from the first sketch</h3>
-          <ul class="ticks">
-            <li>Designed Encourage to WCAG 2.1 AA, with keyboard and screen-reader paths planned up front rather than patched in.</li>
-            <li>Working toward the IAAP CPACC certification.</li>
-            <li>Minored in American Sign Language at RIT.</li>
-            <li>This page meets AA contrast on every color pair, works by keyboard and screen reader, and respects reduced motion settings.</li>
-          </ul>
-        </div>
-        <div>
-          <h3>Cross-platform with React Native</h3>
-          <ul class="ticks">
-            <li>Led the migration of Encourage, used by 150,000+ students, to cross-platform React Native.</li>
-            <li>Reworked layouts to hold up on the school-issued devices students actually use.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="case band-white" id="process" aria-labelledby="title-process">
-    <div class="wrap">
-      <div class="case-head">
-        <div class="caps">How I work</div>
-        <h2 class="case-title" id="title-process">Problem first, then crit, test, and ship</h2>
-      </div>
-      <ol class="process">
-        <li>
-          <h3>Frame the problem first</h3>
-          <p>"Double the survey" was a solution. Our classroom research showed the real problem was getting stuck, not reading more questions, and the design followed that. I ask what a request is for before I open Figma.</p>
-        </li>
-        <li>
-          <h3>Prototype, then measure</h3>
-          <p>Find the problem with research and usability tests, then test the fix: Encoura's first in-app A/B test. I drive much of the team's product analytics and present it at Data Jams, and was the first on the team to query Pendo through Claude Code.</p>
-        </li>
-        <li>
-          <h3>Crit, craft and mentoring</h3>
-          <p>I bring work to crit early and rough, with the questions it raises, and I give the same kind of feedback back. For years I've mentored the RIT UX club, giving students early, honest crit.</p>
-        </li>
-        <li>
-          <h3>AI in the workflow</h3>
-          <p>I brought AI prototyping to Encoura with Figma Make and Claude Code, so ideas get tested as working prototypes, not static frames. This page was built that way.</p>
-        </li>
+      <ol id="toc-list">
+        <li><a href="#top">(Top)</a></li>
+        <li><a href="#onboarding">Encourage onboarding</a></li>
+        <li><a href="#chiron">Chiron</a></li>
+        <li><a href="#educators">Encourage for Educators</a></li>
+        <li><a href="#access">Design system and accessibility</a></li>
+        <li><a href="#see-also">See also</a></li>
+        <li><a href="#resume">Résumé</a></li>
+        <li><a href="#contact">Contact</a></li>
       </ol>
+    </nav>
+
+  <main id="main" class="art">
+  <section class="hero" id="top" aria-labelledby="title-top">
+    <div class="art-head">
+      <h1 id="title-top">Rahul Shah</h1>
+      <div class="prepared">Prepared for <img class="wm-logo" src="wikimedia-logo.svg" alt="Wikimedia Foundation" width="279" height="62"></div>
+    </div>
+    <nav class="tabs" aria-label="Page">
+      <ul>
+        <li><a href="#top" aria-current="page">Article</a></li>
+        <li><a href="#contact">Talk</a></li>
+      </ul>
+      <ul>
+        <li><a href="#top" aria-current="page">Read</a></li>
+        <li><a href="#resume">View history</a></li>
+      </ul>
+    </nav>
+    <p class="tagline">From Rahul Shah's portfolio, prepared for the Wikimedia Foundation's Senior UX Designer role</p>
+
+    <table class="infobox">
+      <caption>Rahul Shah</caption>
+      <tbody>
+        <tr class="ib-img"><td colspan="2"><img src="avatar-rahul.png" alt="Rahul's avatar, a cartoon of his face on a yellow circle" width="120" height="120"></td></tr>
+        <tr><th scope="row">Occupation</th><td><a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Product_design">Product designer<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></td></tr>
+        <tr><th scope="row">Employer</th><td>Encoura (2021–present)</td></tr>
+        <tr><th scope="row">Known for</th><td>Encourage onboarding, Encourage for Educators, Chiron</td></tr>
+        <tr><th scope="row">Focus</th><td>User research, <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/A/B_testing">A/B testing<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>, <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Web_accessibility">accessibility<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>, <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Design_system">design systems<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></td></tr>
+        <tr><th scope="row">Education</th><td>B.S. <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Human-centered_computing">Human-Centered Computing<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>, <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Rochester_Institute_of_Technology">RIT<span class="sr-only"> (Wikipedia, opens in new tab)</span></a><br>M.S. Learning Design &amp; Technology, <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/University_of_Maryland_Global_Campus">UMGC<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></td></tr>
+        <tr><th scope="row">Website</th><td><a href="https://rahulshah.design" target="_blank" rel="noopener">rahulshah.design<span class="sr-only"> (opens in new tab)</span></a></td></tr>
+      </tbody>
+    </table>
+
+    <div class="lead">
+      <p><b>Rahul Shah</b> is a product designer who designs the moment someone starts learning, and what keeps them going. Since 2021 he has designed Encourage, a college and career readiness platform that reaches 1 million students in <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/K%E2%80%9312_education">K–12 education<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>: the <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/User_onboarding">onboarding<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> students start in, the tools their <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/School_counselor">school counselors<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> use, and the <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Design_system">design system<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> under both.</p>
+      <p>His work starts with research and ends with a measured result, and he designs to <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Web_Content_Accessibility_Guidelines">WCAG<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> 2.1 AA from the first sketch. He studied <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Human-centered_computing">human-centered computing<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> at RIT and <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Instructional_design">learning design<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> at UMGC, and in his own time built Chiron, an <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Intelligent_tutoring_system">AI tutor<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> that runs as a <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Claude_(AI)">Claude<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> Skill.</p>
     </div>
   </section>
 
-  <!-- RESUME -->
-  <section class="case band-blue resume-section" id="resume" aria-labelledby="title-resume">
-    <div class="wrap">
-      <div class="resume-head">
-        <h2 class="case-title" id="title-resume">Résumé</h2>
-        <a class="btn btn-ink" href="resume.pdf" download="Rahul-Shah-Resume-WikimediaFoundation.pdf"><span aria-hidden="true">↓</span> Download PDF</a>
-      </div>
-      <div class="resume-preview">
-        <button type="button" class="zoom-btn" aria-label="Enlarge résumé image"><img class="resume-embed" src="resume.png" alt="Rahul Shah's r&eacute;sum&eacute;, one page: experience at Chiron, Encoura, Rochester Regional Health and Prudential Financial, then education and a skills list. Download the PDF for the accessible text version." width="1836" height="2376" loading="lazy"></button>
+  <section class="case" id="onboarding" aria-labelledby="title-onboarding">
+    <h2 class="case-title" id="title-onboarding">Encourage onboarding: twice the questions, and students still finish</h2>
+    <p class="hatnote">Encoura, research then an experiment. Status: shipping Fall 2026.</p>
+    <p class="case-desc">Our classroom research found students weren't stalling on the questions. They stalled on account verification and blocked school inboxes. So when the survey had to double, I rebuilt the <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Wizard_(software)">multi-step flow<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> around that: <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Chunking_(psychology)">chunked<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> by topic to cut <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Cognitive_load">cognitive load<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>, each chunk with its own short <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Progress_bar">progress bar<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>, and a way back from a mistyped or blocked email. In Encoura's first in-app <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/A/B_testing">A/B test<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>, completion held near 84% with twice the questions.</p>
+    <div class="slideshow" id="ss-onboarding" role="region" aria-roledescription="carousel" aria-label="Encourage onboarding screenshots">
+      <div class="stage">
+        <div class="frame-caption">
+          <div class="k" id="cap-k-onboarding" aria-live="polite" aria-atomic="true">Slide 1 of 6</div>
+          <div class="progress" id="strip-onboarding" aria-hidden="true"></div>
+        </div>
+        <div class="talker">
+          <span class="sr-only">Rahul says:</span>
+          <img class="avatar" src="avatar-rahul.png" alt="">
+          <div class="bubble" id="bubble-onboarding" aria-live="polite" aria-atomic="true">Onboarding is the first thing a student sees in Encourage. When the survey had to grow to twice the questions, my job was to keep students finishing it.</div>
+        </div>
+        <div class="device-wrap">
+          <button class="nav-arrow left" data-dir="-1" data-target="onboarding" aria-label="Previous slide">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="well">
+            <div class="device filled">
+              <button type="button" class="zoom-btn" id="zoom-onboarding" aria-label="Enlarge image"><img id="img-onboarding" src="" alt=""></button>
+              <button type="button" class="gif-toggle" id="gif-onboarding" hidden>Pause animation</button>
+            </div>
+          </div>
+          <button class="nav-arrow right" data-dir="1" data-target="onboarding" aria-label="Next slide">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
       </div>
     </div>
+  </section>
+
+  <section class="case" id="chiron" aria-labelledby="title-chiron">
+    <h2 class="case-title" id="title-chiron">Chiron: an AI tutor that gives you exactly what you need</h2>
+    <p class="hatnote">Independent project, a Claude Skill. Source: <a href="https://github.com/Rahul-Shah-Design/Chiron" target="_blank" rel="noopener">Chiron on GitHub<span class="sr-only"> (opens in new tab)</span></a>.</p>
+    <p class="case-desc">My own project, built as a <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Claude_(AI)">Claude<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> Skill. Chiron is a tutor in the <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Socratic_method">Socratic<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> tradition: it asks questions until it finds what you can't yet explain, builds a lesson in that gap, your <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Zone_of_proximal_development">zone of proximal development<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>, and adapts the next one to your answers. Its checks are <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Formative_assessment">formative<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>: each wrong option stands for a specific <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Misconception">misconception<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>, and the course ends on <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Flashcard">flashcards<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> you write yourself. The design problem was giving each learner exactly what they need in that moment, no more and no less.</p>
+    <!-- Session replay. Slides render into #view-chiron from the `replays`
+         data in the script below; edit the copy there, not here. -->
+    <div class="slideshow replay" id="ss-chiron" role="region" aria-roledescription="carousel" aria-label="Chiron session, condensed">
+      <div class="stage">
+        <div class="frame-caption">
+          <div class="k" id="cap-k-chiron" aria-live="polite" aria-atomic="true">Slide 1 of 7</div>
+          <div class="progress" id="strip-chiron" aria-hidden="true"></div>
+        </div>
+        <div class="talker">
+          <span class="sr-only">Rahul says:</span>
+          <img class="avatar" src="avatar-rahul.png" alt="">
+          <div class="bubble" id="bubble-chiron" aria-live="polite" aria-atomic="true"></div>
+        </div>
+        <div class="device-wrap">
+          <button class="nav-arrow left" data-dir="-1" data-target="chiron" aria-label="Previous slide">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="replay-window"><div class="rp-view" id="view-chiron"></div></div>
+          <button class="nav-arrow right" data-dir="1" data-target="chiron" aria-label="Next slide">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case" id="educators" aria-labelledby="title-educators">
+    <h2 class="case-title" id="title-educators">Encourage for Educators: hundreds of students, one clear next step</h2>
+    <p class="hatnote">Encoura, staff tools. Status: shipped.</p>
+    <p class="case-desc">The staff side of Encourage. <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/School_counselor">Counselors<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> track hundreds of students at once, so I built groups, rosters and status tracking around how they already organize their day: <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Faceted_search">filters and search<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> for finding students, and an empty state that puts one clear <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Call_to_action_(marketing)">call to action<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> in front of them.</p>
+    <div class="slideshow" id="ss-educators" role="region" aria-roledescription="carousel" aria-label="Encourage for Educators screenshots">
+      <div class="stage">
+        <div class="frame-caption">
+          <div class="k" id="cap-k-educators" aria-live="polite" aria-atomic="true">Slide 1 of 4</div>
+          <div class="progress" id="strip-educators" aria-hidden="true"></div>
+        </div>
+        <div class="talker">
+          <span class="sr-only">Rahul says:</span>
+          <img class="avatar" src="avatar-rahul.png" alt="">
+          <div class="bubble" id="bubble-educators" aria-live="polite" aria-atomic="true">A brand-new group is a counselor's first real moment in the tool. Rather than drop them on a blank table, the empty state shows the shape of what's coming and puts one clear action in front of them.</div>
+        </div>
+        <div class="device-wrap">
+          <button class="nav-arrow left" data-dir="-1" data-target="educators" aria-label="Previous slide">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="well">
+            <div class="device filled tall">
+              <button type="button" class="zoom-btn" id="zoom-educators" aria-label="Enlarge image"><img id="img-educators" src="" alt=""></button>
+            </div>
+          </div>
+          <button class="nav-arrow right" data-dir="1" data-target="educators" aria-label="Next slide">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case" id="access" aria-labelledby="title-access">
+    <h2 class="case-title" id="title-access">Accessible, cross-platform, and built for everyone</h2>
+    <h3>One design system underneath</h3>
+    <ul class="plain">
+      <li>I own the Encourage <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Design_system">design system<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>, with governance so engineers and designers compose from the same components.</li>
+      <li>Every screen gets a UI review in Storybook and Chromatic before it ships.</li>
+    </ul>
+    <h3>Accessible from the first sketch</h3>
+    <ul class="plain">
+      <li>Designed Encourage to <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Web_Content_Accessibility_Guidelines">WCAG 2.1<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> AA, with keyboard and <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Screen_reader">screen reader<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> paths planned up front rather than patched in.</li>
+      <li>Working toward the IAAP CPACC certification.</li>
+      <li>Minored in <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/American_Sign_Language">American Sign Language<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> at RIT.</li>
+      <li>This page meets AA contrast on every color pair, works by keyboard and screen reader, and respects reduced motion settings.</li>
+    </ul>
+    <h3>Cross-platform with React Native</h3>
+    <ul class="plain">
+      <li>Led the migration of Encourage, used by 150,000+ students, to <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Cross-platform_software">cross-platform<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/React_Native">React Native<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>.</li>
+      <li>Reworked layouts to hold up on the school-issued devices students actually use.</li>
+    </ul>
+  </section>
+
+  <section class="case" id="see-also" aria-labelledby="title-see-also">
+    <h2 class="case-title" id="title-see-also">See also</h2>
+    <ul class="plain see-also">
+      <li><a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Instructional_scaffolding">Instructional scaffolding<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></li>
+      <li><a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Universal_Design_for_Learning">Universal Design for Learning<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></li>
+      <li><a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Progressive_disclosure">Progressive disclosure<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></li>
+      <li><a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Usability_testing">Usability testing<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></li>
+      <li><a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Personalized_learning">Personalized learning<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></li>
+      <li><a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Wikimedia_Foundation">Wikimedia Foundation<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></li>
+    </ul>
+  </section>
+
+  <section class="case resume-section" id="resume" aria-labelledby="title-resume">
+    <h2 class="case-title" id="title-resume">Résumé</h2>
+    <figure class="resume-thumb" style="margin-left:0">
+      <button type="button" class="zoom-btn" aria-label="Enlarge résumé image"><img class="resume-embed" src="resume.png" alt="Rahul Shah's r&eacute;sum&eacute;, one page: experience at Chiron, Encoura, Rochester Regional Health and Prudential Financial, then education and a skills list. Download the PDF for the accessible text version." width="1836" height="2376" loading="lazy"></button>
+      <figcaption>One page, tailored for the Wikimedia Foundation.
+        <a class="btn btn-ink" href="resume.pdf" download="Rahul-Shah-Resume-WikimediaFoundation.pdf"><span aria-hidden="true">↓</span> Download PDF</a>
+      </figcaption>
+    </figure>
   </section>
   </main>
+  </div>
 
   <footer class="site-footer" id="contact">
-    <div class="wrap">
-      <h2 class="footer-kicker">Let&rsquo;s talk.</h2>
-      <nav class="footer-links" aria-label="Contact">
-        <div class="action">
-          <div class="action-text"><span class="action-title">Email</span><span class="action-line">rahulshah.design@gmail.com</span></div>
-          <a class="btn btn-ink" href="mailto:rahulshah.design@gmail.com">Write to me</a>
-        </div>
-        <div class="action">
-          <div class="action-text"><span class="action-title">Résumé</span><span class="action-line">One page, tailored for the Wikimedia Foundation.</span></div>
-          <a class="btn btn-ink" href="resume.pdf" download="Rahul-Shah-Resume-WikimediaFoundation.pdf">Download<span class="sr-only"> résumé</span></a>
-        </div>
-        <div class="action">
-          <div class="action-text"><span class="action-title">LinkedIn</span><span class="action-line">rahul-shah-design</span></div>
-          <a class="btn btn-white" href="https://www.linkedin.com/in/rahul-shah-design/" target="_blank" rel="noopener">Connect<span class="sr-only"> on LinkedIn (opens in new tab)</span></a>
-        </div>
-        <div class="action">
-          <div class="action-text"><span class="action-title">GitHub</span><span class="action-line">Chiron and the code behind this site.</span></div>
-          <a class="btn btn-white" href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">Browse<span class="sr-only"> GitHub (opens in new tab)</span></a>
-        </div>
-      </nav>
-      <div class="footer-base">
-        <div class="mark"><img class="mark-dot" src="avatar-rahul.png" alt=""> Rahul Shah</div>
-        <p>Designed and built by Rahul Shah</p>
-      </div>
+    <div class="inner">
+      <h2 class="footer-kicker">Contact</h2>
+      <ul class="footer-links" aria-label="Contact">
+        <li><a href="mailto:rahulshah.design@gmail.com">rahulshah.design@gmail.com</a></li>
+        <li><a href="resume.pdf" download="Rahul-Shah-Resume-WikimediaFoundation.pdf">Download résumé (PDF)</a></li>
+        <li><a href="https://www.linkedin.com/in/rahul-shah-design/" target="_blank" rel="noopener">LinkedIn<span class="sr-only"> (opens in new tab)</span></a></li>
+        <li><a href="https://github.com/Rahul-Shah-Design" target="_blank" rel="noopener">GitHub<span class="sr-only"> (opens in new tab)</span></a></li>
+      </ul>
+      <p class="footer-base">Designed and built by Rahul Shah. Links in the text go to Wikipedia and open in a new tab.</p>
     </div>
   </footer>
 
@@ -1835,6 +1685,34 @@
     });
   })();
 
+</script>
+
+<script>
+  // ---------- Contents rail: hide toggle and the section in view ----------
+  (function(){
+    const toc = document.getElementById('toc');
+    const btn = toc.querySelector('.toc-toggle');
+    btn.addEventListener('click', ()=>{
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      btn.textContent = open ? 'show' : 'hide';
+      if (open) toc.setAttribute('data-collapsed', ''); else toc.removeAttribute('data-collapsed');
+    });
+    const links = [...toc.querySelectorAll('ol a')];
+    const targets = links.map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+    const mark = id => links.forEach(a => {
+      if (a.getAttribute('href') === '#' + id) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    });
+    const onScroll = ()=>{
+      let cur = targets[0].id;
+      for (const t of targets) if (t.getBoundingClientRect().top < window.innerHeight * 0.3) cur = t.id;
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) cur = targets[targets.length - 1].id;
+      mark(cur);
+    };
+    window.addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
+  })();
 </script>
 
 <!-- GoatCounter: cookieless page-view analytics. build-artifact.py strips this line. -->
