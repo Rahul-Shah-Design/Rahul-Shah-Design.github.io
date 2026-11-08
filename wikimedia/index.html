@@ -170,7 +170,7 @@
     background:var(--subtle); border:1px solid var(--border); border-bottom:0;
   }
   .infobox .ib-img td{ text-align:center; padding:6px 0 2px; }
-  .infobox .ib-img img{ width:120px; height:120px; margin:0 auto; }
+  .infobox .ib-img img{ width:96px; height:96px; margin:0 auto; }
   .infobox .ib-cap td{ text-align:center; font-size:13px; color:var(--text2); padding-bottom:6px; }
   .infobox th{ text-align:left; vertical-align:top; padding:3px 6px 3px 2px; width:96px; font-weight:700; }
   .infobox td{ vertical-align:top; padding:3px 2px; }
@@ -181,11 +181,15 @@
   .lead p:last-child{ margin-bottom:0; }
 
   /* ---------- SECTIONS ---------- */
-  section.case{ padding-top:28px; clear:both; }
+  /* sections flow past the infobox as they do on Wikipedia: text wraps beside
+     it, and only the wide slideshows drop below it */
+  section.case{ padding-top:28px; }
   .case-title{
     font-family:var(--serif); font-size:24px; line-height:1.375;
     border-bottom:1px solid var(--border); padding-bottom:2px; margin-bottom:10px;
     text-wrap:pretty;
+    /* a new formatting context, so the rule stops at the infobox's edge */
+    overflow:hidden;
   }
   .case-title .ed{ font-family:var(--sans); font-size:13px; color:var(--text2); margin-left:10px; white-space:nowrap; }
   h3{ font-family:var(--sans); font-size:16.8px; font-weight:700; line-height:1.6; margin:18px 0 4px; }
@@ -197,7 +201,7 @@
   .see-also{ columns:2; column-gap:32px; }
 
   /* ---------- SLIDESHOW AS A THUMB FRAME ---------- */
-  .slideshow{ position:relative; margin:8px 0 12px; }
+  .slideshow{ position:relative; margin:8px 0 12px; clear:both; }
   .stage{
     position:relative; background:var(--subtle);
     border:1px solid var(--border-soft);
