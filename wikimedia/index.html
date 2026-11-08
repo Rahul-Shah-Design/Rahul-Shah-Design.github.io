@@ -158,7 +158,7 @@
 
   /* the infobox, floated right of the lead as on any biography */
   .infobox{
-    float:right; clear:right; width:300px; margin:0 0 16px 24px;
+    float:right; clear:right; width:320px; margin:0 0 16px 24px;
     border:1px solid var(--border); background:var(--subtle);
     padding:4px; font-size:14px; line-height:1.5; border-collapse:separate; border-spacing:3px;
   }
@@ -174,6 +174,9 @@
   .infobox .ib-cap td{ text-align:center; font-size:13px; color:var(--text2); padding-bottom:6px; }
   .infobox th{ text-align:left; vertical-align:top; padding:3px 6px 3px 2px; width:96px; font-weight:700; }
   .infobox td{ vertical-align:top; padding:3px 2px; }
+  /* a bulleted infobox list: items wrap, so the bullets mark where each starts */
+  .plainlist{ margin:0; padding-left:1.1em; }
+  .plainlist li{ margin:0 0 3px; line-height:1.4; }
   .lead p{ margin-bottom:12px; }
   .lead p:last-child{ margin-bottom:0; }
 
@@ -697,8 +700,7 @@
         <tr class="ib-img"><td colspan="2"><img src="avatar-rahul.png" alt="Rahul's avatar, a cartoon of his face on a yellow circle" width="120" height="120"></td></tr>
         <tr><th scope="row">Occupation</th><td><a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Product_design">Product designer<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></td></tr>
         <tr><th scope="row">Employer</th><td>Encoura (2021–present)</td></tr>
-        <tr><th scope="row">Known for</th><td>Encourage onboarding, Encourage for Educators, Chiron</td></tr>
-        <tr><th scope="row">Focus</th><td>User research, <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/A/B_testing">A/B testing<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>, <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Web_accessibility">accessibility<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>, <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Design_system">design systems<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></td></tr>
+        <tr><th scope="row">Known for</th><td><ul class="plainlist"><li><a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Web_accessibility">Accessible design<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> to WCAG 2.1 AA</li><li>Encoura's first in-app <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/A/B_testing">A/B test<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></li><li>Owning the Encourage <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Design_system">design system<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></li><li><a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Animation">Motion<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> and micro-interactions in Lottie</li><li>Classroom research that reframed onboarding</li><li>AI <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Prototype">prototyping<span class="sr-only"> (Wikipedia, opens in new tab)</span></a> with Figma Make and Claude Code</li><li>Chiron, a Socratic <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Intelligent_tutoring_system">AI tutor<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></li></ul></td></tr>
         <tr><th scope="row">Education</th><td>B.S. <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Human-centered_computing">Human-Centered Computing<span class="sr-only"> (Wikipedia, opens in new tab)</span></a>, <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Rochester_Institute_of_Technology">RIT<span class="sr-only"> (Wikipedia, opens in new tab)</span></a><br>M.S. Learning Design &amp; Technology, <a class="wl" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/University_of_Maryland_Global_Campus">UMGC<span class="sr-only"> (Wikipedia, opens in new tab)</span></a></td></tr>
         <tr><th scope="row">Website</th><td><a href="https://rahulshah.design" target="_blank" rel="noopener">rahulshah.design<span class="sr-only"> (opens in new tab)</span></a></td></tr>
       </tbody>
