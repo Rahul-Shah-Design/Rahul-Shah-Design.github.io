@@ -29,6 +29,13 @@ writing any copy.
   text. **Never guess the posting.**
 - Also look at the company's own site for: brand colours and type, the product's real users,
   and a logo you could use in the "Prepared for" lockup.
+- **Rename the chat** as soon as you know the company and role, so Rahul can find it later.
+  In a cloud session: call `mcp__claude-code-remote__get_session` with no arguments to get
+  this session's id, then `mcp__claude-code-remote__set_session_title` with that id and a title
+  like `College Board: Senior Product Designer` (company first, role short). If they aren't in
+  your tool list, try ToolSearch with
+  `select:mcp__claude-code-remote__get_session,mcp__claude-code-remote__set_session_title`.
+  If they still aren't available (a local session), skip it silently.
 - Show a short **"What they're hiring for"** summary (5–8 bullets) before editing anything.
 
 ## 2. Read his material
@@ -101,6 +108,13 @@ The new folder is what keeps the main portfolio untouched; nothing outside it ch
    ```
    It refuses a résumé that's over one page, whose link doesn't match the folder, or whose
    header is off centre. Fit by tightening spacing or copy, never by shrinking type.
+   **Name the download after the company.** The file stays `resume.pdf` in the folder (the
+   build script and the page expect that), but every link to it gets a `download` attribute
+   of `Rahul-Shah-Resume-<CompanyName>.pdf`: the company in PascalCase, no spaces or
+   punctuation (`Rahul-Shah-Resume-CollegeBoard.pdf`, `Rahul-Shah-Resume-ParentSquare.pdf`).
+   There are usually two links, the résumé section's button and the footer; `grep -n
+   'resume.pdf' <slug>/index.html` and change them all. A page forked from another employer's
+   carries that employer's name in these attributes, so check none is left behind.
 9. **Open questions go on the page, visibly.** Anything you need Rahul to confirm (a number, a
    claim, a placeholder image) gets a `.todo` flag (see `dreambox/`) rather than a guess. List
    them in the hand-back; all must be cleared before the page is shared.
@@ -130,7 +144,8 @@ The new folder is what keeps the main portfolio untouched; nothing outside it ch
 - Accessibility intact: one `h1`, case titles `h2`, `aria-labelledby` on sections, alt text on
   every new image, 4.5:1 text contrast (3:1 UI), skip link first, GIFs have posters.
 - `grep` the folder for the base page's company name, slug and logo so nothing from the old
-  employer leaks through (titles, alt text, `aria-label`s, résumé link, lockup).
+  employer leaks through (titles, alt text, `aria-label`s, résumé link, résumé download
+  name, lockup).
 
 ## 5. Hand back
 

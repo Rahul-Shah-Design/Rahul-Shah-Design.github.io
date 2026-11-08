@@ -8,6 +8,7 @@ exclude:
   - ClaudeProjects/BudgetTracker/CLAUDE.md
   - ClaudeProjects/GrindLog/CLAUDE.md
   - ClaudeProjects/atlas-run/CLAUDE.md
+  - ClaudeProjects/WadaPalette/CLAUDE.md
   - ClaudeProjects/User State Map/process-states.py
   - chiron-stress-test
   - tools

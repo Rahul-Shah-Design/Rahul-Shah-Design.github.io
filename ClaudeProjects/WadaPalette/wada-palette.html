@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wada Palette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--paper:#f4efe6;--ink:#1f1c18;--muted:#6f675c;--line:#d9d0c1;--card:#fbf8f2;--accent:#b2412e}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font:15px/1.4 Inter,system-ui,sans-serif;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent}
+input,textarea{color:var(--ink);-webkit-text-fill-color:var(--ink)}
+input::placeholder{color:var(--muted);-webkit-text-fill-color:var(--muted)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+h1{font:700 19px 'Shippori Mincho',serif;letter-spacing:.02em}
+h1 small{font:400 12px Inter,sans-serif;color:var(--muted);margin-left:6px}
+nav{display:flex;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px}
+nav a{padding:6px 14px;border-radius:999px;text-decoration:none;color:var(--muted);font-weight:500;font-size:14px}
+nav a[aria-current=page]{background:var(--ink);color:var(--paper)}
+main{flex:1;min-height:0;display:flex;flex-direction:column}
+.view{display:none;flex:1;min-height:0;flex-direction:column}
+.view.on{display:flex}
+
+/* combos */
+#bands{flex:1;min-height:320px;display:flex;flex-direction:column}
+@media(min-width:760px){#bands{flex-direction:row}}
+.band{flex:1;position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;cursor:pointer;transition:flex .25s;user-select:none}
+.band.dark{color:#fff}.band.light{color:#1f1c18}
+.band .nm{font:700 20px 'Shippori Mincho',serif}
+.band .hx{font-size:13px;opacity:.8;font-variant-numeric:tabular-nums}
+.band .tools{position:absolute;top:12px;right:12px;display:flex;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:999px;font-size:13px;font-weight:500;background:rgba(255,255,255,.22);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.35)}
+.light .chip{background:rgba(0,0,0,.07);border-color:rgba(0,0,0,.14)}
+.lockbadge{position:absolute;top:12px;left:12px;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;opacity:.45}
+.band.locked .lockbadge{opacity:1}
+.band.locked{box-shadow:inset 0 0 0 4px currentColor}
+svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line);background:var(--card);flex-wrap:wrap}
+.bar .meta{flex:1;min-width:160px;font-size:13px;color:var(--muted)}
+.bar .meta b{color:var(--ink);font:700 16px 'Shippori Mincho',serif;display:block}
+.btn{padding:11px 18px;border-radius:10px;font-weight:600;border:1px solid var(--line);background:var(--paper)}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+@media(max-width:759px){.bar .meta{flex-basis:100%}.bar .btn{flex:1}}
+.cbar{position:sticky;bottom:0;display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--card);border-top:1px solid var(--line);font-size:13px}
+.cbar span{flex:1;color:var(--muted)}.cbar b{color:var(--ink)}
+.seg{display:flex;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:3px}
+.seg button{padding:8px 12px;border-radius:7px;font-weight:600;font-size:14px;color:var(--muted)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.btn:disabled{opacity:.4;cursor:default}
+.hint{font-size:12px;color:var(--muted);padding:0 16px 10px;background:var(--card)}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(20,16,12,.4);display:none;z-index:10}
+.scrim.on{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-height:78vh;overflow:auto;background:var(--card);border-radius:18px 18px 0 0;padding:18px 16px 24px;z-index:11;transform:translateY(105%);visibility:hidden;transition:transform .25s,visibility 0s .25s}
+.sheet.on{transform:none;visibility:visible;transition:transform .25s}
+@media(min-width:760px){.sheet{left:auto;right:24px;bottom:24px;width:420px;border-radius:18px;max-height:80vh}}
+.sheet h2{font:700 18px 'Shippori Mincho',serif;margin-bottom:2px}
+.sheet p.sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+.sheet .x{position:absolute;top:12px;right:12px;padding:8px}
+.shades{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.shade{border-radius:10px;overflow:hidden;border:1px solid var(--line);text-align:left;background:#fff}
+.shade .sw{height:58px}
+.shade .lb{padding:6px 8px;font-size:12px;line-height:1.25}
+.shade .lb span{display:block;color:var(--muted);font-size:11px}
+.shade[aria-pressed=true]{outline:3px solid var(--ink);outline-offset:-1px}
+.shade .sw{position:relative}
+.shade .ck{position:absolute;right:6px;top:6px;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--paper);display:none;align-items:center;justify-content:center}
+.shade[aria-pressed=true] .ck{display:flex}
+.shade .ck svg{width:13px;height:13px;stroke-width:3}
+.tones{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px}
+.tone{width:38px;height:38px;border-radius:50%;border:1px solid rgba(0,0,0,.15);position:relative}
+.tone[aria-pressed=true]{outline:3px solid var(--ink);outline-offset:2px}
+.tone.custom{display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--muted);background:conic-gradient(#f6ede4,#d7bd96,#825c43,#292420,#f6ede4);cursor:pointer;overflow:hidden}
+.tone.custom input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.band .tag{display:inline-flex;vertical-align:middle;align-items:center;gap:6px;margin-left:6px;font-family:Inter,sans-serif;padding:4px 10px 4px 5px;border-radius:999px;font-size:12px;font-weight:600;background:rgba(255,255,255,.85);color:#1f1c18}
+.band .tag i{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.15)}
+.stag{font-style:normal;font-size:11px;font-weight:600;padding:1px 6px;border-radius:999px;background:var(--line);color:var(--ink);white-space:nowrap}
+.skinchip{display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.skinchip i{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.15)}
+.skinchip[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.skinchip[hidden]{display:none}
+.topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line)}
+.seglbl{font-size:13px;font-weight:600;color:var(--muted)}
+.topbar .seg{flex:1;max-width:300px}.topbar .seg button{flex:1;padding:7px 8px}
+.topbar .skinchip{padding:9px 14px}
+.metarow{display:flex;align-items:center;gap:10px;flex:1;min-width:200px}
+.metarow .meta{flex:1;min-width:0}
+@media(max-width:759px){.bar .metarow{flex-basis:100%}.bar .metarow .btn{flex:none}}
+#saveBtn{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+#saveBtn.saved{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+nav a .count{margin-left:5px;font-size:11px;opacity:.7}
+@media(max-width:420px){h1 small{display:none}nav a{padding:6px 10px}}
+.fld{display:block;margin-bottom:14px}
+.fld span{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px}
+.fld input,.svrow input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#fff;font:inherit}
+.svrow{display:grid;grid-template-columns:44px 1fr;gap:4px 12px;padding:12px 0;border-top:1px solid var(--line)}
+.svrow .sw{width:44px;height:44px;border-radius:10px;border:1px solid rgba(0,0,0,.1);grid-row:span 3}
+.svrow .nm{font-weight:600;font-size:14px}
+.roles{display:flex;flex-wrap:wrap;gap:6px}
+.roles button{padding:6px 11px;border-radius:999px;border:1px solid var(--line);font-size:13px;background:var(--paper)}
+.roles button[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.outfits{display:grid;grid-template-columns:1fr;gap:12px;align-items:start}
+@media(min-width:560px){.outfits{grid-template-columns:1fr 1fr}}
+.outfit{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.outfit .ostrip{display:flex;height:44px}
+.outfit .ostrip i{flex:1}
+.outfit .obody{padding:10px 12px}
+.outfit h3{font:700 15px 'Shippori Mincho',serif;margin:0}
+.outfit .odate{font-size:11px;color:var(--muted);margin-bottom:6px}
+.outfit ul{list-style:none;margin:0 0 10px}
+.outfit li{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:13px;line-height:1.3}
+.outfit li i{width:18px;height:18px;border-radius:6px;flex:none;border:1px solid rgba(0,0,0,.1)}
+.outfit li b{font-weight:600}
+.outfit li>span{color:var(--ink)}
+.outfit .oact{display:flex;gap:8px}
+.outfit .oact .btn{padding:6px 12px;font-size:13px}
+.outfit li small{color:var(--muted);font-size:11px}
+.topbar{flex-wrap:wrap}
+.obar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-basis:100%}
+.oopts{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.oopts[hidden]{display:none}
+.btn.toggle{padding:7px 12px;font-size:14px}
+.btn.toggle[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.small{padding:6px 10px;font-size:13px}
+.obar .roles button{padding:5px 10px;font-size:13px}
+.band .tag.free{background:rgba(255,255,255,.55);border:1px dashed rgba(0,0,0,.35)}
+.wsub{font-size:13px;color:var(--muted);margin:0 0 6px}
+.wsec{margin-top:18px}
+.whead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.whead h3{font:700 17px 'Shippori Mincho',serif}
+.pieces{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.piece{display:flex;gap:10px;align-items:center;padding:8px;border-radius:12px;background:var(--card);border:1px solid var(--line);text-align:left}
+.pmain{width:40px;height:40px;border-radius:9px;flex:none;border:1px solid rgba(0,0,0,.1)}
+.ptext{display:flex;flex-direction:column;font-size:14px;line-height:1.3;min-width:0}
+.ptext small{color:var(--muted);font-size:12px}
+.pnear{display:flex;gap:3px;margin-top:3px}
+.pnear i{width:12px;height:12px;border-radius:3px;border:1px solid rgba(0,0,0,.1)}
+.empty.small{font-size:13px;padding:2px 0}
+.pchosen{display:flex;align-items:center;gap:10px}
+.pchosen .linkbtn{margin-left:auto}
+#pieceSheet .grp{margin:14px 0 6px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+#pieceSheet .grid{display:grid;gap:6px;grid-template-columns:repeat(auto-fill,minmax(40px,1fr))}
+#pieceSheet .dot{aspect-ratio:1;border-radius:9px;border:1px solid rgba(0,0,0,.08)}
+#pcNearWrap[hidden]{display:none}
+.obar,.oopts{flex-wrap:nowrap}
+.obar{overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+.obar::-webkit-scrollbar{display:none}
+.obar .btn,.obar .roles button{white-space:nowrap;flex:none}
+.obar .roles{flex-wrap:nowrap}
+.view{overflow-y:auto}
+#bands{flex:1 0 auto}
+@media(max-width:420px){h1{font-size:16px}}
+
+.reset{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:28px 0 8px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.sheet{max-height:calc(100vh - 12px);max-height:calc(100dvh - 12px)}
+@media(min-width:760px){.sheet{bottom:12px;max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);width:560px}}
+#saveSheet .sub{margin-bottom:10px}
+#saveSheet .fld{margin-bottom:6px}
+.svrow{padding:8px 0;gap:4px 10px}
+.svrow .sw{width:36px;height:36px}
+.svrow .roles{gap:4px}
+.svrow .roles button{padding:4px 9px;font-size:12px}
+.svrow input{padding:7px 10px;font-size:14px}
+.piece.wish{align-items:flex-start;border-style:dashed}
+.wtype{margin-top:6px;gap:4px}
+.wtype button{padding:3px 8px;font-size:12px}
+.shades .grp{grid-column:1/-1;margin:6px 0 0}
+.skinrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:12px}
+.skinrow .lbl{font-weight:600}
+.skinrow #skinsw{display:flex;gap:4px;flex:1;min-width:60px;align-items:center;font-size:13px;color:var(--muted)}
+.skinrow #skinsw{flex-wrap:wrap}.skinrow #skinsw i{flex:none;width:24px;height:24px;border-radius:50%;border:1px solid rgba(0,0,0,.12)}
+.skinrow label{display:flex;align-items:center;gap:6px;font-size:14px}
+.skinrow input{width:18px;height:18px;accent-color:var(--ink)}
+.combo .strip i.skin{box-shadow:inset 0 -5px 0 rgba(255,255,255,.75)}
+.linkbtn{grid-column:1/-1;justify-self:start;text-decoration:underline;font-size:13px;color:var(--muted);padding:6px 0}
+.shfoot{position:sticky;bottom:-24px;margin:14px -16px -24px;padding:12px 16px 20px;background:var(--card);border-top:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.shfoot span{flex:1;font-size:13px;color:var(--muted)}
+.band.soft{box-shadow:inset 0 0 0 4px currentColor,inset 0 0 0 8px rgba(255,255,255,.35)}
+
+/* closet */
+.closet{flex:1;overflow:auto;padding:14px 16px 24px}
+.ctop{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.ctop input{flex:1;min-width:160px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);font:inherit}
+.grp{margin:14px 0 6px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
+.dot{aspect-ratio:1;border-radius:10px;position:relative;border:1px solid rgba(0,0,0,.08)}
+.dot.sel::after{content:"";position:absolute;inset:-4px;border:2.5px solid var(--ink);border-radius:13px}
+.dot .ck{position:absolute;right:4px;bottom:4px;width:18px;height:18px;border-radius:50%;background:var(--ink);color:var(--paper);display:none;align-items:center;justify-content:center}
+.dot.sel .ck{display:flex}
+.dot .ck svg{width:11px;height:11px;stroke-width:3}
+.results h3{font:700 17px 'Shippori Mincho',serif;margin:22px 0 4px}
+.results p.sub{font-size:13px;color:var(--muted);margin-bottom:10px}
+.combo{display:flex;align-items:stretch;gap:10px;width:100%;padding:8px;border-radius:12px;background:var(--card);border:1px solid var(--line);margin-bottom:8px;text-align:left}
+.combo .strip{display:flex;width:120px;flex:none;border-radius:8px;overflow:hidden;min-height:44px}
+.combo .strip i{flex:1}
+.combo .strip i.miss{background-image:repeating-linear-gradient(45deg,transparent 0 5px,rgba(255,255,255,.55) 5px 8px)!important}
+.combo .info{font-size:13px;line-height:1.35}
+.combo .info b{font-weight:600}
+.combo .info span{color:var(--muted)}
+.empty{font-size:14px;color:var(--muted);padding:12px 0}
+.toast{position:fixed;left:50%;top:72px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:10px;font-size:13px;max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20;text-align:center}
+.toast.on{opacity:1}
+footer{font-size:11px;color:var(--muted);padding:8px 16px;border-top:1px solid var(--line)}
+footer a{color:inherit}
+</style>
+</head>
+<body>
+<header>
+  <h1>Wada Palette<small>配色辞典</small></h1>
+  <nav aria-label="Views">
+    <a href="#combos" data-v="combos">Combos</a>
+    <a href="#wardrobe" data-v="wardrobe">Wardrobe</a>
+    <a href="#saved" data-v="saved">Saved<span class="count" id="navCount"></span></a>
+  </nav>
+</header>
+
+<main>
+  <section class="view" id="v-combos" aria-label="Combination explorer">
+    <div class="topbar">
+      <span class="seglbl" id="segLbl">Colors</span>
+      <div class="seg" role="group" aria-labelledby="segLbl">
+        <button data-size="0" aria-pressed="true">Any</button><button data-size="2" aria-pressed="false">2</button><button data-size="3" aria-pressed="false">3</button><button data-size="4" aria-pressed="false">4</button>
+      </div>
+      <button class="btn skinchip" id="skinChip" aria-pressed="false"></button>
+      <div class="obar">
+        <button class="btn toggle" id="outfitBtn" aria-pressed="false">Outfit mode</button>
+        <span class="oopts" id="oopts">
+          <button class="btn toggle small" id="strictBtn" aria-pressed="false" title="Strict: every color must be skin or something you own">Strict</button>
+          <span class="seglbl">Needs</span>
+          <span class="roles" id="needs" role="group" aria-label="Pieces every outfit needs"></span>
+        </span>
+      </div>
+    </div>
+    <div id="bands"></div>
+    <div class="bar">
+      <div class="metarow"><div class="meta" id="meta"></div><button class="btn" id="saveBtn">Save</button></div>
+      <button class="btn" id="unlock">Unlock all</button>
+      <button class="btn primary" id="shuffle">Shuffle</button>
+    </div>
+    <div class="hint">Tap a color to lock it, then shuffle to see other combos that include it. “Shades” shows similar colors to swap in. “Outfit mode” builds palettes from your Wardrobe: one piece per type, plus one free color unless Strict is on. “Save” keeps a palette with what you’d wear in each color.</div>
+  </section>
+
+  <section class="view" id="v-wardrobe" aria-label="Your wardrobe">
+    <div class="closet">
+      <div class="skinrow">
+        <span class="lbl">My skin</span><span id="skinsw"></span>
+        <label><input type="checkbox" id="skinOn"> Count it</label>
+        <button class="btn" id="skinSet">Set</button>
+      </div>
+      <p class="sub wsub">The pieces you own, by color. Each piece can also count as nearby shades, so matching isn’t too exact. Pieces you tag when saving an outfit show up here too.</p>
+      <div id="wlist"></div>
+      <div class="reset"><button class="btn" id="resetAll">Start over</button><span>Clears your wardrobe, saved outfits, skin and settings on this device.</span></div>
+    </div>
+  </section>
+  <section class="view" id="v-saved" aria-label="Saved outfits">
+    <div class="closet" id="savedList"></div>
+  </section>
+</main>
+
+<footer>Colors and combinations from Sanzo Wada’s <i>A Dictionary of Color Combinations</i>, via <a href="https://github.com/mattdesl/dictionary-of-colour-combinations">mattdesl’s open dataset</a> (MIT). Skin tones from the <a href="https://skintone.google">Monk Skin Tone Scale</a> (CC BY 4.0). Screen colors are approximations of print.</footer>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle">
+  <button class="x" id="shClose" aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <h2 id="shTitle"></h2>
+  <p class="sub" id="shSub"></p>
+  <div class="shades" id="shGrid"></div>
+  <div class="shfoot"><span id="shCount"></span><button class="btn primary" id="shApply">Apply</button></div>
+</div>
+<div class="sheet" id="saveSheet" role="dialog" aria-modal="true" aria-labelledby="svTitle">
+  <button class="x" id="svClose" aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <h2 id="svTitle">Save outfit</h2>
+  <p class="sub">Say what you’d wear in each color. Anything goes in the note: “red flannel”, “nail polish”, “buy a hat”.</p>
+  <label class="fld"><span>Name</span><input id="svName" type="text" maxlength="60"></label>
+  <div id="svRows"></div>
+  <div class="shfoot"><button class="btn" id="svDelete" hidden>Delete</button><span></span><button class="btn primary" id="svSave">Save</button></div>
+</div>
+<div class="sheet" id="pieceSheet" role="dialog" aria-modal="true" aria-labelledby="pcTitle">
+  <button class="x" id="pcClose" aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <h2 id="pcTitle">Add a piece</h2>
+  <p class="sub">What is it, what color is it closest to, and what other shades should count as a match?</p>
+  <div class="grp">Type</div>
+  <div class="roles" id="pcType" role="group" aria-label="Type"></div>
+  <label class="fld" style="margin-top:12px"><span>Note</span><input id="pcNote" type="text" maxlength="60" placeholder="e.g. white tee, teal chinos"></label>
+  <div class="grp" id="pcColorLbl">Color</div>
+  <div id="pcMain"></div>
+  <div id="pcNearWrap"><div class="grp">Also counts as</div><div class="shades" id="pcNear"></div></div>
+  <div class="shfoot"><button class="btn" id="pcDelete" hidden>Delete</button><span></span><button class="btn primary" id="pcSave">Save piece</button></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const DATA = {"colors":[{"n":"Hermosa Pink","h":"#f9c1ce","l":[83.4,22.1,1.6],"g":0},{"n":"Corinthian Pink","h":"#f8b6ba","l":[80.3,25.4,7.9],"g":0},{"n":"Cameo Pink","h":"#e0b3b6","l":[77.2,17.2,4.9],"g":0},{"n":"Fawn","h":"#d1b0a7","l":[74.5,11.2,9.4],"g":0},{"n":"Light Brown Drab","h":"#b59392","l":[64.1,13.0,5.3],"g":0},{"n":"Coral Red","h":"#f58e84","l":[70.3,39.3,23.2],"g":0},{"n":"Fresh Color","h":"#f6917e","l":[71.0,37.5,27.3],"g":0},{"n":"Grenadine Pink","h":"#f48067","l":[66.9,43.8,34.7],"g":0},{"n":"Eosine Pink","h":"#f37f94","l":[67.3,46.7,10.3],"g":0},{"n":"Spinel Red","h":"#f27291","l":[64.5,52.2,8.3],"g":0},{"n":"Old Rose","h":"#d46d7a","l":[58.8,42.1,12.3],"g":0},{"n":"Eugenia Red | A","h":"#e2625e","l":[58.4,50.8,28.5],"g":0},{"n":"Eugenia Red | B","h":"#da525d","l":[54.3,54.7,23.7],"g":0},{"n":"Raw Sienna","h":"#bb7125","l":[55.1,25.5,52.2],"g":0},{"n":"Vinaceous Tawny","h":"#c56127","l":[53.2,38.2,50.2],"g":0},{"n":"Jasper Red","h":"#eb5324","l":[56.8,58.4,57.6],"g":0},{"n":"Spectrum Red","h":"#e31f26","l":[49.6,70.9,50.1],"g":0},{"n":"Red Orange","h":"#dd4027","l":[51.8,60.6,50.9],"g":0},{"n":"Etruscan Red","h":"#c55347","l":[50.7,45.9,31.1],"g":0},{"n":"Burnt Sienna","h":"#ae5224","l":[46.4,36.2,43.8],"g":0},{"n":"Ochre Red","h":"#ab544d","l":[46.8,35.7,21.8],"g":0},{"n":"Scarlet","h":"#cb2f43","l":[46.5,61.5,28.9],"g":0},{"n":"Carmine","h":"#cc1236","l":[44.3,67.2,33.7],"g":0},{"n":"Indian Lake","h":"#c53c69","l":[47.5,57.2,6.7],"g":0},{"n":"Rosolanc Purple","h":"#b73f74","l":[45.9,52.4,-3.2],"g":0},{"n":"Pomegranite Purple","h":"#b71f57","l":[41.4,61.0,8.4],"g":0},{"n":"Hydrangea Red","h":"#a94151","l":[43.1,44.4,14.2],"g":0},{"n":"Brick Red","h":"#a84222","l":[42.5,41.5,40.7],"g":0},{"n":"Carmine Red","h":"#a62c37","l":[38.7,50.2,24.7],"g":0},{"n":"Pompeian Red","h":"#ab2439","l":[38.9,54.8,23.8],"g":0},{"n":"Red","h":"#a72144","l":[37.9,54.6,15.4],"g":0},{"n":"Brown","h":"#7c4226","l":[35.1,23.5,28.6],"g":0},{"n":"Hay's Russet","h":"#793327","l":[31.2,30.7,23.5],"g":0},{"n":"Vandyke Red","h":"#82241f","l":[30.2,40.6,27.6],"g":0},{"n":"Pansy Purple","h":"#7d133a","l":[27.6,45.9,6.1],"g":0},{"n":"Pale Burnt Lake","h":"#802626","l":[30.2,39.0,22.7],"g":0},{"n":"Violet Red","h":"#642d5e","l":[27.8,30.4,-17.7],"g":0},{"n":"Vistoris Lake","h":"#6d4145","l":[33.1,20.3,6.1],"g":0},{"n":"Sulpher Yellow","h":"#f5ecc2","l":[93.2,-1.7,21.6],"g":1},{"n":"Pale Lemon Yellow","h":"#ffefae","l":[94.9,-0.1,34.1],"g":1},{"n":"Naples Yellow","h":"#fbe6a0","l":[91.7,0.3,36.6],"g":1},{"n":"Ivory Buff","h":"#ebd3a2","l":[85.6,3.4,27.3],"g":1},{"n":"Seashell Pink","h":"#fdd4bd","l":[88.1,12.1,17.3],"g":1},{"n":"Light Pinkish Cinnamon","h":"#fcc79b","l":[84.2,15.6,29.8],"g":1},{"n":"Pinkish Cinnamon","h":"#eeb480","l":[77.8,17.2,34.7],"g":1},{"n":"Cinnamon Buff","h":"#fdc57e","l":[83.5,14.7,43.7],"g":1},{"n":"Cream Yellow","h":"#fdbf68","l":[81.8,16.5,52.0],"g":1},{"n":"Golden Yellow","h":"#f3a257","l":[73.9,25.9,51.2],"g":1},{"n":"Vinaceous Cinnamon","h":"#eea78c","l":[75.0,24.7,24.8],"g":1},{"n":"Ochraceous Salmon","h":"#d8a37b","l":[71.4,16.5,29.1],"g":1},{"n":"Isabella Color","h":"#c5a56e","l":[69.7,7.1,33.0],"g":1},{"n":"Maple","h":"#c59f6b","l":[68.2,9.6,32.9],"g":1},{"n":"Olive Buff","h":"#c1c494","l":[78.0,-7.1,23.7],"g":1},{"n":"Ecru","h":"#c2ae93","l":[72.2,4.2,16.7],"g":1},{"n":"Yellow","h":"#fff200","l":[95.0,-6.5,95.6],"g":1},{"n":"Lemon Yellow","h":"#f8ed43","l":[92.7,-9.4,77.8],"g":1},{"n":"Apricot Yellow","h":"#ffdd00","l":[89.4,1.9,89.5],"g":1},{"n":"Pyrite Yellow","h":"#cab356","l":[73.6,0.4,49.8],"g":1},{"n":"Olive Ocher","h":"#d6b43e","l":[74.9,3.6,61.8],"g":1},{"n":"Yellow Ocher","h":"#e2b540","l":[76.2,8.4,62.8],"g":1},{"n":"Orange Yellow","h":"#fcb315","l":[78.5,19.6,78.2],"g":1},{"n":"Yellow Orange","h":"#f99d1b","l":[73.0,29.4,72.9],"g":1},{"n":"Apricot Orange","h":"#f68c50","l":[69.4,37.7,49.6],"g":1},{"n":"Orange","h":"#f37420","l":[63.8,47.2,64.7],"g":1},{"n":"Peach Red","h":"#f15a30","l":[59.1,57.5,54.4],"g":1},{"n":"English Red","h":"#d96629","l":[57.2,43.3,54.4],"g":1},{"n":"Cinnamon Rufous","h":"#c27544","l":[57.2,27.8,40.2],"g":1},{"n":"Orange Rufous","h":"#c16b27","l":[54.6,31.6,51.2],"g":1},{"n":"Sulphine Yellow","h":"#c19f2c","l":[67.2,4.3,60.6],"g":1},{"n":"Khaki","h":"#bc892b","l":[61.0,13.9,55.1],"g":1},{"n":"Citron Yellow","h":"#b2b73e","l":[72.5,-13.1,58.2],"g":1},{"n":"Citrine","h":"#b09f36","l":[65.6,-2.6,54.5],"g":1},{"n":"Buffy Citrine","h":"#96874d","l":[56.6,0.0,33.3],"g":1},{"n":"Dark Citrine","h":"#8b835b","l":[54.7,-1.4,23.1],"g":1},{"n":"Light Grayish Olive","h":"#848061","l":[53.2,-2.3,17.0],"g":1},{"n":"Krongbergs Green","h":"#84875e","l":[55.1,-6.2,21.5],"g":1},{"n":"Olive","h":"#837e31","l":[52.2,-5.7,41.5],"g":1},{"n":"Orange Citrine","h":"#986f2d","l":[50.2,11.5,42.0],"g":1},{"n":"Sudan Brown","h":"#a36752","l":[49.9,23.0,22.5],"g":1},{"n":"Olive Green","h":"#6b7140","l":[46.4,-8.5,26.5],"g":1},{"n":"Light Brownish Olive","h":"#806e4b","l":[47.5,3.7,22.2],"g":1},{"n":"Deep Grayish Olive","h":"#635a3a","l":[38.6,-0.3,19.9],"g":1},{"n":"Pale Raw Umber","h":"#71502f","l":[37.1,11.2,25.0],"g":1},{"n":"Sepia","h":"#644b1e","l":[33.8,6.9,30.2],"g":1},{"n":"Madder Brown","h":"#762c19","l":[29.1,32.0,29.3],"g":1},{"n":"Mars Brown Tobacco","h":"#653514","l":[28.0,20.5,29.8],"g":1},{"n":"Vandyke Brown","h":"#4b3317","l":[23.8,8.5,22.1],"g":1},{"n":"Turquoise Green","h":"#b5decc","l":[85.3,-16.9,4.6],"g":2},{"n":"Glaucous Green","h":"#b4cdc2","l":[80.3,-10.2,2.3],"g":2},{"n":"Dark Greenish Glaucous","h":"#b7c2a9","l":[77.1,-7.6,11.4],"g":2},{"n":"Yellow Green","h":"#afd472","l":[80.6,-24.6,43.9],"g":2},{"n":"Light Green Yellow","h":"#c7d14f","l":[81.1,-15.9,60.6],"g":2},{"n":"Night Green","h":"#87c540","l":[73.3,-36.0,57.0],"g":2},{"n":"Olive Yellow","h":"#a6a159","l":[65.5,-6.1,37.8],"g":2},{"n":"Artemesia Green","h":"#709390","l":[58.1,-12.8,-2.9],"g":2},{"n":"Andover Green","h":"#6d7e77","l":[51.2,-7.8,1.5],"g":2},{"n":"Rainette Green","h":"#8fa071","l":[63.7,-12.5,22.4],"g":2},{"n":"Chromium Green","h":"#719470","l":[57.9,-18.1,15.0],"g":2},{"n":"Pistachio Green","h":"#648f7b","l":[55.8,-18.6,5.7],"g":2},{"n":"Sea Green","h":"#00b49b","l":[65.1,-48.9,0.5],"g":2},{"n":"Benzol Green","h":"#00978d","l":[53.6,-54.6,-8.3],"g":2},{"n":"Light Porcelain Green","h":"#00908a","l":[53.3,-37.5,-6.8],"g":2},{"n":"Green","h":"#489b6e","l":[57.8,-34.5,15.6],"g":2},{"n":"Dull Viridian Green","h":"#009465","l":[53.5,-49.0,14.4],"g":2},{"n":"Oil Green","h":"#819238","l":[57.6,-16.0,43.8],"g":2},{"n":"Diamine Green","h":"#1a7444","l":[42.7,-35.7,18.6],"g":2},{"n":"Cossack Green","h":"#437742","l":[45.5,-27.2,23.4],"g":2},{"n":"Lincoln Green","h":"#555832","l":[36.3,-5.9,21.2],"g":2},{"n":"Blackish Olive","h":"#42533e","l":[33.3,-10.1,9.7],"g":2},{"n":"Deep Slate Olive","h":"#253122","l":[18.8,-7.7,7.5],"g":2},{"n":"Nile Blue","h":"#bce4e5","l":[87.7,-13.3,-5.0],"g":3},{"n":"Pale King's Blue","h":"#a7d4e4","l":[82.2,-12.7,-12.9],"g":3},{"n":"Light Glaucous Blue","h":"#a5c8d1","l":[78.2,-10.6,-8.7],"g":3},{"n":"Salvia Blue","h":"#97acc8","l":[69.5,-2.8,-16.8],"g":3},{"n":"Cobalt Green","h":"#96d1aa","l":[79.0,-25.6,13.0],"g":3},{"n":"Calamine BLue","h":"#78cdd0","l":[77.1,-26.2,-10.4],"g":3},{"n":"Venice Green","h":"#62c6bf","l":[73.7,-31.7,-6.1],"g":3},{"n":"Cerulian Blue","h":"#0093a5","l":[55.0,-30.2,-20.1],"g":3},{"n":"Peacock Blue","h":"#00939b","l":[52.8,-48.9,-17.5],"g":3},{"n":"Green Blue","h":"#099197","l":[54.1,-31.3,-12.9],"g":3},{"n":"Olympic Blue","h":"#5a82b3","l":[53.1,-3.6,-30.7],"g":3},{"n":"Blue","h":"#006eb8","l":[43.5,-8.8,-48.8],"g":3},{"n":"Antwarp Blue","h":"#007190","l":[42.0,-29.1,-27.7],"g":3},{"n":"Helvetia Blue","h":"#005b8d","l":[35.3,-12.1,-36.4],"g":3},{"n":"Dark Medici Blue","h":"#547076","l":[45.1,-9.2,-6.9],"g":3},{"n":"Dusky Green","h":"#004f46","l":[28.0,-36.3,-3.3],"g":3},{"n":"Deep Lyons Blue","h":"#1c4286","l":[28.5,6.6,-42.7],"g":3},{"n":"Violet Blue","h":"#40456a","l":[30.1,5.4,-22.4],"g":3},{"n":"Vandar Poel's Blue","h":"#064f6e","l":[30.8,-11.3,-24.5],"g":3},{"n":"Dark Tyrian Blue","h":"#12354e","l":[20.6,-5.8,-19.1],"g":3},{"n":"Dull Violet Black","h":"#1e0e3f","l":[8.1,19.4,-28.8],"g":3},{"n":"Deep Indigo","h":"#051230","l":[5.8,4.1,-21.8],"g":3},{"n":"Deep Slate Green","h":"#112f2c","l":[16.9,-12.1,-2.2],"g":3},{"n":"Grayish Lavender - A","h":"#b5b1d8","l":[73.4,7.5,-19.4],"g":4},{"n":"Grayish Lavender - B","h":"#c0a9b3","l":[71.3,10.0,-2.2],"g":4},{"n":"Laelia Pink","h":"#ca92a8","l":[66.5,24.3,-2.7],"g":4},{"n":"Lilac","h":"#b984af","l":[61.5,25.9,-14.3],"g":4},{"n":"Eupatorium Purple","h":"#bf5892","l":[52.2,46.7,-11.7],"g":4},{"n":"Light Mauve","h":"#9a72aa","l":[53.6,23.9,-24.0],"g":4},{"n":"Aconite Violet","h":"#a36aa5","l":[52.7,30.7,-22.4],"g":4},{"n":"Dull Blue Violet","h":"#80719e","l":[50.2,13.4,-22.5],"g":4},{"n":"Dark Soft Violet","h":"#66629c","l":[44.0,12.3,-31.2],"g":4},{"n":"Blue Violet","h":"#6450a1","l":[39.1,23.6,-41.9],"g":4},{"n":"Purple Drab","h":"#84565b","l":[41.9,19.9,5.6],"g":4},{"n":"Deep Violet / Plumbeous","h":"#70727c","l":[48.0,0.8,-5.9],"g":4},{"n":"Veronia Purple","h":"#8c4c62","l":[41.0,29.6,0.1],"g":4},{"n":"Dark Slate Purple","h":"#704357","l":[34.3,22.2,-3.6],"g":4},{"n":"Taupe Brown","h":"#7a4456","l":[36.2,25.6,0.1],"g":4},{"n":"Violet Carmine","h":"#713b4c","l":[32.3,25.9,0.8],"g":4},{"n":"Violet","h":"#4f4086","l":[31.5,20.7,-37.9],"g":4},{"n":"Red Violet","h":"#59256a","l":[25.1,33.1,-30.1],"g":4},{"n":"Cotinga Purple","h":"#501345","l":[18.4,32.9,-15.8],"g":4},{"n":"Dusky Madder Violet","h":"#4e1d4c","l":[20.1,28.6,-18.3],"g":4},{"n":"White","h":"#ffffff","l":[100.0,0.0,0.0],"g":5},{"n":"Neutral Gray","h":"#b6bfc1","l":[76.7,-3.0,-2.0],"g":5},{"n":"Mineral Gray","h":"#a2b0ad","l":[70.8,-5.6,-0.1],"g":5},{"n":"Warm Gray","h":"#a1a39a","l":[66.7,-2.2,4.7],"g":5},{"n":"Slate Color","h":"#34454c","l":[27.8,-5.4,-7.0],"g":5},{"n":"Black","h":"#111314","l":[5.6,-0.4,-1.1],"g":5}],"combos":{"176":[0,42,115],"227":[0,112,117],"273":[0,34,78,154],"27":[1,157],"43":[1,139],"87":[1,70],"97":[1,18],"128":[1,116,138],"169":[1,39,156],"174":[1,134,147],"206":[1,47,66],"246":[1,27,38,45],"254":[1,38,76,135],"264":[1,17,89,117],"342":[1,46,77,109],"101":[2,126],"105":[2,97],"116":[2,142],"120":[2,29],"165":[2,9,37],"231":[2,32,120],"18":[3,152],"125":[3,117,127],"308":[3,21,65,114],"35":[4,28],"68":[4,54],"185":[4,18,39],"191":[4,59,121],"223":[4,49,87],"239":[4,57,88],"244":[4,14,95,122],"268":[4,13,109,110],"285":[4,19,64,87],"321":[4,38,109,113],"92":[5,100],"123":[5,55,147],"320":[5,38,104,112],"332":[5,21,109,125],"240":[6,54,117],"6":[7,131],"21":[7,99],"112":[7,158],"166":[7,40,132],"193":[7,40,101],"201":[7,76,114],"230":[7,87,114],"300":[7,46,87,115],"315":[7,38,47,137],"341":[7,106,109,112],"34":[8,154],"59":[8,71],"90":[8,139],"108":[8,27],"134":[8,138,150],"153":[8,60,70],"197":[8,141,154],"242":[8,19,105,158],"248":[8,69,133,146],"276":[8,42,90,158],"287":[8,57,111,115],"314":[8,32,126,152],"327":[8,13,53,134],"336":[8,32,39,108],"14":[9,40],"147":[9,33,87],"184":[9,41,74],"195":[9,39,154],"224":[9,124,147],"277":[9,24,76,130],"55":[10,153],"162":[10,96,136],"260":[10,48,88,99],"265":[10,56,93,130],"284":[11,56,99,125],"17":[12,99],"77":[12,128],"252":[12,13,68,119],"262":[12,41,71,106],"270":[12,38,79,106],"280":[12,107,135,147],"282":[12,51,114,136],"325":[12,40,59,132],"3":[13,39],"13":[13,145],"33":[13,157],"70":[13,107],"86":[13,99],"130":[13,28,149],"131":[13,65,118],"182":[13,86,131],"243":[13,41,79,157],"247":[13,56,100,126],"255":[13,57,115,158],"269":[13,35,139,158],"279":[13,48,53,129],"293":[13,87,94,102],"298":[13,55,64,158],"319":[13,56,61,106],"40":[14,70],"85":[14,122],"155":[15,100,131],"194":[15,42,120],"216":[15,102,158],"219":[15,97,125],"257":[16,60,121,139],"266":[16,41,96,100],"301":[16,41,96,139],"322":[16,27,137,142],"31":[17,39],"164":[17,60,149],"179":[17,47,126],"241":[17,39,50,124],"25":[18,110],"47":[18,134],"137":[18,45,98],"152":[18,32,112],"275":[18,53,84,147],"198":[19,56,102],"263":[19,44,87,157],"286":[19,60,118,127],"297":[19,61,79,127],"312":[19,61,94,123],"333":[19,55,114,121],"343":[19,41,81,128],"199":[20,80,126],"283":[20,35,97,116],"136":[21,103,150],"39":[22,123],"117":[22,158],"122":[22,46,100],"154":[22,54,121],"225":[22,125,146],"232":[22,44,131],"307":[22,133,139,151],"313":[22,54,105,158],"299":[23,48,104,122],"331":[23,130,138,149],"48":[24,123],"144":[24,63,158],"170":[24,60,150],"204":[24,66,112],"346":[24,87,91,95],"220":[25,49,139],"271":[25,114,119,132],"142":[26,68,113],"37":[27,150],"328":[27,62,86,101],"51":[28,121],"104":[28,38],"181":[28,149,151],"200":[28,52,97],"221":[28,154,158],"228":[28,39,154],"233":[28,72,127],"237":[28,84,113],"245":[28,104,129,157],"338":[28,60,125,134],"30":[29,155],"71":[29,49],"212":[29,77,113],"311":[29,46,89,91],"324":[29,120,139,154],"251":[30,54,105,157],"261":[30,39,115,156],"110":[31,86],"121":[31,49,107],"145":[31,70,130],"161":[31,44,123],"58":[32,99],"82":[32,152],"95":[32,130],"186":[32,49,121],"249":[32,53,58,124],"304":[32,46,73,100],"345":[32,110,116,142],"16":[33,111],"133":[33,71,99],"316":[33,103,149,150],"335":[33,61,149,157],"157":[34,58,120],"124":[35,59,93],"171":[35,61,88],"177":[35,72,133],"205":[35,48,149],"217":[35,49,105],"258":[35,44,76,122],"9":[36,140],"63":[37,117],"91":[37,67],"226":[37,46,149],"290":[37,39,107,114],"337":[37,135,148,158],"52":[38,158],"72":[38,111],"80":[38,138],"132":[38,47,71],"135":[38,106,113],"151":[38,61,128],"208":[38,119,122],"294":[38,46,106,113],"296":[38,49,82,157],"310":[38,44,76,109],"326":[38,64,90,92],"60":[39,129],"76":[39,156],"99":[39,117],"109":[39,108],"111":[39,90],"203":[39,48,107],"272":[39,63,87,113],"281":[39,100,114,122],"292":[39,44,50,53],"115":[40,64],"303":[40,64,109,154],"11":[41,155],"50":[41,152],"94":[41,125],"102":[41,67],"126":[41,59,126],"178":[41,112,119],"190":[41,65,158],"209":[41,61,113],"214":[41,78,149],"235":[41,61,134],"45":[42,55],"84":[42,132],"88":[42,121],"113":[42,86],"150":[42,70,88],"334":[42,76,90,122],"317":[43,53,55,87],"78":[44,116],"175":[44,52,142],"305":[44,56,70,87],"23":[45,138],"127":[45,98,141],"180":[45,138,154],"210":[45,55,107],"234":[45,82,111],"323":[45,70,84,158],"344":[45,126,139,158],"192":[46,86,144],"215":[46,121,137],"267":[46,61,100,121],"278":[46,58,106,125],"295":[46,54,121,130],"302":[46,53,110,122],"329":[46,134,151,157],"26":[47,82],"81":[47,156],"138":[47,55,116],"140":[47,122,157],"229":[47,109,154],"309":[47,62,127,128],"213":[48,56,111],"256":[48,63,103,158],"32":[49,92],"238":[49,151,156],"339":[49,65,112,127],"4":[50,150],"12":[50,119],"83":[52,127],"330":[52,110,113,119],"348":[52,106,109,151],"167":[53,111,128],"22":[54,126],"62":[54,158],"158":[55,66,92],"168":[55,128,145],"173":[55,84,87],"189":[55,109,116],"253":[55,62,151,157],"259":[55,119,123,156],"289":[55,91,127,130],"306":[55,100,103,110],"107":[56,74],"129":[56,69,113],"163":[56,87,122],"250":[57,64,99,110],"66":[58,79],"148":[58,60,117],"149":[58,63,132],"156":[58,114,149],"42":[59,149],"96":[59,76],"118":[59,86],"222":[59,61,67],"114":[60,122],"2":[61,129],"53":[61,152],"89":[61,127],"288":[61,83,147,158],"211":[62,93,131],"7":[63,88],"46":[63,158],"141":[63,90,129],"274":[64,73,120,138],"340":[64,99,154,158],"1":[65,117],"8":[66,133],"10":[66,73],"103":[66,152],"172":[66,122,150],"36":[68,87],"65":[68,115],"160":[68,82,124],"146":[69,81,105],"159":[69,115,133],"236":[69,126,143],"196":[70,111,142],"93":[71,112],"100":[72,140],"41":[73,115],"29":[75,113],"207":[78,88,158],"318":[80,108,125,132],"73":[82,96],"24":[83,145],"28":[84,131],"79":[84,119],"98":[84,127],"19":[85,92],"74":[87,119],"202":[87,114,157],"61":[91,151],"291":[91,99,114,115],"347":[93,99,123,136],"188":[96,113,114],"15":[100,133],"54":[100,112],"44":[101,120],"38":[105,126],"5":[106,128],"49":[111,121],"75":[111,127],"119":[112,129],"139":[113,131,154],"20":[115,135],"67":[120,129],"143":[121,136,156],"106":[122,130],"187":[123,134,139],"218":[123,133,144],"56":[134,149],"64":[139,141],"183":[144,145,150],"57":[147,157],"69":[156,158]}};
+const C = DATA.colors;           // [{n,h,l:[L,a,b],g}]
+const COMBOS = DATA.combos;      // {id:[colorIdx...]}
+const GROUPS = ["Reds & pinks","Yellows, oranges & browns","Greens","Blues","Violets","Neutrals"];
+const IDS = Object.keys(COMBOS).map(Number).sort((a,b)=>a-b);
+const byColor = C.map(()=>[]);
+IDS.forEach(id=>COMBOS[id].forEach(c=>byColor[c].push(id)));
+
+const $ = s=>document.querySelector(s);
+const I = {
+  lock:'<svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  open:'<svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/></svg>',
+  drop:'<svg class="i" viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg>',
+  copy:'<svg class="i" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>',
+  ck:'<svg class="i" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>'
+};
+const isDark = c => C[c].l[0] < 62;
+const dE = (a,b)=>Math.hypot(C[a].l[0]-C[b].l[0],C[a].l[1]-C[b].l[1],C[a].l[2]-C[b].l[2]);
+const store = { get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}, set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}} };
+
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2600)}
+
+/* ---------- Combos view ---------- */
+let current = IDS[Math.floor(Math.random()*IDS.length)];
+let order = [...COMBOS[current]]; // display order; locked colors keep their position across shuffles
+// slots: each slot is a Set of colors. Size 1 = hard lock, size >1 = soft lock (any one of these)
+let slots = [];
+let size = store.get('wada-size',0);
+const sizeOK = id => !size || COMBOS[id].length===size;
+const slotOf = c => slots.find(sl=>sl.has(c));
+function fits(id, sl){
+  const cols=COMBOS[id];
+  const rec=(i,used)=> i===sl.length || cols.some(c=>!used.has(c)&&sl[i].has(c)&&rec(i+1,new Set([...used,c])));
+  return rec(0,new Set());
+}
+// which color in combo id satisfies each slot (or null)
+function assign(id, sl){
+  const cols=COMBOS[id];
+  const rec=(i,used)=>{ if(i===sl.length) return [];
+    for(const c of cols){ if(!used.includes(c)&&sl[i].has(c)){ const r=rec(i+1,[...used,c]); if(r) return [c,...r]; } } return null; };
+  return rec(0,[]);
+}
+function setCurrent(id){
+  const prev=order; current=id;
+  const cols=COMBOS[id], L=cols.length, out=new Array(L).fill(null);
+  const a=assign(id,slots)||[];
+  // place each locked slot's color where that slot sat before
+  slots.forEach((sl,i)=>{ const c=a[i]; if(c==null)return;
+    let p=prev.findIndex(x=>sl.has(x)); if(p<0)return; p=Math.min(p,L-1);
+    if(out[p]!=null){ const free=[...out.keys()].filter(k=>out[k]==null).sort((x,y)=>Math.abs(x-p)-Math.abs(y-p)); if(!free.length)return; p=free[0]; }
+    out[p]=c; });
+  const rest=cols.filter(c=>!out.includes(c));
+  order=out.map(x=>x==null?rest.shift():x);
+}
+// when "count my skin" is on, every combo must include a skin stand-in (unless a lock already covers it)
+function withSkin(sl){ if(!skinActive() || sl.some(x=>[...x].every(c=>skin.has(c)))) return sl; return [...sl, skin]; }
+function matching(sl=slots){ const e=withSkin(sl); return IDS.filter(id=>sizeOK(id) && fits(id,e) && (!outfitOn || cover(id))); }
+const sz = ()=> size?' '+size+'-color':'';
+
+const skinFirst = cols => skinActive() ? [...cols.filter(c=>skin.has(c)), ...cols.filter(c=>!skin.has(c))] : cols;
+function renderCombo(){
+  order = skinFirst(order);
+  const cols = order, cov = outfitOn ? cover(current) : null;
+  $('#bands').innerHTML = cols.map(c=>{
+    const sl=slotOf(c), soft=sl&&sl.size>1, bg=C[c].h, role=cov?cov.get(c):null;
+    const isSkin = cov ? role==='Skin' : skinActive()&&skin.has(c);
+    const pf = role && role!=='Skin' && role!=='Free' ? pieceFor(role,c) : null;
+    const ptag = !cov || !role || role==='Skin' ? '' : role==='Free' ? `<span class="tag free">Free pick · add or buy</span>` : `<span class="tag">${esc(role)}${pf&&pf.note?' · '+esc(pf.note):''}</span>`;
+    const badge = !sl ? I.open : soft ? I.lock+`1 of ${sl.size} shades` : I.lock+'Locked';
+    return `
+    <div class="band ${isDark(c)?'dark':'light'} ${sl?'locked':''} ${soft?'soft':''}" style="background:${bg}" data-c="${c}" role="button" tabindex="0" aria-pressed="${!!sl}" aria-label="${C[c].n}, ${sl?(soft?'soft locked to '+sl.size+' shades':'locked'):'unlocked'}. Tap to ${sl?'unlock':'lock'}.">
+      <div class="lockbadge">${badge}</div>
+      <div class="tools">
+        <button class="chip" data-shades="${c}">${I.drop}Shades</button>
+        <button class="chip" data-copy="${c}" aria-label="Copy ${C[c].h}">${I.copy}</button>
+      </div>
+      <div class="nm">${C[c].n}${isSkin?` <span class="tag">${skinHex?`<i style="background:${skinHex}"></i>`:''}Skin tone</span>`:''}${ptag}</div>
+      <div class="hx">${C[c].h.toUpperCase()} · in ${byColor[c].length} combos</div>
+    </div>`}).join('');
+  const m = matching(), n=slots.length;
+  $('#meta').innerHTML = `<b>Combination No. ${current}</b>` +
+    (()=>{const parts=[n&&`your ${n} lock${n>1?'s':''}`, skinActive()&&'your skin', outfitOn&&'your wardrobe'].filter(Boolean);
+      const what = parts.join(' + ').replace(/ \+ your /g,' + ');
+      if(outfitOn && !pieces.length) return 'Add pieces in Wardrobe to use outfit mode';
+      return what ? (m.length>1 ? `${m.length}${sz()} combos fit ${what}` : m.length ? `This is the only${sz()} combo that fits ${what}` : `No${sz()} combos fit ${what}`) : `${m.length}${sz()} combinations · ${C.length} colors`;})();
+  renderOutfitBar();
+  $('#skinChip').setAttribute('aria-pressed',skinActive());
+  $('#skinChip').innerHTML = (skinHex?`<i style="background:${skinHex}"></i>`:'')+(skin.size?'Skin':'Add skin');
+  const ok=m.includes(current);
+  $('#shuffle').textContent = ok||!m.length ? 'Shuffle' : 'Show a match';
+  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.size===size));
+  $('#shuffle').disabled = !m.length || (m.length===1 && m[0]===current);
+  $('#unlock').disabled = !n;
+  const sv=findSaved(); $('#saveBtn').innerHTML = sv ? I.ck+' Saved' : 'Save'; $('#saveBtn').classList.toggle('saved',!!sv);
+}
+
+function shuffle(){
+  const m = matching().filter(id=>id!==current);
+  if(!m.length){toast(matching().length?'No other combos match':'No combos match your locks and size');return}
+  setCurrent(m[Math.floor(Math.random()*m.length)]);
+  renderCombo();
+}
+
+$('#bands').addEventListener('click',e=>{
+  const sh=e.target.closest('[data-shades]'); if(sh){openShades(+sh.dataset.shades);return}
+  const cp=e.target.closest('[data-copy]'); if(cp){const h=C[+cp.dataset.copy].h.toUpperCase();
+    (navigator.clipboard?navigator.clipboard.writeText(h):Promise.reject()).then(()=>toast('Copied '+h)).catch(()=>toast(h));return}
+  const b=e.target.closest('.band'); if(!b)return;
+  const c=+b.dataset.c, sl=slotOf(c);
+  slots = sl ? slots.filter(x=>x!==sl) : [...slots,new Set([c])];
+  renderCombo();
+});
+$('#bands').addEventListener('keydown',e=>{ if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('band')){e.preventDefault();e.target.click()} });
+$('#shuffle').onclick=shuffle;
+$('#unlock').onclick=()=>{slots=[];renderCombo()};
+document.querySelectorAll('.seg').forEach(g=>g.addEventListener('click',e=>{
+  const b=e.target.closest('[data-size]'); if(!b)return; size=+b.dataset.size; store.set('wada-size',size);
+  const m=matching();
+  if(!m.includes(current)){
+    if(m.length) setCurrent(m[Math.floor(Math.random()*m.length)]);
+    else if(slots.length) toast(`No ${size}-color combos fit all your locks`);
+  }
+  renderCombo();
+}));
+document.addEventListener('keydown',e=>{ if(e.key===' '&&(location.hash===''||location.hash==='#combos')&&!$('#sheet').classList.contains('on')&&!$('#saveSheet').classList.contains('on')&&!$('#pieceSheet').classList.contains('on')&&e.target===document.body){e.preventDefault();shuffle()} });
+
+/* ---------- Shades sheet ---------- */
+let shadeFor=null, pick=new Set(), mode='shades';
+function others(){ const sl=slotOf(shadeFor); return slots.filter(x=>x!==sl); }
+function openShades(c){
+  mode='shades'; shadeFor=c;
+  const sl=slotOf(c);
+  pick = new Set(sl && sl.size>1 ? sl : [c]);
+  const near = C.map((_,i)=>i).filter(i=>i!==c).sort((a,b)=>dE(c,a)-dE(c,b)).slice(0,15);
+  const list=[c,...near,...[...pick].filter(i=>i!==c&&!near.includes(i))];
+  $('#shTitle').textContent='Shades near '+C[c].n;
+  $('#shSub').textContent='Pick one to swap it in, or pick several to shuffle between just those.';
+  $('#shGrid').innerHTML=list.map(i=>`
+    <button class="shade" data-pick="${i}" aria-pressed="${pick.has(i)}">
+      <div class="sw" style="background:${C[i].h}"><span class="ck">${I.ck}</span></div>
+      <div class="lb">${C[i].n}<span>${i===c?'Current · ':''}${C[i].h.toUpperCase()} · ${byColor[i].length} combos</span></div>
+    </button>`).join('');
+  updateSheet();
+  $('#scrim').classList.add('on');$('#sheet').classList.add('on');
+  $('#shGrid button').focus();
+}
+function updateSheet(){
+  $('#shGrid').querySelectorAll('[data-pick]').forEach(b=>b.setAttribute('aria-pressed',pick.has(+b.dataset.pick)));
+  const k=pick.size, btn=$('#shApply');
+  if(mode==='skin'){ btn.textContent = k ? `Save ${k} skin color${k>1?'s':''}` : 'Clear skin'; $('#shCount').textContent = k ? `${k} picked` : 'Nothing picked'; return; }
+  if(!k){btn.textContent='Unlock this color';$('#shCount').textContent='Nothing picked';return}
+  const withOthers=matching([...others(),pick]).length, alone=matching([pick]).length;
+  btn.textContent = k===1 ? (pick.has(shadeFor)?'Lock '+C[shadeFor].n:'Swap in '+C[[...pick][0]].n) : `Shuffle between ${k} shades`;
+  $('#shCount').textContent = withOthers ? `${withOthers}${sz()} combo${withOthers>1?'s':''} fit` : alone ? `${alone}${sz()} combos, but not with your other locks` : `No${sz()} combos with ${k>1?'these':'this'}`;
+}
+function closeShades(){$('#scrim').classList.remove('on');$('#sheet').classList.remove('on')}
+$('#shClose').onclick=closeShades;$('#scrim').onclick=closeShades;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeShades()});
+$('#shGrid').addEventListener('click',e=>{
+  if(e.target.closest('#skinAll')){ skinAll=!skinAll; renderSkinGrid(); return; }
+  const b=e.target.closest('[data-pick]'); if(!b)return;
+  const n=+b.dataset.pick; pick.has(n)?pick.delete(n):pick.add(n); updateSheet();
+});
+$('#shApply').onclick=()=>{
+  closeShades();
+  if(mode==='skin'){ skin=new Set(pick); skinTones=skin.size?[...pickTones]:[]; skinHex=blend(skinTones); store.set('wada-skin',[...skin]); store.set('wada-skintones',skinTones); if(skin.size){skinOn=true;store.set('wada-skinon',true)} renderSkinRow(); renderWardrobe(); { const m=matching(); if(m.length && !m.includes(current)) setCurrent(m[Math.floor(Math.random()*m.length)]); } renderCombo(); return; }
+  const rest=others();
+  if(!pick.size){ slots=rest; renderCombo(); return; }
+  const mine=new Set(pick);
+  slots=[...rest,mine];
+  let m=matching();
+  if(!m.length){ slots=[mine]; m=matching(); if(m.length) toast('No combo fits these with your other locks, so only these are locked now'); }
+  if(!m.length){ size=0; store.set('wada-size',0); m=matching(); toast(`No combos of that size, so the size is set back to Any`); }
+  if(!m.length){ toast('No combos found'); renderCombo(); return; }
+  // swapped-in shade takes the old color's spot
+  const pos=order.indexOf(shadeFor);
+  setCurrent(m.includes(current) && mine.size>1 ? current : m[Math.floor(Math.random()*m.length)]);
+  if(pos>=0){ const c=order.find(x=>mine.has(x)); const j=order.indexOf(c); if(j>=0&&pos<order.length){ [order[pos],order[j]]=[order[j],order[pos]]; } }
+  renderCombo();
+};
+
+/* ---------- My skin ---------- */
+// Real skin tones: the Monk Skin Tone Scale (Google, CC BY 4.0), lightest to deepest
+const MST = ['#f6ede4','#f3e7db','#f7ead0','#eadaba','#d7bd96','#a07e56','#825c43','#604134','#3a312a','#292420'];
+// Dictionary colors that can stand in for skin when matching combos
+const POOL = ['White','Seashell Pink','Ivory Buff','Light Pinkish Cinnamon','Cameo Pink','Corinthian Pink','Fresh Color','Pinkish Cinnamon','Vinaceous Cinnamon','Fawn','Ecru',
+  'Ochraceous Salmon','Isabella Color','Maple','Light Brown Drab','Cinnamon Rufous','Sudan Brown','Light Brownish Olive',
+  'Pale Raw Umber','Brown','Sepia',"Hay's Russet",'Madder Brown','Mars Brown Tobacco','Vandyke Brown','Black'].map(n=>C.findIndex(x=>x.n===n)).filter(i=>i>=0);
+function hexLab(h){
+  let [r,g,b]=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(c=>c<=.04045?c/12.92:((c+.055)/1.055)**2.4);
+  const X=(r*.4124+g*.3576+b*.1805)/.95047, Y=r*.2126+g*.7152+b*.0722, Z=(r*.0193+g*.1192+b*.9505)/1.08883;
+  const f=v=>v>.008856?Math.cbrt(v):7.787*v+16/116;
+  return [116*f(Y)-16,500*(f(X)-f(Y)),200*(f(Y)-f(Z))];
+}
+const dHex=(h,i)=>{const L=hexLab(h);return Math.hypot(L[0]-C[i].l[0],L[1]-C[i].l[1],L[2]-C[i].l[2])};
+const nearestPool=h=>[...POOL].sort((a,b)=>dHex(h,a)-dHex(h,b));
+
+let skinTones = store.get('wada-skintones',null) || (store.get('wada-skinhex',null)?[store.get('wada-skinhex',null)]:[]);
+const blend = ts => { if(!ts.length) return null; const rgb=[1,3,5].map(i=>Math.round(ts.reduce((s,t)=>s+parseInt(t.slice(i,i+2),16),0)/ts.length)); return '#'+rgb.map(v=>v.toString(16).padStart(2,'0')).join(''); };
+let skin = new Set(store.get('wada-skin',[])), skinHex = blend(skinTones), skinOn = store.get('wada-skinon',true), skinAll=false, pickTones=[];
+const isCustom = t => !MST.includes(t);
+const skinActive = ()=> skinOn && skin.size>0;
+const skinFill = c => skinHex || C[c].h;   // show the real skin color where a stand-in sits
+function renderSkinRow(){
+  $('#skinsw').innerHTML = skin.size ? (skinTones.length?skinTones.map(t=>`<i style="background:${t}" title="Your skin"></i>`).join('')+`<span style="margin:0 4px">≈</span>`:'')+[...skin].map(c=>`<i style="background:${C[c].h}" title="${C[c].n}"></i>`).join('') : 'Not set';
+  $('#skinOn').checked = skinActive(); $('#skinOn').disabled = !skin.size;
+  $('#skinSet').textContent = skin.size ? 'Change' : 'Set';
+}
+const tile = i => `<button class="shade" data-pick="${i}" aria-pressed="${pick.has(i)}">
+      <div class="sw" style="background:${C[i].h}"><span class="ck">${I.ck}</span></div>
+      <div class="lb">${C[i].n}<span>${C[i].h.toUpperCase()}</span></div></button>`;
+function renderSkinGrid(){
+  let h=`<div class="grp">1. Your skin tone — pick one or more</div>
+    <div class="tones">${MST.map((t,i)=>`<button class="tone" data-tone="${t}" style="background:${t}" aria-pressed="${pickTones.includes(t)}" aria-label="Skin tone ${i+1} of 10"></button>`).join('')}
+      ${(()=>{const cu=pickTones.find(isCustom);return `<label class="tone custom" aria-pressed="${!!cu}" style="${cu?'background:'+cu:''}" title="Custom color">${cu?'':'+'}<input type="color" id="skinCustom" value="${cu||'#a07e56'}" aria-label="Custom skin color"></label>`+(cu?`<button class="linkbtn" id="rmCustom" style="grid-column:auto;align-self:center">Remove custom</button>`:'')})()}
+    </div>
+    <div class="grp">2. Closest dictionary colors, used for matching</div>`;
+  const list = skinAll ? C.map((_,i)=>i) : POOL;
+  const dist = i => Math.min(...pickTones.map(t=>dHex(t,i)));
+  const sorted = pickTones.length ? [...list].sort((a,b)=>dist(a)-dist(b)) : [...list].sort((a,b)=>C[b].l[0]-C[a].l[0]);
+  h += sorted.map(tile).join('');
+  h += `<button class="linkbtn" id="skinAll">${skinAll?'Show skin stand-ins only':'Show all colors'}</button>`;
+  $('#shGrid').innerHTML=h; updateSheet();
+}
+function syncPick(){ pick=new Set(pickTones.flatMap(t=>nearestPool(t).slice(0,2))); renderSkinGrid(); }
+function toggleTone(hx){ pickTones = pickTones.includes(hx) ? pickTones.filter(t=>t!==hx) : [...pickTones,hx]; syncPick(); }
+function setCustom(hx){ pickTones = [...pickTones.filter(t=>!isCustom(t)), hx]; syncPick(); }
+function openSkin(){
+  mode='skin'; pick=new Set(skin); pickTones=[...skinTones]; skinAll=false;
+  $('#shTitle').textContent='Your skin tone';
+  $('#shSub').textContent='Pick one or more tones, or a custom color. The book has no skin tones, so the closest dictionary colors stand in for them. Adjust them if you like.';
+  renderSkinGrid();
+  $('#scrim').classList.add('on');$('#sheet').classList.add('on');
+  $('#shGrid button').focus();
+}
+$('#shGrid').addEventListener('click',e=>{const t=e.target.closest('[data-tone]'); if(t) toggleTone(t.dataset.tone); if(e.target.closest('#rmCustom')){pickTones=pickTones.filter(t=>!isCustom(t));syncPick();}});
+$('#shGrid').addEventListener('change',e=>{ if(e.target.id==='skinCustom') setCustom(e.target.value); });
+$('#skinSet').onclick=openSkin;
+function setSkinOn(v){ skinOn=v; store.set('wada-skinon',v); renderSkinRow(); renderWardrobe();
+  const m=matching(); if(m.length && !m.includes(current)) setCurrent(m[Math.floor(Math.random()*m.length)]); renderCombo(); }
+$('#skinOn').onchange=e=>setSkinOn(e.target.checked);
+$('#skinChip').onclick=()=>{ if(!skin.size) openSkin(); else setSkinOn(!skinActive()); };
+
+/* ---------- Saved outfits (Closet) ---------- */
+const ROLES=['Top','Bottom','Shoes','Outerwear','Accessory','Skin','Other'];
+let outfits = store.get('wada-outfits',[]);
+let editing=null, draft=null;
+const saveOutfits=()=>{ store.set('wada-outfits',outfits); $('#navCount').textContent = outfits.length||''; };
+const findSaved=()=>outfits.find(o=>o.combo===current);
+const rolesOf = it => !it ? [] : Array.isArray(it.roles) ? it.roles : it.role ? [it.role] : []; // older saves had one role
+const esc=t=>String(t).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function openSave(o){
+  editing = o||null;
+  const cols = o ? o.order : order;
+  draft = { combo: o?o.combo:current, order:[...cols], name: o?o.name:'', items: {} };
+  const cov = !o && outfitOn ? cover(draft.combo) : null;
+  cols.forEach(c=>{ const it=o&&o.items[c];
+    if(it){ draft.items[c]={ roles: rolesOf(it), note: it.note||'' }; return; }
+    const r = cov && cov.get(c), p = r && r!=='Skin' && r!=='Free' && pieceFor(r,c);
+    draft.items[c] = r && r!=='Free' ? { roles:[r], note: p&&p.note||'' } : { roles: skin.has(c)?['Skin']:[], note:'' }; });
+  $('#svTitle').textContent = o ? 'Edit outfit' : 'Save outfit';
+  $('#svName').value = draft.name; $('#svName').placeholder = 'Combination No. '+draft.combo;
+  $('#svRows').innerHTML = cols.map(c=>`
+    <div class="svrow" data-c="${c}">
+      <div class="sw" style="background:${C[c].h}"></div>
+      <div class="nm">${C[c].n}</div>
+      <div class="roles" role="group" aria-label="What is ${C[c].n}? Pick any that apply">${ROLES.map(r=>`<button data-role="${r}" aria-pressed="${draft.items[c].roles.includes(r)}">${r}</button>`).join('')}</div>
+      <input type="text" data-note placeholder="Note (optional), e.g. red flannel, buy a hat" value="${esc(draft.items[c].note)}" aria-label="Note for ${C[c].n}">
+    </div>`).join('');
+  $('#svDelete').hidden = !o; $('#svDelete').textContent='Delete';
+  $('#svSave').textContent = o ? 'Update' : 'Save';
+  $('#scrim').classList.add('on'); $('#saveSheet').classList.add('on'); $('#svName').focus();
+}
+function closeSave(){ $('#saveSheet').classList.remove('on'); if(!$('#sheet').classList.contains('on')) $('#scrim').classList.remove('on'); }
+$('#svClose').onclick=closeSave; $('#scrim').addEventListener('click',closeSave);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSave()});
+$('#svRows').addEventListener('click',e=>{ const b=e.target.closest('[data-role]'); if(!b)return; const c=+b.closest('.svrow').dataset.c;
+  const it=draft.items[c], r=b.dataset.role; it.roles = it.roles.includes(r) ? it.roles.filter(x=>x!==r) : [...it.roles, r];
+  b.setAttribute('aria-pressed',it.roles.includes(r));
+  if(r==='Other' && it.roles.includes(r)) b.closest('.svrow').querySelector('[data-note]').focus(); });
+$('#svRows').addEventListener('input',e=>{ if(!e.target.matches('[data-note]'))return; draft.items[+e.target.closest('.svrow').dataset.c].note=e.target.value; });
+$('#svSave').onclick=()=>{
+  const rec={ id: editing?editing.id:Date.now().toString(36), combo:draft.combo, order:draft.order, name:$('#svName').value.trim(), items:draft.items, saved: editing?editing.saved:Date.now() };
+  if(editing) outfits=outfits.map(o=>o.id===editing.id?rec:o); else outfits=[rec,...outfits];
+  const added = addPiecesFrom(rec);
+  saveOutfits(); closeSave(); renderCombo(); renderSaved(); renderWardrobe();
+  toast((editing?'Outfit updated':'Saved')+(added?` · ${added} piece${added>1?'s':''} added to Wardrobe`:''));
+};
+$('#svDelete').onclick=()=>{ const b=$('#svDelete'); if(b.textContent==='Delete'){ b.textContent='Tap again to delete'; return; }
+  outfits=outfits.filter(o=>o.id!==editing.id); saveOutfits(); closeSave(); renderCombo(); renderSaved(); toast('Deleted'); };
+$('#saveBtn').onclick=()=>openSave(findSaved());
+function renderSaved(){
+  const el=$('#savedList');
+  if(!outfits.length){ el.innerHTML=`<p class="empty">Nothing saved yet. Find a palette you like on the Combos tab and tap <b>Save</b> to note what you’d wear in each color. Tagged pieces also go into your Wardrobe.</p>`; return; }
+  el.innerHTML = '<div class="outfits">'+outfits.map(o=>`
+    <div class="outfit">
+      <div class="ostrip">${o.order.map(c=>`<i style="background:${C[c].h}"></i>`).join('')}</div>
+      <div class="obody">
+        <h3>${esc(o.name||'Combination No. '+o.combo)}</h3>
+        <div class="odate">Wada No. ${o.combo} · saved ${new Date(o.saved).toLocaleDateString()}</div>
+        <ul>${o.order.map(c=>{const it=o.items[c]||{}, r=rolesOf(it).join(' + '), what=[r&&`<b>${esc(r)}</b>`, it.note&&esc(it.note)].filter(Boolean).join(' · ');
+          return `<li><i style="background:${C[c].h}"></i><span>${what||'<small>No tag</small>'} <small>${C[c].n}</small></span></li>`}).join('')}</ul>
+        <div class="oact"><button class="btn" data-view="${o.id}">View</button><button class="btn" data-edit="${o.id}">Edit</button></div>
+      </div>
+    </div>`).join('')+'</div>';
+}
+$('#savedList').addEventListener('click',e=>{
+  const v=e.target.closest('[data-view]'), ed=e.target.closest('[data-edit]');
+  if(ed){ openSave(outfits.find(o=>o.id===ed.dataset.edit)); return; }
+  if(v){ const o=outfits.find(o=>o.id===v.dataset.view); slots=[]; current=o.combo; order=[...o.order]; if(outfitOn&&!cover(o.combo)){outfitOn=false;store.set('wada-outfit',false);} location.hash='combos'; renderCombo(); }
+});
+saveOutfits();
+
+/* ---------- Wardrobe (pieces) + outfit mode ---------- */
+const TYPES=['Top','Bottom','Shoes','Outerwear','Accessory'];
+const PLURAL={Top:'Tops',Bottom:'Bottoms',Shoes:'Shoes',Outerwear:'Outerwear',Accessory:'Accessories'};
+let pieces = store.get('wada-pieces',null);
+let outfitOn = store.get('wada-outfit',false), needs = store.get('wada-needs',['Top','Bottom']), strict = store.get('wada-strict',false);
+const savePieces=()=>store.set('wada-pieces',pieces);
+const covers=(p,c)=>p.color===c||(p.near||[]).includes(c);
+const pieceFor=(type,c)=>pieces.find(p=>p.type===type&&covers(p,c));
+function addPiecesFrom(o){ let n=0;
+  o.order.forEach(c=>{ const it=o.items[c]; if(!it)return;
+    rolesOf(it).filter(r=>TYPES.includes(r)).forEach(t=>{ if(!pieceFor(t,c)){ pieces.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),type:t,color:c,near:[],note:it.note||''}); n++; } }); });
+  if(n) savePieces(); return n; }
+if(!pieces){ pieces=[]; outfits.forEach(addPiecesFrom); savePieces(); }   // first run: build wardrobe from saved outfits
+
+// Can this combo be worn? Every color gets exactly one role: skin, one of each needed type,
+// at most one of each other type you own, and (unless strict) one free color.
+function cover(id){
+  const cols=COMBOS[id], useSkin=skinActive();
+  const opt=TYPES.filter(t=>!needs.includes(t));
+  const roles=[...(useSkin?['Skin']:[]), ...needs, ...opt, ...(strict?[]:['Free'])];
+  const must=[...(useSkin?['Skin']:[]), ...needs];
+  if(cols.length<must.length) return null;
+  const ok=(c,r)=> r==='Skin'?skin.has(c) : r==='Free'?true : !!pieceFor(r,c);
+  const rec=(i,used,map)=>{
+    if(i===cols.length) return must.every(r=>used.has(r)) ? map : null;
+    for(const r of roles){ if(used.has(r)||!ok(cols[i],r)) continue;
+      const res=rec(i+1,new Set([...used,r]),new Map([...map,[cols[i],r]])); if(res) return res; }
+    return null; };
+  return rec(0,new Set(),new Map());
+}
+function renderOutfitBar(){
+  $('#outfitBtn').setAttribute('aria-pressed',outfitOn);
+  $('#oopts').hidden=!outfitOn;
+  $('#strictBtn').setAttribute('aria-pressed',strict);
+  $('#needs').innerHTML=TYPES.map(t=>`<button data-need="${t}" aria-pressed="${needs.includes(t)}">${t}</button>`).join('');
+}
+function refit(){ const m=matching(); if(m.length && !m.includes(current)) setCurrent(m[Math.floor(Math.random()*m.length)]); renderCombo(); }
+$('#outfitBtn').onclick=()=>{
+  if(!outfitOn && !pieces.length){ toast('Add a few pieces in your Wardrobe first'); location.hash='wardrobe'; return; }
+  outfitOn=!outfitOn; store.set('wada-outfit',outfitOn); refit();
+  if(outfitOn && !matching().length) toast('No combos fit your wardrobe yet. Try turning off Strict, needing fewer pieces, or adding nearby shades.');
+};
+$('#strictBtn').onclick=()=>{ strict=!strict; store.set('wada-strict',strict); refit(); };
+$('#needs').addEventListener('click',e=>{ const b=e.target.closest('[data-need]'); if(!b)return; const t=b.dataset.need;
+  needs = needs.includes(t) ? needs.filter(x=>x!==t) : [...needs,t]; store.set('wada-needs',needs); refit(); });
+
+function renderWardrobe(){
+  $('#wlist').innerHTML = TYPES.map(t=>{
+    const ps=pieces.filter(p=>p.type===t);
+    return `<section class="wsec"><div class="whead"><h3>${PLURAL[t]}</h3><button class="btn small" data-add="${t}">+ Add</button></div>
+      ${ps.length ? '<div class="pieces">'+ps.map(p=>`<button class="piece" data-piece="${p.id}">
+        <span class="pmain" style="background:${C[p.color].h}"></span>
+        <span class="ptext"><b>${esc(p.note||C[p.color].n)}</b><small>${C[p.color].n}${p.near&&p.near.length?` · +${p.near.length} shade${p.near.length>1?'s':''}`:''}</small>
+          ${p.near&&p.near.length?`<span class="pnear">${p.near.map(c=>`<i style="background:${C[c].h}" title="${C[c].n}"></i>`).join('')}</span>`:''}</span>
+      </button>`).join('')+'</div>' : `<p class="empty small">No ${PLURAL[t].toLowerCase()} yet.</p>`}
+    </section>`; }).join('') + renderWishlist();
+}
+// Colors from saved outfits that aren't skin and aren't covered by any piece yet
+function wishlist(){
+  const m=new Map();
+  outfits.forEach(o=>o.order.forEach(c=>{
+    const it=o.items[c]||{}, r=rolesOf(it);
+    if(r.includes('Skin') || skin.has(c) || r.some(x=>TYPES.includes(x)) || pieces.some(p=>covers(p,c))) return;
+    const w=m.get(c)||{c,notes:[],n:0}; w.n++; if(it.note&&!w.notes.includes(it.note)) w.notes.push(it.note); m.set(c,w); }));
+  return [...m.values()].sort((a,b)=>b.n-a.n);
+}
+function renderWishlist(){
+  const ws=wishlist(); if(!ws.length) return '';
+  return `<section class="wsec"><div class="whead"><h3>Look out for</h3></div>
+    <p class="wsub">Colors from your saved outfits you don’t own yet. Pick a type when you get one and it moves into your wardrobe.</p>
+    <div class="pieces">${ws.map(w=>`<div class="piece wish">
+      <span class="pmain" style="background:${C[w.c].h}"></span>
+      <span class="ptext"><b>${esc(w.notes.join(', ')||C[w.c].n)}</b><small>${C[w.c].n} · in ${w.n} saved outfit${w.n>1?'s':''}</small>
+        <span class="roles wtype">${TYPES.map(t=>`<button data-wish="${w.c}" data-type="${t}">${t}</button>`).join('')}</span></span>
+    </div>`).join('')}</div></section>`;
+}
+// piece editor
+let pdraft=null, pediting=null;
+function openPiece(p, type){
+  pediting=p||null;
+  pdraft = p ? {...p, near:[...(p.near||[])]} : {type:type||'Top', color:null, near:[], note:''};
+  $('#pcTitle').textContent = p ? 'Edit piece' : 'Add a piece';
+  $('#pcNote').value=pdraft.note; $('#pcDelete').hidden=!p; $('#pcDelete').textContent='Delete';
+  renderPiece();
+  $('#scrim').classList.add('on'); $('#pieceSheet').classList.add('on');
+}
+function renderPiece(){
+  $('#pcType').innerHTML=TYPES.map(t=>`<button data-type="${t}" aria-pressed="${pdraft.type===t}">${t}</button>`).join('');
+  const c=pdraft.color;
+  if(c==null){
+    $('#pcColorLbl').textContent='Color — tap the closest one';
+    $('#pcMain').innerHTML=GROUPS.map((g,gi)=>{ const items=C.map((x,i)=>i).filter(i=>C[i].g===gi).sort((a,b)=>C[b].l[0]-C[a].l[0]);
+      return `<div class="grp">${g}</div><div class="grid">`+items.map(i=>`<button class="dot" style="background:${C[i].h}" data-main="${i}" title="${C[i].n}" aria-label="${C[i].n}"></button>`).join('')+'</div>'; }).join('');
+    $('#pcNearWrap').hidden=true;
+  } else {
+    $('#pcColorLbl').textContent='Color';
+    $('#pcMain').innerHTML=`<div class="pchosen"><span class="pmain" style="background:${C[c].h}"></span><b>${C[c].n}</b><button class="linkbtn" data-change>Change color</button></div>`;
+    const near=C.map((_,i)=>i).filter(i=>i!==c).sort((a,b)=>dE(c,a)-dE(c,b)).slice(0,12);
+    $('#pcNear').innerHTML=near.map(i=>`<button class="shade" data-near="${i}" aria-pressed="${pdraft.near.includes(i)}">
+      <div class="sw" style="background:${C[i].h}"><span class="ck">${I.ck}</span></div><div class="lb">${C[i].n}<span>${C[i].h.toUpperCase()}</span></div></button>`).join('');
+    $('#pcNearWrap').hidden=false;
+  }
+  $('#pcSave').disabled = c==null;
+}
+function closePiece(){ $('#pieceSheet').classList.remove('on'); if(!$('#sheet').classList.contains('on')&&!$('#saveSheet').classList.contains('on')) $('#scrim').classList.remove('on'); }
+$('#pcClose').onclick=closePiece; $('#scrim').addEventListener('click',closePiece);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePiece()});
+$('#pieceSheet').addEventListener('click',e=>{
+  const t=e.target.closest('[data-type]'); if(t){pdraft.type=t.dataset.type;renderPiece();return}
+  const m=e.target.closest('[data-main]'); if(m){const c=+m.dataset.main; pdraft.color=c;
+    // start with the really close shades checked (uncheck any you don't want)
+    pdraft.near=C.map((_,i)=>i).filter(i=>i!==c).sort((a,b)=>dE(c,a)-dE(c,b)).slice(0,3); renderPiece(); return}
+  if(e.target.closest('[data-change]')){pdraft.color=null;renderPiece();return}
+  const n=e.target.closest('[data-near]'); if(n){const i=+n.dataset.near; pdraft.near=pdraft.near.includes(i)?pdraft.near.filter(x=>x!==i):[...pdraft.near,i]; n.setAttribute('aria-pressed',pdraft.near.includes(i)); return}
+});
+$('#pcNote').addEventListener('input',e=>pdraft.note=e.target.value);
+$('#pcSave').onclick=()=>{
+  const rec={...pdraft, id: pediting?pediting.id:Date.now().toString(36), note:pdraft.note.trim()};
+  pieces = pediting ? pieces.map(p=>p.id===rec.id?rec:p) : [...pieces,rec];
+  savePieces(); closePiece(); renderWardrobe(); refit(); toast(pediting?'Piece updated':'Added to Wardrobe');
+};
+$('#pcDelete').onclick=()=>{ const b=$('#pcDelete'); if(b.textContent==='Delete'){b.textContent='Tap again to delete';return}
+  pieces=pieces.filter(p=>p.id!==pediting.id); savePieces(); closePiece(); renderWardrobe(); refit(); toast('Piece deleted'); };
+$('#wlist').addEventListener('click',e=>{
+  const a=e.target.closest('[data-add]'); if(a){openPiece(null,a.dataset.add);return}
+  const w=e.target.closest('[data-wish]'); if(w){ const c=+w.dataset.wish, wl=wishlist().find(x=>x.c===c);
+    pieces.push({id:Date.now().toString(36), type:w.dataset.type, color:c, note:(wl&&wl.notes[0])||'',
+      near:C.map((_,i)=>i).filter(i=>i!==c).sort((a,b)=>dE(c,a)-dE(c,b)).slice(0,3)});
+    savePieces(); renderWardrobe(); refit(); toast(`${C[c].n} added to ${PLURAL[w.dataset.type]}`); return }
+  const p=e.target.closest('[data-piece]'); if(p) openPiece(pieces.find(x=>x.id===p.dataset.piece));
+});
+
+$('#resetAll').onclick=()=>{ const b=$('#resetAll'); if(b.textContent==='Start over'){ b.textContent='Tap again to clear everything'; setTimeout(()=>b.textContent='Start over',4000); return; }
+  try{ Object.keys(localStorage).filter(k=>k.startsWith('wada-')).forEach(k=>localStorage.removeItem(k)); }catch(e){}
+  location.hash='combos'; location.reload(); };
+/* ---------- routing ---------- */
+function route(){
+  const h=location.hash, v = (h==='#saved'||h==='#closet')?'saved':(h==='#wardrobe'||h==='#match')?'wardrobe':'combos';
+  if(v==='saved') renderSaved(); if(v==='wardrobe') renderWardrobe();
+  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
+  document.querySelectorAll('nav a').forEach(a=>a.dataset.v===v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
+}
+window.addEventListener('hashchange',route);
+// first palette: pick only after saved size + skin settings are loaded, so it respects them
+{ let m=matching(); if(!m.length){ size=0; m=matching(); } if(m.length) setCurrent(m[Math.floor(Math.random()*m.length)]); }
+route(); renderCombo(); renderSkinRow(); renderWardrobe();
+</script>
+</body>
+</html>

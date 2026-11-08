@@ -7,27 +7,32 @@
 <link rel="icon" type="image/png" href="avatar-rahul.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Noto+Sans:wght@400;600;700&family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600&family=Inter:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
   :root{
-    /* A ParentSquare-inspired palette, taken from parentsquare.com: the deep
-       forest green of its buttons, the bright green it highlights quotes in,
-       the pale mint and warm cream behind them. Their type is Poppins for
-       display and Noto Sans for text, both on Google Fonts, so the page uses
-       the same faces. The bright green fails as text on white, so it is only
-       ever a decorative fill; every text pair is checked to 4.5:1. */
-    --ink:#1C2619; --forest:#224B17; --forest-dark:#17350F; --text2:#4B5747;
-    --green:#68E246; --mint:#B3F0A2; --mint-pale:#EEF8E8; --mint-mid:#D2EEC4;
-    --peach:#FDD79A; --butter:#FAFAE1;
-    --cream:#F7F8F2; --paper:#FFFFFF;
-    --hairline:#D8E3D2; --outline:#768870;
+    /* ParentSquare's palette, from the custom properties in parentsquare.com's
+       theme CSS: the four petal colors of its logo (green, blue, orange, pink)
+       plus purple, each with a pale tint for tiles, and the deep green of its
+       buttons. Their type is Atyp BL (Adobe Fonts) for headings at weight 500
+       and Inter for text; Figtree stands in for Atyp. The petal colors are
+       fills only; text stays near-black, every pair checked to 4.5:1. */
+    --ink:#111111; --text2:#4A4F55;
+    --forest:#224B17; --forest-dark:#11250B; --btn-ink:#9AEB83;
+    --green:#68E246; --blue:#10A3FF; --orange:#FFB82A; --pink:#FC57E5; --purple:#BE77FF;
+    --green-01:#E5FAE0; --blue-01:#D7EFFF; --orange-01:#FFF3DB; --pink-01:#FEE3FA; --purple-01:#F3E7FF;
+    --mint:#CCF5C1; --mint-pale:#E5FAE0; --mint-mid:#B3F0A2;
+    --peach:#FFDB94; --butter:#FFF3DB;
+    --cream:#F7F7F5; --paper:#FFFFFF;
+    --hairline:#E4E6E9; --outline:#8A9099;
     --flag:#9A4300;
-    --shadow-2:0 4px 16px rgba(34,75,23,.10);
-    --shadow-3:0 16px 48px rgba(34,75,23,.16);
+    --shadow-2:0 4px 16px rgba(17,17,17,.06);
+    --shadow-3:0 16px 48px rgba(17,17,17,.10);
     --wrap:1040px;
-    --display:'Poppins', 'Noto Sans', 'Trebuchet MS', sans-serif;
+    --display:'Figtree', 'Inter', 'Helvetica Neue', sans-serif;
     /* the highlighter swipe; a band can swap it for a color that sits better on its ground */
     --hl:var(--mint);
+    /* each section's tint and dot color; set per section below */
+    --well:var(--green-01); --dot:var(--green);
   }
   *{ box-sizing:border-box; }
   /* scroll-padding keeps a focused or anchored element from landing under
@@ -35,11 +40,11 @@
   html{ scroll-behavior:smooth; scroll-padding-top:84px; }
   body{
     margin:0; background:var(--cream); color:var(--ink);
-    font-family:'Noto Sans', 'Trebuchet MS', Arial, sans-serif;
+    font-family:'Inter', 'Helvetica Neue', Arial, sans-serif;
     font-size:17px; line-height:1.6;
     -webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3{ margin:0; font-family:var(--display); font-weight:700; color:var(--forest); text-wrap:balance; }
+  h1,h2,h3{ margin:0; font-family:var(--display); font-weight:500; letter-spacing:-0.02em; color:var(--ink); text-wrap:balance; }
   p{ margin:0; }
   img{ max-width:100%; display:block; }
   a{ color:inherit; }
@@ -89,19 +94,19 @@
   /* ---------- BUTTONS + CHIPS ---------- */
   .btn{
     display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
-    min-height:46px; padding:0 22px; border-radius:999px; border:2px solid transparent;
+    min-height:48px; padding:0 24px; border-radius:11px; border:1px solid transparent;
     font:inherit; font-size:16px; font-weight:700; line-height:24px;
     text-decoration:none; cursor:pointer;
     transition:background .14s ease, border-color .14s ease, transform .14s ease;
   }
   .btn:hover{ transform:translateY(-1px); }
-  .btn-ink{ background:var(--forest); color:#fff; }
+  .btn-ink{ background:var(--forest); color:var(--btn-ink); border-color:var(--forest); }
   .btn-ink:hover{ background:var(--forest-dark); }
-  .btn-white{ background:var(--paper); color:var(--forest); border-color:var(--outline); }
-  .btn-white:hover{ border-color:var(--forest); }
+  .btn-white{ background:var(--paper); color:var(--ink); border-color:var(--ink); }
+  .btn-white:hover{ background:var(--green-01); }
   .chip{
-    display:inline-block; padding:6px 14px; border-radius:999px;
-    font-size:14px; font-weight:700; line-height:1.4; white-space:nowrap; color:var(--forest);
+    display:inline-block; padding:6px 14px; border-radius:8px;
+    font-size:14px; font-weight:600; line-height:1.4; white-space:nowrap; color:var(--ink);
   }
 
   /* ---------- IMAGE LIGHTBOX ---------- */
@@ -149,66 +154,69 @@
   }
 
   /* ---------- TOP BAR ---------- */
-  .topbar{ position:sticky; top:0; z-index:40; background:var(--paper); border-bottom:2px solid var(--mint-mid); }
+  .topbar{ position:sticky; top:0; z-index:40; background:var(--paper); border-bottom:1px solid var(--hairline); }
   .topbar-inner{
     max-width:1200px; margin:0 auto; padding:0 28px; height:68px;
     display:flex; align-items:center; justify-content:space-between; gap:16px;
   }
-  .mark{ display:flex; align-items:center; gap:10px; font-family:var(--display); font-size:22px; font-weight:600; color:var(--forest); white-space:nowrap; }
+  .mark{ display:flex; align-items:center; gap:10px; font-family:var(--display); font-size:22px; font-weight:600; color:var(--ink); white-space:nowrap; }
   .mark-dot{ width:34px; height:34px; flex-shrink:0; }
   .topnav{ display:flex; align-items:center; gap:4px; }
   .topnav a{
     display:inline-flex; align-items:center; min-height:44px; padding:0 14px;
-    font-size:15px; font-weight:700; color:var(--forest); text-decoration:none; border-radius:999px;
+    font-size:15px; font-weight:500; color:var(--ink); text-decoration:none; border-radius:11px;
   }
-  .topnav a:hover{ background:var(--mint-pale); }
+  .topnav a:hover{ background:var(--green-01); }
 
   /* ---------- HERO ---------- */
-  .hero{
-    padding:72px 0 88px; overflow:hidden;
-    background-color:var(--mint-pale);
-    /* a grid of squares, for ParentSquare */
-    background-image:
-      linear-gradient(var(--mint-mid) 1.5px, transparent 1.5px),
-      linear-gradient(90deg, var(--mint-mid) 1.5px, transparent 1.5px);
-    background-size:32px 32px;
-  }
+  .hero{ padding:80px 0 96px; background:var(--paper); }
   .hero .wrap{ max-width:1200px; }
   /* Wayfinder's layout: the headline beside an "At a glance" card, the
      intro line underneath */
   .hero-copy{ display:flex; flex-direction:column; gap:28px; }
-  /* "Prepared for" lockup: the caps label beside ParentSquare's name, set
-     as a wordmark in its own Poppins with a green square, on a white pill */
+  /* "Prepared for" lockup: the caps label beside ParentSquare's own logo
+     (parentsquare-logo.svg, from parentsquare.com), on a white pill so the
+     black wordmark sits on the ground it was drawn for */
   .eyebrow{
     align-self:flex-start; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
-    background:var(--paper); border:2px solid var(--mint-mid); border-radius:999px; padding:8px 18px 8px 16px;
+    background:var(--paper); border:1px solid var(--hairline); border-radius:12px; padding:10px 18px 10px 16px;
   }
-  .eyebrow .caps{ color:var(--forest); }
-  .ps-mark{ display:inline-flex; align-items:center; gap:8px; font-family:var(--display); font-weight:700; font-size:21px; letter-spacing:-0.2px; color:var(--forest); line-height:1; }
-  .ps-mark::before{ content:""; width:18px; height:18px; border-radius:4px; background:var(--green); box-shadow:inset 0 0 0 2px var(--forest); }
+  .eyebrow .caps{ color:var(--text2); }
+  .ps-logo{ height:28px; width:auto; display:block; }
   .hero-row{ display:flex; align-items:center; justify-content:space-between; gap:48px; }
-  .hero h1{ font-size:56px; line-height:1.1; letter-spacing:-0.8px; max-width:700px; }
+  .hero h1{ font-size:64px; line-height:1.1; max-width:720px; }
   .hero-sub{ max-width:640px; font-size:20px; line-height:1.55; }
-  .glance{
-    width:360px; flex-shrink:0; background:var(--paper); border-radius:16px;
-    padding:28px 30px; box-shadow:var(--shadow-2); border-top:8px solid var(--green);
+  /* "At a glance" as the homepage's pastel tiles: a tint, a rounded-square
+     dot in the matching petal color, dark text */
+  .glance{ width:360px; flex-shrink:0; }
+  .glance .caps{ margin-bottom:14px; }
+  .glance ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+  .glance li{
+    display:flex; gap:14px; align-items:center; padding:14px 20px; border-radius:16px;
+    font-size:16px; line-height:1.4; color:var(--ink); background:var(--t); --t:var(--green-01); --d:var(--green);
   }
-  .glance .caps{ margin-bottom:16px; }
-  .glance ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px; }
-  .glance li{ display:flex; gap:12px; align-items:flex-start; font-size:17px; line-height:1.45; font-weight:600; color:var(--ink); }
-  .glance svg{ flex-shrink:0; }
+  .glance li::before{ content:""; width:18px; height:18px; flex:none; border-radius:6px; background:var(--d); }
+  .glance li:nth-child(2){ --t:var(--blue-01); --d:var(--blue); }
+  .glance li:nth-child(3){ --t:var(--orange-01); --d:var(--orange); }
+  .glance li:nth-child(4){ --t:var(--purple-01); --d:var(--purple); }
 
   /* ---------- SECTIONS ---------- */
   section.case{ padding:96px 0; }
   .band-cream{ background:var(--cream); }
-  .band-mint{ background:var(--mint-pale); }
+  .band-mint{ background:var(--cream); }
   .band-white{ background:var(--paper); }
   .case-head{ display:flex; flex-direction:column; gap:14px; margin-bottom:40px; }
+  /* the homepage's rounded-square bullet, in the section's petal color */
+  .case-head .caps{ display:flex; align-items:center; gap:10px; }
+  .case-head .caps::before{ content:""; width:14px; height:14px; flex:none; border-radius:5px; background:var(--dot); }
   .case-title{ font-size:46px; line-height:1.1; letter-spacing:-0.3px; text-wrap:pretty; }
   .case-row{ display:flex; align-items:center; justify-content:space-between; gap:24px 48px; }
   .case-desc{ max-width:660px; font-size:20px; line-height:1.55; text-wrap:pretty; }
-  #onboarding{ --well:var(--mint-pale); }
-  #educators{ --well:var(--mint-pale); }
+  #onboarding{ --well:var(--green-01); --dot:var(--green); }
+  #educators{ --well:var(--blue-01); --dot:var(--blue); }
+  #chiron{ --well:var(--purple-01); --dot:var(--purple); }
+  #access{ --well:var(--orange-01); --dot:var(--orange); }
+  #process{ --dot:var(--pink); }
 
   /* ---------- SLIDESHOW MODULE ---------- */
   .slideshow{ position:relative; }
@@ -225,8 +233,8 @@
   }
   /* one segment per slide, built by the slideshow script */
   .progress{ display:flex; gap:6px; width:280px; max-width:100%; }
-  .progress span{ flex:1; height:8px; border-radius:999px; background:var(--mint-mid); transition:background .22s ease; }
-  .progress span.on{ background:var(--forest); }
+  .progress span{ flex:1; height:8px; border-radius:999px; background:var(--hairline); transition:background .22s ease; }
+  .progress span.on{ background:var(--ink); }
 
   .well{ width:100%; max-width:860px; background:var(--well); border-radius:20px; padding:20px; }
   .device{ width:100%; position:relative; }
@@ -268,7 +276,7 @@
   }
   .nav-arrow svg{ width:20px; height:20px; stroke-width:2.6; }
   .nav-arrow svg path{ stroke:currentColor; }
-  .nav-arrow:hover{ background:var(--forest); border-color:var(--forest); }
+  .nav-arrow:hover{ background:var(--forest-dark); border-color:var(--forest-dark); }
   /* aria-disabled rather than disabled so the button keeps focus at either
      end of the strip instead of dropping a keyboard user back to the top */
   .slideshow .nav-arrow[aria-disabled="true"],
@@ -286,7 +294,7 @@
   .talker{
     display:flex; align-items:center; gap:14px;
     width:100%; max-width:860px; margin:0 auto 24px;
-    background:var(--mint-pale); border-radius:20px; padding:14px 20px 14px 14px;
+    background:var(--well); border-radius:20px; padding:14px 20px 14px 14px;
   }
   .avatar{ width:52px; height:52px; flex-shrink:0; display:block; }
   .bubble{
@@ -311,14 +319,12 @@
   .ticks{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
   .ticks li{ display:grid; grid-template-columns:26px minmax(0, 1fr); gap:10px; align-items:start; }
   .ticks li::before{
-    content:""; width:22px; height:22px; margin-top:2px; border-radius:7px;
-    background:var(--green);
-    box-shadow:inset 0 0 0 2px rgba(34,75,23,.25);
+    content:""; width:16px; height:16px; margin-top:5px; border-radius:5px;
+    background:var(--dot);
   }
   .a11y{
     display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:28px;
-    background:var(--paper); border-radius:28px; padding:36px; box-shadow:var(--shadow-2);
-    border-top:10px solid var(--green);
+    background:var(--well); border-radius:20px; padding:36px;
   }
   .a11y h3{ font-size:24px; margin-bottom:12px; }
   .echo{ margin-top:18px; padding:16px 18px; border-radius:18px; background:var(--mint-pale); font-size:16px; }
@@ -327,17 +333,17 @@
   .process{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px; counter-reset:step; }
   .process li{
     counter-increment:step; position:relative;
-    background:var(--paper); border-radius:24px; padding:26px 24px 24px; box-shadow:var(--shadow-2);
+    background:var(--paper); border-radius:20px; padding:26px 24px 24px; border:1px solid var(--hairline);
   }
   .process li::before{
     content:counter(step); display:grid; place-items:center;
     width:40px; height:40px; border-radius:12px; margin-bottom:14px;
-    font-family:var(--display); font-weight:600; font-size:20px; color:var(--forest);
+    font-family:var(--display); font-weight:500; font-size:20px; color:var(--ink);
   }
   .process li:nth-child(1)::before{ background:var(--green); }
-  .process li:nth-child(2)::before{ background:var(--mint); }
-  .process li:nth-child(3)::before{ background:var(--peach); }
-  .process li:nth-child(4)::before{ background:var(--butter); box-shadow:inset 0 0 0 2px var(--mint-mid); }
+  .process li:nth-child(2)::before{ background:var(--blue); }
+  .process li:nth-child(3)::before{ background:var(--orange); }
+  .process li:nth-child(4)::before{ background:var(--pink); }
   .process h3{ font-size:22px; margin-bottom:8px; }
   .process p{ font-size:16px; }
   .process .todo{ margin-top:12px; font-size:14px; padding:10px 12px; }
@@ -359,14 +365,14 @@
 
   /* ---------- FOOTER ---------- */
   .site-footer{ background:var(--forest); color:#fff; padding:96px 0 48px; }
-  .footer-kicker{ color:#fff; font-family:var(--display); font-size:46px; font-weight:600; line-height:1.1; margin-bottom:36px; }
+  .footer-kicker{ color:#fff; font-family:var(--display); font-size:52px; font-weight:500; letter-spacing:-0.02em; line-height:1.1; margin-bottom:36px; }
   .footer-links{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px; }
   .action{
     background:var(--paper); color:var(--ink); border-radius:20px;
     padding:20px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px;
   }
   .action-text{ display:flex; flex-direction:column; gap:4px; min-width:0; }
-  .action-title{ font-family:var(--display); font-size:20px; font-weight:600; color:var(--forest); }
+  .action-title{ font-family:var(--display); font-size:20px; font-weight:500; color:var(--ink); }
   .action-line{ font-size:15px; color:var(--text2); overflow-wrap:anywhere; }
   .footer-base{
     display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
@@ -716,26 +722,26 @@
   /* ---------- CHIRON REPLAY: PARENTSQUARE BRAND ----------
      The replay block above is shared with the root page and written against
      its tokens; this maps them onto the ParentSquare-inspired palette and
-     type. The window takes the pale mint tray; pen blue becomes the forest
-     green (9:1 on it). User bubbles are the warm cream, not mint on mint. */
+     type. The window takes the section's pale purple tint; pen blue becomes the forest
+     green (9:1 on it). User bubbles are the pale orange tint, not green on green. */
   .replay{
     --line:var(--hairline); --ink-soft:var(--text2); --ink-faint:var(--text2);
     --pen:var(--forest); --pen-tint:var(--mint-pale); --sketch-tint:var(--butter);
     --rp-yellow-soft:var(--butter); --hl-yellow:var(--peach); --bg:var(--cream); --mastery:var(--green);
-    --red-tint:#FDE2DF; --rp-tray:var(--mint-pale);
-    --rp-display:'Poppins', 'Noto Sans', sans-serif;
-    --rp-body:'Noto Sans', 'Trebuchet MS', sans-serif;
-    --rp-mono:'Noto Sans', 'Trebuchet MS', sans-serif;
-    --rp-hand:'Noto Sans', 'Trebuchet MS', sans-serif;
+    --red-tint:#FDE2DF; --rp-tray:var(--well);
+    --rp-display:'Figtree', 'Inter', sans-serif;
+    --rp-body:'Inter', 'Helvetica Neue', sans-serif;
+    --rp-mono:'Inter', 'Helvetica Neue', sans-serif;
+    --rp-hand:'Inter', 'Helvetica Neue', sans-serif;
   }
   .replay .replay-window{ border:0; border-radius:16px; --ink-faint:var(--text2); }
-  /* Noto Sans sets taller than the root page's face, so the chat slides
-     need a little less air to fit the 540px window */
+  /* the brand fonts set a touch taller than the root page's, so the chat
+     slides need a little less air to fit the 540px window */
   .replay .rp-view{ padding-block:10px; }
   .replay .rp-slide{ gap:8px; }
   /* the loop's arrowheads are drawn in the root page's pen blue */
   .replay .rp-loop-svg #rp-ah path{ fill:var(--pen); }
-  .replay .rp-msg.teacher .rp-body{ border-color:#E2E2B4; }
+  .replay .rp-msg.teacher .rp-body{ border-color:#FFE7B8; }
   .replay .rp-mono-label, .replay .rp-think-k, .replay .rp-card-kind{ font-weight:700; }
   .replay .rp-body{ border-radius:12px; }
 </style>
@@ -764,17 +770,17 @@
   <section class="hero" aria-label="Introduction">
     <div class="wrap hero-copy">
       <div class="eyebrow"><span class="caps">Prepared for</span>
-        <span class="ps-mark">ParentSquare</span>
+        <img class="ps-logo" src="parentsquare-logo.svg" alt="ParentSquare" width="231" height="36">
       </div>
       <div class="hero-row">
         <h1 data-flatten>Making complex school tools <span class="hl">feel simple</span> for students and educators.<br>Hi, I'm Rahul.</h1>
         <div class="glance">
           <p class="caps" id="glance-label">At a glance</p>
           <ul aria-labelledby="glance-label">
-            <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#224B17" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><path d="M7.5 12.5l3 3 6-6.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>5 years in K–12 ed-tech</span></li>
-            <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#224B17" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><path d="M7.5 12.5l3 3 6-6.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>React &amp; React Native</span></li>
-            <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#224B17" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><path d="M7.5 12.5l3 3 6-6.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>WCAG 2.1 AA</span></li>
-            <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#224B17" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><path d="M7.5 12.5l3 3 6-6.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Prototyping with Claude Code</span></li>
+            <li>5 years in K–12 ed-tech</li>
+            <li>React &amp; React Native</li>
+            <li>WCAG 2.1 AA</li>
+            <li>Prototyping with Claude Code</li>
           </ul>
         </div>
       </div>
@@ -788,7 +794,7 @@
         <div class="caps">01 · Encoura · From problem framing to a measured result</div>
         <h2 class="case-title" id="title-onboarding" data-flatten>Encourage onboarding: <span class="hl">twice the questions</span>, and students still finish</h2>
         <div class="case-row">
-          <p class="case-desc">The ask was to double the onboarding survey. Before designing anything, I watched students take it in real classrooms. Length wasn't what lost them: account verification and blocked school inboxes were. I rebuilt the flow around that, chunked by topic, with a way back from a mistyped or blocked email. In Encoura's first in-app A/B test, completion held near 84% with twice the questions.</p>
+          <p class="case-desc">The ask was to double the onboarding survey. Our classroom research showed length wasn't what lost students: account verification and blocked school inboxes were. I rebuilt the flow around that, chunked by topic, with a way back from a mistyped or blocked email. In Encoura's first in-app A/B test, completion held near 84% with twice the questions.</p>
           <p class="chip" style="background:var(--mint)">Shipping Fall 2026</p>
         </div>
       </div>
@@ -864,10 +870,10 @@
   <section class="case band-white" id="chiron" aria-labelledby="title-chiron">
     <div class="wrap">
       <div class="case-head">
-        <div class="caps">03 · Independent project, designed and built with Claude Code</div>
-        <h2 class="case-title" id="title-chiron" data-flatten>Chiron: an AI tutor that <span class="hl">shows its reasoning</span></h2>
+        <div class="caps">03 · Independent project, a Claude Skill</div>
+        <h2 class="case-title" id="title-chiron" data-flatten>Chiron: an AI tutor that gives you <span class="hl">exactly what you need</span></h2>
         <div class="case-row">
-          <p class="case-desc">My own project, prototyped end to end in HTML and JavaScript with Claude Code. Chiron asks questions until it finds what you can't yet explain, builds a lesson around that gap, and adapts the next one to your answers. Most of the design work was making the AI's calls legible: what it thinks you've missed, and why the next lesson looks the way it does.</p>
+          <p class="case-desc">My own project, built as a Claude Skill. Chiron asks questions until it finds what you can't yet explain, builds a lesson around that gap, and adapts the next one to your answers. The design problem was giving each learner exactly what they need in that moment, no more and no less: working out where they're stuck, then deciding what to do with it.</p>
           <a class="btn btn-white" href="https://github.com/Rahul-Shah-Design/Chiron" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">&rarr;</span><span class="sr-only"> (opens in new tab)</span></a>
         </div>
       </div>
@@ -938,7 +944,7 @@
         </li>
         <li>
           <h3>Research, then validation</h3>
-          <p>Watch it in use, change it, then measure the change: classroom visits, usability tests, Encoura's first in-app A/B test. I drive much of the team's product analytics, querying Pendo through Claude Code.</p>
+          <p>Watch it in use, change it, then measure the change: classroom research, usability tests, Encoura's first in-app A/B test. I drive much of the team's product analytics, querying Pendo through Claude Code.</p>
         </li>
         <li>
           <h3>Crit, craft and mentoring</h3>
@@ -946,7 +952,7 @@
         </li>
         <li>
           <h3>AI in the workflow</h3>
-          <p>I brought AI prototyping to Encoura with Figma Make and Claude Code, so ideas get tested as working prototypes, not static frames. Chiron and this page were both built that way.</p>
+          <p>I brought AI prototyping to Encoura with Figma Make and Claude Code, so ideas get tested as working prototypes, not static frames. This page was built that way.</p>
         </li>
       </ol>
     </div>
@@ -957,7 +963,7 @@
     <div class="wrap">
       <div class="resume-head">
         <h2 class="case-title" id="title-resume">Résumé</h2>
-        <a class="btn btn-ink" href="resume.pdf" download="Rahul-Shah-Resume.pdf"><span aria-hidden="true">↓</span> Download PDF</a>
+        <a class="btn btn-ink" href="resume.pdf" download="Rahul-Shah-Resume-ParentSquare.pdf"><span aria-hidden="true">↓</span> Download PDF</a>
       </div>
       <div class="resume-preview">
         <button type="button" class="zoom-btn" aria-label="Enlarge résumé image"><img class="resume-embed" src="resume.png" alt="Rahul Shah's r&eacute;sum&eacute;, one page: experience at Chiron, Encoura, Rochester Regional Health and Prudential Financial, then education and a skills list. Download the PDF for the accessible text version." width="1836" height="2376" loading="lazy"></button>
@@ -976,7 +982,7 @@
         </div>
         <div class="action">
           <div class="action-text"><span class="action-title">Résumé</span><span class="action-line">One page, tailored for ParentSquare.</span></div>
-          <a class="btn btn-ink" href="resume.pdf" download="Rahul-Shah-Resume.pdf">Download<span class="sr-only"> résumé</span></a>
+          <a class="btn btn-ink" href="resume.pdf" download="Rahul-Shah-Resume-ParentSquare.pdf">Download<span class="sr-only"> résumé</span></a>
         </div>
         <div class="action">
           <div class="action-text"><span class="action-title">LinkedIn</span><span class="action-line">rahul-shah-design</span></div>
