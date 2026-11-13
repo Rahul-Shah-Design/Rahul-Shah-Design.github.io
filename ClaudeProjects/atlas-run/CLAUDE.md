@@ -150,7 +150,7 @@ questions, mascot. All of it is bespoke SVG/CSS/Web Audio; no animation library.
   don't reuse the name.)
 - **Results.** The score counts up then bounces; missed chips arrive one by one and show the
   country's outline on hover or focus (`showOutline`).
-- **Streak** (`Streak`, being tried on a branch): a badge on the map's top-left corner from the first
+- **Streak** (`Streak`): a badge on the map's top-left corner from the first
   right answer. The vehicle upgrades car → bus → train → plane → rocket at milestones that split the
   round into fifths (`milestones(T)`: 10 questions → 2/4/6/8, 20 → 4/8/12/16), so a perfect round
   ends on the rocket. Within a vehicle the bob speed, speed lines, confetti and chime pitch ramp
