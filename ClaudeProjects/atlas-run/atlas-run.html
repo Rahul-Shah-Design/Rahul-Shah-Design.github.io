@@ -192,6 +192,16 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 .outline svg{width:96px;height:72px;display:block}
 .outline path{fill:var(--wrong);stroke:var(--red);stroke-width:1.2;vector-effect:non-scaling-stroke}
 #score{display:inline-block;font-variant-numeric:tabular-nums}
+/* Streak badge: sits on the map's top-left corner so it never moves the layout */
+.streak{position:absolute;top:10px;left:10px;z-index:2;display:flex;align-items:center;gap:6px;padding:4px 12px 4px 4px;border-radius:999px;background:var(--paper);border:1px solid var(--line);box-shadow:0 2px 0 var(--line);font:800 18px/1 var(--display);font-variant-numeric:tabular-nums;pointer-events:none}
+.streak small{font:400 13px/1 var(--body);color:var(--ink-soft)}
+.map .streak .veh{width:44px;height:30px;display:block;overflow:visible}
+.veh .bob{transform-box:fill-box;transform-origin:50% 100%;animation:bob var(--bob,.6s) ease-in-out infinite alternate}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-1.6px)}}
+.veh .lines{fill:none;stroke:var(--ink-soft);stroke-width:1.6;stroke-linecap:round;opacity:var(--lines,0)}
+.veh .ink{fill:var(--ink)}.veh .glass{fill:var(--sel)}.veh .tyre{fill:#16324A}.veh .hub{fill:#DCE3E8}
+.veh .v-car{fill:var(--red)}.veh .v-bus{fill:#F2B53A}.veh .v-train{fill:var(--ok)}.veh .v-plane{fill:#F4F8FA;stroke:#16324A;stroke-width:1}.veh .v-rocket{fill:#F4F8FA;stroke:#16324A;stroke-width:1}
+.veh .flame{fill:#F08A24}.veh .flame2{fill:#F7C548}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 /* Desktop: the game is 25% larger than the 640px column the setup and results screens keep */
 @media (min-width:700px){
@@ -248,6 +258,7 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
     <button class="ghost sndbtn" aria-pressed="true" aria-label="Sound and vibration"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/><path class="on" d="M15.5 9.2a4 4 0 0 1 0 5.6M18 6.8a7.5 7.5 0 0 1 0 10.4"/><path class="off" d="M15.5 9.5l5 5M20.5 9.5l-5 5"/></svg></button>
   </div>
   <div class="map" id="map">
+    <div class="streak" id="streak" hidden aria-hidden="true"><svg class="veh" id="veh" viewBox="0 0 44 30"></svg><span id="sn">0</span><small>in a row</small></div>
     <div class="zoomctl"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="zfit" aria-label="Reset view">⤢</button></div>
   </div>
   <div class="panel" id="panel">
@@ -337,6 +348,7 @@ const Snd = {
   thud(){ this.tone(150,.28,{slide:.45,gain:.32}); this.noise(.1,{freq:260,gain:.15}); },
   tick(i=0){ this.tone(900+Math.min(i,30)*40,.035,{type:"square",gain:.035}); },
   ping(){ this.tone(1320,.5,{gain:.07}); },
+  puff(){ this.noise(.35,{freq:2200,to:500,q:.5,gain:.1,attack:.03}); },
   whoosh(d=.6){ this.noise(d,{freq:400,to:1600,q:.8,gain:.1,attack:d*.4}); }
 };
 const buzz = p => { if(!Snd.on || !navigator.vibrate) return; try{ navigator.vibrate(p); }catch(e){} };
@@ -352,6 +364,7 @@ const FX = (()=>{
   size(); addEventListener("resize", size);
   const loop=()=>{ g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
     for(const p of P){ p.vy+=p.g; p.vx*=.965; p.vy*=.965; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; p.life--;
+      if(p.smoke){ p.w+=.35; g.globalAlpha=Math.max(0,Math.min(1,p.life/40))*.35; g.fillStyle=p.c; g.beginPath(); g.arc(p.x,p.y,p.w,0,7); g.fill(); continue; }
       g.globalAlpha=Math.max(0,Math.min(1,p.life/30)); g.save(); g.translate(p.x,p.y); g.rotate(p.rot); g.scale(1,Math.cos(p.rot*2.3)); g.fillStyle=p.c; g.fillRect(-p.w/2,-p.h/2,p.w,p.h); g.restore(); }
     g.globalAlpha=1; P=P.filter(p=>p.life>0);
     if(P.length) requestAnimationFrame(loop); else { running=false; g.clearRect(0,0,W,H); } };
@@ -359,6 +372,8 @@ const FX = (()=>{
   const add=ps=>{ if(reduced) return; P.push(...ps); if(!running){ running=true; requestAnimationFrame(loop); } };
   const pal=()=>["--right","--target","--red","--sel","--ok"].map(css);
   return {
+    smoke(x,y,n=16){ const c=css("--ink-soft"); add(Array.from({length:n},()=>{ const a=-Math.PI/2+(Math.random()-.5)*2.2, sp=.6+Math.random()*1.6;
+      return {smoke:true,x:x+(Math.random()-.5)*12,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,g:-.015,rot:0,vr:0,w:3+Math.random()*4,c,life:50+Math.random()*25}; })); },
     burst(x,y,n=40,power=7){ const cs=pal(); add(Array.from({length:n},(_,i)=>piece(x,y,-Math.PI/2+(Math.random()-.5)*Math.PI*1.4,power*(.45+Math.random()*.75),cs[i%cs.length]))); },
     // from the edges of a box, each piece thrown outward from the side it starts on
     edges(r,n=30){ const cs=pal(), per=2*(r.width+r.height);
@@ -410,6 +425,57 @@ const MODE_ICON = {
 };
 radios($("modes"),"mode",MODES,cfg.mode,(it,a)=>`<label class="game"><input type="radio" ${a}><span class="box"><svg viewBox="0 0 80 50" aria-hidden="true">${MODE_ICON[it[0]]}</svg><span><b>${it[1]}</b><small>${it[2]}</small></span></span></label>`);
 $("modes").addEventListener("change", e=>{ bounce(e.target.nextElementSibling, 1.03); Snd.tick(4); });
+
+/* ---------- Streak: a vehicle badge that upgrades as the run goes on ---------- */
+// Car, bus, train, plane, rocket. Within each vehicle the effects ramp up for 10 answers and then
+// hold; the next vehicle starts them small again, so a long run never gets louder than a short one.
+// The streak counts right answers in a row across rounds in one visit; any miss or "I don't know"
+// ends it. It isn't saved.
+const TIERS = [[0,"car"],[10,"bus"],[20,"train"],[35,"plane"],[50,"rocket"]];
+const WHEEL = (x,y,r=3.4)=>`<circle class="tyre" cx="${x}" cy="${y}" r="${r}"/><circle class="hub" cx="${x}" cy="${y}" r="${r*.4}"/>`;
+const VEH = {
+  car:`<path class="v-car" d="M5 21v-4.5c0-1.5 1-2.5 2.5-2.8L12 13l4.2-4.4c.8-.8 1.8-1.1 2.9-1.1h8.4c1.2 0 2.3.5 3 1.5L34 13l4 .9c1.6.4 2.5 1.6 2.5 3.1V21z"/><path class="glass" d="M14.5 13l3.3-3.4c.4-.4.9-.6 1.5-.6h3.7v4zM25 13V9h2.4c.6 0 1.1.3 1.5.7l2.8 3.3z"/>${WHEEL(12.5,22)}${WHEEL(33,22)}`,
+  bus:`<rect class="v-bus" x="3" y="5" width="37" height="17" rx="3"/><path class="glass" d="M6 8h5v6H6zM13 8h5v6h-5zM20 8h5v6h-5zM27 8h5v6h-5zM34 8h4v8h-4z"/><rect class="ink" x="3" y="16.5" width="31" height="1.6" opacity=".25"/>${WHEEL(10,23)}${WHEEL(32,23)}`,
+  train:`<path class="v-train" d="M4 21V9h11v-3h9v5h10c3 0 6 3 6 6v4z"/><rect class="ink" x="20" y="2" width="4.5" height="5" rx="1"/><path class="glass" d="M6.5 11.5h6v5h-6z"/><path class="ink" d="M40 21l3 4H34z" opacity=".8"/>${WHEEL(10,23.5,3)}${WHEEL(19,23.5,3)}${WHEEL(30,23.5,3)}`,
+  plane:`<path class="v-plane" d="M4 14.5c0-1 .8-1.8 1.8-1.8h26.5c3.5 0 7 1.5 8.6 3.1-1.6 1.6-5.1 3-8.6 3H5.8c-1 0-1.8-.8-1.8-1.8z"/><path class="v-plane" d="M17 13 9 3h4.5l11 10zM17 18.6l-8 9h4.5l11-9zM5 13 2.5 6.5h3.2l5 6.3z"/><path class="glass" d="M34 14.4h3.5l1.5 1.4H34z"/>`,
+  rocket:`<path class="flame" d="M7 12.5c-3 .5-5.5 1.6-6.5 3 1 1.4 3.5 2.5 6.5 3z"/><path class="flame2" d="M7 13.7c-1.8.3-3.4.9-4 1.8.6.9 2.2 1.5 4 1.8z"/><path class="v-rocket" d="M7 11h22c5 0 10 2.4 13 4.5-3 2.1-8 4.5-13 4.5H7z"/><circle class="glass" cx="28" cy="15.5" r="2.6" stroke="#16324A" stroke-width="1"/><path class="v-car" d="M8 11 4 4.5h6l6.5 6.5zM8 20l-4 6.5h6l6.5-6.5z"/>`
+};
+const Streak = {
+  n:0, shown:"",
+  tier(n){ let t=0; TIERS.forEach(([at],i)=>{ if(n>=at) t=i; }); return t; },
+  heat(){ return Math.min(10, this.n - TIERS[this.tier(this.n)][0]); }, // 0..10 within the current vehicle
+  draw(){
+    const name=TIERS[this.tier(this.n)][1], h=this.heat(), v=$("veh");
+    if(this.shown!==name){ v.innerHTML=`<g class="lines"><path d="M1 11h5M0 16h6M1 21h5"/></g><g class="bob">${VEH[name]}</g>`; this.shown=name; }
+    v.style.setProperty("--bob", (0.65-h*.045)+"s"); v.style.setProperty("--lines", h/10);
+    $("sn").textContent=this.n;
+  },
+  hit(){
+    this.n++; const b=$("streak"), t=this.tier(this.n), up = t>0 && this.n===TIERS[t][0];
+    if(this.n<2){ this.draw(); return; }
+    const appearing=b.hidden; b.hidden=false;
+    if(up && !reduced){ // the old vehicle drives off, the new one drives in, and the effects start over
+      const v=$("veh");
+      v.animate([{transform:"none",opacity:1},{transform:"translateX(30px)",opacity:0}],{duration:200,easing:"ease-in"}).onfinish=()=>{
+        this.draw(); v.animate([{transform:"translateX(-30px) scale(1.3)",opacity:0},{transform:"scale(1.3)",opacity:1,offset:.6},{transform:"none",opacity:1}],{duration:420,easing:"ease-out"}); };
+      bounce(b,1.25); const [x,y]=center(b); setTimeout(()=>FX.burst(x,y,60,8.5),180);
+      Snd.chime(0); setTimeout(()=>Snd.chime(2),90); setTimeout(()=>Snd.chime(3.5),180); buzz([20,40,20,40,60]);
+      return;
+    }
+    this.draw();
+    if(appearing) motion(b,[{transform:"scale(.4)",opacity:0},{transform:"scale(1.1)",opacity:1,offset:.6},{transform:"none",opacity:1}],{duration:380,easing:"ease-out"});
+    else bounce(b, 1.08+this.heat()*.012);
+    const h=this.heat(), [x,y]=center($("veh")); FX.burst(x,y,6+h*3,3.5+h*.35);
+    setTimeout(()=>Snd.chime(2+h*.5),120);
+  },
+  miss(){
+    const had=this.n; this.n=0; const b=$("streak");
+    if(b.hidden){ this.draw(); return; }
+    if(had>=2 && !reduced){ const [x,y]=center($("veh")); FX.smoke(x,y-4); Snd.puff();
+      motion(b,[{transform:"none",opacity:1},{transform:"translateX(-5px)",offset:.2},{transform:"translateX(5px)",offset:.4},{transform:"scale(.6)",opacity:0}],{duration:520,easing:"ease-in"}).onfinish=()=>{ b.hidden=true; this.draw(); };
+    } else { b.hidden=true; this.draw(); }
+  }
+};
 
 // Setup mini map: the chosen regions light up in a wave from where they are, and the view moves to them
 const Mini = {
@@ -718,7 +784,7 @@ const G = {
       const was=MapV.fillOf(c);
       MapV.mark(c,"right"); MapV.flood(c, at && at.pt, was);
       const lbl=MapV.label(c);
-      Snd.pop(); Snd.chime(1); buzz(18);
+      Snd.pop(); Snd.chime(1); buzz(18); Streak.hit();
       if(this.qm==="type") this.flyName(c, lbl);
       else {
         MapV.spring(lbl, 90);
@@ -734,7 +800,7 @@ const G = {
       this.missed.add(c); this.q.tries++;
       const back = this.q.tries<=2, pos = Math.min(3,this.queue.length);
       if(back) this.queue.splice(pos,0,this.q); else { this.done++; this.dot(this.done-1,"miss"); }
-      Snd.thud(); buzz([40,70,40]);
+      Snd.thud(); buzz([40,70,40]); Streak.miss();
       if(btn) shake(btn); else if(this.qm==="type") shake($("ti"));
       MapV.mark(c,"right"); MapV.label(c);
       let msg;

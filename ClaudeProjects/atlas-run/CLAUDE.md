@@ -122,7 +122,7 @@ button.
 Chosen from a sampler of 20 ideas (kept: region mini map, mode demos, start reveal, target ping,
 right-answer flood, pick-it check, type-it fly, progress trail, boomerang, score count-up, missed
 outlines, sound, vibration). Not built yet, rated "maybe": title flight path, wrong-answer arrow
-(without shaking the map), streaks (capped, with vehicle icons every 20–50), passport stamps,
+(without shaking the map), passport stamps,
 perfect-round celebration (try bespoke before adding Lottie). Cut: map wave, flight between
 questions, mascot. All of it is bespoke SVG/CSS/Web Audio; no animation library.
 
@@ -150,3 +150,8 @@ questions, mascot. All of it is bespoke SVG/CSS/Web Audio; no animation library.
   don't reuse the name.)
 - **Results.** The score counts up then bounces; missed chips arrive one by one and show the
   country's outline on hover or focus (`showOutline`).
+- **Streak** (`Streak`, being tried on a branch): a badge on the map's top-left corner, shown from 2
+  in a row. The vehicle upgrades car → bus (10) → train (20) → plane (35) → rocket (50) (`TIERS`);
+  within a vehicle the bob speed, speed lines, confetti and chime pitch ramp for 10 answers and then
+  hold, and each new vehicle starts them small again. The streak carries across rounds in one visit
+  (not saved); a miss or "I don't know" puffs it out in smoke.
