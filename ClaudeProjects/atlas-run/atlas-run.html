@@ -13,7 +13,7 @@
   --ink:#16324A; --ink-soft:#4A6275;
   --paper:#FFFFFF; --land:#FFFFFF; --land-out:#EAEFF2; --border:#8FA7B8;
   --target:#F3D98B; --right:#B9D9A6; --wrong:#EFB7B2;
-  --red:#C8323C; --ok:#2F7D4F;
+  --red:#C8323C; --ok:#2F7D4F; --sel:#A9CBE6; --wood:#D9A35B; --trail:#8FA7B8;
   --line:#16324A1f;
   --display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
   --body:"Atkinson Hyperlegible",system-ui,-apple-system,sans-serif;
@@ -22,13 +22,13 @@
   :root:not([data-theme="light"]){
     --ocean:#0F2536; --ocean-line:#1C3A50; --ink:#E6EEF3; --ink-soft:#9DB3C2;
     --paper:#17324A; --land:#2A4A62; --land-out:#1B3346; --border:#0F2536;
-    --target:#C9A94E; --right:#5E9A4E; --wrong:#B0605A; --red:#FF6B6B; --ok:#6BCB8B; --line:#E6EEF31f;
+    --target:#C9A94E; --right:#5E9A4E; --wrong:#B0605A; --red:#FF6B6B; --ok:#6BCB8B; --line:#E6EEF31f; --sel:#3F79A8; --wood:#C99550; --trail:#5D7A90;
   }
 }
 :root[data-theme="dark"]{
   --ocean:#0F2536; --ocean-line:#1C3A50; --ink:#E6EEF3; --ink-soft:#9DB3C2;
   --paper:#17324A; --land:#2A4A62; --land-out:#1B3346; --border:#0F2536;
-  --target:#C9A94E; --right:#5E9A4E; --wrong:#B0605A; --red:#FF6B6B; --ok:#6BCB8B; --line:#E6EEF31f;
+  --target:#C9A94E; --right:#5E9A4E; --wrong:#B0605A; --red:#FF6B6B; --ok:#6BCB8B; --line:#E6EEF31f; --sel:#3F79A8; --wood:#C99550; --trail:#5D7A90;
 }
 *{box-sizing:border-box}
 :root{padding-top:env(safe-area-inset-top,0px)}
@@ -72,8 +72,24 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 /* Play */
 .play{display:flex;flex-direction:column;gap:10px}
 .qhead{display:flex;align-items:center;gap:10px;padding-top:4px}
-.progress{flex:1;height:8px;border-radius:4px;background:var(--paper);overflow:hidden}
-.progress span{display:block;height:100%;width:0;background:var(--ink);transition:width .3s}
+.progress{position:relative;flex:1;min-width:0;height:30px}
+.progress .track{position:absolute;left:6px;right:6px;bottom:8px;height:2px;background:repeating-linear-gradient(90deg,var(--trail) 0 4px,transparent 4px 9px)}
+.progress #bar{position:absolute;left:6px;bottom:7px;height:4px;border-radius:2px;background:var(--ink);width:0;max-width:calc(100% - 12px);transition:width .3s}
+.progress .dots{position:absolute;left:0;right:0;bottom:3px;display:flex;justify-content:space-between;align-items:center}
+.progress .dots:empty{display:none}
+.dot{width:min(12px,calc(100% / var(--n,10) - 3px));aspect-ratio:1;flex:none;border-radius:50%;background:var(--paper);border:2px solid var(--trail);transition:background .2s,border-color .2s}
+.dot.right{background:var(--right);border-color:var(--ok)}
+.dot.miss{background:var(--wrong);border-color:var(--red)}
+.dot.back{border-style:dashed;border-color:var(--red)}
+.progress .marker{position:absolute;left:0;top:0;width:20px;height:14px;fill:var(--ink);transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.count{font-variant-numeric:tabular-nums;white-space:nowrap}
+.roll{display:inline-block;position:relative;height:1.2em;line-height:1.2em;overflow:hidden;vertical-align:bottom}
+.roll span{display:block}
+.sndbtn{flex:none;width:38px;height:38px;padding:0;display:grid;place-items:center}
+.sndbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sndbtn .off{display:none}
+.sndbtn[aria-pressed="false"] .on{display:none}
+.sndbtn[aria-pressed="false"] .off{display:inline}
 .map{position:relative;height:clamp(220px,38vh,420px);border-radius:18px;overflow:hidden;border:1px solid var(--ocean-line);background:var(--ocean);touch-action:none}
 .map svg{display:block;width:100%;height:100%;user-select:none;-webkit-user-select:none}
 .zoomctl{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px}
@@ -94,8 +110,9 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 .mode-find .c:not(.out),.mode-find .hit:not(.out){cursor:pointer}
 .lbl{font-family:var(--body);font-weight:700;fill:var(--ink);stroke:var(--ocean);paint-order:stroke;stroke-linejoin:round;pointer-events:none}
 .lbl.wrong{fill:var(--red)}
-@keyframes pulse{0%,100%{stroke-width:1.6}50%{stroke-width:5}}
-.c.target,.mk.target{animation:pulse 1.4s ease-in-out 2}
+.lbl{transform-box:fill-box;transform-origin:center}
+.ring{fill:none;stroke:var(--red);stroke-width:2.5;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;pointer-events:none}
+.flood{fill:var(--right);pointer-events:none}
 
 .panel{background:var(--paper);border-radius:18px;padding:16px}
 .prompt{font:600 24px/1.2 var(--display);letter-spacing:-.01em;margin:0 0 12px}
@@ -121,6 +138,60 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 .missed li{padding:5px 12px;border-radius:999px;background:var(--wrong);color:#16324A;font-size:15px}
 .stack{display:grid;gap:8px;margin-top:24px}
 .err{padding:14px;border-radius:12px;background:var(--paper);border-left:4px solid var(--red)}
+/* ---------- Juice: confetti layer, setup mini map, mode demos, answer effects ---------- */
+.fxcanvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:50}
+.titlerow{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.titlerow .sndbtn{margin-top:18px}
+.minimap{margin-top:12px;height:clamp(140px,34vw,190px);border-radius:14px;overflow:hidden;background:var(--ocean);border:1px solid var(--ocean-line)}
+.minimap svg{display:block;width:100%;height:100%}
+.minimap .bg{stroke-width:.3}
+.minimap .m{fill:var(--land);stroke:var(--border);stroke-width:.35;vector-effect:non-scaling-stroke;transition:fill .35s;transform-box:fill-box;transform-origin:center}
+.minimap .m.on{fill:var(--sel)}
+.game .box{grid-template-columns:auto 1fr;column-gap:14px;align-items:center}
+.game .box>span{display:grid;gap:2px}
+.game svg{width:80px;height:50px;display:block;border-radius:8px;background:var(--ocean)}
+.game svg *{animation-play-state:paused}
+.game input:checked+.box svg *,.game:hover svg *{animation-play-state:running}
+.mi-box{fill:var(--paper);stroke:var(--border);stroke-width:1}
+.mi-cursor{fill:var(--red);opacity:.85}
+.mi-pick-3{animation:mi-pick 2.4s infinite}
+@keyframes mi-pick{0%,45%{fill:var(--paper);stroke:var(--border)}55%,92%{fill:var(--right);stroke:var(--ok)}100%{fill:var(--paper)}}
+.mi-pick-cur{animation:mi-pick-cur 2.4s infinite}
+@keyframes mi-pick-cur{0%{transform:translate(30px,26px)}40%,92%{transform:translate(0,0)}100%{transform:translate(30px,26px)}}
+.mi-check{fill:none;stroke:var(--ok);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:14;stroke-dashoffset:14;animation:mi-check 2.4s infinite}
+@keyframes mi-check{0%,52%{stroke-dashoffset:14}62%,92%{stroke-dashoffset:0}100%{stroke-dashoffset:14}}
+.mi-land{fill:var(--land);stroke:var(--border);stroke-width:1}
+.mi-find-t{animation:mi-find 2.4s infinite}
+@keyframes mi-find{0%,48%{fill:var(--land);stroke:var(--border)}55%,92%{fill:var(--right);stroke:var(--ok)}100%{fill:var(--land)}}
+.mi-find-cur{animation:mi-find-cur 2.4s infinite}
+@keyframes mi-find-cur{0%{transform:translate(-26px,14px)}40%,92%{transform:translate(0,0)}100%{transform:translate(-26px,14px)}}
+.mi-ripple{fill:none;stroke:var(--red);stroke-width:1.5;transform-box:fill-box;transform-origin:center;animation:mi-ripple 2.4s infinite;opacity:0}
+@keyframes mi-ripple{0%,44%{transform:scale(.2);opacity:0}46%{opacity:1}64%{transform:scale(1.6);opacity:0}100%{opacity:0}}
+.mi-type-box{animation:mi-type-box 2.4s infinite;fill:var(--paper);stroke:var(--border);stroke-width:1.2}
+@keyframes mi-type-box{0%,70%{stroke:var(--border)}76%,94%{stroke:var(--ok);stroke-width:2}100%{stroke:var(--border)}}
+.mi-type-clip{animation:mi-type-clip 2.4s steps(4,end) infinite}
+@keyframes mi-type-clip{0%{width:0}60%,100%{width:44px}}
+.mi-type-text{font:700 15px var(--body);fill:var(--ink)}
+.mi-caret{fill:var(--ink);animation:mi-caret 2.4s steps(4,end) infinite}
+@keyframes mi-caret{0%{transform:translateX(0)}60%,100%{transform:translateX(42px)}}
+.mi-mix{animation:mi-mix 2.4s infinite}
+.mi-mix.d1{animation-delay:.8s}.mi-mix.d2{animation-delay:1.6s}
+@keyframes mi-mix{0%,8%{fill:var(--paper);stroke:var(--border)}14%,30%{fill:var(--right);stroke:var(--ok)}38%,100%{fill:var(--paper);stroke:var(--border)}}
+.mi-glyph{fill:none;stroke:var(--ink-soft);stroke-width:1.4;stroke-linecap:round}
+#play.revealing{position:relative;z-index:1;background:var(--ocean)}
+.answers button{position:relative;padding-left:28px;padding-right:28px}
+.answers .ck{position:absolute;right:8px;top:50%;width:18px;height:18px;margin-top:-9px}
+.answers .ck path{fill:none;stroke:#2F7D4F;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .3s .12s ease-out}
+.answers button.right .ck path{stroke-dashoffset:0}
+.flytext{position:fixed;z-index:60;pointer-events:none;font:700 18px/1 var(--body);color:var(--ink);white-space:nowrap;transform-origin:0 50%}
+.boomer{position:fixed;z-index:60;width:28px;height:28px;pointer-events:none}
+.boomer path{fill:var(--wood);stroke:var(--ink);stroke-width:1.2;stroke-linejoin:round}
+.missed li{position:relative}
+.missed li:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.outline{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px;pointer-events:none;z-index:5;box-shadow:0 6px 18px #0002}
+.outline svg{width:96px;height:72px;display:block}
+.outline path{fill:var(--wrong);stroke:var(--red);stroke-width:1.2;vector-effect:non-scaling-stroke}
+#score{display:inline-block;font-variant-numeric:tabular-nums}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 /* Desktop: the game is 25% larger than the 640px column the setup and results screens keep */
 @media (min-width:700px){
@@ -161,9 +232,9 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 <div class="app">
 
 <section id="setup" aria-labelledby="t1">
-  <h1 id="t1">Atlas Run</h1>
+  <div class="titlerow"><h1 id="t1">Atlas Run</h1><button class="ghost sndbtn" aria-pressed="true" aria-label="Sound and vibration"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/><path class="on" d="M15.5 9.2a4 4 0 0 1 0 5.6M18 6.8a7.5 7.5 0 0 1 0 10.4"/><path class="off" d="M15.5 9.5l5 5M20.5 9.5l-5 5"/></svg></button></div>
   <p class="muted">Learn where every country is. Misses come back later in the round until you get them.</p>
-  <fieldset><legend>Where</legend><p class="small muted hint">Pick one or more.</p><div class="chips" id="scopes"></div></fieldset>
+  <fieldset><legend>Where</legend><p class="small muted hint">Pick one or more.</p><div class="chips" id="scopes"></div><div class="minimap" id="minimap" aria-hidden="true"></div></fieldset>
   <fieldset><legend>Game</legend><div class="games" id="modes"></div></fieldset>
   <fieldset><legend>Round length</legend><div class="chips" id="lens"></div></fieldset>
   <button class="primary start" id="startBtn">Start</button>
@@ -172,8 +243,9 @@ legend{font:600 18px/1.2 var(--display);margin:26px 0 10px;padding:0}
 <section id="play" class="play" hidden aria-label="Game">
   <div class="qhead">
     <button class="ghost small" id="quitBtn">Quit</button>
-    <div class="progress" role="progressbar" aria-label="Round progress" aria-valuemin="0" aria-valuemax="100"><span id="bar"></span></div>
-    <span class="small muted" id="count"></span>
+    <div class="progress" id="prog" role="progressbar" aria-label="Round progress" aria-valuemin="0" aria-valuemax="100"><div class="track"></div><span id="bar"></span><div class="dots" id="dots"></div><svg class="marker" id="marker" viewBox="-15 -11 30 22" aria-hidden="true"><path d="M13 0L-1 -2.4L-5 -10L-8.5 -10L-5.5 -2.4L-10 -2.2L-12.5 -5.5L-14.5 -5.5L-13 0L-14.5 5.5L-12.5 5.5L-10 2.2L-5.5 2.4L-8.5 10L-5 10L-1 2.4Z"/></svg></div>
+    <span class="small muted count" id="count"></span>
+    <button class="ghost sndbtn" aria-pressed="true" aria-label="Sound and vibration"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/><path class="on" d="M15.5 9.2a4 4 0 0 1 0 5.6M18 6.8a7.5 7.5 0 0 1 0 10.4"/><path class="off" d="M15.5 9.5l5 5M20.5 9.5l-5 5"/></svg></button>
   </div>
   <div class="map" id="map">
     <div class="zoomctl"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="zfit" aria-label="Reset view">⤢</button></div>
@@ -231,6 +303,85 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; };
 
+/* ---------- Juice: sound, buzz, confetti and small motion helpers ---------- */
+// Every effect here is extra. JS-started animations are gated on `reduced` (the CSS rule at the
+// end of the stylesheet only stops CSS animations), and none of them changes layout.
+const NS = "http://www.w3.org/2000/svg";
+const S = (tag, attrs={}) => { const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); return e; };
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const easeOut = t => 1-Math.pow(1-t,3);
+function tween(dur, fn){ return new Promise(res=>{ const t0=performance.now(); const step=now=>{ const t=Math.max(0,Math.min(1,(now-t0)/dur)); fn(t); if(t<1) requestAnimationFrame(step); else res(); }; requestAnimationFrame(step); }); }
+const motion = (el, kf, o) => reduced || !el ? null : el.animate(kf, o);
+const bounce = (el, k=1.08) => motion(el, [{transform:"scale(1)"},{transform:`scale(${k})`,offset:.35},{transform:"scale(.97)",offset:.7},{transform:"scale(1)"}], {duration:420, easing:"ease-out"});
+const shake = el => motion(el, [{transform:"translateX(0)"},{transform:"translateX(-7px)"},{transform:"translateX(7px)"},{transform:"translateX(-4px)"},{transform:"translateX(2px)"},{transform:"translateX(0)"}], {duration:400, easing:"ease-out"});
+const center = el => { const r=el.getBoundingClientRect(); return [r.left+r.width/2, r.top+r.height/2]; };
+
+// Sounds are made as they play (Web Audio), so the game ships no audio files. One toggle covers sound
+// and vibration; the choice is the only thing the game remembers between visits.
+const Snd = {
+  on: (()=>{ try{ return localStorage.getItem("atlasRun.sound")!=="off"; }catch(e){ return true; } })(), ctx:null,
+  ac(){ try{ if(!this.ctx) this.ctx = new (window.AudioContext||window.webkitAudioContext)(); if(this.ctx.state==="suspended") this.ctx.resume(); }catch(e){ this.ctx=null; } return this.ctx; },
+  tone(f, dur, o={}){ if(!this.on) return; const a=this.ac(); if(!a) return; const t=a.currentTime+(o.delay||0);
+    const osc=a.createOscillator(), g=a.createGain(); osc.type=o.type||"sine"; osc.frequency.setValueAtTime(f,t);
+    if(o.slide) osc.frequency.exponentialRampToValueAtTime(f*o.slide, t+dur);
+    g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(o.gain||.16,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    osc.connect(g).connect(a.destination); osc.start(t); osc.stop(t+dur+.03); },
+  noise(dur, o={}){ if(!this.on) return; const a=this.ac(); if(!a) return; const t=a.currentTime;
+    const n=Math.ceil(a.sampleRate*dur), buf=a.createBuffer(1,n,a.sampleRate), d=buf.getChannelData(0); for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
+    const src=a.createBufferSource(); src.buffer=buf; const fl=a.createBiquadFilter(); fl.type="bandpass"; fl.frequency.setValueAtTime(o.freq||800,t); fl.Q.value=o.q||1;
+    if(o.to) fl.frequency.exponentialRampToValueAtTime(o.to,t+dur);
+    const g=a.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(o.gain||.2,t+(o.attack||.01)); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    src.connect(fl).connect(g).connect(a.destination); src.start(t); src.stop(t+dur+.03); },
+  pop(){ this.tone(520,.14,{type:"triangle",slide:1.9,gain:.2}); },
+  chime(n=0){ const f=523.25*Math.pow(2,Math.min(n,12)*2/12); this.tone(f,.4,{gain:.14}); this.tone(f*1.5,.32,{delay:.05,gain:.07}); this.tone(f*2,.25,{delay:.09,gain:.04}); },
+  thud(){ this.tone(150,.28,{slide:.45,gain:.32}); this.noise(.1,{freq:260,gain:.15}); },
+  tick(i=0){ this.tone(900+Math.min(i,30)*40,.035,{type:"square",gain:.035}); },
+  ping(){ this.tone(1320,.5,{gain:.07}); },
+  whoosh(d=.6){ this.noise(d,{freq:400,to:1600,q:.8,gain:.1,attack:d*.4}); }
+};
+const buzz = p => { if(!Snd.on || !navigator.vibrate) return; try{ navigator.vibrate(p); }catch(e){} };
+function setSound(on){ Snd.on = on; try{ localStorage.setItem("atlasRun.sound", on?"on":"off"); }catch(e){}
+  document.querySelectorAll(".sndbtn").forEach(b=>b.setAttribute("aria-pressed", on)); if(on) Snd.pop(); }
+document.querySelectorAll(".sndbtn").forEach(b=>{ b.setAttribute("aria-pressed", Snd.on); b.onclick = ()=>setSound(!Snd.on); });
+
+// Confetti on one fixed canvas over the page
+const FX = (()=>{
+  const cv=document.createElement("canvas"); cv.className="fxcanvas"; cv.setAttribute("aria-hidden","true"); document.body.append(cv);
+  const g=cv.getContext("2d"); let P=[], running=false, dpr=1, W=0, H=0;
+  const size=()=>{ dpr=Math.min(2,devicePixelRatio||1); W=innerWidth; H=innerHeight; cv.width=W*dpr; cv.height=H*dpr; };
+  size(); addEventListener("resize", size);
+  const loop=()=>{ g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
+    for(const p of P){ p.vy+=p.g; p.vx*=.965; p.vy*=.965; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; p.life--;
+      g.globalAlpha=Math.max(0,Math.min(1,p.life/30)); g.save(); g.translate(p.x,p.y); g.rotate(p.rot); g.scale(1,Math.cos(p.rot*2.3)); g.fillStyle=p.c; g.fillRect(-p.w/2,-p.h/2,p.w,p.h); g.restore(); }
+    g.globalAlpha=1; P=P.filter(p=>p.life>0);
+    if(P.length) requestAnimationFrame(loop); else { running=false; g.clearRect(0,0,W,H); } };
+  const piece=(x,y,ang,sp,c)=>({x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,g:.2,rot:Math.random()*6,vr:(Math.random()-.5)*.35,w:5+Math.random()*4,h:3+Math.random()*3,c,life:60+Math.random()*40});
+  const add=ps=>{ if(reduced) return; P.push(...ps); if(!running){ running=true; requestAnimationFrame(loop); } };
+  const pal=()=>["--right","--target","--red","--sel","--ok"].map(css);
+  return {
+    burst(x,y,n=40,power=7){ const cs=pal(); add(Array.from({length:n},(_,i)=>piece(x,y,-Math.PI/2+(Math.random()-.5)*Math.PI*1.4,power*(.45+Math.random()*.75),cs[i%cs.length]))); },
+    // from the edges of a box, each piece thrown outward from the side it starts on
+    edges(r,n=30){ const cs=pal(), per=2*(r.width+r.height);
+      add(Array.from({length:n},(_,i)=>{ let d=Math.random()*per, x, y, a;
+        if(d<r.width){ x=r.left+d; y=r.top; a=-Math.PI/2; }
+        else if((d-=r.width)<r.height){ x=r.right; y=r.top+d; a=0; }
+        else if((d-=r.height)<r.width){ x=r.right-d; y=r.bottom; a=Math.PI/2; }
+        else { d-=r.width; x=r.left; y=r.bottom-d; a=Math.PI; }
+        const p=piece(x,y,a+(Math.random()-.5)*1.1,1.8+Math.random()*3.2,cs[i%cs.length]); p.vy-=1.2; return p; })); }
+  };
+})();
+
+// The round count: the new number rolls up into place
+function rollTo(roll, v){
+  const nw=document.createElement("span"); nw.textContent=v;
+  const old=roll.lastElementChild;
+  if(reduced || !old){ roll.replaceChildren(nw); return; }
+  [...roll.children].forEach(x=>{ if(x!==old) x.remove(); });
+  nw.style.cssText="position:absolute;left:0;top:0"; roll.append(nw);
+  old.animate([{transform:"none"},{transform:"translateY(-100%)"}],{duration:240,easing:"ease-in",fill:"forwards"}).onfinish=()=>old.remove();
+  nw.animate([{transform:"translateY(100%)"},{transform:"none"}],{duration:320,easing:"cubic-bezier(.34,1.56,.64,1)"}).onfinish=()=>{ nw.style.cssText=""; };
+}
+
 /* ---------- Setup ---------- */
 // scope is a list of region keys; an empty list means the whole world
 const cfg = {scope:[], mode:"pick", len:"10"};
@@ -246,11 +397,72 @@ $("scopes").addEventListener("change", e=>{
   else world.checked = false;
   cfg.scope = boxes.filter(b=>b.checked && b!==world).map(b=>b.value);
   if(!cfg.scope.length) world.checked = true;
+  bounce(e.target.nextElementSibling, 1.14);
+  e.target.checked ? Snd.pop() : Snd.tick();
+  Mini.update(true);
 });
-radios($("modes"),"mode",MODES,cfg.mode,(it,a)=>`<label class="game"><input type="radio" ${a}><span class="box"><b>${it[1]}</b><small>${it[2]}</small></span></label>`);
+// each card loops a tiny demo of its mode while it's selected or hovered
+const MODE_ICON = {
+  pick:`<rect class="mi-box" x="6" y="6" width="32" height="16" rx="4"/><rect class="mi-box" x="42" y="6" width="32" height="16" rx="4"/><rect class="mi-box mi-pick-3" x="6" y="28" width="32" height="16" rx="4"/><rect class="mi-box" x="42" y="28" width="32" height="16" rx="4"/><path class="mi-check" d="M14 36l4 4 7-7"/><circle class="mi-cursor mi-pick-cur" cx="30" cy="40" r="4"/>`,
+  find:`<path class="mi-land" d="M6 12l15-5 10 7-3 12-13 3-9-7z"/><path class="mi-land mi-find-t" d="M33 15l13-3 12 8-2 12-13 5-10-8z"/><path class="mi-land" d="M60 26l13-3 3 12-11 8-8-5z"/><circle class="mi-ripple" cx="45" cy="25" r="7"/><circle class="mi-cursor mi-find-cur" cx="45" cy="25" r="3.5"/>`,
+  type:`<defs><clipPath id="tclip"><rect class="mi-type-clip" x="13" y="14" width="0" height="22"/></clipPath></defs><rect class="mi-type-box" x="6" y="12" width="68" height="26" rx="6"/><text class="mi-type-text" x="14" y="30" clip-path="url(#tclip)">Peru</text><rect class="mi-caret" x="14" y="18" width="1.6" height="15"/>`,
+  mixed:`<rect class="mi-box mi-mix" x="6" y="13" width="20" height="24" rx="4"/><rect class="mi-box mi-mix d1" x="30" y="13" width="20" height="24" rx="4"/><rect class="mi-box mi-mix d2" x="54" y="13" width="20" height="24" rx="4"/><path class="mi-glyph" d="M11 21h10M11 25h10M11 29h10M35 22l5-3 5 4-2 6-6 1-3-4zM59 25h10M60 21v8"/>`
+};
+radios($("modes"),"mode",MODES,cfg.mode,(it,a)=>`<label class="game"><input type="radio" ${a}><span class="box"><svg viewBox="0 0 80 50" aria-hidden="true">${MODE_ICON[it[0]]}</svg><span><b>${it[1]}</b><small>${it[2]}</small></span></span></label>`);
+$("modes").addEventListener("change", e=>{ bounce(e.target.nextElementSibling, 1.03); Snd.tick(4); });
+
+// Setup mini map: the chosen regions light up in a wave from where they are, and the view moves to them
+const Mini = {
+  init(){
+    $("minimap").innerHTML = `<svg viewBox="0 0 ${MD.W} ${MD.H}" preserveAspectRatio="xMidYMid meet"><path class="sea" d="${MD.sphere}"/><path class="bg" d="${MD.bg.d}"/>`
+      + C.map(c=>c.d?`<path class="m" id="mm${c.i}" d="${c.d}"/>`:"").join("") + `</svg>`;
+    this.svg = $("minimap").firstChild; this.v = [0,0,MD.W,MD.H]; this.update(false);
+  },
+  box(){
+    if(!cfg.scope.length) return [0,0,MD.W,MD.H];
+    let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+    for(const c of C){ if(!inScope(cfg.scope,c) || c.n==="Russia" || !c.b) continue;
+      x0=Math.min(x0,c.b[0][0]); y0=Math.min(y0,c.b[0][1]); x1=Math.max(x1,c.b[1][0]); y1=Math.max(y1,c.b[1][1]); }
+    if(x1-x0 > MD.W*.7) return [0,0,MD.W,MD.H]; // a region that spans the date line: show the world
+    const r=this.svg.getBoundingClientRect(), asp=r.width&&r.height ? r.height/r.width : .4;
+    let w=Math.max((x1-x0)*1.25, 60), h=Math.max((y1-y0)*1.25, w*asp); w=Math.max(w, h/asp);
+    return [(x0+x1)/2-w/2, (y0+y1)/2-h/2, w, h];
+  },
+  update(anim){
+    const changed=C.filter(c=>{ const p=$("mm"+c.i); return p && p.classList.contains("on")!==inScope(cfg.scope,c); });
+    const pts=changed.filter(c=>c.c), cx=pts.reduce((a,c)=>a+c.c[0],0)/(pts.length||1), cy=pts.reduce((a,c)=>a+c.c[1],0)/(pts.length||1);
+    changed.forEach(c=>{ const p=$("mm"+c.i), on=!p.classList.contains("on");
+      const d = anim && c.c ? Math.min(700, Math.hypot(c.c[0]-cx,c.c[1]-cy)*5) : 0;
+      p.style.transitionDelay = d+"ms"; p.classList.toggle("on", on);
+      if(anim && on) motion(p, [{transform:"scale(1)"},{transform:"scale(1.18)",offset:.5},{transform:"scale(1)"}], {duration:420, delay:d, easing:"ease-out"}); });
+    const to=this.box(), from=this.v.slice();
+    const set=v=>{ this.v=v; this.svg.setAttribute("viewBox", v.join(" ")); };
+    if(!anim || reduced) return set(to);
+    tween(650, t=>{ const e=easeOut(t); set(from.map((a,i)=>a+(to[i]-a)*e)); });
+  }
+};
+Mini.init();
 radios($("lens"),"len",LENS,cfg.len,(it,a)=>`<label class="chip"><input type="radio" ${a}><span>${it[1]}</span></label>`);
 
-function show(id){ ["setup","play","results"].forEach(s=>$(s).hidden = s!==id); window.scrollTo(0,0); }
+let keepSetup = false;
+function show(id){ ["setup","play","results"].forEach(s=>$(s).hidden = s!==id && !(s==="setup" && keepSetup)); window.scrollTo(0,0); }
+// Start: the button squashes and the game opens in a circle that grows out of it. G.start runs
+// straight away inside the tap, so "type it" can still open the phone keyboard; the setup screen is
+// pinned in place underneath while the play screen's circle covers it.
+function startRound(){
+  const setup=$("setup"), play=$("play"), btn=$("startBtn");
+  if(reduced){ G.start(cfg.scope, cfg.mode, cfg.len); return; }
+  const br=btn.getBoundingClientRect(), sr=setup.getBoundingClientRect();
+  Object.assign(setup.style,{position:"fixed",top:sr.top+"px",left:sr.left+"px",width:sr.width+"px",margin:"0",pointerEvents:"none"});
+  keepSetup = true; G.start(cfg.scope, cfg.mode, cfg.len); keepSetup = false;
+  const pr=play.getBoundingClientRect(), x=br.left+br.width/2-pr.left, y=br.top+br.height/2-pr.top, R=Math.hypot(innerWidth,innerHeight)*1.1;
+  play.classList.add("revealing"); Snd.whoosh(.6);
+  btn.animate([{transform:"scale(1,1)"},{transform:"scale(1.05,.86)",offset:.3},{transform:"scale(.98,1.04)",offset:.65},{transform:"scale(1,1)"}],{duration:300,easing:"ease-out"});
+  setup.animate([{opacity:1},{opacity:1,offset:.45},{opacity:0}],{duration:640,fill:"forwards"});
+  const a=play.animate([{clipPath:`circle(0px at ${x}px ${y}px)`},{clipPath:`circle(${R}px at ${x}px ${y}px)`}],{duration:640,easing:"cubic-bezier(.7,0,.2,1)"});
+  const done=()=>{ setup.getAnimations().forEach(x=>x.cancel()); setup.removeAttribute("style"); if(!play.hidden) setup.hidden=true; play.classList.remove("revealing"); };
+  a.onfinish=done; a.oncancel=done;
+}
 
 /* ---------- Map ---------- */
 const MapV = {
@@ -264,7 +476,7 @@ const MapV = {
     this.svg.on("click", e=>{
       const t = e.target.closest("[data-i]"); if(!t) return;
       const c = C[+t.dataset.i]; if(!c || !this.inScope(c)) return;
-      this.onTap && this.onTap(c);
+      this.onTap && this.onTap(c, {pt:d3.pointer(e, this.g.node()), client:[e.clientX, e.clientY]});
     });
     $("zin").onclick = ()=>this.svg.transition().duration(reduced?0:250).call(this.zoom.scaleBy,1.8);
     $("zout").onclick = ()=>this.svg.transition().duration(reduced?0:250).call(this.zoom.scaleBy,1/1.8);
@@ -282,7 +494,7 @@ const MapV = {
     for(const c of C){ const g=this.geo(c); if(g.d) h += `<path class="c${this.inScope(c)?"":" out"}" id="p${c.i}" data-i="${c.i}" d="${g.d}"/>`; }
     for(const c of C){ const g=this.geo(c); if(c.s && g.c){ const o=this.inScope(c)?"":" out";
       h += `<circle class="mk${o}" id="m${c.i}" cx="${g.c[0]}" cy="${g.c[1]}" r="5"/><circle class="hit${o}" data-i="${c.i}" cx="${g.c[0]}" cy="${g.c[1]}" r="14"/>`; } }
-    h += `<g id="lbls"></g>`;
+    h += `<g id="fx"></g><g id="lbls"></g>`;
     this.g.html(h);
     this.size(); this.fit(this.scopeBox(), true);
   },
@@ -319,7 +531,7 @@ const MapV = {
   },
   mark(c, cls){
     const p=$("p"+c.i), m=$("m"+c.i);
-    [p,m].forEach(el=>{ if(el){ el.classList.remove("target","right","wrong"); if(cls) el.classList.add(cls); }});
+    [p,m].forEach(el=>{ if(el){ el.classList.remove("target","right","wrong"); el.style.fill=""; if(cls) el.classList.add(cls); }});
     if(cls && p) p.parentNode.insertBefore(p, p.parentNode.querySelector("circle, #lbls")); // raise stroke above neighbors
   },
   label(c, cls){
@@ -328,8 +540,31 @@ const MapV = {
     d3.select("#lbls").append("text").attr("class","lbl "+(cls||"")).attr("x",g.c[0]).attr("y",g.c[1]+dy)
       .attr("text-anchor","middle").attr("dominant-baseline", c.s?"auto":"middle")
       .attr("font-size",14/k).attr("stroke-width",4/k).text(c.n);
+    return d3.select("#lbls").node().lastChild;
   },
-  reset(){ C.forEach(c=>this.mark(c,null)); d3.select("#lbls").html(""); }
+  reset(){ C.forEach(c=>this.mark(c,null)); d3.select("#lbls").html(""); d3.select("#fx").html(""); },
+  // a label pops in with a little overshoot
+  spring(el, delay=0){ return motion(el, [{transform:"scale(0)",opacity:0},{transform:"scale(1.25)",opacity:1,offset:.55},{transform:"scale(1)",opacity:1}], {duration:400, delay, easing:"ease-out", fill:"backwards"}); },
+  // map coordinates (inside the zoomed group) to a point on screen
+  client(pt){ const r=this.svg.node().getBoundingClientRect(), t=d3.zoomTransform(this.svg.node()); return [r.left+t.applyX(pt[0]), r.top+t.applyY(pt[1])]; },
+  fillOf(c){ const p=$("p"+c.i); return p ? getComputedStyle(p).fill : ""; },
+  // the target: three rings spread from it, the same size on screen at any zoom
+  ping(c){
+    if(reduced || !this.svg) return; const g=this.geo(c); if(!g.c) return;
+    [0,260,520].forEach(d=>{ const r=S("circle",{class:"ring",cx:g.c[0],cy:g.c[1],r:46/this.k}); $("fx").append(r);
+      r.animate([{transform:"scale(.08)",opacity:1},{transform:"scale(1)",opacity:0}],{duration:1150,delay:d,easing:"cubic-bezier(.2,.7,.3,1)",fill:"both"}).onfinish=()=>r.remove(); });
+    Snd.ping();
+  },
+  // a right answer: green floods out from the tapped spot (or the middle) over the country's old colour
+  flood(c, pt, fromFill, dur=320){
+    const p=$("p"+c.i), g=this.geo(c); if(reduced || !p || !g.b) return;
+    const b=g.b; pt = pt || g.c || [(b[0][0]+b[1][0])/2,(b[0][1]+b[1][1])/2];
+    const id="flc"+c.i, cp=S("clipPath",{id}), circ=S("circle",{cx:pt[0],cy:pt[1],r:0}); cp.append(circ);
+    const fl=S("path",{class:"flood",d:p.getAttribute("d"),"clip-path":`url(#${id})`}); $("fx").append(cp, fl);
+    p.style.fill = fromFill;
+    const rmax=Math.max(...[[b[0][0],b[0][1]],[b[1][0],b[0][1]],[b[0][0],b[1][1]],[b[1][0],b[1][1]]].map(q=>Math.hypot(q[0]-pt[0],q[1]-pt[1])));
+    tween(dur, t=>circ.setAttribute("r", rmax*easeOut(t))).then(()=>{ p.style.fill=""; cp.remove(); fl.remove(); });
+  }
 };
 
 /* ---------- Name matching for Type it ---------- */
@@ -363,10 +598,14 @@ const G = {
     this.scope=scope; this.mode=mode; this.len=len;
     this.queue = list.map(c=>({c,tries:0})); this.total = list.length;
     this.done = 0; this.firstTry = 0; this.missed = new Set();
+    // the progress trail: a dot per question up to 20, a bar beyond that
+    this.dotMode = this.total <= 20; this.shownDone = undefined;
+    $("dots").innerHTML = this.dotMode ? '<span class="dot"></span>'.repeat(this.total) : "";
+    $("dots").style.setProperty("--n", this.total); $("bar").hidden = this.dotMode;
     show("play"); MapV.build(scope); this.next();
   },
   next(){
-    clearTimeout(this.t);
+    clearTimeout(this.t); clearTimeout(this.pingT);
     if(!this.queue.length) return this.finish();
     this.q = this.queue.shift(); this.answered = false;
     const m = this.mode==="mixed" ? ["pick","find","type"][Math.random()*3|0] : this.mode;
@@ -387,21 +626,20 @@ const G = {
     MapV.reset(); MapV.onTap = null;
     $("fb").textContent = ""; $("fb").className = "feedback";
     $("nextBtn").hidden = true; $("skipBtn").hidden = false;
-    $("count").textContent = `${this.done}/${this.total}`;
-    $("bar").style.width = (this.done/this.total*100)+"%";
+    this.prog();
     const c = this.q.c, geo = MapV.geo(c);
     let box;
     if(m==="find"){
       $("prompt").textContent = `Find ${c.n}`;
       $("answer").innerHTML = `<p class="small muted" style="margin:0">Tap it on the map. Pinch or use + to zoom.${c.s?" Small countries have a circle.":""}</p>`;
       box = MapV.scopeBox();
-      MapV.onTap = t => this.answer(t===c, t);
+      MapV.onTap = (t, at) => this.answer(t===c, t, null, null, null, at);
     } else {
       MapV.mark(c,"target"); box = MapV.context(geo.b);
       if(m==="pick"){
         $("prompt").textContent = "Which country is this?";
         const opts = shuffle([c, ...this.distractors(c)]);
-        $("answer").innerHTML = `<div class="answers">${opts.map(o=>`<button data-n="${esc(o.n)}">${esc(o.n)}</button>`).join("")}</div>`;
+        $("answer").innerHTML = `<div class="answers">${opts.map(o=>`<button data-n="${esc(o.n)}">${esc(o.n)}<svg class="ck" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9.5l4 4 8-9"/></svg></button>`).join("")}</div>`;
         $("answer").querySelectorAll("button").forEach(b=>b.onclick=()=>{
           const pick = byName[b.dataset.n]; this.answer(pick===c, pick, b);
         });
@@ -419,6 +657,44 @@ const G = {
       }
     }
     MapV.fit(box);
+    if(m!=="find") this.pingT = setTimeout(()=>{ if(!this.answered) MapV.ping(c); }, 680); // once the camera has landed
+  },
+  prog(){
+    const d=this.done, T=this.total, roll=$("count").querySelector(".roll");
+    if(this.shownDone===undefined || !roll) $("count").innerHTML = `<span class="roll"><span>${d}</span></span>/${T}`;
+    else if(this.shownDone!==d) rollTo(roll, d);
+    this.shownDone = d;
+    $("bar").style.width = `calc((100% - 12px) * ${d/T})`;
+    $("prog").setAttribute("aria-valuenow", Math.round(d/T*100));
+    const w=$("prog").clientWidth, dot=this.dotMode && $("dots").children[Math.min(d,T-1)];
+    const x = dot ? dot.offsetLeft+dot.offsetWidth/2-10 : 6+(w-12)*d/T-10;
+    $("marker").style.transform = `translateX(${x}px)`;
+  },
+  dot(i, cls){ const d=$("dots").children[i]; if(!d) return; d.classList.remove("back"); d.classList.add(cls);
+    motion(d, [{transform:"scale(1)"},{transform:"scale(1.7)",offset:.4},{transform:"scale(1)"}], {duration:420, easing:"ease-out"}); },
+  // a miss that comes back: a boomerang carries it from the feedback line to the slot it returns in
+  boomerang(i){
+    const dot=this.dotMode && $("dots").children[i];
+    const ghost=()=>{ if(dot && !dot.classList.contains("right") && !dot.classList.contains("miss")){ dot.classList.add("back"); motion(dot,[{transform:"scale(1)"},{transform:"scale(1.8)",offset:.4},{transform:"scale(1)"}],{duration:420}); } };
+    if(reduced) return ghost();
+    let tx, ty; if(dot) [tx,ty]=center(dot); else { const r=$("prog").getBoundingClientRect(); tx=r.left+6+(r.width-12)*Math.min(1,(i+.5)/this.total); ty=r.bottom-9; }
+    const rg=document.createRange(); rg.selectNodeContents($("fb")); const rs=rg.getClientRects(), last=rs[rs.length-1]; if(!last) return ghost();
+    const bx=Math.min(last.right+18, innerWidth-24), by=last.top+last.height/2;
+    const b=S("svg",{class:"boomer",viewBox:"0 0 32 32","aria-hidden":"true"}); b.innerHTML='<path d="M6.5 26.5C5 25 6 21 9 16.5S15.5 7 18.5 5c1.6-1 3.6.6 2.6 2.3C18.4 11.7 14.6 17 13 21.5c5-.6 10-.4 13.6.4 1.9.4 1.9 3.2 0 3.6-6.2 1.4-13 1.8-18.3 1.7-.8 0-1.4-.2-1.8-.7z"/>';
+    b.style.left=(bx-14)+"px"; b.style.top=(by-14)+"px"; document.body.append(b);
+    const dx=tx-bx, dy=ty-by; Snd.whoosh(.7);
+    b.animate([{transform:"translate(0,0) rotate(0) scale(.6)",opacity:0},{transform:`translate(${dx*.35+40}px,${dy*.5-30}px) rotate(400deg) scale(1.15)`,opacity:1,offset:.45},{transform:`translate(${dx}px,${dy}px) rotate(900deg) scale(.6)`,opacity:1}],
+      {duration:900,easing:"cubic-bezier(.4,0,.3,1)"}).onfinish=()=>{ b.remove(); ghost(); Snd.tick(6); };
+  },
+  // a right "type it" answer flies out of the box onto the map, where it becomes the label
+  flyName(c, lbl){
+    const inp=$("ti"), g=MapV.geo(c); if(reduced || !inp || !g.c || !lbl){ return; }
+    const r=inp.getBoundingClientRect(), ft=document.createElement("span"); ft.className="flytext"; ft.textContent=c.n; ft.setAttribute("aria-hidden","true");
+    ft.style.left=(r.left+14)+"px"; ft.style.top=(r.top+r.height/2-9)+"px"; document.body.append(ft);
+    lbl.style.opacity="0"; inp.value="";
+    const [tx,ty]=MapV.client([g.c[0], g.c[1]+(c.s?-9/MapV.k:0)]), k=14/18, fw=ft.getBoundingClientRect().width, dx=tx-(r.left+14)-fw*k/2, dy=ty-(r.top+r.height/2);
+    ft.animate([{transform:"translate(0,0) scale(1)"},{transform:`translate(${dx*.5}px,${dy*.5-40}px) scale(1.12)`,offset:.45},{transform:`translate(${dx}px,${dy}px) scale(${k})`}],{duration:560,easing:"cubic-bezier(.5,0,.3,1)",fill:"forwards"})
+      .onfinish=()=>{ ft.remove(); lbl.style.opacity=""; MapV.spring(lbl); FX.burst(tx,ty,22,5); };
   },
   distractors(c){
     const pool = C.filter(o=>o!==c && inScope(this.scope,o) && MapV.geo(o).c);
@@ -426,7 +702,7 @@ const G = {
     pool.sort((a,b)=>{ const A=MapV.geo(a).c,B=MapV.geo(b).c; return Math.hypot(A[0]-cc[0],A[1]-cc[1])-Math.hypot(B[0]-cc[0],B[1]-cc[1]); });
     return shuffle(pool.slice(0,6)).slice(0,3);
   },
-  answer(ok, other, btn, typed, raw){
+  answer(ok, other, btn, typed, raw, at){
     if(this.answered) return; this.answered = true;
     const c = this.q.c; MapV.onTap = null;
     $("skipBtn").hidden = true;
@@ -434,10 +710,21 @@ const G = {
     if($("play").classList.contains("inline")) $("prompt").hidden = true;
     if(this.qm==="type"){ $("tcheck").textContent = "Next"; $("tcheck").className = "primary tnext"; }
     else $("answer").querySelectorAll("button,input").forEach(el=>el.disabled=true);
+    clearTimeout(this.pingT);
     if(ok){
-      if(this.q.tries===0 && !this.missed.has(c)) this.firstTry++;
-      this.done++;
-      MapV.mark(c,"right"); MapV.label(c);
+      const first = this.q.tries===0 && !this.missed.has(c);
+      if(first) this.firstTry++;
+      this.done++; this.dot(this.done-1, first?"right":"miss");
+      const was=MapV.fillOf(c);
+      MapV.mark(c,"right"); MapV.flood(c, at && at.pt, was);
+      const lbl=MapV.label(c);
+      Snd.pop(); Snd.chime(1); buzz(18);
+      if(this.qm==="type") this.flyName(c, lbl);
+      else {
+        MapV.spring(lbl, 90);
+        if(btn){ bounce(btn); FX.edges(btn.getBoundingClientRect()); }
+        else if(at) FX.burst(at.client[0], at.client[1]);
+      }
       if(btn) btn.classList.add("right");
       $("fb").className = "feedback good";
       $("fb").textContent = typed && !typed.exact ? `Yes, ${c.n}. Watch the spelling.` : `Yes, ${c.n}.`;
@@ -445,7 +732,10 @@ const G = {
       this.t = setTimeout(()=>this.next(), typed && !typed.exact ? 1800 : 1000);
     } else {
       this.missed.add(c); this.q.tries++;
-      if(this.q.tries<=2) this.queue.splice(Math.min(3,this.queue.length),0,this.q); else this.done++;
+      const back = this.q.tries<=2, pos = Math.min(3,this.queue.length);
+      if(back) this.queue.splice(pos,0,this.q); else { this.done++; this.dot(this.done-1,"miss"); }
+      Snd.thud(); buzz([40,70,40]);
+      if(btn) shake(btn); else if(this.qm==="type") shake($("ti"));
       MapV.mark(c,"right"); MapV.label(c);
       let msg;
       if(this.qm==="pick" && btn){
@@ -466,26 +756,46 @@ const G = {
       $("fb").className = "feedback bad";
       $("fb").textContent = msg + (this.q.tries<=2 && this.qm!=="type" ? " It'll come back soon." : ""); // type it has two lines for this
       if(this.qm!=="type"){ $("nextBtn").hidden = false; $("nextBtn").focus({preventScroll:true}); }
+      if(back) this.boomerang(Math.min(this.done+pos, this.total-1));
     }
-    $("count").textContent = `${this.done}/${this.total}`;
-    $("bar").style.width = (this.done/this.total*100)+"%";
+    this.prog();
   },
   skip(){ if(!this.answered) this.answer(false, null); },
   finish(){
     show("results");
-    $("score").textContent = `${this.firstTry}/${this.total}`;
+    const F=this.firstTry, T=this.total, sc=$("score");
+    sc.textContent = `${F}/${T}`;
+    if(!reduced && F>0){ // count up with a rising tick, then land with a bounce
+      sc.textContent = `0/${T}`; let last=0; const every=Math.ceil(F/30);
+      setTimeout(()=>tween(Math.min(1400,450+F*70), t=>{ const v=Math.round(easeOut(t)*F); if(v!==last){ last=v; sc.textContent=`${v}/${T}`; if(v%every===0||v===F) Snd.tick(v/every); } })
+        .then(()=>{ sc.textContent=`${F}/${T}`; bounce(sc,1.14); Snd.chime(F===T?6:3); }), 250);
+    }
     $("scoreNote").textContent = this.firstTry===this.total ? "Every one right on the first try." : "right on the first try";
     const miss=[...this.missed];
     $("missWrap").hidden = !miss.length; $("replayMiss").hidden = !miss.length;
-    $("missed").innerHTML = miss.map(c=>`<li>${esc(c.n)}</li>`).join("");
+    $("missed").innerHTML = miss.map(c=>`<li tabindex="0" data-i="${c.i}">${esc(c.n)}</li>`).join("");
+    [...$("missed").children].forEach((li,i)=>motion(li,[{transform:"translateY(14px) scale(.7)",opacity:0},{transform:"translateY(-2px) scale(1.05)",opacity:1,offset:.7},{transform:"none",opacity:1}],{duration:420,delay:300+i*90,easing:"ease-out",fill:"backwards"}));
     this.lastMiss = miss;
   }
 };
 
-$("startBtn").onclick = ()=>G.start(cfg.scope, cfg.mode, cfg.len);
+$("startBtn").onclick = startRound;
 $("nextBtn").onclick = ()=>G.next();
 $("skipBtn").onclick = ()=>G.skip();
-$("quitBtn").onclick = ()=>{ clearTimeout(G.t); show("setup"); };
+$("quitBtn").onclick = ()=>{ clearTimeout(G.t); clearTimeout(G.pingT); show("setup"); };
+// Missed countries: hover or focus one to see its outline
+function showOutline(li){
+  if(!li || li.querySelector(".outline")) return; const c=C[+li.dataset.i], b=c && c.b; if(!b || !c.d) return;
+  const pad=Math.max(.8,(b[1][0]-b[0][0])*.08), w=Math.max(b[1][0]-b[0][0],1)+pad*2, h=Math.max(b[1][1]-b[0][1],1)+pad*2;
+  li.insertAdjacentHTML("beforeend",`<span class="outline" aria-hidden="true"><svg viewBox="${b[0][0]-pad} ${b[0][1]-pad} ${w} ${h}"><path d="${c.d}"/></svg></span>`);
+  motion(li.lastChild,[{transform:"translateX(-50%) translateY(6px) scale(.85)",opacity:0},{transform:"translateX(-50%) scale(1)",opacity:1}],{duration:220,easing:"cubic-bezier(.34,1.56,.64,1)"});
+}
+const hideOutline = li => { if(li) li.querySelectorAll(".outline").forEach(o=>o.remove()); };
+$("missed").addEventListener("mouseover", e=>showOutline(e.target.closest("li")));
+$("missed").addEventListener("mouseout", e=>{ const li=e.target.closest("li"); if(li && !li.contains(e.relatedTarget) && document.activeElement!==li) hideOutline(li); });
+$("missed").addEventListener("focusin", e=>showOutline(e.target.closest("li")));
+$("missed").addEventListener("focusout", e=>hideOutline(e.target.closest("li")));
+new ResizeObserver(()=>{ if(!$("play").hidden && G.total) G.prog(); }).observe($("prog"));
 $("replayMiss").onclick = ()=>G.start(G.scope, G.mode, "all", G.lastMiss);
 $("again").onclick = ()=>G.start(cfg.scope, cfg.mode, cfg.len);
 $("newGame").onclick = ()=>show("setup");

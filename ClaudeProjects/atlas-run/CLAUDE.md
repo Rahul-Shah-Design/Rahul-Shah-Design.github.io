@@ -19,8 +19,8 @@ type="application/json">` block (`MD`) — pre-projected SVG path data plus boun
 label centroids per country, so no runtime geo-projection math is needed. That JSON block is one
 very long line and dominates the file size; treat it as a data asset, not code to hand-edit.
 
-**No persistence.** Unlike BudgetTracker/GrindLog, this game keeps no `localStorage` state —
-every round starts fresh, nothing is saved between visits.
+**Almost no persistence.** Every round starts fresh. The only thing kept between visits is the
+sound/vibration toggle (`localStorage` key `atlasRun.sound`).
 
 **Flow:** `setup` → `play` → `results`, toggled via `show(id)` which hides/shows the three
 `<section>`s.
@@ -116,3 +116,37 @@ button.
 - The Pacific-centred projection (`pd`/`pb`/`pc`) only exists for Oceania, East & Southeast Asia
   and a few neighbours, so `MapV.build` uses it only when every selected country has a `pc`.
   Oceania mixed with any other region falls back to the regular projection.
+
+## Juice (micro-interactions)
+
+Chosen from a sampler of 20 ideas (kept: region mini map, mode demos, start reveal, target ping,
+right-answer flood, pick-it check, type-it fly, progress trail, boomerang, score count-up, missed
+outlines, sound, vibration). Not built yet, rated "maybe": title flight path, wrong-answer arrow
+(without shaking the map), streaks (capped, with vehicle icons every 20–50), passport stamps,
+perfect-round celebration (try bespoke before adding Lottie). Cut: map wave, flight between
+questions, mascot. All of it is bespoke SVG/CSS/Web Audio; no animation library.
+
+- **Rules.** Effects are overlays or transforms only; nothing changes layout (the cards' heights
+  and the phone "type it" fit depend on it). `#ti` is never blurred, replaced or disabled.
+  JS animations go through `motion()`, which skips them under `prefers-reduced-motion` (the CSS
+  rule only stops CSS animations). Confetti (`FX`) is one fixed canvas, also off under reduced motion.
+- **Sound** (`Snd`) is synthesised with Web Audio, no files. `buzz()` vibrates (Android only).
+  Both follow the `.sndbtn` toggle on the setup and play screens.
+- **Setup.** `Mini` draws the world mini map under the region chips; picked regions light up in a
+  wave from their centre and the view moves to them. Each mode card loops a CSS demo (`MODE_ICON`)
+  while selected or hovered. `startRound()` opens the play screen in a circle from the Start
+  button; `G.start` still runs inside the tap so "type it" can open the iPhone keyboard, while
+  `#setup` is pinned (`position:fixed`) underneath until the circle covers it.
+- **Map.** `MapV.ping` replaces the old stroke pulse: three rings, constant on screen, started
+  680ms after the camera move. `MapV.flood` floods green from the tap point (or the centre) over
+  the country's previous fill; labels pop in with `MapV.spring`. Both draw into `#fx`.
+- **Answers.** Pick it: the right button bounces, draws a check (CSS) and throws confetti from its
+  edges (`FX.edges`); a wrong one shakes. Type it: a miss shakes the input; a right answer flies
+  from the input to the map label (`G.flyName`). Find it: confetti from the tap point.
+- **Progress trail** (`G.prog`, `G.dot`): a dot per question for rounds of 20 or fewer (green first
+  try, red otherwise), a bar beyond that; a plane marker shows where you are and the count rolls
+  up (`rollTo`). A re-queued miss sends a boomerang from the feedback line to the slot where it
+  should come back (`G.boomerang`), leaving a dashed `.dot.back`. (`.ghost` is the button style;
+  don't reuse the name.)
+- **Results.** The score counts up then bounces; missed chips arrive one by one and show the
+  country's outline on hover or focus (`showOutline`).
