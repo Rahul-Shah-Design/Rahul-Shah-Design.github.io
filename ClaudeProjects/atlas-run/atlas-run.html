@@ -427,11 +427,13 @@ radios($("modes"),"mode",MODES,cfg.mode,(it,a)=>`<label class="game"><input type
 $("modes").addEventListener("change", e=>{ bounce(e.target.nextElementSibling, 1.03); Snd.tick(4); });
 
 /* ---------- Streak: a vehicle badge that upgrades as the run goes on ---------- */
-// Car, bus, train, plane, rocket. Within each vehicle the effects ramp up for 10 answers and then
-// hold; the next vehicle starts them small again, so a long run never gets louder than a short one.
-// The streak counts right answers in a row across rounds in one visit; any miss or "I don't know"
-// ends it. It isn't saved.
-const TIERS = [[0,"car"],[10,"bus"],[20,"train"],[35,"plane"],[50,"rocket"]];
+// Car, bus, train, plane, rocket. The milestones split each round into fifths, so a perfect round
+// always finishes on the rocket whatever its length (10 questions: bus at 2, train 4, plane 6,
+// rocket 8). Within a vehicle the effects ramp across its fifth; the next vehicle starts them small
+// again. The streak counts right answers in a row in this round; any miss or "I don't know" ends it.
+const RIDES = ["car","bus","train","plane","rocket"];
+// streak counts where each vehicle starts: at least one answer apart, so tiny rounds still climb
+const milestones = T => RIDES.map((_,i)=> i ? Math.max(i+1, Math.round(i*T/5)) : 0);
 const WHEEL = (x,y,r=3.4)=>`<circle class="tyre" cx="${x}" cy="${y}" r="${r}"/><circle class="hub" cx="${x}" cy="${y}" r="${r*.4}"/>`;
 const VEH = {
   car:`<path class="v-car" d="M5 21v-4.5c0-1.5 1-2.5 2.5-2.8L12 13l4.2-4.4c.8-.8 1.8-1.1 2.9-1.1h8.4c1.2 0 2.3.5 3 1.5L34 13l4 .9c1.6.4 2.5 1.6 2.5 3.1V21z"/><path class="glass" d="M14.5 13l3.3-3.4c.4-.4.9-.6 1.5-.6h3.7v4zM25 13V9h2.4c.6 0 1.1.3 1.5.7l2.8 3.3z"/>${WHEEL(12.5,22)}${WHEEL(33,22)}`,
@@ -441,18 +443,20 @@ const VEH = {
   rocket:`<path class="flame" d="M7 12.5c-3 .5-5.5 1.6-6.5 3 1 1.4 3.5 2.5 6.5 3z"/><path class="flame2" d="M7 13.7c-1.8.3-3.4.9-4 1.8.6.9 2.2 1.5 4 1.8z"/><path class="v-rocket" d="M7 11h22c5 0 10 2.4 13 4.5-3 2.1-8 4.5-13 4.5H7z"/><circle class="glass" cx="28" cy="15.5" r="2.6" stroke="#16324A" stroke-width="1"/><path class="v-car" d="M8 11 4 4.5h6l6.5 6.5zM8 20l-4 6.5h6l6.5-6.5z"/>`
 };
 const Streak = {
-  n:0, shown:"",
-  tier(n){ let t=0; TIERS.forEach(([at],i)=>{ if(n>=at) t=i; }); return t; },
-  heat(){ return Math.min(10, this.n - TIERS[this.tier(this.n)][0]); }, // 0..10 within the current vehicle
+  n:0, shown:"", at:milestones(10), T:10,
+  round(T){ this.T=T; this.at=milestones(T); this.n=0; $("streak").hidden=true; this.draw(); },
+  tier(n){ let t=0; this.at.forEach((a,i)=>{ if(n>=a) t=i; }); return t; },
+  heat(){ // 0..10: how far through the current vehicle's stretch of the round
+    const t=this.tier(this.n), from=this.at[t], to=t<4 ? this.at[t+1] : Math.max(this.T, from+1);
+    return Math.round(Math.min(1, (this.n-from)/Math.max(1,to-from))*10); },
   draw(){
-    const name=TIERS[this.tier(this.n)][1], h=this.heat(), v=$("veh");
+    const name=RIDES[this.tier(this.n)], h=this.heat(), v=$("veh");
     if(this.shown!==name){ v.innerHTML=`<g class="lines"><path d="M1 11h5M0 16h6M1 21h5"/></g><g class="bob">${VEH[name]}</g>`; this.shown=name; }
     v.style.setProperty("--bob", (0.65-h*.045)+"s"); v.style.setProperty("--lines", h/10);
     $("sn").textContent=this.n;
   },
   hit(){
-    this.n++; const b=$("streak"), t=this.tier(this.n), up = t>0 && this.n===TIERS[t][0];
-    if(this.n<2){ this.draw(); return; }
+    this.n++; const b=$("streak"), t=this.tier(this.n), up = t>0 && this.n===this.at[t];
     const appearing=b.hidden; b.hidden=false;
     if(up && !reduced){ // the old vehicle drives off, the new one drives in, and the effects start over
       const v=$("veh");
@@ -668,6 +672,7 @@ const G = {
     this.dotMode = this.total <= 20; this.shownDone = undefined;
     $("dots").innerHTML = this.dotMode ? '<span class="dot"></span>'.repeat(this.total) : "";
     $("dots").style.setProperty("--n", this.total); $("bar").hidden = this.dotMode;
+    Streak.round(this.total);
     show("play"); MapV.build(scope); this.next();
   },
   next(){

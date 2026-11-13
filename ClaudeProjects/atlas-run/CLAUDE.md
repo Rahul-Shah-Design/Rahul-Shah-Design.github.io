@@ -150,8 +150,9 @@ questions, mascot. All of it is bespoke SVG/CSS/Web Audio; no animation library.
   don't reuse the name.)
 - **Results.** The score counts up then bounces; missed chips arrive one by one and show the
   country's outline on hover or focus (`showOutline`).
-- **Streak** (`Streak`, being tried on a branch): a badge on the map's top-left corner, shown from 2
-  in a row. The vehicle upgrades car → bus (10) → train (20) → plane (35) → rocket (50) (`TIERS`);
-  within a vehicle the bob speed, speed lines, confetti and chime pitch ramp for 10 answers and then
-  hold, and each new vehicle starts them small again. The streak carries across rounds in one visit
-  (not saved); a miss or "I don't know" puffs it out in smoke.
+- **Streak** (`Streak`, being tried on a branch): a badge on the map's top-left corner from the first
+  right answer. The vehicle upgrades car → bus → train → plane → rocket at milestones that split the
+  round into fifths (`milestones(T)`: 10 questions → 2/4/6/8, 20 → 4/8/12/16), so a perfect round
+  ends on the rocket. Within a vehicle the bob speed, speed lines, confetti and chime pitch ramp
+  across its fifth, and each new vehicle starts them small again. The streak resets every round;
+  a miss or "I don't know" puffs it out in smoke.
